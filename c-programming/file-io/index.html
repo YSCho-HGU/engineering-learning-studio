@@ -135,10 +135,12 @@ int main(void) {
     fp = fopen("students.txt", "r");
     if (fp == NULL) return 1;
     if (fscanf(fp, "%d %39s %lf",
-               &amp;s.id, s.name, &amp;s.score) == 3) {
-        printf("%d %s %.1f\n",
-               s.id, s.name, s.score);
+               &amp;s.id, s.name, &amp;s.score) != 3) {
+        fprintf(stderr, "Invalid student record\n");
+        fclose(fp);
+        return 1;
     }
+    printf("%d %s %.1f\n", s.id, s.name, s.score);
     if (fclose(fp) == EOF) return 1;
     return 0;
 }</pre></div>
@@ -198,6 +200,7 @@ while (<select id="blank-read" aria-label="read condition"><option value="">선�
 }
 <select id="blank-close" aria-label="close function"><option value="">선택</option><option value="fclose">fclose(fp);</option><option value="free">free(fp);</option><option value="none">/* nothing */</option></select>
 if (count &gt; 0) printf("%.2f\n", sum / count);
+/* 오류 진단은 위의 완성형 예제를 참고 */
 return 0;
 }</pre></div><button class="primary" id="build-check">코드 검증</button><p class="activity-feedback" id="build-feedback" aria-live="polite"></p></div>
 <div class="check" data-check="7"><div class="check-eyebrow">FINAL CHECK · 7.7</div><h3>파일을 읽어 구조체 배열에 저장하는 프로그램의 안전한 순서는?</h3><label><input type="radio" name="q7" value="a"> 읽기 → 모드 선택 → 파일 열기 → 닫기</label><label><input type="radio" name="q7" value="b"> 파일 열기 → NULL 확인 → 읽기 반환값 확인 → 닫기</label><label><input type="radio" name="q7" value="c"> 파일 열기 → feof() 먼저 검사 → 읽기 → 닫지 않기</label><button class="check-btn" data-grade="7">답 확인 및 설명</button><div class="answer" id="answer-7" aria-live="polite"></div></div>
