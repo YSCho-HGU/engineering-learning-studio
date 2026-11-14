@@ -2,7 +2,7 @@
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="C Programming Chapter 7 File I/O Self-Study: streams, files, EOF, records and sensor logs.">
 <title>Chapter 7 · File I/O Learning Journey</title>
-<link rel="stylesheet" href="./style.css"></head><body>
+<link rel="stylesheet" href="./style.css?v=20261114qa"></head><body>
 <a class="skip" href="#lesson">학습 본문으로 건너뛰기</a>
 <header class="topbar"><a class="brand" href="../">◈ C Programming <small>/ Learning Studio</small></a><div class="toplinks"><a href="../">C Learning Home</a><a href="https://drive.google.com/file/d/1pQoUv5072-RW6k7vnjDQULbp1qVNQRDq/view" target="_blank" rel="noopener">교재 171 ↗</a><button id="theme-button" aria-label="Toggle dark mode">◐ Theme</button></div></header>
 <div class="course-header"><div class="eyebrow">2026 · CHAPTER 7 · SELF-STUDY COURSE</div><h1>File I/O <span>Learning Journey</span></h1><p>프로그램이 종료되어도 데이터를 남기려면? Stream의 원리를 이해하고, 실제 센서 로그 프로그램까지 단계별로 완성해 보세요.</p><div class="course-meta"><span>8개의 학습 단계</span><span>실험 + 코드 분석 + 자기점검</span><span>교재: 171_C_File_IO_Rev8</span></div></div>
@@ -26,8 +26,8 @@
 <section class="stage" data-stage="0">
 <div class="topic">7.1 · WHY IT MATTERS</div><h2>프로그램을 다시 실행하면 데이터는 어디에 있을까요?</h2><p class="lead">메모리에 저장된 변수는 일반적으로 프로그램이 끝나면 사라집니다. 반면 파일에 기록한 정보는 다음 실행에서 다시 읽을 수 있습니다. 이것이 File I/O가 필요한 이유입니다.</p>
 <div class="concept"><strong>Core idea</strong><p><code>int value</code> 같은 변수는 실행 중인 프로그램의 메모리 상태를 나타냅니다. 저장된 파일은 프로그램 외부의 데이터를 표현하므로 다음 실행에서도 사용할 수 있습니다.</p></div>
-<div class="activity"><div class="activity-head"><span>EXPLORE 01</span><h3>프로그램 종료 시뮬레이션</h3><p>아래 두 데이터를 비교한 다음 <strong>End program</strong>을 누르세요.</p></div><div class="two-col"><div class="state-box"><div class="box-name">PROCESS MEMORY</div><div class="big" id="memory-value">score = 92</div><small>실행 중인 변수</small></div><div class="state-box"><div class="box-name">FILE: scores.txt</div><div class="big" id="stored-value">101 Mina 92.5</div><small>외부 저장 데이터 (가상 파일)</small></div></div><div class="button-row"><button class="primary" id="end-process">End program</button><button id="start-process">Start new program</button></div><p class="activity-feedback" id="memory-msg" aria-live="polite">프로그램이 실행 중입니다.</p></div>
-<div class="snippet"><div class="code-head">CONNECTION TO C</div><pre>int score = 92;  // program memory
+<div class="activity"><div class="activity-head"><span>EXPLORE 01</span><h3>프로그램 종료 시뮬레이션</h3><p>아래 두 데이터를 비교한 다음 <strong>End program</strong>을 누르세요.</p></div><div class="two-col"><div class="state-box"><div class="box-name">PROCESS MEMORY</div><div class="big" id="memory-value">score = 92.5</div><small>실행 중인 변수</small></div><div class="state-box"><div class="box-name">FILE: scores.txt</div><div class="big" id="stored-value">101 Mina 92.5</div><small>외부 저장 데이터 (가상 파일)</small></div></div><div class="button-row"><button class="primary" id="end-process">End program</button><button id="start-process">Start new program</button></div><p class="activity-feedback" id="memory-msg" aria-live="polite">프로그램이 실행 중입니다.</p></div>
+<div class="snippet"><div class="code-head">ILLUSTRATIVE CODE FRAGMENT · called inside main()</div><pre>double score = 92.5;  // program memory
 FILE *fp = fopen("scores.txt", "w");
 if (fp != NULL) {
     fprintf(fp, "101 Mina 92.5\n");
@@ -38,7 +38,7 @@ if (fp != NULL) {
 <section class="stage" data-stage="1" hidden>
 <div class="topic">7.2 · STREAM MODEL</div><h2>파일 I/O는 새로운 개념이 아니라 Stream의 확장입니다</h2><p class="lead">이미 사용해 온 <code>scanf()</code>와 <code>printf()</code>도 Stream을 통해 데이터를 주고받습니다. 무엇을 읽고 어디에 쓸지만 달라질 뿐입니다.</p>
 <div class="concept"><strong>Core idea</strong><p><code>stdin</code>은 표준 입력, <code>stdout</code>은 정상 출력, <code>stderr</code>는 오류·진단 출력입니다. <code>FILE *fp</code>는 열린 Stream을 가리키는 포인터이며 파일 이름 자체를 담고 있는 문자열 변수가 아닙니다.</p></div>
-<div class="activity"><div class="activity-head"><span>EXPLORE 02</span><h3>Stream Routing Explorer</h3><p>출력 대상을 선택하면 같은 메시지가 어디로 향하는지 확인할 수 있습니다.</p></div><div class="field"><label for="stream-target">Destination stream</label><select id="stream-target"><option value="stdout">stdout · 정상 출력</option><option value="stderr">stderr · 오류 출력</option><option value="file">fp · 파일 Stream</option><option value="stdin">stdin · 표준 입력</option></select></div><div class="stream-map"><div class="flow-node">C Program</div><div class="flow-arrow" id="stream-arrow">→</div><div class="flow-node destination" id="stream-destination">Terminal · 정상 출력</div></div><pre id="stream-code" class="mini-code">fprintf(stdout, "READY\n");</pre><p class="activity-feedback" id="stream-explain">printf()는 일반적으로 stdout에 씁니다.</p></div>
+<div class="activity"><div class="activity-head"><span>EXPLORE 02</span><h3>Stream Routing Explorer</h3><p>Stream을 선택하면 입력과 출력의 방향 및 데이터 흐름이 어떻게 달라지는지 확인할 수 있습니다.</p></div><div class="field"><label for="stream-target">Stream · input/output destination</label><select id="stream-target"><option value="stdout">stdout · 정상 출력</option><option value="stderr">stderr · 오류 출력</option><option value="file">fp · 파일 Stream</option><option value="stdin">stdin · 표준 입력</option></select></div><div class="stream-map"><div class="flow-node">C Program</div><div class="flow-arrow" id="stream-arrow">→</div><div class="flow-node destination" id="stream-destination">Terminal · 정상 출력</div></div><pre id="stream-code" class="mini-code">fprintf(stdout, "READY\n");</pre><p class="activity-feedback" id="stream-explain">printf()는 일반적으로 stdout에 씁니다.</p></div>
 <div class="keypoint"><strong>관련 교재: 7.2.1 ~ 7.2.4</strong><p><code>fprintf(stdout, ...)</code>와 <code>printf(...)</code>의 연결을 이해하면 File I/O 함수가 낯설지 않습니다. 파일을 다룰 때는 Stream 인자로 <code>fp</code>를 전달합니다.</p></div>
 <div class="check" data-check="1"><div class="check-eyebrow">CHECK YOURSELF · 7.2</div><h3><code>FILE *fp</code>가 의미하는 것은?</h3><label><input type="radio" name="q1" value="a"> 파일 이름을 저장하는 문자 배열</label><label><input type="radio" name="q1" value="b"> 열린 Stream을 다루기 위한 포인터</label><label><input type="radio" name="q1" value="c"> 파일의 데이터 크기를 저장하는 정수</label><button class="check-btn" data-grade="1">답 확인 및 설명</button><div class="answer" id="answer-1" aria-live="polite"></div></div>
 </section>
@@ -46,21 +46,21 @@ if (fp != NULL) {
 <div class="topic">7.3 · FILE MODES &amp; RESOURCE MANAGEMENT</div>
 <h2>파일 모드에 따라 C 프로그램의 실행 경로가 달라집니다</h2>
 <p class="lead">읽기용 <code>r</code>과 쓰기용 <code>w</code>·<code>a</code>는 서로 다른 프로그램 경로입니다. <strong>현재 모드에 해당하는 C 코드만</strong> 보여주며, 버튼은 해당 코드의 동작을 한 단계씩 수행합니다.</p>
-<div class="concept"><strong>학습 전 확인</strong><p><code>fopen()</code>은 성공하면 열린 Stream을 가리키는 <code>FILE *</code>를, 실패하면 <code>NULL</code>을 반환합니다. <code>r</code>은 기존 내용을 읽고, <code>w</code>는 기존 내용을 지우고 쓰며, <code>a</code>는 기존 데이터 끝에 씁니다. 상대 경로 <code>"sensor.txt"</code>는 현재 작업 디렉터리를 기준으로 해석됩니다.</p></div>
+<div class="concept"><strong>학습 전 확인</strong><p><code>fopen()</code>은 성공하면 열린 Stream을 가리키는 <code>FILE *</code>를, 실패하면 <code>NULL</code>을 반환합니다. <code>r</code>은 기존 내용을 읽고, <code>w</code>는 기존 내용을 지우고 쓰며, <code>a</code>는 기존 데이터 끝에 씁니다. 상대 경로 <code>"readings.txt"</code>는 현재 작업 디렉터리를 기준으로 해석됩니다.</p></div>
 <div class="activity" id="mode-activity"><div class="activity-head"><span>EXPLORE 03 · CONTROL FLOW</span><h3>한 단계씩 실행하며 다음 문장을 찾으세요</h3><p>버튼과 실행 코드가 일치합니다. 읽기가 성공하면 <code>fputs()</code>가 자동 실행됩니다. 마지막 줄을 읽은 다음에도 <strong>한 번 더 읽기를 시도해야 EOF를 확인</strong>할 수 있습니다.</p></div>
 <div class="mode-path" id="mode-path">READ PATH · fopen → fgets + fputs (반복) → fclose</div>
 <div class="toolstrip" id="mode-actions"><div class="field"><label for="open-mode">File open mode</label><select id="open-mode"><option value="r">r · read</option><option value="w">w · truncate &amp; write</option><option value="a">a · append</option></select></div>
 <button class="primary" id="mode-open">① fopen()</button><button id="mode-read" disabled>② fgets() · 다음 줄</button><button id="mode-write" disabled hidden>② fprintf() · 한 줄 쓰기</button><button id="mode-close" disabled>③ fclose()</button></div>
 <div class="next-action" id="mode-next" aria-live="polite"><strong id="mode-next-title">다음 동작: fopen()</strong><span id="mode-next-detail">선택한 모드로 파일을 열어 시작하세요.</span></div>
 <div class="inline-status" id="mode-status" aria-live="polite">Stream: CLOSED</div>
-<div class="code-live"><div class="code-head">EXECUTION PATH · 현재 모드의 C 코드만 표시 · 노란색 = 수행된 문장</div><div id="mode-code" class="live-lines" role="list" aria-label="Current C file I/O execution path"></div></div>
-<div class="two-col"><div class="state-box"><div class="box-name">FILE · sensor.txt</div><pre id="mode-file">25.0
+<div class="code-live"><div class="code-head">EXECUTION PATH · 현재 모드의 C 코드만 표시 · 노란색 = 방금 실행한 문장</div><div id="mode-code" class="live-lines" role="list" aria-label="Current C file I/O execution path"></div></div>
+<div class="two-col"><div class="state-box"><div class="box-name">FILE · readings.txt</div><pre id="mode-file">25.0
 26.5</pre></div><div class="state-box"><div class="box-name">stdout · fputs()가 자동 출력한 내용</div><pre id="mode-output">(no output)</pre></div></div>
 <div class="button-row"><button id="mode-restart">↻ Restart Program · 파일 유지</button><button id="mode-reset">⟲ Reset Sample · 파일 복원</button></div>
 <p class="activity-feedback" id="mode-explain" aria-live="polite">먼저 r 모드로 파일을 열어 보세요.</p>
-<div class="keypoint"><strong>직접 생각해 보세요</strong><p><code>fgets()</code>를 두 번 눌러 두 줄을 읽은 뒤, 반복문은 종료되었을까요? 아닙니다. <strong>세 번째 fgets() 호출에서 NULL이 나와야</strong> while 조건이 거짓이 되고, 이후 <code>fclose()</code>로 진행합니다. 이 실습에서 <code>fprintf()</code>는 <code>r</code> 모드에 등장하지 않습니다.</p></div>
+<div class="keypoint"><strong>직접 생각해 보세요</strong><p><code>fgets()</code>를 두 번 눌러 두 줄을 읽은 뒤, 반복문은 종료되었을까요? 아닙니다. <strong>세 번째 fgets() 호출에서 NULL이 나와야</strong> while 조건이 거짓이 되고, 이 실습의 전체 파일 읽기 과제에서는 이후 <code>fclose()</code>로 진행합니다. C 자체는 필요한 데이터만 읽고 파일을 더 일찍 닫는 것도 가능합니다. 이 실습에서 <code>fprintf()</code>는 <code>r</code> 모드에 등장하지 않습니다.</p></div>
 </div>
-<div class="check" data-check="2"><div class="check-eyebrow">CHECK YOURSELF · 7.3</div><h3>기존 sensor.txt를 <code>fopen("sensor.txt", "w")</code>로 성공적으로 열면?</h3>
+<div class="check" data-check="2"><div class="check-eyebrow">CHECK YOURSELF · 7.3</div><h3>기존 readings.txt를 <code>fopen("readings.txt", "w")</code>로 성공적으로 열면?</h3>
 <label><input type="radio" name="q2" value="a"> 기존 내용이 남고 새 내용이 뒤에 붙는다.</label>
 <label><input type="radio" name="q2" value="b"> 기존 내용이 삭제되고 빈 파일로 열린다.</label>
 <label><input type="radio" name="q2" value="c"> 읽기 전용으로 열린다.</label>
@@ -69,55 +69,117 @@ if (fp != NULL) {
 <section class="stage" data-stage="3" hidden>
 <div class="topic">7.4 · TEXT INPUT / OUTPUT</div><h2>무엇을 읽고 쓰는지에 따라 함수를 선택하세요</h2><p class="lead">숫자·문자열·한 줄·한 글자는 다르게 읽습니다. 중요한 것은 함수 이름 암기가 아니라 <strong>데이터 형식과 반환값</strong>을 구분하는 것입니다.</p>
 <div class="concept"><strong>Function map</strong><div class="function-grid"><div><code>fprintf()</code><small>형식 있는 텍스트 쓰기</small></div><div><code>fputs()</code><small>문자열 쓰기</small></div><div><code>fputc()</code><small>문자 한 개 쓰기</small></div><div><code>fscanf()</code><small>형식 있는 값 읽기, 성공 변환 개수 반환</small></div><div><code>fgets()</code><small>문자열 버퍼에 한 줄 읽기, 성공 시 버퍼 반환</small></div><div><code>fgetc()</code><small>문자 읽기, EOF 구분 위해 int 사용</small></div></div></div>
-<div class="activity"><div class="activity-head"><span>PRACTICE 04</span><h3>요구사항을 보고 알맞은 함수를 선택하세요</h3></div><div class="field"><label for="io-task">Program requirement</label><select id="io-task"><option value="line">공백을 포함하는 한 줄 전체를 읽는다</option><option value="values">정수 하나와 실수 하나를 읽는다</option><option value="write">파일에 정수 ID와 실수 점수를 서식에 맞게 기록한다</option><option value="char">파일에서 문자 하나를 읽는다</option></select></div><div class="field"><label for="io-fn">Function to use</label><select id="io-fn"><option value="">— 선택하세요 —</option><option value="fgets">fgets</option><option value="fscanf">fscanf</option><option value="fprintf">fprintf</option><option value="fgetc">fgetc</option><option value="fputs">fputs</option></select></div><button class="primary" id="io-check">선택 검증</button><p class="activity-feedback" id="io-feedback" aria-live="polite"></p><pre id="io-pattern" class="mini-code">char line[120];
+<div class="activity"><div class="activity-head"><span>PRACTICE 04</span><h3>요구사항을 보고 알맞은 함수를 선택하세요</h3></div><div class="field"><label for="io-task">Program requirement</label><select id="io-task"><option value="line">공백을 포함하는 한 줄 전체를 읽는다</option><option value="values">정수 하나와 실수 하나를 읽는다</option><option value="write">파일에 정수 ID와 실수 점수를 서식에 맞게 기록한다</option><option value="char">파일에서 문자 하나를 읽는다</option></select></div><div class="field"><label for="io-fn">Function to use</label><select id="io-fn"><option value="">— 선택하세요 —</option><option value="fgets">fgets</option><option value="fscanf">fscanf</option><option value="fprintf">fprintf</option><option value="fgetc">fgetc</option><option value="fputs">fputs</option></select></div><button class="primary" id="io-check">선택 검증</button><p class="activity-feedback" id="io-feedback" aria-live="polite"></p><div class="code-head" style="margin-top:12px">CODE FRAGMENT · assumes fp is already open</div><pre id="io-pattern" class="mini-code">char line[120];
 while (fgets(line, sizeof line, fp) != NULL) {
     fputs(line, stdout);
 }</pre></div>
 <div class="check" data-check="3"><div class="check-eyebrow">CHECK YOURSELF · 7.4</div><h3><code>fscanf(fp, "%d %lf", &amp;id, &amp;score)</code>가 두 값을 모두 읽었는지 검사하려면?</h3><label><input type="radio" name="q3" value="a"> 반환값이 1인지 검사한다.</label><label><input type="radio" name="q3" value="b"> 반환값이 2인지 검사한다.</label><label><input type="radio" name="q3" value="c"> <code>feof(fp)</code>만 검사한다.</label><button class="check-btn" data-grade="3">답 확인 및 설명</button><div class="answer" id="answer-3" aria-live="polite"></div></div>
 </section>
 <section class="stage" data-stage="4" hidden>
-<div class="topic">7.4.4 · EOF &amp; SAFE LOOPS</div><h2>EOF는 읽기 전에 미리 아는 것이 아닙니다</h2><p class="lead">많은 초보자가 <code>while (!feof(fp))</code>를 사용합니다. 하지만 파일의 끝은 읽기를 시도한 뒤에야 확인됩니다. 실제 읽기 결과를 추적해 보세요.</p>
-<div class="snippet"><div class="code-head">RECOMMENDED PATTERN</div><pre>int x;
+<div class="topic">7.4.4 · EOF &amp; SAFE LOOPS</div><h2>EOF는 읽기 전에 미리 아는 것이 아닙니다</h2><p class="lead">파일 끝을 확인하려고 <code>while (!feof(fp))</code>를 사용하는 경우가 있지만, 먼저 <strong>이번 읽기가 성공했는지</strong> 검사해야 합니다. <code>fscanf()</code> 반환값을 직접 추적해 보세요.</p>
+<div class="concept"><strong>핵심 구분 · EOF 검사와 읽기 성공 검사는 다릅니다</strong><p><code>fscanf(fp, "%d", &amp;x) == 1</code>은 <strong>정수 하나를 성공적으로 변환했는가?</strong>라는 질문입니다. 하나를 읽으면 <code>1</code>, 처음부터 파일 끝이라 입력에 실패하면 <code>EOF</code>, 숫자 대신 문자 등 변환이 맞지 않으면 <code>0</code>을 반환할 수 있습니다. 따라서 <code>== 1</code>은 EOF뿐 아니라 형식 오류도 안전하게 걸러냅니다. 서로 다른 원인을 구분하려면 <code>feof(fp)</code>와 <code>ferror(fp)</code>를 추가로 확인합니다.</p></div>
+<div class="snippet"><div class="code-head">COMPLETE C EXAMPLE · successful conversion count == 1</div><pre>#include &lt;stdio.h&gt;
+
+int main(void) {
+    FILE *fp;
+    int x;
+
+    fp = fopen("numbers.txt", "r");
+    if (fp == NULL) return 1;
+
+    while (fscanf(fp, "%d", &amp;x) == 1) {
+        printf("%d\n", x);
+    }
+
+    if (ferror(fp)) {
+        fclose(fp);
+        return 1;
+    }
+    if (fclose(fp) == EOF) return 1;
+    return 0;
+}</pre></div><pre>int x;
 while (fscanf(fp, "%d", &amp;x) == 1) {
     printf("%d\n", x);
 }</pre></div>
-<div class="activity"><div class="activity-head"><span>TRACE 05</span><h3>읽기 성공 횟수와 EOF Indicator</h3><p>가상 파일 <code>numbers.txt</code>에는 10, 20, 30이 저장되어 있습니다. <strong>Read next</strong>를 반복하며 반환값을 관찰하세요.</p></div><div class="two-col"><div class="state-box"><div class="box-name">numbers.txt</div><pre>10
+<div class="activity"><div class="activity-head"><span>TRACE 05</span><h3>읽기 성공 횟수와 EOF Indicator</h3><p><strong>정상 데이터</strong>와 <strong>잘못된 토큰</strong>을 비교합니다. <code>fscanf("%d", &amp;x)</code>의 반환값이 달라지는 순간을 확인하세요.</p><div class="field"><label for="eof-scenario">Input scenario</label><select id="eof-scenario"><option value="normal">10 / 20 / 30 · 정상 정수</option><option value="malformed">10 / ABC / 30 · 두 번째 토큰 오류</option><option value="empty">빈 파일 · 첫 읽기에서 EOF</option></select></div></div><div class="two-col"><div class="state-box"><div class="box-name">numbers.txt</div><pre id="eof-input-preview">10
 20
-30</pre><div class="smallstat">Read attempts: <strong id="eof-attempts">0</strong></div></div><div class="state-box"><div class="box-name">LAST fscanf RESULT</div><div class="big" id="eof-result">아직 읽지 않음</div><div class="smallstat" id="eof-flag">feof(fp) = 0</div></div></div><div class="button-row"><button class="primary" id="eof-read">Read next →</button><button id="eof-reset">Restart trace</button></div><div class="trace-list" id="eof-trace" aria-live="polite">읽기 버튼을 누르면 기록이 나타납니다.</div><p class="activity-feedback" id="eof-message">세 번 성공한 다음 네 번째 읽기에서 무슨 일이 생길까요?</p></div>
+30</pre><div class="smallstat">Read attempts: <strong id="eof-attempts">0</strong></div></div><div class="state-box"><div class="box-name">LAST fscanf RESULT</div><div class="big" id="eof-result">아직 읽지 않음</div><div class="smallstat" id="eof-flag">feof(fp) = 0 · ferror(fp) = 0</div></div></div><div class="button-row"><button class="primary" id="eof-read">Read next →</button><button id="eof-reset">Restart trace</button></div><div class="trace-list" id="eof-trace" aria-live="polite">읽기 버튼을 누르면 기록이 나타납니다.</div><p class="activity-feedback" id="eof-message">세 번 성공한 다음 네 번째 읽기에서 어떤 반환값이 나올까요?</p></div>
 <div class="check" data-check="4"><div class="check-eyebrow">CHECK YOURSELF · 7.4.4</div><h3>안전한 반복 읽기를 위한 가장 직접적인 조건은?</h3><label><input type="radio" name="q4" value="a"> <code>while (!feof(fp))</code></label><label><input type="radio" name="q4" value="b"> <code>while (fscanf(fp, "%d", &amp;x) == 1)</code></label><label><input type="radio" name="q4" value="c"> <code>while (fp != NULL)</code></label><button class="check-btn" data-grade="4">답 확인 및 설명</button><div class="answer" id="answer-4" aria-live="polite"></div></div>
 </section>
 <section class="stage" data-stage="5" hidden>
 <div class="topic">7.5 · STRUCTURE RECORDS</div><h2>구조체는 메모리에, 파일에는 문자로 저장됩니다</h2><p class="lead">Structure를 File I/O와 연결하려면 기록할 텍스트 형식을 결정해야 합니다. 저장할 때와 읽을 때 <strong>같은 멤버 순서</strong>를 사용하세요.</p>
-<div class="snippet"><div class="code-head">STRUCTURE + TEXT RECORD</div><pre>struct Student {
+<div class="snippet"><div class="code-head">COMPLETE C EXAMPLE · write, close, reopen, read</div><pre>#include &lt;stdio.h&gt;
+
+struct Student {
     int id;
     char name[40];
     double score;
 };
-fprintf(fp, "%d %s %.1f\n", s.id, s.name, s.score);
-if (fscanf(fp, "%d %39s %lf",
-           &amp;s.id, s.name, &amp;s.score) == 3) {
-    /* one record loaded */
+
+int main(void) {
+    struct Student s = {101, "Mina", 92.5};
+    FILE *fp;
+
+    fp = fopen("students.txt", "w");
+    if (fp == NULL) return 1;
+    if (fprintf(fp, "%d %s %.1f\n",
+                s.id, s.name, s.score) &lt; 0) {
+        fclose(fp);
+        return 1;
+    }
+    if (fclose(fp) == EOF) return 1;
+
+    fp = fopen("students.txt", "r");
+    if (fp == NULL) return 1;
+    if (fscanf(fp, "%d %39s %lf",
+               &amp;s.id, s.name, &amp;s.score) == 3) {
+        printf("%d %s %.1f\n",
+               s.id, s.name, s.score);
+    }
+    if (fclose(fp) == EOF) return 1;
+    return 0;
 }</pre></div>
-<div class="activity"><div class="activity-head"><span>BUILD 06</span><h3>Structure → Text → Structure</h3><p>레코드를 직접 수정한 다음 Serialize / Load를 눌러 변환 관계를 확인하세요. 이 예제의 이름은 공백이 없는 단어만 지원합니다.</p></div><div class="record-inputs"><div class="field"><label for="rec-id">Student ID</label><input id="rec-id" type="number" value="101" min="0" max="999999"></div><div class="field"><label for="rec-name">Name (no spaces)</label><input id="rec-name" value="Mina" maxlength="39"></div><div class="field"><label for="rec-score">Score</label><input id="rec-score" type="number" value="92.5" min="0" max="100" step="0.1"></div></div><div class="button-row"><button class="primary" id="rec-save">Serialize · fprintf()</button><button id="rec-load">Load · fscanf()</button></div><div class="two-col"><div class="state-box"><div class="box-name">students.txt · saved record</div><pre id="rec-file">(not saved yet)</pre></div><div class="state-box"><div class="box-name">LOADED STRUCTURE</div><pre id="rec-result">(not loaded yet)</pre></div></div><p class="activity-feedback" id="rec-message" aria-live="polite">먼저 Serialize를 누르세요.</p></div>
+<div class="activity"><div class="activity-head"><span>BUILD 06</span><h3>Structure → Text → Structure</h3><p>레코드를 직접 수정한 다음 Serialize / Load를 눌러 변환 관계를 확인하세요. 이 예제의 이름은 공백 없는 단어만 지원합니다. 저장 형식은 ID·이름·점수 순서이고 점수는 소수 첫째 자리까지 저장됩니다. 저장 후 입력값을 바꿔도 Load는 저장된 텍스트를 기준으로 복원해야 합니다.</p></div><div class="record-inputs"><div class="field"><label for="rec-id">Student ID</label><input id="rec-id" type="number" value="101" min="0" max="999999"></div><div class="field"><label for="rec-name">Name (no spaces)</label><input id="rec-name" value="Mina" maxlength="39"></div><div class="field"><label for="rec-score">Score</label><input id="rec-score" type="number" value="92.5" min="0" max="100" step="0.1"></div></div><div class="button-row"><button class="primary" id="rec-save">Serialize · fprintf()</button><button id="rec-load">Load · fscanf()</button></div><div class="two-col"><div class="state-box"><div class="box-name">students.txt · saved record</div><pre id="rec-file">(not saved yet)</pre></div><div class="state-box"><div class="box-name">LOADED STRUCTURE</div><pre id="rec-result">(not loaded yet)</pre></div></div><p class="activity-feedback" id="rec-message" aria-live="polite">먼저 Serialize를 누르세요.</p></div>
 <div class="check" data-check="5"><div class="check-eyebrow">CHECK YOURSELF · 7.5</div><h3><code>fscanf()</code>에서 <code>s.name</code>에 <code>&amp;</code>가 없는 주된 이유는?</h3><label><input type="radio" name="q5" value="a"> 문자열 이름에는 읽기가 불가능하기 때문이다.</label><label><input type="radio" name="q5" value="b"> 배열 이름이 이 함수 호출에서 첫 원소의 주소로 변환되기 때문이다.</label><label><input type="radio" name="q5" value="c"> <code>fscanf()</code>가 자동으로 변수를 생성하기 때문이다.</label><button class="check-btn" data-grade="5">답 확인 및 설명</button><div class="answer" id="answer-5" aria-live="polite"></div></div>
 </section>
 <section class="stage" data-stage="6" hidden>
 <div class="topic">7.5.3 · ENGINEERING APPLICATION</div><h2>센서 데이터로 File I/O의 활용을 확인해 봅시다</h2><p class="lead">온도·전압·환경 센서에서는 데이터를 시간 순서대로 저장합니다. 여기서는 Sensor Log를 읽어 평균을 구하고 임계값을 넘는 측정치를 찾아봅니다.</p>
-<div class="snippet"><div class="code-head">SENSOR LOG PATTERN</div><pre>double t, value, sum = 0.0;
-int count = 0;
-while (fscanf(fp, "%lf %lf", &amp;t, &amp;value) == 2) {
-    sum += value;
-    count++;
-    if (value > threshold)
-        printf("ALERT %.1f: %.2f\n", t, value);
+<div class="snippet"><div class="code-head">COMPLETE C EXAMPLE · sensor_log.txt contains time and value pairs</div><pre>#include &lt;stdio.h&gt;
+
+int main(void) {
+    FILE *fp;
+    double t, value, sum = 0.0;
+    double threshold = 3.0;
+    int count = 0;
+
+    fp = fopen("sensor_log.txt", "r");
+    if (fp == NULL) return 1;
+
+    while (fscanf(fp, "%lf %lf", &amp;t, &amp;value) == 2) {
+        sum += value;
+        count++;
+        if (value &gt; threshold)
+            printf("ALERT %.1f: %.2f\n", t, value);
+    }
+    if (ferror(fp)) {
+        fclose(fp);
+        return 1;
+    }
+    if (fclose(fp) == EOF) return 1;
+    if (count &gt; 0)
+        printf("Average = %.3f\n", sum / count);
+    return 0;
 }</pre></div>
-<div class="activity"><div class="activity-head"><span>ENGINEERING LAB 07</span><h3>Sensor Log Analyzer</h3><p>임계값을 바꿔 경보 개수와 평균을 관찰하세요. 실제 파일을 읽는 대신 교재의 샘플 데이터를 이용합니다.</p></div><div class="field"><label for="sensor-threshold">Alert threshold: <output id="threshold-label">3.00</output></label><input id="sensor-threshold" type="range" min="2.0" max="4.2" step="0.1" value="3.0"></div><div class="sensor-summary"><div><span>Count</span><strong id="sensor-count">4</strong></div><div><span>Average</span><strong id="sensor-mean">2.840</strong></div><div><span>Alerts (value &gt; threshold)</span><strong id="sensor-alerts">1</strong></div></div><div class="data-list" id="sensor-list" aria-live="polite"></div><p class="activity-feedback" id="sensor-msg">교재의 4개 측정값을 분석합니다.</p></div>
+<div class="activity"><div class="activity-head"><span>ENGINEERING LAB 07</span><h3>Sensor Log Analyzer</h3><p>임계값을 바꿔 경보 개수와 평균을 관찰하세요. 실제 파일을 읽는 대신 교재의 <code>sensor_log.txt</code> 형식에 해당하는 시간·측정값 쌍 4개를 사용합니다. 앞의 <code>readings.txt</code>(숫자 한 열)와는 별도의 파일 예제입니다.</p></div><div class="field"><label for="sensor-threshold">Alert threshold: <output id="threshold-label">3.00</output></label><input id="sensor-threshold" type="range" min="2.0" max="4.2" step="0.1" value="3.0"></div><div class="sensor-summary"><div><span>Count</span><strong id="sensor-count">4</strong></div><div><span>Average</span><strong id="sensor-mean">2.840</strong></div><div><span>Alerts (value &gt; threshold)</span><strong id="sensor-alerts">1</strong></div></div><div class="data-list" id="sensor-list" aria-live="polite"></div><p class="activity-feedback" id="sensor-msg">교재의 4개 측정값을 분석합니다.</p></div>
 <div class="check" data-check="6"><div class="check-eyebrow">CHECK YOURSELF · 7.5.3</div><h3><code>fscanf(fp, "%lf %lf", &amp;t, &amp;value)</code>가 두 값을 모두 읽은 경우의 반환값은?</h3><label><input type="radio" name="q6" value="a"> 0</label><label><input type="radio" name="q6" value="b"> 1</label><label><input type="radio" name="q6" value="c"> 2</label><button class="check-btn" data-grade="6">답 확인 및 설명</button><div class="answer" id="answer-6" aria-live="polite"></div></div>
 </section>
 <section class="stage" data-stage="7" hidden>
 <div class="topic">7.7 · TRANSFER &amp; MASTERY</div><h2>이제 스스로 파일을 읽고 저장할 수 있나요?</h2><p class="lead">마지막 단계에서는 함수를 암기했는지보다, 상황에 맞는 모드와 조건을 선택하고 코드의 오류를 수정할 수 있는지 확인합니다.</p>
-<div class="activity"><div class="activity-head"><span>MISSION 08 · BUILD THE LOGIC</span><h3>안전한 파일 읽기 코드 완성</h3><p>다음 요구사항에 맞게 빈칸을 채우세요. <strong>values.txt에 저장된 double들을 모두 읽어 평균을 구합니다.</strong></p></div><div class="code-fill">
-<pre>double x, sum = 0.0;
+<div class="activity"><div class="activity-head"><span>MISSION 08 · BUILD THE LOGIC</span><h3>파일을 안전하게 읽는 핵심 로직 완성</h3><p>다음 요구사항에 맞게 빈칸을 채우세요. <strong>values.txt에 저장된 double들을 모두 읽어 평균을 구합니다.</strong></p></div><div class="code-fill"><div class="code-head">MAIN FUNCTION · 빈칸을 C 구문으로 완성합니다</div>
+<pre>#include &lt;stdio.h&gt;
+
+int main(void) {
+double x, sum = 0.0;
 int count = 0;
 FILE *fp = fopen("values.txt", <select id="blank-mode" aria-label="fopen mode"><option value="">선택</option><option value="r">"r"</option><option value="w">"w"</option><option value="a">"a"</option></select>);
 if (fp == NULL) return 1;
@@ -126,11 +188,13 @@ while (<select id="blank-read" aria-label="read condition"><option value="">선�
     count++;
 }
 <select id="blank-close" aria-label="close function"><option value="">선택</option><option value="fclose">fclose(fp);</option><option value="free">free(fp);</option><option value="none">/* nothing */</option></select>
-if (count &gt; 0) printf("%.2f\n", sum / count);</pre></div><button class="primary" id="build-check">코드 검증</button><p class="activity-feedback" id="build-feedback" aria-live="polite"></p></div>
+if (count &gt; 0) printf("%.2f\n", sum / count);
+return 0;
+}</pre></div><button class="primary" id="build-check">코드 검증</button><p class="activity-feedback" id="build-feedback" aria-live="polite"></p></div>
 <div class="check" data-check="7"><div class="check-eyebrow">FINAL CHECK · 7.7</div><h3>파일을 읽어 구조체 배열에 저장하는 프로그램의 안전한 순서는?</h3><label><input type="radio" name="q7" value="a"> 읽기 → 모드 선택 → 파일 열기 → 닫기</label><label><input type="radio" name="q7" value="b"> 파일 열기 → NULL 확인 → 읽기 반환값 확인 → 닫기</label><label><input type="radio" name="q7" value="c"> 파일 열기 → feof() 먼저 검사 → 읽기 → 닫지 않기</label><button class="check-btn" data-grade="7">답 확인 및 설명</button><div class="answer" id="answer-7" aria-live="polite"></div></div>
 <div class="concept"><strong>Mini Challenge · Persistent Record Manager</strong><p>교재의 연습 과제와 연결하여 <code>struct Student records[]</code>를 텍스트 파일로 저장하고 다시 불러오는 프로그램을 직접 작성해 보세요. 경로 오류, 빈 파일, 비정상 데이터도 테스트하세요.</p><details><summary>코드 작성 시 확인할 항목</summary><ul><li>읽기/쓰기 모드를 목적에 맞게 선택했는가?</li><li><code>fopen()</code>의 <code>NULL</code> 여부를 확인했는가?</li><li><code>fscanf()</code>의 변환 개수가 기대한 값인지 검사하는가?</li><li>구조체 배열의 용량을 초과하지 않는가?</li><li><code>fclose()</code>를 호출하는가?</li></ul></details><p><a href="https://drive.google.com/file/d/1pQoUv5072-RW6k7vnjDQULbp1qVNQRDq/view" target="_blank" rel="noopener">참고 교재 · 171_C_File_IO_Rev8 ↗</a></p></div>
 <div id="completion-message" class="completion" hidden><strong>Chapter 7 Mastery Check Complete!</strong><p>여덟 단계의 핵심 확인을 마쳤습니다. 실제 GCC 환경에서 프로그램을 작성·실행하면서 다음 과제를 수행해 보세요.</p></div>
 </section>
 <div class="step-footer"><button id="prev-stage">← 이전 단계</button><span id="footer-position">1 / 8</span><button class="primary" id="next-stage">다음 단계 →</button></div>
-<div class="page-note">Self-study companion for <strong>171_C_File_IO_Rev8</strong>. 웹 실험은 교육용 모의 실행입니다. 실제 C 컴파일러 실행이나 파일 시스템 접근이 아닙니다. 학습 성취는 이 브라우저의 로컬 저장소에만 기록됩니다.</div>
-</main></div><script src="./app.js" defer></script></body></html>
+<div class="page-note">모든 C 코드 표기의 <code>!=</code>와 <code>==</code>는 실제 C 연산자입니다. 글꼴 ligature로 합쳐 보이지 않도록 설정했습니다. 설명용 실습은 실제 C 컴파일러의 동작을 단순화할 수 있으므로 각 예제의 가정을 함께 확인하세요. Self-study companion for <strong>171_C_File_IO_Rev8</strong>. 웹 실험은 교육용 모의 실행입니다. 실제 C 컴파일러 실행이나 파일 시스템 접근이 아닙니다. 학습 성취는 이 브라우저의 로컬 저장소에만 기록됩니다.</div>
+</main></div><script src="./app.js?v=20261114qa" defer></script></body></html>
