@@ -56,3 +56,7 @@
 #file .fio-learning-note .feedback{margin:9px 0}
 #file .fio-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(max-width:720px){#file .fio-heading{padding:18px 15px 10px}#file .fio-flow{padding:0 15px 12px}#file .fio-console-head{padding:11px 13px}#file .fio-toolbar{padding:12px 13px;gap:10px}#file .fio-mode-field{width:100%}#file .fio-actions{width:100%}#file .fio-actions button{flex:1 1 calc(50% - 8px)}#file .fio-quick-restart{padding:0 13px 11px}#file .fio-quick-restart button{flex:1 1 160px}#file .fio-event{padding:10px 13px}#file .fio-state{grid-template-columns:1fr;padding:13px;gap:12px}#file .fio-learning-note{padding:4px 15px 18px}#file .fio-code-line{grid-template-columns:39px minmax(max-content,1fr)}#file .fio-code-line .fio-no{padding-right:7px}#file .fio-code-line .fio-src{padding:2px 10px}}
+
+/* Override legacy #file-code pre styles from the original portal. */
+#file #file-code{background:transparent!important;border:0!important;padding:0!important;border-radius:0!important;margin:0!important;white-space:normal!important;overflow:visible!important;max-height:none!important;color:#e7edf7!important;font-family:"IBM Plex Mono","Cascadia Code","JetBrains Mono",Consolas,monospace!important;font-size:var(--fio-code-size,16px)!important;line-height:inherit!important}
+#file .fio-code-window{scroll-behavior:smooth}
