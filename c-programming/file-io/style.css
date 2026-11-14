@@ -12,3 +12,12 @@
 #mode-activity .live-row.selected{box-shadow:inset 4px 0 #ffd15b}
 #mode-activity .toolstrip button[hidden]{display:none!important}
 #mode-activity .toolstrip button:disabled{opacity:.4}
+
+/* QA: literal C tokens must remain visible as typed; no programming ligatures. */
+.snippet pre,.mini-code,.code-fill pre,.code-live,.live-row,.live-row span,.stage code,.stage pre,.state-box pre{font-family:Consolas,"Liberation Mono","Courier New",monospace!important;font-variant-ligatures:none!important;font-feature-settings:"liga" 0,"calt" 0!important}
+.stage pre{tab-size:4;overflow-x:auto;white-space:pre-wrap;overflow-wrap:normal}
+.code-fill pre{line-height:2.2}
+.code-fill select{max-width:min(100%,430px);font-variant-ligatures:none!important}
+#mode-activity .live-row.selected{background:#5c451e!important;color:#fff3c5!important;border-left:5px solid #ffda65!important}
+#mode-activity .live-row.selected span:last-child{font-weight:750}
+#eof-trace{white-space:pre-wrap;font-family:Consolas,"Liberation Mono",monospace;font-variant-ligatures:none;line-height:1.7}
