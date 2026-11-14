@@ -2,7 +2,7 @@
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="C Programming Chapter 7 File I/O Self-Study: streams, files, EOF, records and sensor logs.">
 <title>Chapter 7 · File I/O Learning Journey</title>
-<link rel="stylesheet" href="./style.css?v=20261114qa"></head><body>
+<link rel="stylesheet" href="./style.css?v=20261115qa2"></head><body>
 <a class="skip" href="#lesson">학습 본문으로 건너뛰기</a>
 <header class="topbar"><a class="brand" href="../">◈ C Programming <small>/ Learning Studio</small></a><div class="toplinks"><a href="../">C Learning Home</a><a href="https://drive.google.com/file/d/1pQoUv5072-RW6k7vnjDQULbp1qVNQRDq/view" target="_blank" rel="noopener">교재 171 ↗</a><button id="theme-button" aria-label="Toggle dark mode">◐ Theme</button></div></header>
 <div class="course-header"><div class="eyebrow">2026 · CHAPTER 7 · SELF-STUDY COURSE</div><h1>File I/O <span>Learning Journey</span></h1><p>프로그램이 종료되어도 데이터를 남기려면? Stream의 원리를 이해하고, 실제 센서 로그 프로그램까지 단계별로 완성해 보세요.</p><div class="course-meta"><span>8개의 학습 단계</span><span>실험 + 코드 분석 + 자기점검</span><span>교재: 171_C_File_IO_Rev8</span></div></div>
@@ -92,6 +92,12 @@ int main(void) {
     }
 
     if (ferror(fp)) {
+        fprintf(stderr, "File read error\\n");
+        fclose(fp);
+        return 1;
+    }
+    if (!feof(fp)) {
+        fprintf(stderr, "Invalid integer input\\n");
         fclose(fp);
         return 1;
     }
@@ -159,6 +165,12 @@ int main(void) {
             printf("ALERT %.1f: %.2f\n", t, value);
     }
     if (ferror(fp)) {
+        fprintf(stderr, "Sensor file read error\\n");
+        fclose(fp);
+        return 1;
+    }
+    if (!feof(fp)) {
+        fprintf(stderr, "Invalid sensor data\\n");
         fclose(fp);
         return 1;
     }
@@ -172,7 +184,7 @@ int main(void) {
 </section>
 <section class="stage" data-stage="7" hidden>
 <div class="topic">7.7 · TRANSFER &amp; MASTERY</div><h2>이제 스스로 파일을 읽고 저장할 수 있나요?</h2><p class="lead">마지막 단계에서는 함수를 암기했는지보다, 상황에 맞는 모드와 조건을 선택하고 코드의 오류를 수정할 수 있는지 확인합니다.</p>
-<div class="activity"><div class="activity-head"><span>MISSION 08 · BUILD THE LOGIC</span><h3>파일을 안전하게 읽는 핵심 로직 완성</h3><p>다음 요구사항에 맞게 빈칸을 채우세요. <strong>values.txt에 저장된 double들을 모두 읽어 평균을 구합니다.</strong></p></div><div class="code-fill"><div class="code-head">MAIN FUNCTION · 빈칸을 C 구문으로 완성합니다</div>
+<div class="activity"><div class="activity-head"><span>MISSION 08 · BUILD THE LOGIC</span><h3>파일을 안전하게 읽는 핵심 로직 완성</h3><p>다음 요구사항에 맞게 빈칸을 채우세요. <strong>values.txt에 저장된 double들을 모두 읽어 평균을 구합니다.</strong></p></div><div class="code-fill"><div class="code-head">MAIN FUNCTION · 정상 입력의 평균 계산 로직을 완성합니다</div>
 <pre>#include &lt;stdio.h&gt;
 
 int main(void) {
@@ -194,4 +206,4 @@ return 0;
 </section>
 <div class="step-footer"><button id="prev-stage">← 이전 단계</button><span id="footer-position">1 / 8</span><button class="primary" id="next-stage">다음 단계 →</button></div>
 <div class="page-note">모든 C 코드 표기의 <code>!=</code>와 <code>==</code>는 실제 C 연산자입니다. 글꼴 ligature로 합쳐 보이지 않도록 설정했습니다. 설명용 실습은 실제 C 컴파일러의 동작을 단순화할 수 있으므로 각 예제의 가정을 함께 확인하세요. Self-study companion for <strong>171_C_File_IO_Rev8</strong>. 웹 실험은 교육용 모의 실행입니다. 실제 C 컴파일러 실행이나 파일 시스템 접근이 아닙니다. 학습 성취는 이 브라우저의 로컬 저장소에만 기록됩니다.</div>
-</main></div><script src="./app.js?v=20261114qa" defer></script></body></html>
+</main></div><script src="./app.js?v=20261115qa2" defer></script></body></html>
