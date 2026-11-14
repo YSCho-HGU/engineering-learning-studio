@@ -39,24 +39,55 @@ stderr:["Terminal · 오류 출력",'fprintf(stderr, "Cannot open file\\n");',"s
 file:["sensor.txt · File Stream",'fprintf(fp, "READY\\n");',"fp를 통해 열린 파일로 출력합니다.","→"],
 stdin:["Keyboard · 입력",'fgets(line, sizeof line, stdin);',"stdin은 프로그램으로 들어오는 표준 입력 Stream입니다.","←"]
 }[$("stream-target").value];$("stream-destination").textContent=data[0];$("stream-code").textContent=data[1];$("stream-explain").textContent=data[2];$("stream-arrow").textContent=data[3]};
-let file=["25.0","26.5"],streamOpen=false,streamMode="r",position=0,readOutput=[];
-const liveLines=[
-["open",m=>'FILE *fp = fopen("sensor.txt", "'+m+'");'],
-["check",()=> "if (fp == NULL) return 1;"],
-["read",()=> "while (fgets(line, sizeof line, fp) != NULL) {"],
-["out",()=> "    fputs(line, stdout);"],
-["write",()=> 'fprintf(fp, "%.1f\\n", 27.2);'],
-["close",()=> "fclose(fp);"]];
-function renderFile(key,message){$("mode-file").textContent=file.length?file.join("\n"):"(empty file)";$("mode-output").textContent=readOutput.length?readOutput.join("\n"):"(no output)";$("mode-status").textContent=streamOpen?"Stream: OPEN ("+streamMode+"), position "+position:"Stream: CLOSED";
-$("mode-explain").textContent=message;$("mode-open").disabled=streamOpen;$("mode-close").disabled=!streamOpen;$("mode-read").disabled=!streamOpen||streamMode!=="r";$("mode-write").disabled=!streamOpen||streamMode==="r";$("open-mode").disabled=streamOpen;
-$("mode-code").innerHTML=liveLines.map(([id,fn],i)=>'<div class="live-row'+(id===key?' selected':'')+'"><span>'+(i+1)+'</span><span>'+fn(streamOpen?streamMode:$("open-mode").value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")+'</span></div>').join("");}
-$("mode-open").onclick=()=>{if(streamOpen)return;streamMode=$("open-mode").value;streamOpen=true;position=streamMode==="a"?file.length:0;readOutput=[];if(streamMode==="w")file=[];renderFile("open",streamMode==="w"?"w 모드: 기존 파일 내용을 삭제하고 열었습니다.":streamMode==="a"?"a 모드: 기존 데이터를 보존하고 파일 끝에 쓰기 준비를 했습니다.":"r 모드: 파일 처음부터 읽기 준비를 했습니다.")};
-$("mode-read").onclick=()=>{if(!streamOpen||streamMode!=="r")return;if(position>=file.length){renderFile("read","fgets()가 NULL을 반환했습니다. EOF를 확인한 뒤 읽기 반복을 종료합니다.");return;}const line=file[position++];readOutput.push(line);renderFile("read","fgets() 성공: "+line+"을 읽었고, 다음 위치는 "+position+"입니다.")};
-$("mode-write").onclick=()=>{if(!streamOpen||streamMode==="r")return;file.push("27.2");position=file.length;renderFile("write","fprintf()로 27.2를 가상 파일에 기록했습니다.")};
-$("mode-close").onclick=()=>{if(!streamOpen)return;streamOpen=false;renderFile("close","fclose(): Stream을 닫았습니다. 파일 내용은 보존됩니다.")};
-$("mode-restart").onclick=()=>{streamOpen=false;position=0;readOutput=[];renderFile(null,"프로그램 재시작: Stream 상태만 초기화합니다. 파일 내용은 변경되지 않습니다.")};
-$("mode-reset").onclick=()=>{file=["25.0","26.5"];streamOpen=false;position=0;readOutput=[];$("open-mode").value="r";renderFile(null,"샘플 초기화: sensor.txt의 원본 데이터를 복원했습니다.")};
-$("open-mode").onchange=()=>renderFile(null,"선택한 모드의 fopen()을 누르면 실제 변화가 반영됩니다.");
+
+let file=["25.0","26.5"],streamOpen=false,streamMode="r",position=0,readOutput=[],readFinished=false,wrote=false;
+function escapeSource(v){return v.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function codeFor(m){
+ if(m==="r")return [
+ ["open",'FILE *fp = fopen("sensor.txt", "r");'],
+ ["check","if (fp == NULL) return 1;"],
+ ["declaration","char line[80];"],
+ ["read","while (fgets(line, sizeof line, fp) != NULL) {"],
+ ["out","    fputs(line, stdout);"],
+ ["loopend","}"],
+ ["close","fclose(fp);"]];
+ return [["open",'FILE *fp = fopen("sensor.txt", "'+m+'");'],
+ ["check","if (fp == NULL) return 1;"],
+ ["write",'fprintf(fp, "%.1f\\n", 27.2);'],
+ ["close","fclose(fp);"]];
+}
+function renderFile(line,message){
+ const m=streamOpen?streamMode:$("open-mode").value;
+ $("mode-file").textContent=file.length?file.join("\n"):"(empty file)";
+ $("mode-output").textContent=readOutput.length?readOutput.join("\n"):"(no output)";
+ $("mode-status").textContent=streamOpen?"Stream: OPEN ("+streamMode+"), position "+position+" / "+file.length:"Stream: CLOSED";
+ $("mode-explain").textContent=message;
+ $("mode-open").disabled=streamOpen;
+ $("mode-read").hidden=m!=="r";
+ $("mode-write").hidden=m==="r";
+ $("mode-read").disabled=!streamOpen||m!=="r"||readFinished;
+ $("mode-write").disabled=!streamOpen||m==="r"||wrote;
+ $("mode-close").disabled=!streamOpen||(m==="r"&&!readFinished)||(m!=="r"&&!wrote);
+ $("open-mode").disabled=streamOpen;
+ $("mode-path").textContent=m==="r"?"READ PATH · fopen → fgets + fputs (반복) → EOF → fclose":m==="w"?"WRITE PATH · fopen (기존 내용 삭제) → fprintf → fclose":"APPEND PATH · fopen → fprintf → fclose";
+ $("mode-code").innerHTML=codeFor(m).map(([key,src],i)=>'<div role="listitem" class="live-row'+(key===line?' selected':'')+'"><span>'+(i+1)+'</span><span>'+escapeSource(src)+'</span></div>').join("");
+ let title,detail;
+ if(!streamOpen){title="다음 동작: fopen()";detail="파일 열기 모드를 선택하세요."}
+ else if(m==="r"&&!readFinished){title="다음 동작: fgets()";detail=position<file.length?"성공하면 fputs()가 자동으로 이어서 실행됩니다.":"두 줄을 읽었지만 종료는 아직 아닙니다. 세 번째 fgets()에서 NULL을 확인하세요."}
+ else if(m==="r"){title="다음 동작: fclose()";detail="세 번째 fgets()가 NULL을 반환했으므로 while 조건이 거짓입니다."}
+ else if(!wrote){title="다음 동작: fprintf()";detail="쓰기 모드로 열었습니다. 27.2 한 줄을 기록하세요."}
+ else {title="다음 동작: fclose()";detail="쓰기 작업이 끝났습니다. Stream을 닫으세요."}
+ $("mode-next-title").textContent=title;$("mode-next-detail").textContent=detail;
+}
+$("mode-open").onclick=()=>{if(streamOpen)return;streamMode=$("open-mode").value;streamOpen=true;position=0;readFinished=false;wrote=false;readOutput=[];if(streamMode==="w")file=[];if(streamMode==="a")position=file.length;
+ renderFile("open",streamMode==="r"?"r 모드: 첫 줄부터 읽습니다.":streamMode==="w"?"w 모드: 파일을 열면서 기존 내용이 삭제되었습니다.":"a 모드: 기존 내용을 유지하고 파일 끝에 추가합니다.")};
+$("mode-read").onclick=()=>{if(!streamOpen||streamMode!=="r"||readFinished)return;if(position>=file.length){readFinished=true;renderFile("read","fgets() → NULL. while 조건이 거짓이므로 반복문 종료. 다음은 fclose(fp)입니다.");return}
+ const item=file[position++];readOutput.push(item);renderFile("out","fgets()가 "+item+"을 읽고 fputs()가 자동 실행되어 stdout에 출력했습니다. 이제 while 조건으로 되돌아갑니다.")};
+$("mode-write").onclick=()=>{if(!streamOpen||streamMode==="r"||wrote)return;file.push("27.2");position=file.length;wrote=true;renderFile("write","fprintf()가 27.2를 기록했습니다. 다음은 fclose(fp)입니다.")};
+$("mode-close").onclick=()=>{if(!streamOpen)return;streamOpen=false;renderFile("close","fclose(fp) 완료. 파일 내용은 유지됩니다. 다른 모드를 선택하여 다시 열 수 있습니다.")};
+$("mode-restart").onclick=()=>{streamOpen=false;position=0;readFinished=false;wrote=false;readOutput=[];renderFile(null,"프로그램 상태만 초기화했습니다. 저장된 파일은 유지됩니다.")};
+$("mode-reset").onclick=()=>{file=["25.0","26.5"];streamOpen=false;position=0;readFinished=false;wrote=false;readOutput=[];$("open-mode").value="r";renderFile(null,"원본 sensor.txt(25.0, 26.5)를 복원했습니다.")};
+$("open-mode").onchange=()=>renderFile(null,"새 모드를 선택했습니다. fopen()을 눌러 실행 경로를 시작하세요.");
 const patterns={line:['fgets',"char line[120];\nwhile (fgets(line, sizeof line, fp) != NULL) {\n    fputs(line, stdout);\n}"],values:['fscanf','int id; double value;\nif (fscanf(fp, "%d %lf", &id, &value) == 2) {\n    /* both values read */\n}'],write:['fprintf','fprintf(fp, "%d %.1f\\n", id, score);'],char:['fgetc','int ch;\nwhile ((ch = fgetc(fp)) != EOF) {\n    putchar(ch);\n}']};
 $("io-check").onclick=()=>{const which=$("io-task").value,want=patterns[which][0],actual=$("io-fn").value;$("io-feedback").textContent=!actual?"먼저 함수를 선택하세요.":actual===want?"정답! 데이터의 단위와 함수 반환값을 함께 확인하세요.":"요구된 데이터 형식을 다시 확인하고 다른 함수를 선택하세요.";if(actual===want)$("io-pattern").textContent=patterns[which][1];};
 $("io-task").onchange=()=>{$("io-fn").value="";$("io-feedback").textContent="먼저 사용할 함수를 예측하세요."};
