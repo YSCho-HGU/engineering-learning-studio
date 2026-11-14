@@ -92,12 +92,12 @@ int main(void) {
     }
 
     if (ferror(fp)) {
-        fprintf(stderr, "File read error\\n");
+        fprintf(stderr, "File read error\n");
         fclose(fp);
         return 1;
     }
     if (!feof(fp)) {
-        fprintf(stderr, "Invalid integer input\\n");
+        fprintf(stderr, "Invalid integer input\n");
         fclose(fp);
         return 1;
     }
@@ -167,12 +167,12 @@ int main(void) {
             printf("ALERT %.1f: %.2f\n", t, value);
     }
     if (ferror(fp)) {
-        fprintf(stderr, "Sensor file read error\\n");
+        fprintf(stderr, "Sensor file read error\n");
         fclose(fp);
         return 1;
     }
     if (!feof(fp)) {
-        fprintf(stderr, "Invalid sensor data\\n");
+        fprintf(stderr, "Invalid sensor data\n");
         fclose(fp);
         return 1;
     }
