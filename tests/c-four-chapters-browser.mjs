@@ -2,7 +2,7 @@ import {chromium} from 'playwright';
 import {readFileSync} from 'node:fs';
 const chapters=[['131','arrays'],['132','strings'],['133','standard-library'],['141','functions']];
 const catalog=JSON.parse(readFileSync('c-programming/course-catalog.json','utf8'));
-const counts=Object.fromEntries(chapters.map(([id,slug])=>[id,JSON.parse(readFileSync('c-programming/'+slug+'/data.js','utf8').replace(/^window\\.C_JOURNEY=/,'').replace(/;\\s*$/,'')).lessons.length]));
+const counts=Object.fromEntries(chapters.map(([id,slug])=>[id,JSON.parse(readFileSync('c-programming/'+slug+'/data.js','utf8').replace(/^window\.C_JOURNEY=/,'').replace(/;\s*$/,'')).lessons.length]));
 const browser=await chromium.launch({headless:true});
 const issues=[];let views=0;
 for(const width of [390,1280]){
