@@ -6,6 +6,15 @@
 <a class="skip" href="#lesson">학습 본문으로 건너뛰기</a>
 <header class="topbar"><a class="brand" href="../">◈ C Programming <small>/ Learning Studio</small></a><div class="toplinks"><a href="../">C Learning Home</a><a href="https://drive.google.com/file/d/1pQoUv5072-RW6k7vnjDQULbp1qVNQRDq/view" target="_blank" rel="noopener">교재 171 ↗</a><button id="theme-button" aria-label="Toggle dark mode">◐ Theme</button></div></header>
 <div class="course-header"><div class="eyebrow">2026 · CHAPTER 7 · SELF-STUDY COURSE</div><h1>File I/O <span>Learning Journey</span></h1><p>프로그램이 종료되어도 데이터를 남기려면? Stream의 원리를 이해하고, 실제 센서 로그 프로그램까지 단계별로 완성해 보세요.</p><div class="course-meta"><span>8개의 학습 단계</span><span>실험 + 코드 분석 + 자기점검</span><span>교재: 171_C_File_IO_Rev8</span></div></div>
+<section class="learning-route" aria-label="File I/O three-phase learning route">
+<div class="route-heading"><strong>학습 로드맵 · 3-Phase Learning</strong><span>교재 171 · Chapter 7</span></div>
+<div class="route-cards">
+<article class="route-card"><div class="route-number">01 · BEFORE CLASS</div><h2>예습 · 개념 이해</h2><p>Stream, 파일 모드, 읽기 반환값과 EOF를 학습하고 실행 결과를 먼저 예측합니다.</p><strong>활동:</strong> 현재 페이지 1~5단계</article>
+<article class="route-card"><div class="route-number">02 · IN CLASS</div><h2>실습 · 실행 흐름 탐색</h2><p>구조체 저장과 센서 로그를 실험하고, 파일 형식과 오류 처리 과정을 설명합니다.</p><strong>활동:</strong> 현재 페이지 6~8단계</article>
+<article class="route-card"><div class="route-number">03 · AFTER CLASS</div><h2>자기평가 · 직접 코딩</h2><p>교재 §7.7.3의 P1~P6를 직접 작성합니다. 참조 출력과 비교하고 GCC로 실행해 확인합니다.</p><a class="practice-link" href="./practice/">P1~P6 Coding Practice 열기 →</a></article>
+</div>
+<p class="route-note">학습 성취 기준: 개념 확인은 출발점이며, 실제 C 코드의 컴파일·실행·오류 수정까지 수행해야 과제를 완료한 것으로 판단합니다.</p>
+</section>
 <div class="shell">
 <aside class="sidebar" aria-label="학습 단계">
   <div class="progress-panel"><div class="progress-line"><strong>My Progress</strong><output id="progress-text" aria-live="polite">0 / 8</output></div><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0" id="progress-meter"><span id="progress-fill"></span></div><small>각 단계의 핵심 확인 문제를 풀면 완료 표시됩니다. 진도는 이 브라우저에만 저장됩니다.</small></div>
@@ -207,6 +216,7 @@ return 0;
 <div class="concept"><strong>Mini Challenge · Persistent Record Manager</strong><p>교재의 연습 과제와 연결하여 <code>struct Student records[]</code>를 텍스트 파일로 저장하고 다시 불러오는 프로그램을 직접 작성해 보세요. 경로 오류, 빈 파일, 비정상 데이터도 테스트하세요.</p><details><summary>코드 작성 시 확인할 항목</summary><ul><li>읽기/쓰기 모드를 목적에 맞게 선택했는가?</li><li><code>fopen()</code>의 <code>NULL</code> 여부를 확인했는가?</li><li><code>fscanf()</code>의 변환 개수가 기대한 값인지 검사하는가?</li><li>구조체 배열의 용량을 초과하지 않는가?</li><li><code>fclose()</code>를 호출하는가?</li></ul></details><p><a href="https://drive.google.com/file/d/1pQoUv5072-RW6k7vnjDQULbp1qVNQRDq/view" target="_blank" rel="noopener">참고 교재 · 171_C_File_IO_Rev8 ↗</a></p></div>
 <div class="concept"><strong>직접 코드 작성하기 · P1–P6 Practice Lab</strong><p>교재의 6개 과제를 C 소스 편집기로 작성하고 핵심 구문을 점검할 수 있습니다. 테스트 데이터와 참조 결과를 비교한 뒤 <code>.c</code>를 다운로드하여 GCC로 실제 실행해 보세요. 웹의 점검은 C 컴파일이나 실행이 아닙니다.</p><p><a href="./practice/" style="font-weight:800">P1–P6 Coding Practice Lab 열기 →</a></p></div>
 <div class="concept"><strong>교재 연결 · 부족한 부분을 보완하는 학습 체크리스트</strong><p>앞의 8단계는 개념과 실행 흐름을 확인하는 기초 과정입니다. 실제 C 프로그래밍 능력은 아래 교재 과제를 직접 작성하고 컴파일하여 확인해야 합니다.</p><ol><li><strong>P1 Write Numbers:</strong> 정수 5개를 파일에 저장하고 다시 열어 검증</li><li><strong>P2 Read and Average:</strong> 실수 읽기, 개수와 평균, 빈 파일 처리</li><li><strong>P3 Copy Lines:</strong> <code>fgets()</code>와 <code>fputs()</code>로 텍스트 복사</li><li><strong>P4 Save Students:</strong> 구조체 배열을 텍스트 레코드로 저장</li><li><strong>P5 Load Students:</strong> 레코드 형식과 배열 크기를 확인하며 최고 점수 찾기</li><li><strong>P6 Sensor Alert:</strong> 시간·측정값을 읽고 <code>alerts.txt</code>에 경보 기록</li></ol><p><strong>함수 분리:</strong> P4·P5를 <code>saveRecords()</code>와 <code>loadRecords()</code>로 나눠보세요. <strong>선택 학습:</strong> CSV는 쉼표로 구분한 텍스트 형식이고, <code>fread()</code>/<code>fwrite()</code>의 이진 파일은 자료형 표현과 구조체 패딩·이식성에 주의해야 합니다.</p><p><strong>오류 진단 질문:</strong> 파일이 없으면? <code>fscanf()</code>가 0을 반환하면? <code>fgets()</code>의 버퍼보다 한 줄이 길면? <code>fclose()</code>가 실패하면?</p></div>
+<p><a class="practice-link" href="./practice/">교재 P1~P6 · 직접 코드 작성 Practice Lab →</a></p>
 <div id="completion-message" class="completion" hidden><strong>Chapter 7 Concept Checks Complete!</strong><p>여덟 단계의 개념 확인을 마쳤습니다. 이는 실제 코딩 숙달 인증이 아닙니다. 교재의 P1~P6을 직접 작성하고 GCC로 검증해 보세요.</p></div>
 </section>
 <div class="step-footer"><button id="prev-stage">← 이전 단계</button><span id="footer-position">1 / 8</span><button class="primary" id="next-stage">다음 단계 →</button></div>
