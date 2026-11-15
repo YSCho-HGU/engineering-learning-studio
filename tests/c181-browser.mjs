@@ -13,6 +13,18 @@ for(const width of [390,1280]){
  if(chapters.join('|')!=='15 / Chapter 15|16 / Chapter 16|17 / Chapter 17|18 / Chapter 18')problems.push(width+' order incorrect: '+chapters);
  if(await page.getByText('세 단원을 하나의 흐름으로').count())problems.push(width+' obsolete heading');
  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+3))problems.push(width+' home horizontal scroll');
+
+ if(await page.locator('a[href*="quick-labs"]').count())problems.push(width+' unexpected Quick Labs link');
+ const fullUnit=page.locator('#units a.unit-live');
+ if(await fullUnit.count()!==4)problems.push(width+' expected 4 fully linked roadmap cards');
+ if(await fullUnit.first().getAttribute('href')!=='./pointer/')problems.push(width+' roadmap card destination incorrect');
+ if(await page.locator('#course-overview-details').evaluate(e=>e.open))problems.push(width+' overview should begin collapsed');
+ await page.locator('#course-roadmap-link').click();
+ if(!await page.locator('#course-overview-details').evaluate(e=>e.open))problems.push(width+' roadmap link did not open overview');
+ if(await page.locator('#units .unit').count()!==18)problems.push(width+' expected 18 roadmap chapters');
+ await page.goto('http://127.0.0.1:8765/c-programming/#roadmap',{waitUntil:'networkidle'});
+ if(!await page.locator('#course-overview-details').evaluate(e=>e.open))problems.push(width+' direct #roadmap link did not open overview');
+
  await page.goto('http://127.0.0.1:8765/c-programming/dynamic-memory/',{waitUntil:'networkidle'});
  const heap=page.locator('.dm-heap');
  await heap.waitFor();
