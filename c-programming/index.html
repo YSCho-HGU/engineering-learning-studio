@@ -176,6 +176,25 @@ body{overflow-x:hidden;-webkit-text-size-adjust:100%}
 }
 @media(prefers-reduced-motion:reduce){.action,.progress-track span{transition:none}}
 
+
+/* Available-chapter catalog: chronological, non-sequential development order. */
+.course-intro{margin:24px 0 0;padding:clamp(23px,3vw,42px);background:var(--surface);border:1px solid var(--border);border-radius:18px}
+.course-intro h1{font-size:clamp(29px,3.5vw,43px);letter-spacing:-.04em;line-height:1.18;margin:10px 0}
+.course-intro h1 span{color:var(--accent)}
+.course-intro p{color:var(--muted);font-size:14px;max-width:780px;margin:0 0 20px}
+.intro-actions{display:flex;flex-wrap:wrap;gap:10px}
+#learning{margin-top:28px}
+.available-count{font-size:12px;font-weight:800;color:var(--accent);white-space:nowrap}
+#available-chapters.path{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+#available-chapters .path-card{padding:19px}
+#available-chapters .path-card::after{display:none!important}
+#available-chapters .path-card h3{font-size:18px}
+#available-chapters .path-card p{font-size:12px}
+#available-chapters .resource-links{min-height:18px}
+#available-chapters .path-card .open{margin-top:auto}
+@media(max-width:1020px){#available-chapters.path{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:590px){#available-chapters.path{grid-template-columns:1fr}.course-intro{padding:24px 19px}.intro-actions .action{flex:1 1 100%}}
+
 </style><link rel="stylesheet" href="../assets/els-theme-v2.css?v=3"></head>
 <body>
 <header class="site-header"><div class="wrap header-inner">
@@ -183,27 +202,15 @@ body{overflow-x:hidden;-webkit-text-size-adjust:100%}
  <nav class="header-nav" aria-label="Primary navigation"><a href="#learning">Learning Paths</a><a href="#roadmap">Course Roadmap</a><a href="./quick-labs/">Quick Labs</a><label class="theme-control"><span>Theme</span><select id="theme" data-els-theme-picker aria-label="Theme"></select></label></nav>
 </div></header>
 <main class="wrap">
-<section class="hero" aria-labelledby="home-title"><div>
+<section class="course-intro" aria-labelledby="home-title">
  <div class="overline">C PROGRAMMING · INTERACTIVE LEARNING</div>
- <h1 id="home-title">From concepts<br>to <span>working code.</span></h1>
- <p class="hero-copy">개념을 이해하고 → 결과를 예측하고 → 직접 실험하고 → 코드를 작성합니다. 포인터, 구조체, 파일 입출력까지 이어지는 하나의 학습 흐름으로 C 프로그래밍을 익혀보세요.</p>
- <div class="action-row"><a class="action primary" href="./learning-journey/">통합 학습 시작 <span aria-hidden="true">→</span></a><a class="action" href="#learning">단원별 학습 선택</a></div>
- </div><aside class="hero-progress" aria-label="File I/O progress">
-  <div class="progress-head"><b>MY LEARNING</b><span>Chapter 17</span></div>
-  <div class="progress-title">File I/O Learning Journey</div>
-  <p class="progress-desc">파일 입출력 8단계 학습 진행 상태</p>
-  <div class="progress-track" role="progressbar" aria-label="File I/O progress" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0" id="progress-track"><span id="progress-bar"></span></div>
-  <div class="progress-label" id="progress-label">학습 진도 0 / 8</div>
-  <a href="./file-io/">File I/O 학습 계속하기 →</a>
- </aside></section>
+ <h1 id="home-title">C Programming <span>Learning Studio</span></h1>
+ <p>강의 순서대로 단원을 선택하세요. 개념 이해, 코드 실행 예측, 시각적 실험, 직접 코딩으로 학습합니다. 새 단원이 완성되면 아래 카드에 Chapter 순서대로 추가됩니다.</p>
+ <div class="intro-actions"><a class="action primary" href="#learning">학습 가능한 단원 보기 ↓</a><a class="action" href="./quick-labs/">Quick Labs</a></div>
+</section>
 <section class="section" id="learning" aria-labelledby="learning-title">
- <div class="section-top"><div><div class="overline">YOUR LEARNING PATH</div><h2 id="learning-title">세 단원을 하나의 흐름으로</h2><p>각 단원은 독립적으로 학습할 수도 있고, 순서대로 연결해서 학습할 수도 있습니다.</p></div><a class="inline-link" href="./quick-labs/">전체 Quick Labs →</a></div>
- <div class="path">
-  <article class="path-card"><span class="number">01 / CHAPTER 15</span><h3>Pointers</h3><p>주소와 역참조, 배열과 포인터, 함수 호출에서의 메모리 접근을 실험합니다.</p><a class="open" href="./pointer/">8단계 포인터 학습 <span>→</span></a><div class="resource-links"><a href="./quick-labs/#pointer">Quick Lab</a><a href="https://drive.google.com/file/d/1o7bzzH32a2gMwjFZ-SdYCtaUcdjxMK4H/view" target="_blank" rel="noopener noreferrer">교재 151</a></div></article>
-  <article class="path-card"><span class="number">02 / CHAPTER 16</span><h3>Structures</h3><p>자료의 묶음과 typedef, 멤버 접근, 구조체 배열과 함수 전달을 다룹니다.</p><a class="open" href="./structure/">8단계 구조체 학습 <span>→</span></a><div class="resource-links"><a href="./quick-labs/#structure">Quick Lab</a><a href="https://drive.google.com/file/d/1lINKdMeBQgnnnfisq8ekTLCntl4QJI4A/view" target="_blank" rel="noopener noreferrer">교재 161</a></div></article>
-  <article class="path-card"><span class="number">03 / CHAPTER 17</span><h3>File I/O</h3><p>Stream, 파일 모드, EOF, 구조체 저장과 센서 로그 응용까지 연결합니다.</p><a class="open" href="./file-io/">8단계 파일 입출력 학습 <span>→</span></a><div class="resource-links"><a href="./quick-labs/#file">Quick Lab</a><a href="https://drive.google.com/file/d/1gnBNypCu4ntdnffhvf_mQ4g6gyfjLCzV/view" target="_blank" rel="noopener noreferrer">교재 171</a></div></article>
- </div>
- <div class="full-journey"><div><b>Pointer → Structure → File I/O · Integrated Journey</b><p>24개 학습 단계와 18개 코딩 과제를 연결한 통합 학습 경로</p></div><a class="action" href="./learning-journey/">통합 학습 열기 →</a></div>
+ <div class="section-top"><div><div class="overline">AVAILABLE CHAPTERS</div><h2 id="learning-title">학습 가능한 단원</h2><p>완성된 단원만 표시합니다. 번호는 개발 순서가 아닌 교재 Chapter 순서입니다.</p></div><span class="available-count" id="available-count"></span></div>
+ <div class="path" id="available-chapters"></div>
 </section>
 <section class="method-bar" id="method" aria-labelledby="method-title"><h2 id="method-title">학습 방법 · 5-step Learning Cycle</h2><div class="method-steps">
  <div class="method-step"><b>01 Understand</b><span>핵심 개념 이해</span></div><div class="method-step"><b>02 Predict</b><span>실행 결과 예측</span></div><div class="method-step"><b>03 Explore</b><span>변수를 바꾸어 실험</span></div><div class="method-step"><b>04 Practice</b><span>코드 작성과 디버깅</span></div><div class="method-step"><b>05 Check</b><span>결과 설명과 점검</span></div>
@@ -215,10 +222,15 @@ body{overflow-x:hidden;-webkit-text-size-adjust:100%}
 <footer class="site-footer"><div class="wrap">C Programming · Engineering Learning Studio · 2026</div></footer>
 <script>
 const units=[["101","Getting Started"],["110","Data I/O & Expressions"],["121","if Statements"],["122","switch Statements"],["123","Loops"],["131","Arrays"],["132","Strings"],["133","Standard Library Functions"],["141","User-Defined Functions"],["151","Pointers"],["161","Structures"],["169","Supplementary Topics"],["171","File I/O"],["181","Dynamic Memory"],["182","Linked Lists"],["191","Practical Low-Level C"],["201","Progressive Integration Practice"],["202","CRUD Integration"]];
-const current={"151":{url:"./pointer/"},"161":{url:"./structure/"},"171":{url:"./file-io/"},"181":{url:"./dynamic-memory/"}};
+const current={
+"151":{chapter:15,url:"./pointer/",description:"주소, 역참조, 포인터와 배열, 함수의 주소 전달",lab:"./quick-labs/#pointer",book:"https://drive.google.com/file/d/1o7bzzH32a2gMwjFZ-SdYCtaUcdjxMK4H/view"},
+"161":{chapter:16,url:"./structure/",description:"struct와 typedef, 멤버 접근, 구조체 배열",lab:"./quick-labs/#structure",book:"https://drive.google.com/file/d/1lINKdMeBQgnnnfisq8ekTLCntl4QJI4A/view"},
+"171":{chapter:17,url:"./file-io/",description:"파일 열기, Stream, EOF, 레코드와 센서 로그",lab:"./quick-labs/#file",book:"https://drive.google.com/file/d/1gnBNypCu4ntdnffhvf_mQ4g6gyfjLCzV/view"},
+"181":{chapter:18,url:"./dynamic-memory/",description:"malloc, free, 포인터와 동적 배열 · 필수 4단계 + 선택 4단계"}
+};
+const available=Object.entries(current).map(([id,chapter])=>({id,...chapter,name:units.find(row=>row[0]===id)?.[1]||id})).sort((a,b)=>a.chapter-b.chapter);
+document.getElementById("available-count").textContent=available.length+"개 단원 공개";
+document.getElementById("available-chapters").innerHTML=available.map(ch=>'<article class="path-card"><span class="number">'+ch.chapter+' / Chapter '+ch.chapter+'</span><h3>'+ch.name+'</h3><p>'+ch.description+'</p><a class="open" href="'+ch.url+'">학습 시작 <span aria-hidden="true">→</span></a><div class="resource-links">'+(ch.lab?'<a href="'+ch.lab+'">Quick Lab</a>':'')+(ch.book?'<a href="'+ch.book+'" target="_blank" rel="noopener noreferrer">교재 '+ch.id+'</a>':'')+'</div></article>').join("");
 document.getElementById("units").innerHTML=units.map(([n,name])=>{const c=current[n];return '<article class="unit"><span class="id">'+n+'</span><div class="details"><strong>'+name+'</strong><small>'+(c?"8-step interactive learning":"인터랙티브 학습 준비 중")+'</small></div>'+(c?'<a href="'+c.url+'">학습 열기 →</a>':'<span class="pending">준비 중</span>')+'</article>'}).join("");
-let progress=[];try{const v=JSON.parse(localStorage.getItem("els-fileio-progress-v2")||localStorage.getItem("els-fileio-progress-v1")||"[]");if(Array.isArray(v))progress=v.filter(n=>Number.isInteger(n)&&n>=0&&n<8)}catch(e){}
-const done=new Set(progress).size;document.getElementById("progress-bar").style.width=(done/8*100)+"%";
-document.getElementById("progress-label").textContent="학습 진도 "+done+" / 8";
-document.getElementById("progress-track").setAttribute("aria-valuenow",String(done));
+
 </script><script src="../assets/els-theme-v2.js?v=2" defer></script></body></html>
