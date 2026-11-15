@@ -269,3 +269,10 @@
  .els-design .sensor-code-walkthrough{padding:10px}
  .els-design .sensor-code-values{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+/* Progressive disclosure of optional full-length examples and challenges */
+.els-design .study-advanced-content{border:1px solid var(--els-border);border-radius:11px;margin:15px 0;background:var(--els-surface);color:var(--els-ink);overflow:hidden}
+.els-design .study-advanced-content>summary{display:list-item;list-style-position:inside;padding:12px 15px;background:var(--els-surface-alt);color:var(--els-link);font-size:.91rem;line-height:1.65;font-weight:800;cursor:pointer}
+.els-design .study-advanced-content>summary:hover{filter:brightness(.97)}
+.els-design .study-advanced-content>.snippet,.els-design .study-advanced-content>.concept{margin:0!important;border:0;border-top:1px solid var(--els-border);border-radius:0;padding:13px}
+.els-design .study-advanced-content:focus-within,.els-design .study-scope:focus-within{outline-offset:2px}
