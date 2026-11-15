@@ -9,6 +9,11 @@ on:
       - 'c-programming/structure/**'
       - 'c-programming/index.html'
       - 'tests/c-journey-qa.mjs'
+      - 'tests/c-integrated-qa.mjs'
+      - 'c-programming/practice-engine.js'
+      - 'c-programming/practice-engine.css'
+      - 'c-programming/learning-journey/**'
+      - 'c-programming/file-io/**'
       - '.github/workflows/c-journey-qa.yml'
 jobs:
   cross-validation:
@@ -24,7 +29,9 @@ jobs:
           npm install --no-save playwright@1.56.0
           npx playwright install --with-deps chromium
       - name: Run C11 GCC oracle and browser interaction tests
-        run: C_JOURNEY_BROWSER=1 node tests/c-journey-qa.mjs
+        run: |
+          C_JOURNEY_BROWSER=1 node tests/c-journey-qa.mjs
+          C_JOURNEY_BROWSER=1 node tests/c-integrated-qa.mjs
       - name: Upload validation report
         if: always()
         uses: actions/upload-artifact@v4
