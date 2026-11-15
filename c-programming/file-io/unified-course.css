@@ -244,3 +244,28 @@
 .els-design .sensor-reference-code>summary strong{font-size:.96rem}
 .els-design .sensor-reference-code>summary span{font-size:.8rem;color:var(--els-muted)}
 .els-design .sensor-reference-code>.snippet{margin:0;border:0;border-top:1px solid var(--els-border);border-radius:0}
+
+/* First-year guidance shared by all 8 stages */
+.els-design .study-scope{border:1px solid var(--els-border);border-radius:12px;background:var(--els-surface);color:var(--els-ink);margin:16px 0 20px;overflow:hidden}
+.els-design .study-scope-core{padding:14px 16px;display:flex;align-items:start;gap:12px;border-left:4px solid var(--els-link);background:var(--els-info-bg);color:var(--els-info-ink)}
+.els-design .study-scope-badge{flex:0 0 auto;white-space:nowrap;padding:4px 8px;border:1px solid var(--els-link);border-radius:7px;font-size:.76rem;font-weight:850;color:var(--els-info-ink)}
+.els-design .study-scope-core strong{display:block;font-size:.94rem;line-height:1.6;color:var(--els-info-ink)}
+.els-design .study-scope-core p{font-size:.83rem;line-height:1.7;margin:6px 0 0;color:var(--els-info-ink)}
+.els-design .study-scope-optional{border-top:1px solid var(--els-border)}
+.els-design .study-scope-optional summary{cursor:pointer;padding:11px 16px;font-weight:750;font-size:.86rem;color:var(--els-link);background:var(--els-surface-alt)}
+.els-design .study-scope-optional p{padding:12px 16px;margin:0;font-size:.87rem;line-height:1.75;color:var(--els-ink)}
+/* Student-first variable transitions: changed only by default */
+.els-design .sensor-diff-highlight{padding:11px 12px;border-left:4px solid var(--els-success);background:var(--els-info-bg);color:var(--els-info-ink);line-height:1.7;font-size:.86rem;font-weight:700;border-radius:7px;overflow-wrap:anywhere}
+.els-design .sensor-diff-toggle{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--els-ink);font-weight:650;padding:9px 0;cursor:pointer}
+.els-design .sensor-diff-toggle input{min-width:18px;min-height:18px;accent-color:var(--els-primary)}
+.els-design .sensor-diff-empty{font-size:.82rem;color:var(--els-muted);line-height:1.7;margin:0;padding:10px 12px;background:var(--els-surface-alt);border-radius:8px}
+.els-design .sensor-step-context{margin:8px 0 12px;padding:9px 12px;background:var(--els-info-bg);color:var(--els-info-ink);border-radius:8px;line-height:1.65;font-size:.85rem}
+.els-design .sensor-code-walkthrough-grid{align-items:start}
+.els-design .sensor-code-vars{position:relative}
+@media(min-width:1150px){.els-design .sensor-code-walkthrough-grid{grid-template-columns:minmax(0,1.1fr) minmax(290px,.9fr)}}
+@media(max-width:630px){
+ .els-design .study-scope-core{display:grid;gap:8px;padding:13px}
+ .els-design .study-scope-badge{justify-self:start}
+ .els-design .sensor-code-walkthrough{padding:10px}
+ .els-design .sensor-code-values{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
