@@ -1,0 +1,24 @@
+/* Shared editor-based C practice; follows File I/O practice structure. */
+.cp-layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:18px;margin:22px 0 50px}
+.cp-menu,.cp-content{background:var(--els-surface,#fff);border:1px solid var(--els-border,#d5e0ed);border-radius:14px;padding:17px;min-width:0}
+.cp-menu{align-self:start;position:sticky;top:12px;display:grid;gap:5px}
+.cp-nav-item{text-align:left;background:transparent;color:inherit;border:1px solid transparent;border-radius:9px;padding:12px;font:inherit;cursor:pointer}
+.cp-nav-item.active{border-color:var(--els-link,#2477ae);background:var(--els-info-bg,#e5f2ff);font-weight:800}
+.cp-eyebrow{font-size:.78rem;letter-spacing:.1em;color:var(--els-link,#246a9c);font-weight:850}
+.cp-content h2{font-size:clamp(1.35rem,2.5vw,1.9rem);margin:8px 0}
+.cp-description{color:var(--els-muted,#52657b);line-height:1.7}
+.cp-reference{border:1px solid var(--els-border,#d5e0ed);border-radius:10px;padding:14px;margin:13px 0;background:var(--els-surface-alt,#edf4fc)}
+.cp-reference pre{white-space:pre-wrap;font:14px/1.6 Consolas,monospace;overflow:auto}
+.cp-editor-label{display:block;font-weight:800;margin:15px 0 6px}
+.cp-editor{width:100%;min-height:350px;resize:vertical;background:var(--els-code-bg,#101b2b);color:var(--els-code-ink,#ecf4ff);border:1px solid var(--els-border,#60758d);border-radius:10px;padding:15px;font:14px/1.65 Consolas,monospace;tab-size:4}
+.cp-actions{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}
+.cp-button{min-height:44px;background:var(--els-surface,#fff);color:var(--els-ink,#172b44);border:1px solid var(--els-border,#d5e0ed);border-radius:9px;padding:9px 14px;font:700 14px system-ui;cursor:pointer}
+.cp-primary{background:#1e6ca4;color:#fff;border-color:#1e6ca4}
+.cp-feedback{background:var(--els-info-bg,#edf4fc);color:var(--els-info-ink,#193e51);border:1px solid var(--els-border,#d5e0ed);border-radius:9px;padding:13px;white-space:pre-wrap;line-height:1.7}
+.cp-proof{display:flex;align-items:start;gap:8px;margin-top:17px;padding:12px;border:1px solid var(--els-border,#d5e0ed);border-radius:9px}
+.cp-proof input{margin-top:5px}.cp-proof label{line-height:1.6;font-size:.89rem}
+.cp-disclaimer{font-size:.83rem;color:var(--els-muted,#52657b)}.cp-hint{margin-top:15px}
+.cp-hint summary{cursor:pointer;font-weight:800}
+.cp-disclaimer,.cp-hint p{line-height:1.7}
+@media(max-width:800px){.cp-layout{grid-template-columns:1fr}.cp-menu{position:static;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.cp-menu{grid-template-columns:1fr}.cp-content,.cp-menu{padding:12px}.cp-editor{font-size:12px;min-height:280px}}
