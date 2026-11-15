@@ -3,20 +3,16 @@
 const E=window.FileIOPilot;if(!E){document.body.insertAdjacentHTML("afterbegin","<p>Learning engine failed to load.</p>");return;}
 const $=id=>document.getElementById(id);
 let m3=E.createM3(),m4=E.createM4(),m3Unlocked=false,m4Unlocked=false,m3Evidence=null,m4Evidence=null;
-let m3PredictionBefore=null,m3PredictionAfter=null;
-const initialM3Preds={
-  "r|lab":"unchanged","w|lab":"empty","a|lab":"append",
-  "r|other":"fail","w|other":"new","a|other":"new"
-};
 const correctM4={normal:"eof",malformed:"mismatch",empty:"eof",ioError:"ioError"};
 const esc=s=>String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
 const fileCode=(mode,cwd)=>{
  const name='"readings.txt"';
- const parts=['#include <stdio.h>',"","int main(void) {",'    FILE *fp = fopen('+name+', "'+mode+'");','    if (fp == NULL) return 1;'];
- if(mode==="r")parts.push('    char line[80];','    while (fgets(line, sizeof line, fp) != NULL) {','        fputs(line, stdout);','    }');
- else parts.push('    fprintf(fp, "%.1f\\n", 27.2);');
+ const parts=['#include <stdio.h>',"","int main(void) {",'    FILE *fp;',...(mode==="r"?['    char line[80];']:[]),'    fp = fopen('+name+', "'+mode+'");','    if (fp == NULL) return 1;'];
+ if(mode==="r")parts.push('    while (fgets(line, sizeof line, fp) != NULL) {','        fputs(line, stdout);','    }');
+ else parts.push('    if (fprintf(fp, "%.1f\\n", 27.2) < 0) {','        fclose(fp);','        return 1;','    }');
  parts.push('    if (fclose(fp) == EOF) return 1;','    return 0;','}');
- const map=mode==="r"?{open:[3,4],read:[6,7],openFail:[3,4],close:[9]}:{open:[3,4],openFail:[3,4],write:[5],close:[6]};
+ const offset=mode==="r"?5:4;
+ const map=mode==="r"?{open:[offset,offset+1],read:[offset+2,offset+3],openFail:[offset,offset+1],close:[offset+5]}:{open:[offset,offset+1],openFail:[offset,offset+1],write:[offset+2],close:[offset+6]};
  return {parts,map};
 };
 const eofCode=[
@@ -65,7 +61,7 @@ function updateM3(){
  $("m3-file").textContent=file.exists?(file.content===""?"(empty file)":file.content):"(file does not exist)";
  $("m3-stdout").textContent=m3.stdout||"(no output)";
  renderEvents("m3-events",m3.events);
- const next=m3Unlocked?E.m3Next(m3):null;
+ const next=m3Unlocked&&m3.phase!=="closed"&&m3.phase!=="failed"?E.m3Next(m3):null;
  $("m3-open").disabled=next!=="open";
  $("m3-read").disabled=next!=="read";
  $("m3-write").disabled=next!=="write";
@@ -178,7 +174,7 @@ $("m4-close").onclick=()=>{E.m4Close(m4);updateM4()};
 const noteKey=m=>"els-fileio-pilot-"+m+"-notes";
 for(const m of ["m3","m4"]){
  try{$(m+"-reflection").value=localStorage.getItem(noteKey(m))||""}catch(e){}
- $(m+"-save").onclick=()=>{try{localStorage.setItem(noteKey(m),$(m+"-reflection").value);$(m+"-pred-feedback").textContent="학습 설명을 이 브라우저에 저장했습니다.";if($(m+"-reflection").value.trim().length>=10){setFlow(m,4);try{localStorage.setItem("els-fileio-integrated-"+m+"-reflection", "saved")}catch(e){};window.dispatchEvent(new CustomEvent("els:labEvidence",{detail:{mission:m,state:"reflected"}}));}else{$(m+"-pred-feedback").textContent="설명을 저장했습니다. 원인 설명을 10자 이상 작성하면 설명 단계가 완료로 표시됩니다."}}catch(e){$(m+"-pred-feedback").textContent="로컬 저장이 차단되어 있습니다. 다운로드 버튼을 이용하세요."}};
+ $(m+"-save").onclick=()=>{try{localStorage.setItem(noteKey(m),$(m+"-reflection").value);$(m+"-pred-feedback").textContent="학습 설명을 이 브라우저에 저장했습니다.";if($(m+"-reflection").value.trim().length>=10 && ((m==="m3"&&m3Evidence&&["closed","failed"].includes(m3.phase))||(m==="m4"&&m4Evidence&&m4.phase==="closed"))){setFlow(m,4);try{localStorage.setItem("els-fileio-integrated-"+m+"-reflection", "saved")}catch(e){};if((m==="m3"&&m3Evidence&&["closed","failed"].includes(m3.phase))||(m==="m4"&&m4Evidence&&m4.phase==="closed"))window.dispatchEvent(new CustomEvent("els:labEvidence",{detail:{mission:m,state:"reflected"}}));}else{$(m+"-pred-feedback").textContent="설명을 저장했습니다. 원인 설명을 10자 이상 작성하면 설명 단계가 완료로 표시됩니다."}}catch(e){$(m+"-pred-feedback").textContent="로컬 저장이 차단되어 있습니다. 다운로드 버튼을 이용하세요."}};
  $(m+"-download").onclick=()=>{const evidence=m==="m3"?m3Evidence:m4Evidence;
  const report="File I/O Pilot · "+m.toUpperCase()+"\n"+JSON.stringify(evidence,null,2)+"\n\n실험 설명:\n"+$(m+"-reflection").value+"\n";
  const url=URL.createObjectURL(new Blob([report],{type:"text/plain;charset=utf-8"}));
