@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="ko"><head><script>/* Apply selected palette before CSS paint. */(function(){var t="neutral-dark";try{var v=localStorage.getItem("els-theme-v2");if(["neutral-dark","warm-dark","navy-dark","warm-neutral"].includes(v))t=v;else{var ss=localStorage.getItem("ss-visual-lab-theme"),e=localStorage.getItem("els-theme");if(ss==="light"||e==="light")t="warm-neutral";else if(ss==="dark"||e==="dark")t="navy-dark"}}catch(e){}document.documentElement.dataset.elsTheme=t;document.documentElement.dataset.theme=t==="warm-neutral"?"light":"dark";document.documentElement.style.colorScheme=t==="warm-neutral"?"light":"dark"})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="C Programming Chapter 7 File I/O Self-Study: streams, files, EOF, records and sensor logs.">
-<title>Chapter 7 · File I/O Learning Journey</title>
+<meta name="description" content="C Programming Chapter 17 File I/O Self-Study: streams, files, EOF, records and sensor logs.">
+<title>Chapter 17 · File I/O Learning Journey</title>
 <link rel="stylesheet" href="./style.css?v=20261115contrast3"><link rel="stylesheet" href="../../assets/design-system.css?v=1"><link rel="stylesheet" href="./unified-course.css?v=15"><link rel="stylesheet" href="../../assets/els-theme-v2.css?v=3"></head><body class="els-design">
 <a class="skip" href="#lesson">학습 본문으로 건너뛰기</a>
 <header class="topbar"><a class="brand" href="../">◈ C Programming <small>/ Learning Studio</small></a><div class="toplinks"><a href="../learning-journey/">Integrated Journey</a><a href="../">C Learning Home</a><a href="https://drive.google.com/file/d/1pQoUv5072-RW6k7vnjDQULbp1qVNQRDq/view" target="_blank" rel="noopener">교재 171 ↗</a><button id="theme-button" aria-label="Toggle dark mode" aria-pressed="false">◐ Theme</button></div></header>
-<div class="course-header"><div class="eyebrow">2026 · CHAPTER 7 · SELF-STUDY COURSE</div><h1>File I/O <span>Learning Journey</span></h1><p>프로그램이 종료되어도 데이터를 남기려면? Stream의 원리를 이해하고, 실제 센서 로그 프로그램까지 단계별로 완성해 보세요.</p><div class="course-meta"><span>8개의 필수 학습 단계</span><span>선택 심화는 별도 표시</span><span>실험 + 코드 분석 + 자기점검</span><span>교재: 171_C_File_IO_Rev8</span></div></div>
+<div class="course-header"><div class="eyebrow">2026 · CHAPTER 17 · SELF-STUDY COURSE</div><h1>File I/O <span>Learning Journey</span></h1><p>프로그램이 종료되어도 데이터를 남기려면? Stream의 원리를 이해하고, 실제 센서 로그 프로그램까지 단계별로 완성해 보세요.</p><div class="course-meta"><span>8개의 필수 학습 단계</span><span>선택 심화는 별도 표시</span><span>실험 + 코드 분석 + 자기점검</span><span>교재: 171_C_File_IO_Rev8</span></div></div>
 <section class="learning-route" aria-label="File I/O 학습 로드맵">
-<div class="route-heading"><strong>학습 로드맵 · 3-Phase Learning</strong><span>교재 171 · Chapter 7</span></div>
+<div class="route-heading"><strong>학습 로드맵 · 3-Phase Learning</strong><span>교재 171 · Chapter 17</span></div>
 <div class="route-cards">
 <article class="route-card"><div class="route-number">01 · BEFORE CLASS</div><h2>예습 · 개념 이해</h2><p>Stream, 파일 모드, 읽기 반환값과 EOF를 학습하고 실행 결과를 먼저 예측합니다.</p><strong>활동:</strong> 01~05 개념·예측·실험</article>
 <article class="route-card"><div class="route-number">02 · IN CLASS</div><h2>실습 · 실행 흐름 탐색</h2><p>구조체 저장과 센서 로그를 실험하고, 파일 형식과 오류 처리 과정을 설명합니다.</p><strong>활동:</strong> 06~08 응용·평가</article>
@@ -507,7 +507,7 @@ while (fscanf(fp, &quot;%lf&quot;, &amp;x) == 1) {
 </details>
 <div class="core-next-coding"><strong>개념을 이해했다면 실제 C 코드로 확인하기</strong><p>1학년 권장 최소 연습: <strong>P1 Write Numbers</strong>(쓰기·닫기)와 <strong>P2 Read and Average</strong>(읽기·반환값·평균). P3~P6은 수업 운영과 학습 진도에 맞춰 추가로 연습합니다. 웹의 구문 점검은 컴파일·실행 결과가 아니므로 작성한 C 소스를 GCC로 확인해야 합니다.</p></div>
 <p><a class="practice-link" href="./practice/">교재 P1~P6 · 직접 코드 작성 Practice Lab →</a></p>
-<div id="completion-message" class="completion" hidden><strong>Chapter 7 Learning Activities Recorded!</strong><p>여덟 단계의 개념 확인 또는 예측·설명 활동이 기록되었습니다. 이는 실제 코딩 능력이나 설명의 정확성을 인증하지 않습니다. 교재의 P1~P6을 직접 작성하고 GCC로 검증해 보세요.</p></div>
+<div id="completion-message" class="completion" hidden><strong>Chapter 17 Learning Activities Recorded!</strong><p>여덟 단계의 개념 확인 또는 예측·설명 활동이 기록되었습니다. 이는 실제 코딩 능력이나 설명의 정확성을 인증하지 않습니다. 교재의 P1~P6을 직접 작성하고 GCC로 검증해 보세요.</p></div>
 </section>
 <div class="step-footer"><button id="prev-stage">← 이전 단계</button><span id="footer-position">1 / 8</span><button class="primary" id="next-stage">다음 단계 →</button></div>
 <div class="page-note">모든 C 코드 표기의 <code>!=</code>와 <code>==</code>는 실제 C 연산자입니다. 글꼴 ligature로 합쳐 보이지 않도록 설정했습니다. 설명용 실습은 실제 C 컴파일러의 동작을 단순화할 수 있으므로 각 예제의 가정을 함께 확인하세요. Self-study companion for <strong>171_C_File_IO_Rev8</strong>. 웹 실험은 교육용 모의 실행입니다. 실제 C 컴파일러 실행이나 파일 시스템 접근이 아닙니다. 학습 성취는 이 브라우저의 로컬 저장소에만 기록됩니다.</div>
