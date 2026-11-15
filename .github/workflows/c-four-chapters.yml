@@ -1,0 +1,24 @@
+name: C Arrays Strings Libraries Functions QA
+on:
+  push:
+    paths:
+      - 'c-programming/arrays/**'
+      - 'c-programming/strings/**'
+      - 'c-programming/standard-library/**'
+      - 'c-programming/functions/**'
+      - 'c-programming/journey.js'
+      - 'c-programming/practice-engine.js'
+      - 'c-programming/course-catalog.json'
+      - 'tests/c-four-chapters.mjs'
+      - '.github/workflows/c-four-chapters.yml'
+  workflow_dispatch:
+jobs:
+  gcc-c11-content:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify C11 examples and pedagogical content
+        run: node tests/c-four-chapters.mjs
