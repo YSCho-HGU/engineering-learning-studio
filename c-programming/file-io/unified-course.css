@@ -1,0 +1,67 @@
+/* Unified File I/O learning journey: M3/M4 shared activity components.
+   All colors use Engineering Learning Studio semantic tokens. */
+.els-design .stage .lesson{background:transparent;border:0;margin:0;padding:0;box-shadow:none;color:var(--els-ink)}
+.els-design .stage .lesson>h2{margin:6px 0 9px;color:var(--els-ink);font-size:clamp(1.45rem,2.6vw,2rem)}
+.els-design .stage .lesson>.caption{color:var(--els-muted);font-size:.92rem;line-height:1.7}
+.els-design .stage .eyebrow,.els-design .stage .step-title{font-size:.8rem;font-weight:850;letter-spacing:.06em;color:var(--els-link)}
+.els-design .stage .learning-map{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:15px 0}
+.els-design .stage .learning-map span{display:block;background:var(--els-surface-alt);border:1px solid var(--els-border);border-radius:8px;padding:9px 7px;text-align:center;font-size:.8rem;font-weight:750;color:var(--els-muted)}
+.els-design .stage .learning-map span.current{background:var(--els-info-bg);color:var(--els-info-ink);border:2px solid var(--els-link)}
+.els-design .stage .learning-map span.completed{color:var(--els-success);border-color:var(--els-success)}
+.els-design .stage .step{margin:15px 0;padding:18px;border:1px solid var(--els-border);border-radius:12px;background:var(--els-surface-alt);color:var(--els-ink)}
+.els-design .stage .step p{margin:6px 0 12px}
+.els-design .stage .input-row{display:flex;gap:11px;flex-wrap:wrap;align-items:end}
+.els-design .stage .field{display:flex;flex-direction:column;min-width:170px;flex:1;gap:5px;margin:8px 0}
+.els-design .stage .field label{font-size:.82rem;color:var(--els-muted);font-weight:750}
+.els-design .stage .field select{width:100%;max-width:100%}
+.els-design .stage .prediction-box fieldset{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:13px;border:1px solid var(--els-border);border-radius:10px;background:var(--els-surface);min-width:0}
+.els-design .stage .prediction-box legend{font-weight:800;font-size:.9rem;color:var(--els-ink)}
+.els-design .stage .prediction-box fieldset label{display:flex;align-items:flex-start;gap:7px;border:1px solid var(--els-border);padding:10px 12px;border-radius:9px;margin:0;background:var(--els-surface);color:var(--els-ink);cursor:pointer;font-size:.88rem;line-height:1.5}
+.els-design .stage .prediction-box fieldset label:has(input:checked){background:var(--els-info-bg);color:var(--els-info-ink);border:2px solid var(--els-link)}
+.els-design .stage .prediction-box fieldset label input{margin-top:5px;flex-shrink:0}
+.els-design .stage :is(.lesson textarea){width:100%;min-height:82px;resize:vertical;display:block;margin:6px 0;padding:11px 13px}
+.els-design .stage .actions{display:flex;gap:8px;flex-wrap:wrap;margin:11px 0;align-items:center}
+.els-design .stage .actions button{padding:10px 13px;line-height:1.4}
+.els-design .stage .actions button.next-action:not(:disabled){outline:3px solid var(--els-focus);outline-offset:2px;font-weight:850}
+.els-design .stage .feedback{font-size:.9rem;border:1px solid var(--els-border);border-radius:9px;padding:12px 14px;background:var(--els-info-bg);color:var(--els-info-ink);white-space:pre-wrap;min-height:48px;line-height:1.65}
+.els-design .stage .focus-banner{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:16px 0;padding:12px 15px;border-left:4px solid var(--els-link);background:var(--els-info-bg);color:var(--els-info-ink);border-radius:8px}
+.els-design .stage .focus-banner strong{display:block}
+.els-design .stage .focus-banner span{font-size:.83rem}
+.els-design .stage .tag,.els-design .stage .status-mark{display:inline-block;font-size:.73rem;font-weight:750;color:var(--els-muted);border:1px solid var(--els-border);border-radius:20px;padding:4px 8px}
+.els-design .stage .grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:14px;align-items:start}
+.els-design .stage .grid>.panel{background:var(--els-surface);border:1px solid var(--els-border);padding:16px;border-radius:12px;min-width:0}
+.els-design .stage .panel h3{font-size:1rem;margin:0 0 10px;color:var(--els-ink)}
+.els-design .stage .code-box{border-radius:11px;border:1px solid var(--els-border);overflow:auto;max-height:420px;background:var(--els-code-bg);color:var(--els-code-ink)}
+.els-design .stage .code-head{background:#22354B;color:#EFF7FF;padding:9px 13px;font-size:.78rem;font-weight:800}
+.els-design .stage .code-lines{padding:8px 0;font-size:14px}
+.els-design .stage .code-row{display:grid;grid-template-columns:38px minmax(max-content,1fr);font:14px/1.8 Consolas,"Liberation Mono",monospace;white-space:pre;border-left:4px solid transparent;color:var(--els-code-ink);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.els-design .stage .code-row span:first-child{text-align:right;padding-right:8px;color:#B5CBE2;user-select:none}
+.els-design .stage .code-row span:last-child{padding:2px 10px}
+.els-design .stage .code-row.active{background:#59451C;color:#FFF3D6;border-left-color:#FFDA72;font-weight:800}
+.els-design .stage .meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.els-design .stage .meta>div{border:1px solid var(--els-border);background:var(--els-surface-alt);border-radius:9px;padding:11px;overflow-wrap:anywhere}
+.els-design .stage .meta small{display:block;color:var(--els-muted);font-size:.75rem}
+.els-design .stage .meta strong{font:700 .95rem/1.4 Consolas,"Liberation Mono",monospace;color:var(--els-ink)}
+.els-design .stage pre.data{font:14px/1.65 Consolas,"Liberation Mono",monospace;white-space:pre-wrap;overflow-wrap:anywhere;min-height:65px;color:var(--els-ink)}
+.els-design .stage .trace{display:grid;gap:6px;max-height:170px;overflow:auto;margin-top:7px}
+.els-design .stage .trace div{background:var(--els-surface-alt);color:var(--els-ink);border-radius:7px;padding:8px 10px;font-size:.84rem}
+.els-design .stage .trace div:last-child{border:2px solid var(--els-link)}
+.els-design .stage .compare-card{border:2px solid var(--els-success);border-radius:12px;background:var(--els-surface-alt);color:var(--els-ink);padding:16px;margin:16px 0;white-space:pre-wrap}
+.els-design .stage .compare-card h3{margin:0 0 5px}
+.els-design .stage .compare-card .result-line{font-weight:800}
+.els-design .stage .compare-card .compare-diff{font-size:.9rem;line-height:1.7}
+.els-design .stage .learn-check{background:var(--els-surface-alt);border:1px solid var(--els-border);border-left:4px solid var(--els-success);border-radius:10px;padding:15px;margin:18px 0}
+.els-design .stage .learn-check h3{margin:0 0 7px;font-size:1.05rem}
+.els-design .stage .breadcrumb-note{font-size:.85rem;color:var(--els-muted)}
+.els-design .stage .learn-check details{margin:9px 0}
+.els-design .stage .learn-check summary{cursor:pointer;font-weight:700;color:var(--els-link)}
+.els-design #lesson{scroll-margin-top:16px}
+.els-design .stage .lesson [hidden]{display:none!important}
+.els-design .step-footer button{min-height:44px}
+.els-design #m3-workspace,.els-design #m4-workspace{scroll-margin-top:16px}
+.els-design .sidebar .lesson-nav button.current{background:var(--els-info-bg);color:var(--els-info-ink);border:1px solid var(--els-link)}
+.els-design .sidebar .lesson-nav button.completed .done{color:var(--els-success)}
+.els-design .stage .lesson .small{font-size:.8rem;color:var(--els-muted)}
+.els-design .stage .lesson code,.els-design .stage .lesson pre{font-variant-ligatures:none!important;font-feature-settings:"liga" 0,"calt" 0!important}
+@media(max-width:870px){.els-design .stage .grid{grid-template-columns:1fr}.els-design .stage .prediction-box fieldset{grid-template-columns:1fr}}
+@media(max-width:600px){.els-design .stage .learning-map{grid-template-columns:repeat(2,1fr)}.els-design .stage .actions button{flex:1 1 44%}.els-design .stage .step{padding:13px}.els-design .stage .focus-banner{display:block}.els-design .stage .code-box{max-height:350px}}
