@@ -1,0 +1,28 @@
+/* P1 and P2 educational I/O flow explorer, aligned with M1 Neutral Dark */
+.coreio-panel{border:1px solid var(--border);background:var(--panel);border-radius:14px;padding:clamp(14px,2.5vw,23px);margin:22px 0}
+.coreio-panel[hidden]{display:none!important}
+.coreio-head{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:start}
+.coreio-head h3{font-size:clamp(17px,2vw,22px);margin:5px 0}
+.coreio-head p{font-size:13px;color:var(--muted);margin:0;max-width:650px}
+.coreio-scenario-label{font-size:12px;font-weight:750;min-width:min(220px,100%)}
+.coreio-scenario-label select{display:block;width:100%;min-height:43px;margin-top:6px;border:1px solid var(--border);border-radius:8px;background:var(--panel);color:var(--text);padding:9px}
+.coreio-pipeline{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);gap:9px;align-items:stretch;margin:20px 0 15px}
+.coreio-node{border:1px solid var(--border);background:var(--bg);border-radius:10px;padding:12px;min-width:0}
+.coreio-node-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:7px}
+.coreio-node-head strong{font-size:13px}
+.coreio-state{font-size:10px;color:var(--muted);padding:2px 6px;border:1px solid var(--border);border-radius:12px}
+.coreio-node-sub{font-size:10px;color:var(--muted);margin:7px 0}
+.coreio-data{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;min-height:114px;line-height:1.7}
+.coreio-memory{border-color:var(--accent)}
+.coreio-direction{display:grid;place-items:center;font-size:17px;font-weight:800;color:var(--accent)}
+.coreio-trace{border:1px solid var(--border);border-radius:10px;background:var(--bg);padding:13px}
+.coreio-trace-title{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:13px}
+#coreio-result{font-size:11px;font-weight:800;color:var(--accent)}
+.coreio-code{display:block;margin:9px 0;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--accent);font-size:12px}
+#coreio-explain{font-size:12px;line-height:1.7;margin:0}
+.coreio-controls{display:flex;gap:8px;flex-wrap:wrap;margin:13px 0}
+.coreio-controls button:disabled{opacity:.45;cursor:not-allowed}
+.coreio-controls button:focus-visible,.coreio-scenario-label select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.coreio-foot{border-top:1px solid var(--border);padding-top:12px;color:var(--muted);font-size:12px;line-height:1.7}
+@media(max-width:920px){.coreio-pipeline{grid-template-columns:1fr;gap:7px}.coreio-direction{transform:rotate(90deg);min-height:20px}.coreio-data{min-height:0}.coreio-controls button{flex:1 1 calc(50% - 8px)}}
+@media(prefers-reduced-motion:reduce){.coreio-panel *{animation:none!important;transition:none!important}}
