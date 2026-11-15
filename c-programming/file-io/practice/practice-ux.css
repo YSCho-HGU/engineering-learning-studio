@@ -1,0 +1,33 @@
+/* Core-first File I/O practice; preserves all seven coding tasks. */
+main{padding-top:16px}
+.hero{padding:17px 20px;background:var(--panel);border:1px solid var(--border);color:var(--text)}
+.hero .eyebrow{color:var(--accent)!important}
+.hero h1{font-size:clamp(22px,2.8vw,32px);margin:5px 0}
+.hero p{color:var(--muted);font-size:13px;line-height:1.6}
+.practice-help{border:1px solid var(--border);border-radius:9px;margin:9px 0;background:var(--panel)}
+.practice-help summary{padding:10px 13px;cursor:pointer;font-size:12px;color:var(--muted);font-weight:650}
+.practice-help .notice{margin:0;border:0;border-top:1px solid var(--border);border-radius:0;font-size:12px}
+.practice-core-route{display:flex;gap:7px;align-items:center;flex-wrap:wrap;border:1px solid var(--border);border-radius:11px;background:var(--panel);padding:11px;margin:13px 0}
+.practice-core-route>strong{font-size:12px;color:var(--text);margin-right:5px}
+.practice-core-route>span{font-size:11px;color:var(--muted)}
+.practice-core-route button{border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text);min-height:37px;padding:8px 11px;font:inherit;font-size:12px;cursor:pointer}
+.practice-core-route button.active{border-color:var(--accent);color:var(--accent);background:var(--bg);font-weight:800}
+.practice-core-route button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.mini-overview[hidden]{display:none!important}
+.layout{display:block;margin-top:11px}
+.practice-full-list{border:1px solid var(--border);border-radius:10px;background:var(--panel);margin:0 0 13px}
+.practice-full-list>summary{padding:11px 15px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer}
+.practice-full-list[open]>summary{border-bottom:1px solid var(--border)}
+.practice-full-list .nav{border:0;background:transparent;position:static;border-radius:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:11px}
+.practice-full-list .nav button{font-size:12px;border:1px solid var(--border);min-width:0;margin:0;padding:10px}
+.practice-full-list .nav button.active{border-color:var(--accent)}
+.practice-full-list .nav small{font-size:11px;line-height:1.45}
+.work{padding:clamp(14px,2vw,21px)}
+.work>h2{font-size:clamp(19px,2.2vw,25px)}
+.work>p{font-size:13px}
+.work>.grid{margin:12px 0}
+.work .panel{padding:12px}
+.coreio-panel,.buffer-explorer{margin:14px 0}
+.work textarea{min-height:340px}
+@media(max-width:720px){main{padding:12px 10px 42px}.hero{padding:14px}.practice-core-route>strong{width:100%}.practice-core-route button{flex:1 1 28%;padding:8px 5px;font-size:11px}.practice-core-route>span{width:100%}.practice-full-list .nav{grid-template-columns:repeat(2,minmax(0,1fr))}.work{padding:13px}.work textarea{min-height:330px}}
+@media(max-width:420px){.practice-core-route button{flex:1 1 100%}.practice-full-list .nav{grid-template-columns:1fr}}
