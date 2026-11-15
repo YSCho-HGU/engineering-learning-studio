@@ -5,9 +5,9 @@
 const D=window.C_JOURNEY;
 if(!D||!Array.isArray(D.lessons)||D.lessons.length!==8)throw Error("Journey must contain exactly 8 lessons");
 const $=id=>document.getElementById(id);
-const key="els-journey-"+D.slug+"-v1";
+const key="els-journey-"+D.slug+(D.slug==="dynamic-memory"?"-v2":"-v1");
 let completed=[],current=0;
-const assessmentKey="els-concept-"+D.slug+"-v1";
+const assessmentKey="els-concept-"+D.slug+(D.slug==="dynamic-memory"?"-v2":"-v1");
 let concepts=[];
 try{const v=JSON.parse(localStorage.getItem(assessmentKey)||"[]");if(Array.isArray(v))concepts=[...new Set(v.filter(n=>Number.isInteger(n)&&n>=0&&n<8))]}catch(e){}
 const persistConcepts=()=>{try{localStorage.setItem(assessmentKey,JSON.stringify(concepts))}catch(e){}};
