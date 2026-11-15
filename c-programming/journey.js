@@ -37,8 +37,8 @@ function renderNav(){
   const coreA=completed.filter(i=>i<coreCount).length,coreC=concepts.filter(i=>i<coreCount).length;
   $("progress-text").textContent="필수 Activity "+coreA+"/"+coreCount+" · Concept "+coreC+"/"+coreCount+" · 선택 "+completed.filter(i=>i>=coreCount).length+"/"+(total-coreCount);
  }else $("progress-text").textContent="Activity "+completed.length+"/"+total+" · Concept "+concepts.length+"/"+total;
- $("progress-bar").style.width=(D.slug==="dynamic-memory"?completed.filter(i=>i<4).length/4:completed.length/total)*100+"%";
- const meter=$("progress-bar").parentElement;if(meter){meter.setAttribute("aria-valuenow",String(D.slug==="dynamic-memory"?completed.filter(i=>i<coreCount).length:completed.length));meter.setAttribute("aria-valuemax",String(coreCount));}
+ $("progress-bar").style.width=(D.slug==="dynamic-memory"?completed.filter(i=>i<coreCount).length/coreCount:completed.length/total)*100+"%";
+ const meter=$("progress-bar").parentElement;if(meter){meter.setAttribute("aria-valuenow",String(D.slug==="dynamic-memory"?completed.filter(i=>i<coreCount).length:completed.length));meter.setAttribute("aria-valuemax",String(D.slug==="dynamic-memory"?coreCount:total));}
 }
 function createCode(host,source){
  const pre=element("pre","code",host);
@@ -69,7 +69,7 @@ function renderQuiz(stage,l){
 }
 function updateAssessmentSummary(){
  const target=$("assessment-status");if(!target)return;
- target.textContent=D.slug==="dynamic-memory"?"필수 Activity "+completed.filter(i=>i<coreCount).length+"/"+coreCount+" · 필수 Concept "+concepts.filter(i=>i<coreCount).length+"/"+coreCount+" · 선택 심화 Activity "+completed.filter(i=>i>=coreCount).length+"/"+(total-coreCount) · Coding은 GCC 자기보고": "Activity Reviewed "+completed.length+"/"+total+" · Concept Check Passed "+concepts.length+"/"+total+" · Coding Practice: self-reported GCC checks only.";
+ target.textContent=D.slug==="dynamic-memory"?"필수 Activity "+completed.filter(i=>i<coreCount).length+"/"+coreCount+" · 필수 Concept "+concepts.filter(i=>i<coreCount).length+"/"+coreCount+" · 선택 심화 Activity "+completed.filter(i=>i>=coreCount).length+"/"+(total-coreCount)+" · Coding은 GCC 자기보고": "Activity Reviewed "+completed.length+"/"+total+" · Concept Check Passed "+concepts.length+"/"+total+" · Coding Practice: self-reported GCC checks only.";
 }
 function modelOutput(model,v){
  switch(model.kind){
