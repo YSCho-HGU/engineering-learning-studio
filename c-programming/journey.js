@@ -4,7 +4,9 @@
 "use strict";
 const D=window.C_JOURNEY;
 if(!D||!Array.isArray(D.lessons)||D.lessons.length<1)throw Error("Journey must contain at least one lesson");
-const total=D.lessons.length, coreCount=D.slug==="dynamic-memory"?(D.coreCount||4):total;
+const total=D.lessons.length;
+const hasOptional=Number.isInteger(D.coreCount)&&D.coreCount>0&&D.coreCount<total;
+const coreCount=hasOptional?D.coreCount:total;
 const phaseBreaks=Array.isArray(D.phaseBreaks)&&D.phaseBreaks.length===2?D.phaseBreaks:[Math.ceil(total/2),Math.max(Math.ceil(total/2)+1,total-1)];
 const $=id=>document.getElementById(id);
 const version=D.contentRevision||1;
@@ -21,7 +23,7 @@ function element(tag,cls,parent,text){const n=document.createElement(tag);if(cls
 function renderNav(){
  $("lesson-nav").replaceChildren();
  D.lessons.forEach((l,i)=>{
-  if(D.slug==="dynamic-memory"&&(i===0||i===coreCount)){
+  if(hasOptional&&(i===0||i===coreCount)){
    const group=element("div","dm-nav-group",$("lesson-nav"),i===0?"필수 학습 · CORE (01–"+String(coreCount).padStart(2,"0")+")":"선택 심화 · OPTIONAL ("+String(coreCount+1).padStart(2,"0")+"–"+String(total).padStart(2,"0")+")");
    group.setAttribute("aria-label",i===0?"Core lessons":"Optional advanced lessons");
   }
@@ -29,16 +31,16 @@ function renderNav(){
   b.type="button";b.dataset.lesson=i;
   element("span","n",b,String(i+1).padStart(2,"0"));
   element("span","",b,l.title);
-  if(D.slug==="dynamic-memory")element("span","dm-level",b,i<coreCount?"필수":"선택");
+  if(hasOptional)element("span","dm-level",b,i<coreCount?"필수":"선택");
   if(concepts.includes(i))element("span","concept-indicator",b,"✓ Concept");
   b.addEventListener("click",()=>show(i));
  });
- if(D.slug==="dynamic-memory"){
+ if(hasOptional){
   const coreA=completed.filter(i=>i<coreCount).length,coreC=concepts.filter(i=>i<coreCount).length;
   $("progress-text").textContent="필수 Activity "+coreA+"/"+coreCount+" · Concept "+coreC+"/"+coreCount+" · 선택 "+completed.filter(i=>i>=coreCount).length+"/"+(total-coreCount);
  }else $("progress-text").textContent="Activity "+completed.length+"/"+total+" · Concept "+concepts.length+"/"+total;
- $("progress-bar").style.width=(D.slug==="dynamic-memory"?completed.filter(i=>i<coreCount).length/coreCount:completed.length/total)*100+"%";
- const meter=$("progress-bar").parentElement;if(meter){meter.setAttribute("aria-valuenow",String(D.slug==="dynamic-memory"?completed.filter(i=>i<coreCount).length:completed.length));meter.setAttribute("aria-valuemax",String(D.slug==="dynamic-memory"?coreCount:total));}
+ $("progress-bar").style.width=(hasOptional?completed.filter(i=>i<coreCount).length/coreCount:completed.length/total)*100+"%";
+ const meter=$("progress-bar").parentElement;if(meter){meter.setAttribute("aria-valuenow",String(hasOptional?completed.filter(i=>i<coreCount).length:completed.length));meter.setAttribute("aria-valuemax",String(hasOptional?coreCount:total));}
 }
 function createCode(host,source){
  const pre=element("pre","code",host);
@@ -69,7 +71,7 @@ function renderQuiz(stage,l){
 }
 function updateAssessmentSummary(){
  const target=$("assessment-status");if(!target)return;
- target.textContent=D.slug==="dynamic-memory"?"필수 Activity "+completed.filter(i=>i<coreCount).length+"/"+coreCount+" · 필수 Concept "+concepts.filter(i=>i<coreCount).length+"/"+coreCount+" · 선택 심화 Activity "+completed.filter(i=>i>=coreCount).length+"/"+(total-coreCount)+" · Coding은 GCC 자기보고": "Activity Reviewed "+completed.length+"/"+total+" · Concept Check Passed "+concepts.length+"/"+total+" · Coding Practice: self-reported GCC checks only.";
+ target.textContent=hasOptional?"필수 Activity "+completed.filter(i=>i<coreCount).length+"/"+coreCount+" · 필수 Concept "+concepts.filter(i=>i<coreCount).length+"/"+coreCount+" · 선택 심화 Activity "+completed.filter(i=>i>=coreCount).length+"/"+(total-coreCount)+" · Coding은 GCC 자기보고": "Activity Reviewed "+completed.length+"/"+total+" · Concept Check Passed "+concepts.length+"/"+total+" · Coding Practice: self-reported GCC checks only.";
 }
 function modelOutput(model,v){
  switch(model.kind){
@@ -252,7 +254,7 @@ function show(i){
  current=Math.max(0,Math.min(total-1,i));renderNav();
  const l=D.lessons[current];
  const stage=$("lesson");stage.replaceChildren();
- element("div","tag",stage,"STEP "+String(current+1).padStart(2,"0")+" / "+String(total).padStart(2,"0")+" · "+(D.slug==="dynamic-memory"?(current<coreCount?"필수 학습 · CORE":"선택 심화 · OPTIONAL"):(current<phaseBreaks[0]?"BEFORE CLASS":current<phaseBreaks[1]?"IN CLASS":"AFTER CLASS")));
+ element("div","tag",stage,"STEP "+String(current+1).padStart(2,"0")+" / "+String(total).padStart(2,"0")+" · "+(hasOptional?(current<coreCount?"필수 학습 · CORE":"선택 심화 · OPTIONAL"):(current<phaseBreaks[0]?"BEFORE CLASS":current<phaseBreaks[1]?"IN CLASS":"AFTER CLASS")));
  element("h2","",stage,l.title);element("p","lead",stage,l.goal);
  if(l.minutes)element("p","legend",stage,"권장 개념 학습 시간: 약 "+l.minutes+"분 · 코딩 실습은 별도");
  const concept=element("section","concept",stage);
@@ -285,11 +287,11 @@ function init(){
  $("site-title").textContent=D.title+" Learning Journey";
  $("hero-title").textContent=D.title+" Learning Journey";
  $("hero-summary").textContent=D.summary;
- $("hero-count").textContent=(D.slug==="dynamic-memory"?coreCount+" Core + "+(total-coreCount)+" Optional · ":total+" Learning Steps · ")+D.book;
+ $("hero-count").textContent=(hasOptional?coreCount+" Core + "+(total-coreCount)+" Optional · ":total+" Learning Steps · ")+D.book;
  const stepLabel=document.querySelector(".hero-aside small");if(stepLabel)stepLabel.textContent=total+" LEARNING STEPS";
  const heading=document.querySelector(".route-heading span");if(heading)heading.textContent=total+" Learning Steps / "+D.practice.length+" Coding Practices";
  const intro=document.querySelector("#coding-practice h2");if(intro)intro.textContent="P1–P"+D.practice.length+" · Coding Practice";
- const meter=$("progress-bar")?.parentElement;if(meter)meter.setAttribute("aria-valuemax",String(D.slug==="dynamic-memory"?coreCount:total));
+ const meter=$("progress-bar")?.parentElement;if(meter)meter.setAttribute("aria-valuemax",String(hasOptional?coreCount:total));
  $("course-number").textContent=D.book;
  $("phase-one").textContent=D.phases[0];$("phase-two").textContent=D.phases[1];$("phase-three").textContent=D.phases[2];
  const back=$("back-link");if(back)back.href="../";
