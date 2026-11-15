@@ -40,3 +40,23 @@ body{overflow-x:hidden}
 .trace-controls button:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:800px){.trace-layout{grid-template-columns:1fr}.trace-code{max-height:350px}}
 @media(max-width:520px){.trace-lines{font-size:12px}.trace-memory{font-size:12px}}
+
+/* Q2 - visual memory cells: semantic palette, responsive, not color-only */
+.mem-diagram{border:1px solid var(--line);border-radius:12px;padding:12px;margin:12px 0;background:var(--surface)}
+.mem-diagram-title{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;align-items:baseline}
+.mem-diagram-title strong{font-size:.88rem}.mem-diagram-title small{color:var(--muted);font-size:.7rem}
+.mem-diagram-board{display:grid;gap:8px;margin:9px 0}
+.mem-pointer-link{display:grid;grid-template-columns:minmax(0,1fr) 56px minmax(0,1fr);align-items:center;gap:5px;border:1px solid var(--line);border-radius:10px;padding:7px;min-width:0}
+.mem-cell{min-width:0;border:2px solid var(--line);border-radius:9px;background:var(--soft);padding:7px}
+.mem-cell.mem-pointer{border-style:dashed;border-color:var(--blue)}
+.mem-cell.mem-target{border-color:#27956f}
+.mem-cell-head{display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap}
+.mem-cell-name{font:700 12px/1.45 Consolas,monospace;overflow-wrap:anywhere}
+.mem-cell-address{font-size:9px;color:var(--muted)}
+.mem-cell-value{display:block;font:700 12px/1.4 Consolas,monospace;overflow-wrap:anywhere}
+.mem-connector{display:grid;justify-items:center;align-items:center;color:var(--blue)}
+.mem-arrow{font-size:28px;font-weight:900;line-height:1}
+.mem-link-label{font-size:9px;text-align:center;line-height:1.25}
+.mem-diagram-output{display:grid;gap:3px;border-radius:8px;background:var(--soft);padding:8px;margin-top:9px;font-size:.78rem;overflow-wrap:anywhere}
+.mem-diagram-note{color:var(--muted);font-size:.74rem;line-height:1.5;margin:8px 0 0}
+@media(max-width:570px){.mem-pointer-link{grid-template-columns:minmax(0,1fr) 35px minmax(0,1fr)}.mem-link-label{font-size:8px}.mem-cell{padding:5px}.mem-cell-name,.mem-cell-value{font-size:10px}.mem-diagram{padding:9px}}
