@@ -34,6 +34,7 @@
   box.replaceChildren();
   for(const line of lines){const p=document.createElement("p");p.textContent=line;box.append(p)}
   box.dataset.state=correct===2?"success":"review";
+  if(correct===2)window.dispatchEvent(new CustomEvent("els:conceptPassed",{detail:{stage:step-1}}));
   state.set(step,{selected,correct,at:new Date().toISOString()});
   try{localStorage.setItem(storageKey,JSON.stringify(Object.fromEntries(state)))}catch(e){}
  }
