@@ -10,6 +10,9 @@ on:
       - 'c-programming/index.html'
       - 'tests/c-journey-qa.mjs'
       - 'tests/c-integrated-qa.mjs'
+      - 'tests/els-theme-qa.mjs'
+      - 'assets/els-theme-v2.css'
+      - 'assets/els-theme-v2.js'
       - 'c-programming/practice-engine.js'
       - 'c-programming/practice-engine.css'
       - 'c-programming/learning-journey/**'
@@ -32,6 +35,7 @@ jobs:
         run: |
           C_JOURNEY_BROWSER=1 node tests/c-journey-qa.mjs
           C_JOURNEY_BROWSER=1 node tests/c-integrated-qa.mjs
+          C_JOURNEY_BROWSER=1 node tests/els-theme-qa.mjs
       - name: Upload validation report
         if: always()
         uses: actions/upload-artifact@v4
