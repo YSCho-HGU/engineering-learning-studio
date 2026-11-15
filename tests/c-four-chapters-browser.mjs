@@ -2,6 +2,7 @@ import {chromium} from 'playwright';
 import {readFileSync} from 'node:fs';
 const chapters=[['131','arrays'],['132','strings'],['133','standard-library'],['141','functions']];
 const catalog=JSON.parse(readFileSync('c-programming/course-catalog.json','utf8'));
+const counts=Object.fromEntries(chapters.map(([id,slug])=>[id,JSON.parse(readFileSync('c-programming/'+slug+'/data.js','utf8').replace(/^window\\.C_JOURNEY=/,'').replace(/;\\s*$/,'')).lessons.length]));
 const browser=await chromium.launch({headless:true});
 const issues=[];let views=0;
 for(const width of [390,1280]){
@@ -19,9 +20,9 @@ for(const width of [390,1280]){
   if(!entry?.published)issues.push(id+' should be published');
   await page.goto('http://127.0.0.1:8765/c-programming/'+slug+'/',{waitUntil:'networkidle'});
   await page.locator('#lesson-nav button').first().waitFor();
-  if(await page.locator('#lesson-nav button').count()!==8)issues.push(id+' navigation count');
+  if(await page.locator('#lesson-nav button').count()!==counts[id])issues.push(id+' navigation count');
   if(await page.locator('#practice article').count()!==6)issues.push(id+' coding overview count');
-  for(let i=0;i<8;i++){
+  for(let i=0;i<counts[id];i++){
    await page.locator('#lesson-nav button').nth(i).click();
    const name=await page.locator('#lesson h2').first().textContent();
    if(!name?.trim())issues.push(id+' step '+i+' empty');
@@ -35,12 +36,12 @@ for(const width of [390,1280]){
   await page.locator('.cp-nav-item').first().waitFor();
   if(await page.locator('.cp-nav-item').count()!==6)issues.push(id+' missing practice tasks');
   await page.locator('.cp-nav-item').nth(5).click();
-  if(!await page.locator('#cp-editor').inputValue())issues.push(id+' empty task editor');
+  if(!await page.locator('textarea').first().inputValue())issues.push(id+' empty task editor');
   views++;
  }
  await ctx.close();
 }
 await browser.close();
-console.log('Browser views:',views,'widths 390/1280; four lessons x eight steps');
+console.log('Browser views:',views,'widths 390/1280; dynamic lesson counts',counts);
 if(issues.length){console.error(issues.join('\n'));process.exit(1)}
-console.log('PASS: 4 new chapters, 32 lesson pages and 24 coding tasks accessible.');
+console.log('PASS: 4 chapters with variable-length learning journeys and coding tasks accessible.');
