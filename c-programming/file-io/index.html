@@ -2,7 +2,7 @@
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="C Programming Chapter 7 File I/O Self-Study: streams, files, EOF, records and sensor logs.">
 <title>Chapter 7 · File I/O Learning Journey</title>
-<link rel="stylesheet" href="./style.css?v=20261115contrast3"><link rel="stylesheet" href="../../assets/design-system.css?v=1"><link rel="stylesheet" href="./unified-course.css?v=9"></head><body class="els-design">
+<link rel="stylesheet" href="./style.css?v=20261115contrast3"><link rel="stylesheet" href="../../assets/design-system.css?v=1"><link rel="stylesheet" href="./unified-course.css?v=10"></head><body class="els-design">
 <a class="skip" href="#lesson">학습 본문으로 건너뛰기</a>
 <header class="topbar"><a class="brand" href="../">◈ C Programming <small>/ Learning Studio</small></a><div class="toplinks"><a href="../">C Learning Home</a><a href="https://drive.google.com/file/d/1pQoUv5072-RW6k7vnjDQULbp1qVNQRDq/view" target="_blank" rel="noopener">교재 171 ↗</a><button id="theme-button" aria-label="Toggle dark mode" aria-pressed="false">◐ Theme</button></div></header>
 <div class="course-header"><div class="eyebrow">2026 · CHAPTER 7 · SELF-STUDY COURSE</div><h1>File I/O <span>Learning Journey</span></h1><p>프로그램이 종료되어도 데이터를 남기려면? Stream의 원리를 이해하고, 실제 센서 로그 프로그램까지 단계별로 완성해 보세요.</p><div class="course-meta"><span>8개의 연결된 학습 단계</span><span>실험 + 코드 분석 + 자기점검</span><span>교재: 171_C_File_IO_Rev8</span></div></div>
@@ -224,7 +224,7 @@ int main(void) {
     return EXIT_SUCCESS;
 }</pre>
 <p class="sensor-code-notes"><strong>코드 스타일:</strong> 실무에서 흔히 볼 수 있는 <code>FILE *fp = fopen(...);</code> 초기화 → <code>if (fp == NULL)</code> 검사 → 입력 반환값 검사 → <code>fclose()</code> 검사 형식입니다. <code>fields != EOF</code>는 파일 끝이 아닌 불완전·부정확한 센서 레코드를 탐지합니다. 입력 도중 실제 I/O 오류는 <code>ferror(fp)</code>로 별도 검사합니다.</p><a href="./examples/sensor_log_analyzer.c" download>검증된 C 코드 다운로드</a> <button type="button" id="sensor-download-c" class="sensor-download-c">현재 임계값으로 C 소스 다운로드</button></div>
-<div class="activity"><div class="activity-head"><span>ENGINEERING LAB 07</span><h3>Sensor Log Analyzer</h3><p>임계값을 바꿔 경보 개수와 평균을 관찰하세요. 실제 파일을 읽는 대신 위에 표시한 <code>sensor_log.txt</code>와 동일한 네 행의 데이터를 사용합니다. 앞의 <code>readings.txt</code>(숫자 한 열)와는 별도의 파일 예제입니다.</p></div><div class="field"><label for="sensor-threshold">Alert threshold: <output id="threshold-label">3.00</output></label><input id="sensor-threshold" type="range" min="2.0" max="4.2" step="0.1" value="3.0"></div><div class="sensor-execute-controls">
+<div class="activity"><div class="activity-head"><span>ENGINEERING LAB 07</span><h3>Sensor Log Analyzer</h3><p>1학년 필수: 파일에 있는 시간·측정값 쌍을 읽고 <code>count</code>, 평균, 경보를 예측한 후 실행으로 확인합니다. 이 실습은 학생이 직접 편집한 텍스트를 사용하며, 실제 GCC 실행이 아닌 교육용 시뮬레이션입니다.</p></div><div class="field"><label for="sensor-threshold">Alert threshold: <output id="threshold-label">3.00</output></label><input id="sensor-threshold" type="range" min="2.0" max="4.2" step="0.1" value="3.0"></div><div class="sensor-execute-controls">
 <button type="button" class="primary" id="sensor-run">▶ Simulate Run · 입력 파일 분석</button>
 <span class="sensor-execution-label">SIMULATED · 실제 C/GCC 실행이 아닙니다</span>
 </div><div class="sensor-run-status" id="sensor-run-status" aria-live="polite">파일을 변경하고 평균·경보 개수를 예측한 다음 실행하세요.</div><div class="sensor-summary"><div><span>Count</span><strong id="sensor-count">—</strong></div><div><span>Average</span><strong id="sensor-mean">—</strong></div><div><span>Alerts (value &gt; threshold)</span><strong id="sensor-alerts">—</strong></div></div><div class="data-list" id="sensor-list" aria-live="polite"></div><div class="sensor-output-grid">
@@ -235,7 +235,8 @@ int main(void) {
 <div id="sensor-trace" class="sensor-trace" aria-live="polite">Simulate Run을 누르면 읽기 순서가 표시됩니다.</div>
 <p class="els-meta" id="sensor-return">최종 반환값: — · 프로그램 종료 코드: —</p></div>
 <section class="sensor-step-lab els-card" aria-labelledby="sensor-step-title">
-<div class="sensor-part-title"><span>PART A · VISUAL TRACE</span><h3 id="sensor-step-title">fscanf() 한 번씩 실행하기</h3><p>각 C 문장을 한 줄씩 실행하면서 실제로 변환된 항목, <code>time_s</code>와 <code>value</code>, 누적 <code>count</code>·<code>sum</code>·<code>average</code>를 확인하세요. <strong>Simulate Run</strong> 후 Step 버튼을 사용할 수 있습니다.</p></div>
+<div class="sensor-part-title"><span>PART A · 필수 원리 이해</span><h3 id="sensor-step-title">fscanf() 한 번씩 실행하기</h3><p>처음에는 기본 흐름을 선택하여 각 C 문장을 실행하면서 실제로 변환된 항목, <code>time_s</code>와 <code>value</code>, 누적 <code>count</code>·<code>sum</code>·<code>average</code>를 확인하세요. <strong>Simulate Run</strong> 후 Step 버튼을 사용할 수 있습니다.</p></div>
+<div class="sensor-step-mode"><label for="sensor-step-view">학습 깊이</label><select id="sensor-step-view"><option value="core">기본 · 읽기 / sum / count / 경보</option><option value="all">심화 · EOF와 파일 오류 검사까지 전 과정</option></select><span>1학년 필수: 기본 흐름을 먼저 확인하고, 더 자세한 오류 처리는 선택하세요.</span></div>
 <div class="sensor-step-controls"><button type="button" id="sensor-step-first" disabled>처음</button><button type="button" id="sensor-step-prev" disabled>이전 문장</button><button type="button" id="sensor-step-next" disabled class="primary">다음 C 문장</button><button type="button" id="sensor-step-last" disabled>끝까지</button><output id="sensor-step-counter" aria-live="polite">실행 전</output></div>
 <div class="sensor-step-grid">
 <div class="sensor-step-card"><span>현재 읽기 시도</span><strong id="sensor-step-attempt">—</strong><small id="sensor-step-detail">한 단계씩 읽어 보세요.</small></div>
@@ -248,6 +249,11 @@ int main(void) {
 <div class="sensor-code-walkthrough-grid">
 <div class="sensor-code-lines" id="sensor-step-code" role="region" aria-label="실행 중인 C 코드 줄" tabindex="0">Simulate Run 후 Step으로 실행 코드를 추적하세요.</div>
 <div class="sensor-code-vars"><strong>현재 C 변수 상태</strong>
+<div class="sensor-variable-diff" aria-labelledby="sensor-variable-diff-title">
+ <div class="sensor-variable-diff-head"><strong id="sensor-variable-diff-title">이번 문장의 변수 변화 · Before → After</strong><span>값이 바뀌지 않으면 변화 없음으로 표시</span></div>
+ <div id="sensor-variable-diff-list" class="sensor-variable-diff-list" aria-live="polite">Simulate Run 후 다음 C 문장을 누르세요.</div>
+ <p class="sensor-variable-diff-note">읽기 실패 시 성공적으로 변환된 변수만 변경됩니다. <code>sum/count</code>와 경보 상태는 C에 선언한 변수가 아닌 교육용 계산·상태 표시입니다.</p>
+</div>
 <div class="sensor-code-values" aria-live="polite">
 <div><span>fields</span><strong id="sensor-code-fields">—</strong></div>
 <div><span>time_s</span><strong id="sensor-code-time">미정</strong></div>
@@ -264,6 +270,8 @@ int main(void) {
 </div></div></div>
 <div class="sensor-step-source"><strong>읽은 텍스트 위치</strong><pre id="sensor-step-source" aria-live="polite">실행한 파일의 입력 위치가 여기에 표시됩니다.</pre></div>
 </section>
+<details class="sensor-advanced-optional" id="sensor-advanced-section">
+<summary><span class="sensor-optional-tag">선택 심화 · 1학년 필수 아님</span><strong>Part B — 더 견고하게 파일 읽기: fgets() / strtod()</strong><small>기본 fscanf 실습을 마친 학생이 확장 학습할 때 펼치세요.</small></summary>
 <section class="sensor-robust-lab els-card" aria-labelledby="sensor-robust-title">
 <div class="sensor-part-title"><span>PART B · ROBUST FILE I/O</span><h3 id="sensor-robust-title">기존 코드를 유지하고, 한 줄 검증 방식까지 확장</h3>
 <p>Part A의 <code>fscanf()</code> 코드를 바꾸지 않습니다. 그다음 별도의 프로그램에서는 <code>fgets()</code>로 한 줄을 읽고 <code>strtod()</code>로 두 숫자를 검증합니다.</p></div>
@@ -307,6 +315,7 @@ int main(void) {
     count++;
 }</pre><p>위는 핵심 흐름만 보여주는 부분 코드입니다. 다운로드한 완전한 C 예제에는 길이 검사, 수치 유효성 검사, 누적 합계, 출력·닫기 오류 처리도 포함되어 있습니다.</p></details>
 </section>
+</details>
 <div class="sensor-practice-note"><strong>모형의 한계:</strong> 유한한 10진수 및 지수 표기만 시뮬레이션합니다. <code>fscanf("%lf %lf")</code>는 줄바꿈을 공백으로 처리하므로 항상 한 줄씩 읽는 것은 아닙니다. 실제 실행 결과는 현재 데이터 파일과 C 소스를 다운로드하여 GCC에서 확인하세요. 임계값을 바꾸면 아래 C 소스의 <code>threshold</code> 초기값도 함께 변경됩니다.</div>
 <p class="activity-feedback" id="sensor-msg">예측한 결과와 시뮬레이션의 계산 결과를 비교해 보세요.</p></div>
 <div class="check" data-check="6"><div class="check-eyebrow">CHECK YOURSELF · 7.5.3</div><h3><code>fscanf(fp, "%lf %lf", &amp;t, &amp;value)</code>가 두 값을 모두 읽은 경우의 반환값은?</h3><label><input type="radio" name="q6" value="a"> 0</label><label><input type="radio" name="q6" value="b"> 1</label><label><input type="radio" name="q6" value="c"> 2</label><button class="check-btn" data-grade="6">답 확인 및 설명</button><div class="answer" id="answer-6" aria-live="polite"></div></div>
@@ -344,4 +353,4 @@ int main(void) {
 </section>
 <div class="step-footer"><button id="prev-stage">← 이전 단계</button><span id="footer-position">1 / 8</span><button class="primary" id="next-stage">다음 단계 →</button></div>
 <div class="page-note">모든 C 코드 표기의 <code>!=</code>와 <code>==</code>는 실제 C 연산자입니다. 글꼴 ligature로 합쳐 보이지 않도록 설정했습니다. 설명용 실습은 실제 C 컴파일러의 동작을 단순화할 수 있으므로 각 예제의 가정을 함께 확인하세요. Self-study companion for <strong>171_C_File_IO_Rev8</strong>. 웹 실험은 교육용 모의 실행입니다. 실제 C 컴파일러 실행이나 파일 시스템 접근이 아닙니다. 학습 성취는 이 브라우저의 로컬 저장소에만 기록됩니다.</div>
-</main></div><script src="./sensor-model.js?v=2" defer></script><script src="./robust-sensor-model.js?v=1" defer></script><script src="./app.js?v=trace-robust1" defer></script><script src="./sensor-code-trace.js?v=1" defer></script><script src="./sensor-trace-ui.js?v=2" defer></script><script src="./sensor-assessment.js?v=1" defer></script><script src="./pilot/engine.js?v=unified2" defer></script><script src="./unified-labs.js?v=unified2" defer></script></body></html>
+</main></div><script src="./sensor-model.js?v=2" defer></script><script src="./robust-sensor-model.js?v=1" defer></script><script src="./app.js?v=trace-robust1" defer></script><script src="./sensor-code-trace.js?v=1" defer></script><script src="./sensor-variable-diff.js?v=1" defer></script><script src="./sensor-trace-ui.js?v=3" defer></script><script src="./sensor-assessment.js?v=1" defer></script><script src="./pilot/engine.js?v=unified2" defer></script><script src="./unified-labs.js?v=unified2" defer></script></body></html>
