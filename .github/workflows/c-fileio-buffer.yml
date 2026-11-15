@@ -3,8 +3,12 @@ on:
   push:
     paths:
       - 'c-programming/file-io/practice/**'
+      - 'c-programming/file-io/index.html'
+      - 'c-programming/file-io/app.js'
+      - 'c-programming/file-io/ux-review.css'
       - 'tests/c-fileio-buffer-browser.mjs'
       - 'tests/c-fileio-core-browser.mjs'
+      - 'tests/c-fileio-ux-browser.mjs'
       - '.github/workflows/c-fileio-buffer.yml'
   workflow_dispatch:
 jobs:
@@ -20,6 +24,7 @@ jobs:
       - run: python3 -m http.server 8765 --bind 127.0.0.1 &
       - run: node tests/c-fileio-buffer-browser.mjs
       - run: node tests/c-fileio-core-browser.mjs
+      - run: node tests/c-fileio-ux-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -27,4 +32,5 @@ jobs:
           path: |
             qa-fileio-buffer-*.png
             qa-fileio-core-*.png
+            qa-fileio-ux-*.png
           retention-days: 7
