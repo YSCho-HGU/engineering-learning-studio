@@ -55,7 +55,7 @@ if(process.env.C_JOURNEY_BROWSER==='1'){
   const browser=await chromium.launch({headless:true});
   try{
    for(const kind of ['pointer','structure'])for(const width of [390,1280])for(const theme of ['light','dark']){
-    const page=await browser.newPage({viewport:{width,height:820}});
+    const page=await browser.newPage({viewport:{width,height:820},colorScheme:theme});
     const pageErrors=[];
     page.on('pageerror',e=>pageErrors.push(String(e)));
     await page.goto('http://127.0.0.1:8776/c-programming/'+kind+'/',{waitUntil:'domcontentloaded'});
@@ -76,6 +76,17 @@ if(process.env.C_JOURNEY_BROWSER==='1'){
     check((await page.locator('#lesson h2').innerText())===lessons.find(x=>x.kind===kind).data.lessons[7].title,kind+'/'+width+'/'+theme+': last lesson navigation');
     check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+6),kind+'/'+width+'/'+theme+': no horizontal overflow');
     check(pageErrors.length===0,kind+'/'+width+'/'+theme+': no JS page errors '+pageErrors.join(';'));
+    fs.mkdirSync('qa-output/c-journey-screens',{recursive:true});
+    await page.screenshot({path:'qa-output/c-journey-screens/'+kind+'-'+width+'-'+theme+'.png',fullPage:true});
+    await page.close();
+   }
+   for(const width of [390,1280])for(const theme of ['light','dark']){
+    const page=await browser.newPage({viewport:{width,height:820},colorScheme:theme});
+    const errs=[];page.on('pageerror',e=>errs.push(String(e)));
+    await page.goto('http://127.0.0.1:8776/c-programming/file-io/',{waitUntil:'domcontentloaded'});
+    check(await page.locator('h1').count()>0,'File I/O / '+width+'/'+theme+': header exists');
+    check(errs.length===0,'File I/O / '+width+'/'+theme+': no page errors '+errs.join(';'));
+    await page.screenshot({path:'qa-output/c-journey-screens/file-io-'+width+'-'+theme+'.png',fullPage:true});
     await page.close();
    }
    browserStatus='RAN';
