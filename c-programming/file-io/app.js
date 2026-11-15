@@ -15,8 +15,17 @@ const explanations = [
 "안전한 순서는 파일 열기 → NULL 확인 → 읽기 결과 확인 → fclose()입니다."
 ];
 let current=0;let done=new Set();
-try{const stored=JSON.parse(localStorage.getItem("els-fileio-progress-v1")||"[]");if(Array.isArray(stored))done=new Set(stored.filter(x=>Number.isInteger(x)&&x>=0&&x<8))}catch(e){}
-const persist=()=>{try{localStorage.setItem("els-fileio-progress-v1",JSON.stringify([...done]))}catch(e){}};
+try{
+ const newer=localStorage.getItem("els-fileio-progress-v2");
+ const stored=JSON.parse(newer ?? localStorage.getItem("els-fileio-progress-v1") ?? "[]");
+ if(Array.isArray(stored))done=new Set(stored.filter(x=>Number.isInteger(x)&&x>=0&&x<8));
+ if(newer===null){
+  done.delete(2);done.delete(4);
+  if(localStorage.getItem("els-fileio-integrated-m3-reflection")==="saved")done.add(2);
+  if(localStorage.getItem("els-fileio-integrated-m4-reflection")==="saved")done.add(4);
+ }
+}catch(e){}
+const persist=()=>{try{localStorage.setItem("els-fileio-progress-v2",JSON.stringify([...done]))}catch(e){}};
 window.addEventListener("els:labEvidence",e=>{const n=e.detail?.mission==="m3"?2:e.detail?.mission==="m4"?4:-1;if(n<0||e.detail?.state!=="reflected")return;done.add(n);persist();navigate(current,false);const status=$("step-status");if(status)status.textContent="예측·실험·설명 기록";});
 function navigate(i,doScroll=true){current=Math.max(0,Math.min(7,i));stages.forEach((s,j)=>s.hidden=j!==current);
 document.querySelectorAll("[data-nav]").forEach((b,j)=>{b.classList.toggle("current",j===current);b.classList.toggle("completed",done.has(j));if(j===current)b.setAttribute("aria-current","step");else b.removeAttribute("aria-current")});
