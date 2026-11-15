@@ -235,3 +235,12 @@
 .els-design .sensor-optional-tag{font-size:.75rem;font-weight:850;letter-spacing:.02em;color:var(--els-link)}
 .els-design .sensor-advanced-optional>.sensor-robust-lab{margin:0;border:0;border-top:1px solid var(--els-border);border-radius:0}
 @media(max-width:680px){.els-design .sensor-variable-change{grid-template-columns:1fr}.els-design .sensor-variable-change>small{grid-column:auto}}
+
+/* First-year lesson scope and deferred complete C listing */
+.els-design .sensor-course-scope{display:grid;gap:5px;margin:13px 0 18px;padding:12px 14px;border:1px solid var(--els-border);border-left:4px solid var(--els-link);border-radius:9px;background:var(--els-info-bg);color:var(--els-info-ink);font-size:.87rem;line-height:1.65}
+.els-design .sensor-course-scope strong{font-size:.97rem}
+.els-design .sensor-reference-code{margin:16px 0 18px;border:1px solid var(--els-border);border-radius:11px;background:var(--els-surface);overflow:hidden}
+.els-design .sensor-reference-code>summary{cursor:pointer;display:grid;gap:5px;padding:13px 16px;list-style-position:inside;background:var(--els-surface-alt);color:var(--els-ink)}
+.els-design .sensor-reference-code>summary strong{font-size:.96rem}
+.els-design .sensor-reference-code>summary span{font-size:.8rem;color:var(--els-muted)}
+.els-design .sensor-reference-code>.snippet{margin:0;border:0;border-top:1px solid var(--els-border);border-radius:0}
