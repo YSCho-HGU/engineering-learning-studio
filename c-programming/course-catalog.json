@@ -115,7 +115,7 @@
       "group": "memory",
       "url": "./pointer/",
       "published": true,
-      "description": "주소, 역참조, 포인터와 배열, 함수의 주소 전달",
+      "description": "값·주소, 포인터 역참조, swap, 배열·포인터 산술과 안전성 · 필수 6단계 + 선택 2단계",
       "book": "https://drive.google.com/file/d/1o7bzzH32a2gMwjFZ-SdYCtaUcdjxMK4H/view"
     },
     {
@@ -125,7 +125,7 @@
       "group": "memory",
       "url": "./structure/",
       "published": true,
-      "description": "struct와 typedef, 멤버 접근, 구조체 배열",
+      "description": "struct·typedef, 멤버 접근, 구조체 배열·함수 전달·복사 · 필수 6단계 + 선택 2단계",
       "book": "https://drive.google.com/file/d/1lINKdMeBQgnnnfisq8ekTLCntl4QJI4A/view"
     },
     {
@@ -144,7 +144,7 @@
       "group": "memory",
       "url": "./file-io/",
       "published": true,
-      "description": "파일 열기, Stream, EOF, 레코드와 센서 로그",
+      "description": "Stream, 파일 열기·읽기·쓰기, EOF·오류 처리와 센서 로그 · 코딩 P1–P2 우선",
       "book": "https://drive.google.com/file/d/1gnBNypCu4ntdnffhvf_mQ4g6gyfjLCzV/view"
     },
     {
@@ -154,7 +154,7 @@
       "group": "memory",
       "url": "./dynamic-memory/",
       "published": true,
-      "description": "malloc, free, 포인터와 동적 배열 · 필수 4단계 + 선택 4단계"
+      "description": "malloc·free와 포인터·동적 배열 · 필수 4단계 + 선택 4단계"
     },
     {
       "id": "182",
