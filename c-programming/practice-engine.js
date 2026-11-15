@@ -18,7 +18,7 @@ pointer:[
  ["printf","*p"],["*a","*b","temp"],["sum","for","*"],["out","for","if"],["i","if","printf"],["samples","for","printf"]
 ],
 structure:[
- ["Student","printf"],["Student *","->score"],["Student","for","score"],["Student","for","score"],["Student","=","->"],["fopen","fprintf","fscanf","fclose"]
+ ["Student","printf"],["Student *","->score"],["Student","for","score"],["Student","for","score"],["Student","b.score","printf"],["fopen","fprintf","fscanf","fclose"]
 ],
 "dynamic-memory":[["malloc","sizeof","free"],["malloc","p[","free"],["free","NULL"],["calloc","free"],["realloc","free"],["Sensor","malloc","free"]]};
 rulebook.arrays=[
