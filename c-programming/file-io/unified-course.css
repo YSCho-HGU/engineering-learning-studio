@@ -65,3 +65,48 @@
 .els-design .stage .lesson code,.els-design .stage .lesson pre{font-variant-ligatures:none!important;font-feature-settings:"liga" 0,"calt" 0!important}
 @media(max-width:870px){.els-design .stage .grid{grid-template-columns:1fr}.els-design .stage .prediction-box fieldset{grid-template-columns:1fr}}
 @media(max-width:600px){.els-design .stage .learning-map{grid-template-columns:repeat(2,1fr)}.els-design .stage .actions button{flex:1 1 44%}.els-design .stage .step{padding:13px}.els-design .stage .focus-banner{display:block}.els-design .stage .code-box{max-height:350px}}
+
+/* Stage 07 · sensor log file and code visual hierarchy */
+.els-design .sensor-format{
+ margin:17px 0 19px;
+ background:var(--els-surface)!important;
+ color:var(--els-ink)!important;
+ padding:18px;
+}
+.els-design .sensor-format-head{
+ display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap;
+}
+.els-design .sensor-format-head strong{font-size:.97rem}
+.els-design .sensor-format-head p{font-size:.83rem;margin:3px 0;color:var(--els-muted)}
+.els-design .sensor-format-head a,.els-design .stage .snippet>a{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:44px;padding:9px 12px;border-radius:9px;
+ border:1px solid var(--els-link);font-weight:750;color:var(--els-link);
+ text-decoration:none;background:var(--els-surface);
+}
+.els-design .sensor-file-contents{
+ padding:18px;background:var(--els-code-bg)!important;color:var(--els-code-ink)!important;
+ font:600 16px/1.75 Consolas,"Liberation Mono",monospace;
+ border-radius:10px;margin:12px 0;white-space:pre;overflow-x:auto;
+ font-feature-settings:"liga" 0,"calt" 0!important;
+}
+.els-design .sensor-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:13px 0}
+.els-design .sensor-fields>div{
+ border:1px solid var(--els-border);border-radius:10px;background:var(--els-surface-alt);
+ padding:12px 13px;display:grid;gap:2px;min-width:0;
+}
+.els-design .sensor-fields strong{font-size:.9rem;color:var(--els-ink)}
+.els-design .sensor-fields span{font-size:.81rem;color:var(--els-muted)}
+.els-design .sensor-fields code{font-size:.89rem;color:var(--els-link)}
+.els-design .sensor-format>p{line-height:1.8;color:var(--els-ink);font-size:.9rem}
+.els-design .sensor-expected{
+ border-left:4px solid var(--els-link);background:var(--els-info-bg);color:var(--els-info-ink);
+ padding:12px 14px;border-radius:8px;display:grid;gap:4px;
+}
+.els-design .sensor-code-notes{font-size:.88rem;color:var(--els-ink);line-height:1.75;margin:12px 0}
+.els-design .stage .snippet:has(.sensor-code-notes){padding-bottom:16px}
+.els-design .stage .snippet:has(.sensor-code-notes)>pre{
+ white-space:pre;overflow-x:auto;max-height:none;
+ color:var(--els-code-ink);
+}
+@media(max-width:630px){.els-design .sensor-fields{grid-template-columns:1fr}.els-design .sensor-format{padding:13px}}
