@@ -110,3 +110,30 @@
  color:var(--els-code-ink);
 }
 @media(max-width:630px){.els-design .sensor-fields{grid-template-columns:1fr}.els-design .sensor-format{padding:13px}}
+
+/* Step 07: interactive sensor text input and trace, shared accessible theme tokens */
+.els-design .sensor-editor-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin:14px 0}
+.els-design .sensor-editor-toolbar>.field{flex:1 1 220px;min-width:190px}
+.els-design .sensor-editor-toolbar>button{padding:10px 13px;border:1px solid var(--els-border);border-radius:9px;color:var(--els-ink);background:var(--els-surface);font-weight:650}
+.els-design .sensor-editor-label{display:block;font-weight:800;color:var(--els-ink);margin:14px 0 6px}
+.els-design .sensor-file-editor{display:block;width:100%;min-height:165px;resize:vertical;padding:15px 17px;line-height:1.75;font-size:16px;font-family:Consolas,"Liberation Mono",monospace!important;background:var(--els-code-bg)!important;color:var(--els-code-ink)!important;border:2px solid var(--els-border);border-radius:11px;white-space:pre;tab-size:4;font-variant-ligatures:none!important;font-feature-settings:"liga" 0,"calt" 0!important}
+.els-design .sensor-execute-controls{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:13px 0}
+.els-design .sensor-execution-label{font-size:.82rem;font-weight:750;color:var(--els-muted)}
+.els-design #sensor-run{background:var(--els-primary)!important;color:var(--els-primary-text)!important;border:1px solid var(--els-primary);border-radius:8px;padding:11px 16px;font-weight:800;min-height:44px}
+.els-design .sensor-run-status{border:1px solid var(--els-border);background:var(--els-info-bg);color:var(--els-info-ink);border-radius:9px;padding:11px 14px;font-weight:650}
+.els-design .sensor-run-status[data-state=error]{border-left:4px solid var(--els-warning)}
+.els-design .sensor-run-status[data-state=ok]{border-left:4px solid var(--els-success)}
+.els-design .sensor-output-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}
+.els-design .sensor-output{border:1px solid var(--els-border);background:var(--els-surface-alt);padding:12px;border-radius:10px;min-width:0}
+.els-design .sensor-output>strong{display:block;font-size:.84rem;color:var(--els-ink);margin-bottom:6px}
+.els-design .sensor-output>pre{font:14px/1.7 Consolas,"Liberation Mono",monospace;background:var(--els-code-bg);color:var(--els-code-ink);border-radius:7px;min-height:84px;max-height:240px;overflow:auto;padding:12px;white-space:pre-wrap;overflow-wrap:anywhere;font-variant-ligatures:none}
+.els-design .sensor-scan-panel{border:1px solid var(--els-border);border-radius:10px;padding:13px;margin:12px 0;background:var(--els-surface)}
+.els-design .sensor-scan-panel>strong{color:var(--els-ink)}
+.els-design .sensor-trace{max-height:290px;overflow-y:auto;display:grid;gap:5px;margin:9px 0}
+.els-design .sensor-trace-row{background:var(--els-surface-alt);border-left:3px solid var(--els-link);border-radius:7px;padding:8px 10px;display:grid;gap:2px}
+.els-design .sensor-trace-row strong{font-family:Consolas,"Liberation Mono",monospace;font-size:.8rem;color:var(--els-ink)}
+.els-design .sensor-trace-row span{font-size:.85rem;color:var(--els-muted)}
+.els-design .sensor-trace-terminal{border-left-color:var(--els-warning)}
+.els-design .sensor-practice-note{margin:12px 0 14px;border-left:4px solid var(--els-link);background:var(--els-info-bg);color:var(--els-info-ink);padding:12px 14px;border-radius:8px;font-size:.85rem;line-height:1.8}
+.els-design .sensor-editor-toolbar button:hover,.els-design #sensor-run:hover{filter:brightness(.95)}
+@media(max-width:680px){.els-design .sensor-output-grid{grid-template-columns:1fr}.els-design .sensor-editor-toolbar>button{flex:1 1 200px}}
