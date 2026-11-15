@@ -217,6 +217,19 @@ html{scroll-padding-top:90px}#roadmap{scroll-margin-top:90px}
 @media(max-width:760px){.unit-grid{grid-template-columns:1fr}.unit{min-height:76px;padding:13px}.unit .details strong{font-size:14px}}
 @media(max-width:390px){.unit{gap:8px}.unit .id{font-size:12px;min-width:38px}.unit .unit-action{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.path-card,.unit-live{transition:none}}
+
+/* Course overview: 18 chapters in four curriculum stages. */
+.course-groups{padding:16px;display:grid;gap:22px;border-top:1px solid var(--border)}
+.course-group{min-width:0}
+.course-group+.course-group{border-top:1px solid var(--border);padding-top:19px}
+.course-group-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:11px}
+.course-group-kicker{display:block;color:var(--accent);font-size:10px;font-weight:850;letter-spacing:.09em}
+.course-group-head h3{font-size:18px;line-height:1.35;margin:4px 0 2px;letter-spacing:-.015em}
+.course-group-head p{font-size:12px;color:var(--muted);margin:0}
+.course-group-count{font-size:11px;color:var(--muted);white-space:nowrap;flex-shrink:0;border:1px solid var(--border);border-radius:30px;padding:4px 9px}
+.course-groups .unit-grid{padding:0;border-top:0;gap:9px}
+@media(max-width:590px){.course-groups{padding:12px;gap:17px}.course-group+.course-group{padding-top:16px}.course-group-head h3{font-size:16px}.course-group-head p{font-size:11px}.course-group-count{font-size:10px}.course-groups .unit-grid{grid-template-columns:1fr}}
+
 </style><link rel="stylesheet" href="../assets/els-theme-v2.css?v=3"></head>
 <body>
 <header class="site-header"><div class="wrap header-inner">
@@ -238,7 +251,7 @@ html{scroll-padding-top:90px}#roadmap{scroll-margin-top:90px}
  <div class="method-step"><b>01 Understand</b><span>핵심 개념 이해</span></div><div class="method-step"><b>02 Predict</b><span>실행 결과 예측</span></div><div class="method-step"><b>03 Explore</b><span>변수를 바꾸어 실험</span></div><div class="method-step"><b>04 Practice</b><span>코드 작성과 디버깅</span></div><div class="method-step"><b>05 Check</b><span>결과 설명과 점검</span></div>
 </div></section>
 <section class="roadmap" id="roadmap" aria-labelledby="roadmap-title"><div class="section-top"><div><div class="overline">COURSE OVERVIEW</div><h2 id="roadmap-title">전체 강의 로드맵</h2><p>기초 문법에서 포인터·파일 처리, 자료구조와 종합 프로젝트까지</p></div></div>
- <details class="roadmap-panel" id="course-overview-details"><summary><span>전체 18개 단원 보기 <span class="hint">· 현재 학습 가능한 단원은 바로 이동할 수 있습니다.</span></span><span class="chevron">⌄</span></summary><div class="unit-grid" id="units"></div></details>
+ <details class="roadmap-panel" id="course-overview-details"><summary><span>전체 18개 단원 · 4개 학습 영역 <span class="hint">· 공개된 단원은 카드 전체를 눌러 학습할 수 있습니다.</span></span><span class="chevron">⌄</span></summary><div class="course-groups" id="units"></div></details>
  <p class="disclosure">교재 링크는 Google Drive 공유 권한이 필요할 수 있습니다. 학습 완료 기록은 사용 중인 브라우저에 저장됩니다. 준비 중인 단원은 공개 후 학습 카드로 자동 추가할 수 있습니다.</p>
 </section></main>
 <footer class="site-footer"><div class="wrap">C Programming · Engineering Learning Studio · 2026</div></footer>
@@ -253,10 +266,23 @@ const current={
 const available=Object.entries(current).map(([id,chapter])=>({id,...chapter,name:units.find(row=>row[0]===id)?.[1]||id})).sort((a,b)=>a.chapter-b.chapter);
 document.getElementById("available-count").textContent=available.length+"개 단원 공개";
 document.getElementById("available-chapters").innerHTML=available.map(ch=>'<article class="path-card"><span class="number">'+ch.chapter+' / Chapter '+ch.chapter+'</span><h3>'+ch.name+'</h3><p>'+ch.description+'</p><a class="open stretch-link" href="'+ch.url+'" aria-label="Chapter '+ch.chapter+' '+ch.name+' 학습 열기">학습 시작 <span aria-hidden="true">→</span></a><div class="resource-links">'+(ch.book?'<a href="'+ch.book+'" target="_blank" rel="noopener noreferrer">교재 '+ch.id+' ↗</a>':'')+'</div></article>').join("");
-document.getElementById("units").innerHTML=units.map(([n,name])=>{
- const c=current[n],body='<span class="id">'+n+'</span><span class="details"><strong>'+name+'</strong><small>'+(c?(n==="181"?"필수 4단계 · 선택 심화 4단계":"인터랙티브 학습 공개"):"학습 콘텐츠 준비 중")+'</small></span>';
- return c?'<a class="unit unit-live" href="'+c.url+'" aria-label="'+name+' 학습 열기">'+body+'<span class="unit-action">학습 열기 →</span></a>':'<article class="unit unit-pending">'+body+'<span class="pending">준비 중</span></article>';
+const chapterGroups=[
+ {title:"기초 문법",en:"FOUNDATIONS",description:"입출력과 연산, 조건문, 반복문",ids:["101","110","121","122","123"]},
+ {title:"배열 · 함수",en:"DATA & FUNCTIONS",description:"배열, 문자열, 라이브러리 함수와 사용자 정의 함수",ids:["131","132","133","141"]},
+ {title:"포인터 · 구조체 · 메모리",en:"POINTERS & MEMORY",description:"포인터와 구조체를 기반으로 파일 처리와 동적 메모리까지 확장",ids:["151","161","169","171","181"]},
+ {title:"자료구조 · 종합 응용",en:"ADVANCED & INTEGRATION",description:"연결 리스트, 저수준 C, 통합 실습과 CRUD 프로젝트",ids:["182","191","201","202"]}
+];
+const unitMap=new Map(units);
+document.getElementById("units").innerHTML=chapterGroups.map((group,index)=>{
+ const entries=group.ids.map(id=>{
+  const name=unitMap.get(id),c=current[id];
+  const body='<span class="id">'+id+'</span><span class="details"><strong>'+name+'</strong><small>'+(c?(id==="181"?"필수 4단계 · 선택 심화 4단계":"인터랙티브 학습 공개"):"학습 콘텐츠 준비 중")+'</small></span>';
+  return c?'<a class="unit unit-live" href="'+c.url+'" aria-label="'+name+' 학습 열기">'+body+'<span class="unit-action">학습 열기 →</span></a>':'<article class="unit unit-pending">'+body+'<span class="pending">준비 중</span></article>';
+ }).join("");
+ const ready=group.ids.filter(id=>Boolean(current[id])).length;
+ return '<section class="course-group" aria-labelledby="course-group-'+index+'"><div class="course-group-head"><div><span class="course-group-kicker">'+String(index+1).padStart(2,"0")+' · '+group.en+'</span><h3 id="course-group-'+index+'">'+group.title+'</h3><p>'+group.description+'</p></div><span class="course-group-count">'+ready+' / '+group.ids.length+' 공개</span></div><div class="unit-grid">'+entries+'</div></section>';
 }).join("");
+
 function openCourseOverview(){
  const details=document.getElementById("course-overview-details");
  details.open=true;
