@@ -75,3 +75,32 @@ GitHub Actions: `.github/workflows/c-journey-qa.yml`; results in `qa-output/c-jo
 - **Important:** GitHub source changes are verified, but GitHub Pages URLs and workflow output were inaccessible from the available browser/network tools. Local Chromium/GCC binaries exist in the runtime, but repository checkout failed due DNS restrictions. Do **not** claim a successful real Chromium screenshot inspection or production deployment.
 - Release gate **Q1 browser verification: PENDING** until 12 screenshots and report from `c-journey-qa` are actually available and reviewed.
 - Release gate **Q2 memory diagram implementation: SOURCE VERIFIED**, interactive presentation pending Chromium confirmation.
+
+## 2026-11-15 — Q1 arrays/structures + Q3 GCC cross-verification
+
+### New memory layout learning panels
+- Pointer: arrays show a[0], a[1], a[2], symbolic offset `i * sizeof(int)`. The teaching example discusses 4-byte int only as a conditional illustration.
+- Structure: Student/record examples show member fields and `offsetof`-based symbolic offsets, structure array stride `sizeof(struct S)`, pointer-to-struct relationships, and explicit padding/alignment uncertainties.
+- All panels use the existing responsive UI, are independent of the numerical JavaScript demo values, and carry portability caveats.
+- Existing 16 step-by-step C traces and all 12 practice prompts remain untouched.
+
+### Executed GCC validation
+A local GCC C11 run was performed for **16 semantically equivalent reproductions** of the published examples with `-std=c11 -Wall -Wextra -Wpedantic -Werror`. **16/16 compiled and produced their specified outputs.** The original website lesson `data.js` bytes could not be checked out into this runtime because GitHub DNS was unavailable. Therefore this is a **strong independent mathematical/semantic cross-check**, but it is **not a byte-for-byte compile of all published source snippets**. The repository's `tests/c-journey-qa.mjs` is configured to compile the exact published lesson snippets in CI; its completed run artifacts are still pending.
+
+Observed local GCC/ABI layout:
+- `sizeof(int)=4`; a[1] byte displacement 4, a[2] displacement 8.
+- `struct S {char flag; int value;}`: size 8, `flag` offset 0, `value` offset 4.
+- `struct Student {int id; double score;}`: size 16, `id` offset 0, `score` offset 8.
+
+**These values are observations for the local test platform, not universal C standard guarantees.**
+
+### Evidence/gates
+| Gate | Outcome |
+|---|---|
+| Reproduced C11 snippets compiled and ran | 16/16 PASS |
+| Representative layout probes compiled and ran | PASS, values captured |
+| Source design and authored layout references | Implemented |
+| Exact source-snippet CI execution | PENDING workflow artifacts |
+| Actual Chromium Light/Dark/mobile screenshot approval | PENDING workflow artifacts |
+
+Cross-verification report is separately available as `c_journey_gcc_validation.json` in the working session output, not committed to the website repository.
