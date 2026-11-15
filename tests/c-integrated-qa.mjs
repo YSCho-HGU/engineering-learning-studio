@@ -43,7 +43,7 @@ if(process.env.C_JOURNEY_BROWSER==="1"){
   browser=await chromium.launch({headless:true});
   for(const kind of ["pointer","structure"]){
    const page=await browser.newPage({viewport:{width:390,height:850}});
-   const errors=[];page.on("pageerror",e=>errors.push(String(e)));
+   const errors=[];page.on("pageerror",e=>errors.push(String(e)));page.on("response",r=>{if(r.status()>=400)errors.push("HTTP "+r.status()+" "+r.url())});
    await page.goto("http://127.0.0.1:8876/"+base+kind+"/",{waitUntil:"domcontentloaded"});
    assert(await page.locator("#lesson-nav button").count()===8,kind+" 8 working steps");
    const conceptIndex=course[kind].lessons[0].quiz.correct;
@@ -57,7 +57,7 @@ if(process.env.C_JOURNEY_BROWSER==="1"){
    assert(errors.length===0,kind+" no runtime errors "+errors.join(";"));
    await page.close();
    const practice=await browser.newPage({viewport:{width:390,height:850}});
-   const practiceErrors=[];practice.on("pageerror",e=>practiceErrors.push(String(e)));
+   const practiceErrors=[];practice.on("pageerror",e=>practiceErrors.push(String(e)));practice.on("response",r=>{if(r.status()>=400)practiceErrors.push("HTTP "+r.status()+" "+r.url())});
    await practice.goto("http://127.0.0.1:8876/"+base+kind+"/practice/",{waitUntil:"domcontentloaded"});
    assert(await practice.locator(".cp-nav-item").count()===6,kind+" 6 selectable coding exercises");
    const draft="/* TODO removed */\n#include <stdio.h>\nint main(void){return 0;}";
@@ -73,7 +73,7 @@ if(process.env.C_JOURNEY_BROWSER==="1"){
    await practice.close();
   }
   const fileio=await browser.newPage({viewport:{width:390,height:850}});
-  const fileioErrors=[];fileio.on("pageerror",e=>fileioErrors.push(String(e)));
+  const fileioErrors=[];fileio.on("pageerror",e=>fileioErrors.push(String(e)));fileio.on("response",r=>{if(r.status()>=400)fileioErrors.push("HTTP "+r.status()+" "+r.url())});
   await fileio.goto("http://127.0.0.1:8876/"+base+"file-io/",{waitUntil:"domcontentloaded"});
   await fileio.locator('input[name="q0"][value="b"]').check();
   await fileio.locator('[data-grade="0"]').click();
@@ -88,8 +88,10 @@ if(process.env.C_JOURNEY_BROWSER==="1"){
   assert(!(await filePractice.locator("#gcc-confirm").isChecked()),"File I/O code edit revokes GCC self-report");
   await filePractice.close();
   const page=await browser.newPage();
+  const dashboardErrors=[];page.on("pageerror",e=>dashboardErrors.push(String(e)));page.on("response",r=>{if(r.status()>=400)dashboardErrors.push("HTTP "+r.status()+" "+r.url())});
   await page.goto("http://127.0.0.1:8876/"+base+"learning-journey/",{waitUntil:"domcontentloaded"});
   assert(await page.locator("[data-course]").count()===3,"integrated dashboard renders all courses");
+  assert(dashboardErrors.length===0,"integrated dashboard no missing resources or JS errors "+dashboardErrors.join(";"));
   await page.close();
   browserStatus="RAN";
  }catch(e){assert(false,"Browser integration test failed: "+String(e))}
