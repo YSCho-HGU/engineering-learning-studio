@@ -18,6 +18,22 @@ structure:[
  ["Student","printf"],["Student *","->score"],["Student","for","score"],["Student","for","score"],["Student","=","->"],["fopen","fprintf","fscanf","fclose"]
 ],
 "dynamic-memory":[["malloc","sizeof","free"],["malloc","p[","free"],["free","NULL"],["calloc","free"],["realloc","free"],["Sensor","malloc","free"]]};
+rulebook.arrays=[
+ ["for","sum","printf"],["max","for","printf"],["f[","for","printf"],
+ ["for","printf"],["m[","for","printf"],["double","for","printf"]
+];
+rulebook.strings=[
+ ["char","printf"],["strlen","printf"],["strcmp","printf"],
+ ["for","printf"],["fgets","sizeof"],["for","printf"]
+];
+rulebook["standard-library"]=[
+ ["abs","printf"],["sqrt","printf"],["toupper","printf"],
+ ["isdigit","printf"],["srand","rand"],["fabs","printf"]
+];
+rulebook.functions=[
+ ["add","return"],["triple","return"],["max2","return"],
+ ["positives","for"],["avg","return"],["add","multiply"]
+];
 const rules=rulebook[d.slug]||[];
 function assess(code,idx){
  const findings=[];
