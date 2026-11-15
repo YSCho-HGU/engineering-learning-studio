@@ -9,22 +9,22 @@ for(const width of [390,1280]){
  await page.goto('http://127.0.0.1:8765/c-programming/',{waitUntil:'networkidle'});
  const cards=page.locator('#available-chapters .path-card');
  await page.locator('#available-count').waitFor({state:'visible'});
- await page.waitForFunction(()=>document.querySelectorAll('#available-chapters .path-card').length===4);
- if(await cards.count()!==4)problems.push(width+' expected four available chapter cards');
+ await page.waitForFunction(()=>document.querySelectorAll('#available-chapters .path-card').length===8);
+ if(await cards.count()!==8)problems.push(width+' expected eight available chapter cards');
  const catalogResponse=await page.request.get('http://127.0.0.1:8765/c-programming/course-catalog.json');
  const catalog=await catalogResponse.json();
- if(catalog.chapters.length!==18||catalog.chapters.filter(c=>c.published).length!==4)problems.push(width+' catalog public state mismatch');
+ if(catalog.chapters.length!==18||catalog.chapters.filter(c=>c.published).length!==8)problems.push(width+' catalog public state mismatch');
  if(!catalog.chapters.every(c=>/^\.\/[a-z0-9-]+\/$/.test(c.url)))problems.push(width+' invalid catalog route');
 
  const chapters=await cards.locator('.number').allTextContents();
- if(chapters.join('|')!=='15 / Chapter 15|16 / Chapter 16|17 / Chapter 17|18 / Chapter 18')problems.push(width+' order incorrect: '+chapters);
+ if(chapters.join('|')!=='13 / Chapter 13|13 / Chapter 13|13 / Chapter 13|14 / Chapter 14|15 / Chapter 15|16 / Chapter 16|17 / Chapter 17|18 / Chapter 18')problems.push(width+' order incorrect: '+chapters);
  if(await page.getByText('세 단원을 하나의 흐름으로').count())problems.push(width+' obsolete heading');
  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+3))problems.push(width+' home horizontal scroll');
 
  if(await page.locator('a[href*="quick-labs"]').count())problems.push(width+' unexpected Quick Labs link');
  const fullUnit=page.locator('#units a.unit-live');
- if(await fullUnit.count()!==4)problems.push(width+' expected 4 fully linked roadmap cards');
- if(await fullUnit.first().getAttribute('href')!=='./pointer/')problems.push(width+' roadmap card destination incorrect');
+ if(await fullUnit.count()!==8)problems.push(width+' expected 8 fully linked roadmap cards');
+ if(await fullUnit.first().getAttribute('href')!=='./arrays/')problems.push(width+' roadmap card destination incorrect');
  if(await page.locator('#course-overview-details').evaluate(e=>e.open))problems.push(width+' overview should begin collapsed');
  await page.locator('#course-roadmap-link').click();
  if(!await page.locator('#course-overview-details').evaluate(e=>e.open))problems.push(width+' roadmap link did not open overview');
@@ -34,14 +34,14 @@ for(const width of [390,1280]){
  const groupCounts=await page.locator('#units .course-group .unit').count();
  if(groupCounts!==18)problems.push(width+' grouped course count mismatch');
  const liveCards=page.locator('#units a.unit-live'),pendingCards=page.locator('#units article.unit-pending');
- if(await liveCards.count()!==4)problems.push(width+' 4 published cards required');
- if(await pendingCards.count()!==14)problems.push(width+' 14 pending cards required');
+ if(await liveCards.count()!==8)problems.push(width+' 8 published cards required');
+ if(await pendingCards.count()!==10)problems.push(width+' 10 pending cards required');
  if(await page.locator('.course-availability .availability-item').count()!==2)problems.push(width+' status legend missing');
- if(await page.locator('#available-overview-count').innerText()!=='4개')problems.push(width+' published count mismatch');
- if(await page.locator('#pending-overview-count').innerText()!=='14개')problems.push(width+' pending count mismatch');
+ if(await page.locator('#available-overview-count').innerText()!=='8개')problems.push(width+' published count mismatch');
+ if(await page.locator('#pending-overview-count').innerText()!=='10개')problems.push(width+' pending count mismatch');
  if(await pendingCards.locator('a').count())problems.push(width+' pending cards must not contain links');
- if(await liveCards.locator('.unit-status.live').count()!==4)problems.push(width+' published badges missing');
- if(await pendingCards.locator('.unit-status.pending').count()!==14)problems.push(width+' pending badges missing');
+ if(await liveCards.locator('.unit-status.live').count()!==8)problems.push(width+' published badges missing');
+ if(await pendingCards.locator('.unit-status.pending').count()!==10)problems.push(width+' pending badges missing');
 
  await page.goto('http://127.0.0.1:8765/c-programming/#roadmap',{waitUntil:'networkidle'});
  if(!await page.locator('#course-overview-details').evaluate(e=>e.open))problems.push(width+' direct #roadmap link did not open overview');
