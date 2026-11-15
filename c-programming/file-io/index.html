@@ -2,32 +2,31 @@
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="C Programming Chapter 7 File I/O Self-Study: streams, files, EOF, records and sensor logs.">
 <title>Chapter 7 · File I/O Learning Journey</title>
-<link rel="stylesheet" href="./style.css?v=20261115contrast3"></head><body>
+<link rel="stylesheet" href="./style.css?v=20261115contrast3"><link rel="stylesheet" href="../../assets/design-system.css?v=1"><link rel="stylesheet" href="./unified-course.css?v=1"></head><body class="els-design">
 <a class="skip" href="#lesson">학습 본문으로 건너뛰기</a>
-<header class="topbar"><a class="brand" href="../">◈ C Programming <small>/ Learning Studio</small></a><div class="toplinks"><a href="../">C Learning Home</a><a href="https://drive.google.com/file/d/1pQoUv5072-RW6k7vnjDQULbp1qVNQRDq/view" target="_blank" rel="noopener">교재 171 ↗</a><button id="theme-button" aria-label="Toggle dark mode">◐ Theme</button></div></header>
-<div class="course-header"><div class="eyebrow">2026 · CHAPTER 7 · SELF-STUDY COURSE</div><h1>File I/O <span>Learning Journey</span></h1><p>프로그램이 종료되어도 데이터를 남기려면? Stream의 원리를 이해하고, 실제 센서 로그 프로그램까지 단계별로 완성해 보세요.</p><div class="course-meta"><span>8개의 학습 단계</span><span>실험 + 코드 분석 + 자기점검</span><span>교재: 171_C_File_IO_Rev8</span></div></div>
-<div style="max-width:1340px;margin:18px auto 0;padding:15px 22px;background:light-dark(#e6f4ff,#203b55);border:1px solid #498dc0;border-radius:14px"><strong>NEW · M3/M4 Learning Pilot</strong><p style="margin:4px 0 8px">파일 모드와 EOF의 예측 → 단계별 코드 Trace → 오류 원인 설명을 연습하는 시범 콘텐츠입니다. 이 페이지의 기존 8단계 코스는 계속 사용할 수 있습니다.</p><a href="./pilot/" style="font-weight:800">새 M3/M4 시범 모듈 열기 →</a></div>
+<header class="topbar"><a class="brand" href="../">◈ C Programming <small>/ Learning Studio</small></a><div class="toplinks"><a href="../">C Learning Home</a><a href="https://drive.google.com/file/d/1pQoUv5072-RW6k7vnjDQULbp1qVNQRDq/view" target="_blank" rel="noopener">교재 171 ↗</a><button id="theme-button" aria-label="Toggle dark mode" aria-pressed="false">◐ Theme</button></div></header>
+<div class="course-header"><div class="eyebrow">2026 · CHAPTER 7 · SELF-STUDY COURSE</div><h1>File I/O <span>Learning Journey</span></h1><p>프로그램이 종료되어도 데이터를 남기려면? Stream의 원리를 이해하고, 실제 센서 로그 프로그램까지 단계별로 완성해 보세요.</p><div class="course-meta"><span>8개의 연결된 학습 단계</span><span>실험 + 코드 분석 + 자기점검</span><span>교재: 171_C_File_IO_Rev8</span></div></div>
 <section class="learning-route" aria-label="File I/O three-phase learning route">
 <div class="route-heading"><strong>학습 로드맵 · 3-Phase Learning</strong><span>교재 171 · Chapter 7</span></div>
 <div class="route-cards">
-<article class="route-card"><div class="route-number">01 · BEFORE CLASS</div><h2>예습 · 개념 이해</h2><p>Stream, 파일 모드, 읽기 반환값과 EOF를 학습하고 실행 결과를 먼저 예측합니다.</p><strong>활동:</strong> 현재 페이지 1~5단계</article>
-<article class="route-card"><div class="route-number">02 · IN CLASS</div><h2>실습 · 실행 흐름 탐색</h2><p>구조체 저장과 센서 로그를 실험하고, 파일 형식과 오류 처리 과정을 설명합니다.</p><strong>활동:</strong> 현재 페이지 6~8단계</article>
+<article class="route-card"><div class="route-number">01 · BEFORE CLASS</div><h2>예습 · 개념 이해</h2><p>Stream, 파일 모드, 읽기 반환값과 EOF를 학습하고 실행 결과를 먼저 예측합니다.</p><strong>활동:</strong> 01~05 개념·예측·실험</article>
+<article class="route-card"><div class="route-number">02 · IN CLASS</div><h2>실습 · 실행 흐름 탐색</h2><p>구조체 저장과 센서 로그를 실험하고, 파일 형식과 오류 처리 과정을 설명합니다.</p><strong>활동:</strong> 06~08 응용·평가</article>
 <article class="route-card"><div class="route-number">03 · AFTER CLASS</div><h2>자기평가 · 직접 코딩</h2><p>교재 §7.7.3의 P1~P6를 직접 작성합니다. 참조 출력과 비교하고 GCC로 실행해 확인합니다.</p><a class="practice-link" href="./practice/">P1~P6 Coding Practice 열기 →</a></article>
 </div>
 <p class="route-note">학습 성취 기준: 개념 확인은 출발점이며, 실제 C 코드의 컴파일·실행·오류 수정까지 수행해야 과제를 완료한 것으로 판단합니다.</p>
 </section>
 <div class="shell">
 <aside class="sidebar" aria-label="학습 단계">
-  <div class="progress-panel"><div class="progress-line"><strong>My Progress</strong><output id="progress-text" aria-live="polite">0 / 8</output></div><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0" id="progress-meter"><span id="progress-fill"></span></div><small>각 단계의 핵심 확인 문제를 풀면 완료 표시됩니다. 진도는 이 브라우저에만 저장됩니다.</small></div>
+  <div class="progress-panel"><div class="progress-line"><strong>My Progress</strong><output id="progress-text" aria-live="polite">0 / 8</output></div><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0" id="progress-meter"><span id="progress-fill"></span></div><small>개념 확인과 예측·설명은 별도 학습 증거입니다. 저장은 이 브라우저에만 적용됩니다.</small></div>
   <nav class="lesson-nav" id="lesson-nav">
   <button data-nav="0" class="current"><span class="num">01</span><span>왜 파일이 필요한가?<small>Motivation & persistence</small></span><span class="done" aria-hidden="true"></span></button>
   <button data-nav="1"><span class="num">02</span><span>Stream과 FILE *<small>Input / Output model</small></span><span class="done" aria-hidden="true"></span></button>
-  <button data-nav="2"><span class="num">03</span><span>파일 열기와 모드<small>fopen · r · w · a</small></span><span class="done" aria-hidden="true"></span></button>
+  <button data-nav="2"><span class="num">03</span><span>파일 모드 예측·실험<small>fopen · r · w · a</small></span><span class="done" aria-hidden="true"></span></button>
   <button data-nav="3"><span class="num">04</span><span>텍스트 읽기·쓰기<small>fprintf · fscanf · fgets</small></span><span class="done" aria-hidden="true"></span></button>
-  <button data-nav="4"><span class="num">05</span><span>EOF와 안전한 반복문<small>Return values · trace</small></span><span class="done" aria-hidden="true"></span></button>
+  <button data-nav="4"><span class="num">05</span><span>EOF와 오류 진단<small>fscanf · feof · ferror</small></span><span class="done" aria-hidden="true"></span></button>
   <button data-nav="5"><span class="num">06</span><span>Structure 레코드 저장<small>Serialize & load</small></span><span class="done" aria-hidden="true"></span></button>
   <button data-nav="6"><span class="num">07</span><span>센서 로그 분석<small>Real engineering data</small></span><span class="done" aria-hidden="true"></span></button>
-  <button data-nav="7"><span class="num">08</span><span>종합 성취 확인<small>Mastery & mini challenge</small></span><span class="done" aria-hidden="true"></span></button>
+  <button data-nav="7"><span class="num">08</span><span>종합 개념 확인<small>Concept check · build</small></span><span class="done" aria-hidden="true"></span></button>
   </nav>
   <button class="text-button" id="clear-progress">학습 진도 초기화</button>
 </aside>
@@ -53,28 +52,16 @@ if (fp != NULL) {
 <div class="check" data-check="1"><div class="check-eyebrow">CHECK YOURSELF · 7.2</div><h3><code>FILE *fp</code>가 의미하는 것은?</h3><label><input type="radio" name="q1" value="a"> 파일 이름을 저장하는 문자 배열</label><label><input type="radio" name="q1" value="b"> 열린 Stream을 다루기 위한 포인터</label><label><input type="radio" name="q1" value="c"> 파일의 데이터 크기를 저장하는 정수</label><button class="check-btn" data-grade="1">답 확인 및 설명</button><div class="answer" id="answer-1" aria-live="polite"></div></div>
 </section>
 <section class="stage" data-stage="2" hidden>
-<div class="topic">7.3 · FILE MODES &amp; RESOURCE MANAGEMENT</div>
-<h2>파일 모드에 따라 C 프로그램의 실행 경로가 달라집니다</h2>
-<p class="lead">읽기용 <code>r</code>과 쓰기용 <code>w</code>·<code>a</code>는 서로 다른 프로그램 경로입니다. <strong>현재 모드에 해당하는 C 코드만</strong> 보여주며, 버튼은 해당 코드의 동작을 한 단계씩 수행합니다.</p>
-<div class="concept"><strong>학습 전 확인</strong><p><code>fopen()</code>은 성공하면 열린 Stream을 가리키는 <code>FILE *</code>를, 실패하면 <code>NULL</code>을 반환합니다. <code>r</code>은 기존 내용을 읽고, <code>w</code>는 기존 내용을 지우고 쓰며, <code>a</code>는 기존 데이터 끝에 씁니다. 상대 경로 <code>"readings.txt"</code>는 현재 작업 디렉터리를 기준으로 해석됩니다.</p></div>
-<div class="activity" id="mode-activity"><div class="activity-head"><span>EXPLORE 03 · CONTROL FLOW</span><h3>한 단계씩 실행하며 다음 문장을 찾으세요</h3><p>버튼과 실행 코드가 일치합니다. 읽기가 성공하면 <code>fputs()</code>가 자동 실행됩니다. 마지막 줄을 읽은 다음에도 <strong>한 번 더 읽기를 시도해야 EOF를 확인</strong>할 수 있습니다.</p></div>
-<div class="mode-path" id="mode-path">READ PATH · fopen → fgets + fputs (반복) → fclose</div>
-<div class="toolstrip" id="mode-actions"><div class="field"><label for="open-mode">File open mode</label><select id="open-mode"><option value="r">r · read</option><option value="w">w · truncate &amp; write</option><option value="a">a · append</option></select></div>
-<button class="primary" id="mode-open">① fopen()</button><button id="mode-read" disabled>② fgets() · 다음 줄</button><button id="mode-write" disabled hidden>② fprintf() · 한 줄 쓰기</button><button id="mode-close" disabled>③ fclose()</button></div>
-<div class="next-action" id="mode-next" aria-live="polite"><strong id="mode-next-title">다음 동작: fopen()</strong><span id="mode-next-detail">선택한 모드로 파일을 열어 시작하세요.</span></div>
-<div class="inline-status" id="mode-status" aria-live="polite">Stream: CLOSED</div>
-<div class="code-live"><div class="code-head">EXECUTION PATH · 현재 모드의 C 코드만 표시 · 노란색 = 방금 실행한 문장</div><div id="mode-code" class="live-lines" role="list" aria-label="Current C file I/O execution path"></div></div>
-<div class="two-col"><div class="state-box"><div class="box-name">FILE · readings.txt</div><pre id="mode-file">25.0
-26.5</pre></div><div class="state-box"><div class="box-name">stdout · fputs()가 자동 출력한 내용</div><pre id="mode-output">(no output)</pre></div></div>
-<div class="button-row"><button id="mode-restart">↻ Restart Program · 파일 유지</button><button id="mode-reset">⟲ Reset Sample · 파일 복원</button></div>
-<p class="activity-feedback" id="mode-explain" aria-live="polite">먼저 r 모드로 파일을 열어 보세요.</p>
-<div class="keypoint"><strong>직접 생각해 보세요</strong><p><code>fgets()</code>를 두 번 눌러 두 줄을 읽은 뒤, 반복문은 종료되었을까요? 아닙니다. <strong>세 번째 fgets() 호출에서 NULL이 나와야</strong> while 조건이 거짓이 되고, 이 실습의 전체 파일 읽기 과제에서는 이후 <code>fclose()</code>로 진행합니다. C 자체는 필요한 데이터만 읽고 파일을 더 일찍 닫는 것도 가능합니다. 이 실습에서 <code>fprintf()</code>는 <code>r</code> 모드에 등장하지 않습니다.</p></div>
-</div>
-<div class="check" data-check="2"><div class="check-eyebrow">CHECK YOURSELF · 7.3</div><h3>기존 readings.txt를 <code>fopen("readings.txt", "w")</code>로 성공적으로 열면?</h3>
-<label><input type="radio" name="q2" value="a"> 기존 내용이 남고 새 내용이 뒤에 붙는다.</label>
-<label><input type="radio" name="q2" value="b"> 기존 내용이 삭제되고 빈 파일로 열린다.</label>
-<label><input type="radio" name="q2" value="c"> 읽기 전용으로 열린다.</label>
-<button class="check-btn" data-grade="2">답 확인 및 설명</button><div class="answer" id="answer-2" aria-live="polite"></div></div>
+<section class="lesson" id="m3" aria-labelledby="m3-title"><div class="eyebrow">MISSION 03 · 교재 §7.3</div><h2 id="m3-title">파일 열기 모드와 실제 실행 경로</h2><p class="caption">데이터가 남는가, 삭제되는가, 추가되는가? 파일이 없을 때 r 모드는 어떻게 동작하는가?</p><div class="learning-map" id="m3-map" aria-label="M3 학습 단계"><span class="current">1 예측</span><span>2 실험</span><span>3 비교</span><span>4 설명</span></div>
+<div class="step prediction-box locked" id="m3-predict"><div class="step-title">1 · PREDICT — 실험 전 예측</div><p>현재 가상 파일의 내용을 확인하고, 선택한 모드로 <code>fopen()</code>을 실행했을 때의 결과를 예측하세요. <strong>Restart</strong> 후에는 변경된 파일 내용으로 새 실험을 이어갈 수 있습니다.</p>
+<div class="input-row"><div class="field"><label for="m3-mode">fopen 모드</label><select id="m3-mode"><option value="r">r · 읽기</option><option value="w">w · 기존 내용 삭제</option><option value="a">a · 이어쓰기</option></select></div><div class="field"><label for="m3-cwd">Current Working Directory</label><select id="m3-cwd"><option value="lab">lab/ · readings.txt 존재</option><option value="other">other/ · 파일 없음</option></select></div></div>
+<fieldset><legend>fopen 직후 파일 상태를 예측하세요</legend><label><input type="radio" name="m3-pred" value="unchanged">기존 내용 그대로, 읽기 준비</label><label><input type="radio" name="m3-pred" value="empty">파일 내용이 비워짐</label><label><input type="radio" name="m3-pred" value="append">기존 내용 유지, 끝에서 쓰기 준비</label><label><input type="radio" name="m3-pred" value="fail">fopen 실패 → NULL</label><label><input type="radio" name="m3-pred" value="new">새 빈 파일을 생성하여 쓰기 준비</label></fieldset>
+<label for="m3-reason">예측한 이유 (권장: 한 문장 이상)</label><textarea id="m3-reason" placeholder="파일 모드와 기존 파일의 관계를 설명해 보세요."></textarea><div class="actions"><button id="m3-confirm" class="primary">예측 제출 → 실험 활성화</button><button id="m3-repredict">다른 모드로 새 실험 · 파일 유지</button></div><div class="feedback" id="m3-pred-feedback" aria-live="polite"></div></div>
+<div class="focus-banner" id="m3-flow" aria-live="polite"><div><strong id="m3-flow-title">Step 1 · 예측부터 제출하세요.</strong><span id="m3-flow-detail">실험 버튼은 예측 후 활성화됩니다.</span></div><span class="status-mark">SIMULATED</span></div><div class="grid" id="m3-workspace"><div class="panel experiment-panel"><h3>2 · EXPERIMENT — 코드 한 단계씩 실행</h3><div class="tag">SIMULATED · deterministic C semantics</div><div class="actions"><button id="m3-open" class="primary" disabled>① fopen()</button><button id="m3-read" disabled>② fgets() · 성공 시 fputs()</button><button id="m3-write" disabled>② fprintf()</button><button id="m3-close" disabled>③ fclose()</button></div><div class="feedback" id="m3-guide">예측을 제출하면 첫 실행 버튼이 활성화됩니다.</div><div class="code-box"><div class="code-head">현재 선택한 모드의 C 코드 · 노란색은 해당 단계</div><div class="code-lines" id="m3-code"></div></div></div>
+<div class="panel"><h3>3 · OBSERVE — 파일과 Stream 상태</h3><div class="meta"><div><small>파일 상태</small><strong id="m3-status">Ready</strong></div><div><small>마지막 반환값</small><strong id="m3-return">—</strong></div><div><small>Stream 위치 (ASCII 문자 기준)</small><strong id="m3-pos">0</strong></div><div><small>EOF indicator</small><strong id="m3-eof">0</strong></div></div><div class="panel" style="margin:13px 0"><h3 id="m3-path">virtual/lab/readings.txt</h3><pre class="data" id="m3-file"></pre></div><div class="panel" style="margin:13px 0"><h3>stdout · fputs가 실행된 결과</h3><pre class="data" id="m3-stdout">(no output)</pre></div><h3>Trace</h3><div class="trace" id="m3-events"></div></div></div>
+<div id="m3-compare" class="compare-card" hidden aria-live="polite"><h3>3 · COMPARE — 내 예측과 관찰 비교</h3><p class="result-line" id="m3-compare-result"></p><p class="compare-diff" id="m3-compare-detail"></p></div><div class="actions"><button id="m3-restart">↻ 새 실행 준비 · 파일 유지</button><button id="m3-reset">⟲ Reset Lab · 원본 샘플 복원</button></div><p class="breadcrumb-note">새 실행 준비는 파일을 그대로 보존하고, 새로운 모드·디렉터리를 선택해 다시 예측하도록 합니다. Reset Lab만 샘플 파일을 원본으로 되돌립니다.</p>
+<div class="learn-check"><h3>4 · EXPLAIN &amp; TRANSFER</h3><p>최초 예측과 관찰이 같았나요? <strong>파일 내용을 보존하면서 다음 실행에서 값을 읽는 과정</strong>을 설명하고, 계속 데이터를 추가할 때 필요한 모드를 적어 보세요.</p><textarea id="m3-reflection" placeholder="내 실험 결과와 C 코드의 관계를 적으세요."></textarea><div class="actions"><button id="m3-save">학습 노트 저장</button><button id="m3-download">학습 노트 다운로드</button></div><details><summary>핵심 원리 힌트</summary><p><code>w</code>는 성공적으로 열 때 기존 데이터를 지웁니다. <code>a</code>는 데이터 보존 후 파일 끝에 기록합니다. 파일은 프로그램의 일반적인 변수와 수명이 다릅니다.</p></details></div>
+</section>
 </section>
 <section class="stage" data-stage="3" hidden>
 <div class="topic">7.4 · TEXT INPUT / OUTPUT</div><h2>무엇을 읽고 쓰는지에 따라 함수를 선택하세요</h2><p class="lead">숫자·문자열·한 줄·한 글자는 다르게 읽습니다. 중요한 것은 함수 이름 암기가 아니라 <strong>데이터 형식과 반환값</strong>을 구분하는 것입니다.</p>
@@ -86,38 +73,13 @@ while (fgets(line, sizeof line, fp) != NULL) {
 <div class="check" data-check="3"><div class="check-eyebrow">CHECK YOURSELF · 7.4</div><h3><code>fscanf(fp, "%d %lf", &amp;id, &amp;score)</code>가 두 값을 모두 읽었는지 검사하려면?</h3><label><input type="radio" name="q3" value="a"> 반환값이 1인지 검사한다.</label><label><input type="radio" name="q3" value="b"> 반환값이 2인지 검사한다.</label><label><input type="radio" name="q3" value="c"> <code>feof(fp)</code>만 검사한다.</label><button class="check-btn" data-grade="3">답 확인 및 설명</button><div class="answer" id="answer-3" aria-live="polite"></div></div>
 </section>
 <section class="stage" data-stage="4" hidden>
-<div class="topic">7.4.4 · EOF &amp; SAFE LOOPS</div><h2>EOF는 읽기 전에 미리 아는 것이 아닙니다</h2><p class="lead">파일 끝을 확인하려고 <code>while (!feof(fp))</code>를 사용하는 경우가 있지만, 먼저 <strong>이번 읽기가 성공했는지</strong> 검사해야 합니다. <code>fscanf()</code> 반환값을 직접 추적해 보세요.</p>
-<div class="concept"><strong>핵심 구분 · EOF 검사와 읽기 성공 검사는 다릅니다</strong><p><code>fscanf(fp, "%d", &amp;x) == 1</code>은 <strong>정수 하나를 성공적으로 변환했는가?</strong>라는 질문입니다. 하나를 읽으면 <code>1</code>, 처음부터 파일 끝이라 입력에 실패하면 <code>EOF</code>, 숫자 대신 문자 등 변환이 맞지 않으면 <code>0</code>을 반환할 수 있습니다. 따라서 <code>== 1</code>은 EOF뿐 아니라 형식 오류도 안전하게 걸러냅니다. 서로 다른 원인을 구분하려면 <code>feof(fp)</code>와 <code>ferror(fp)</code>를 추가로 확인합니다.</p></div>
-<div class="snippet"><div class="code-head">COMPLETE C EXAMPLE · successful conversion count == 1</div><pre>#include &lt;stdio.h&gt;
-
-int main(void) {
-    FILE *fp;
-    int x;
-
-    fp = fopen("numbers.txt", "r");
-    if (fp == NULL) return 1;
-
-    while (fscanf(fp, "%d", &amp;x) == 1) {
-        printf("%d\n", x);
-    }
-
-    if (ferror(fp)) {
-        fprintf(stderr, "File read error\n");
-        fclose(fp);
-        return 1;
-    }
-    if (!feof(fp)) {
-        fprintf(stderr, "Invalid integer input\n");
-        fclose(fp);
-        return 1;
-    }
-    if (fclose(fp) == EOF) return 1;
-    return 0;
-}</pre></div>
-<div class="activity"><div class="activity-head"><span>TRACE 05</span><h3>읽기 성공 횟수와 EOF Indicator</h3><p><strong>정상 데이터</strong>와 <strong>잘못된 토큰</strong>을 비교합니다. <code>fscanf("%d", &amp;x)</code>의 반환값이 달라지는 순간을 확인하세요.</p><div class="field"><label for="eof-scenario">Input scenario</label><select id="eof-scenario"><option value="normal">10 / 20 / 30 · 정상 정수</option><option value="malformed">10 / ABC / 30 · 두 번째 토큰 오류</option><option value="empty">빈 파일 · 첫 읽기에서 EOF</option></select></div></div><div class="two-col"><div class="state-box"><div class="box-name">numbers.txt</div><pre id="eof-input-preview">10
+<section class="lesson" id="m4" aria-labelledby="m4-title"><div class="eyebrow">MISSION 04 · 교재 §7.4.4</div><h2 id="m4-title">EOF, 형식 불일치, 읽기 오류를 구분하기</h2><p class="caption"><code>while (fscanf(fp, "%d", &amp;x) == 1)</code>은 무엇을 검사하는 조건인가요?</p><div class="learning-map" id="m4-map" aria-label="M4 학습 단계"><span class="current">1 예측</span><span>2 실험</span><span>3 비교</span><span>4 설명</span></div>
+<div class="step prediction-box locked" id="m4-predict"><div class="step-title">1 · PREDICT — 반환값을 먼저 판단</div><p><code>numbers.txt</code>에는 아래 시나리오 중 하나의 데이터가 들어 있습니다.</p><div class="input-row"><div class="field"><label for="m4-scenario">입력 시나리오</label><select id="m4-scenario"><option value="normal">10 / 20 / 30</option><option value="malformed">10 / ABC / 30</option><option value="empty">빈 파일</option><option value="ioError">가상 I/O 오류 주입 (2번째 읽기)</option></select></div></div><div class="panel"><h3>numbers.txt</h3><pre class="data" id="m4-file">10
 20
-30</pre><div class="smallstat">Read attempts: <strong id="eof-attempts">0</strong></div></div><div class="state-box"><div class="box-name">LAST fscanf RESULT</div><div class="big" id="eof-result">아직 읽지 않음</div><div class="smallstat" id="eof-flag">feof(fp) = 0 · ferror(fp) = 0</div></div></div><div class="button-row"><button class="primary" id="eof-read">Read next →</button><button id="eof-reset">Restart trace</button></div><div class="trace-list" id="eof-trace" aria-live="polite">읽기 버튼을 누르면 기록이 나타납니다.</div><p class="activity-feedback" id="eof-message">세 번 성공한 다음 네 번째 읽기에서 어떤 반환값이 나올까요?</p></div>
-<div class="check" data-check="4"><div class="check-eyebrow">CHECK YOURSELF · 7.4.4</div><h3>안전한 반복 읽기를 위한 가장 직접적인 조건은?</h3><label><input type="radio" name="q4" value="a"> <code>while (!feof(fp))</code></label><label><input type="radio" name="q4" value="b"> <code>while (fscanf(fp, "%d", &amp;x) == 1)</code></label><label><input type="radio" name="q4" value="c"> <code>while (fp != NULL)</code></label><button class="check-btn" data-grade="4">답 확인 및 설명</button><div class="answer" id="answer-4" aria-live="polite"></div></div>
+30</pre></div><fieldset><legend>읽기 반복이 끝나는 원인을 예측하세요</legend><label><input type="radio" name="m4-pred" value="eof">정상 EOF (추가 입력 없음)</label><label><input type="radio" name="m4-pred" value="mismatch">형식 불일치 (정수 변환 실패)</label><label><input type="radio" name="m4-pred" value="ioError">읽기 I/O 오류</label></fieldset><label for="m4-reason">예측 근거 (권장: 한 문장 이상)</label><textarea id="m4-reason" placeholder="fscanf 반환값, feof 또는 ferror 상태를 예상하세요."></textarea><div class="actions"><button id="m4-confirm" class="primary">예측 제출 → 실험 활성화</button><button id="m4-repredict">새 조건으로 다시 예측</button></div><div class="feedback" id="m4-pred-feedback" aria-live="polite"></div></div>
+<div class="focus-banner" id="m4-flow" aria-live="polite"><div><strong id="m4-flow-title">Step 1 · 예측부터 제출하세요.</strong><span id="m4-flow-detail">정답 판정은 실험이 끝난 뒤에 표시합니다.</span></div><span class="status-mark">SIMULATED</span></div><div class="grid" id="m4-workspace"><div class="panel experiment-panel"><h3>2 · EXPERIMENT — 반환값 추적</h3><div class="tag">SIMULATED · injected error is artificial</div><div class="actions"><button id="m4-open" class="primary" disabled>① fopen()</button><button id="m4-read" disabled>② fscanf() · 성공 시 printf()</button><button id="m4-close" disabled>③ 진단 및 fclose()</button></div><div class="feedback" id="m4-guide">예측을 제출하면 실험할 수 있습니다.</div><div class="code-box"><div class="code-head">정확한 C 읽기 코드 · 성공한 변환마다 printf 실행</div><div class="code-lines" id="m4-code"></div></div></div><div class="panel"><h3>3 · OBSERVE — 읽기 반환값과 결과</h3><div class="meta"><div><small>fscanf 반환값</small><strong id="m4-return">—</strong></div><div><small>x (마지막 성공 값)</small><strong id="m4-value">—</strong></div><div><small>feof(fp)</small><strong id="m4-eof">0</strong></div><div><small>ferror(fp)</small><strong id="m4-error">0</strong></div></div><div class="panel" style="margin:13px 0"><h3>stdout</h3><pre class="data" id="m4-stdout">(no output)</pre></div><h3>읽기 Trace</h3><div class="trace" id="m4-events"></div></div></div>
+<div id="m4-compare" class="compare-card" hidden aria-live="polite"><h3>3 · COMPARE — 종료 원인 확인</h3><p class="result-line" id="m4-compare-result"></p><p class="compare-diff" id="m4-compare-detail"></p></div><div class="learn-check"><h3>4 · EXPLAIN &amp; TRANSFER</h3><p><code>fscanf(...) == 1</code>이 왜 적절할까요? 반환값 <code>0</code>과 <code>EOF</code>가 서로 다른 이유는 무엇일까요? 정상 파일과 <code>ABC</code>가 포함된 파일을 비교해 보세요.</p><textarea id="m4-reflection" placeholder="반환값과 파일 상태를 근거로 설명하세요."></textarea><div class="actions"><button id="m4-save">학습 노트 저장</button><button id="m4-download">학습 노트 다운로드</button></div><details><summary>핵심 원리 힌트</summary><p><code>fscanf</code>는 성공한 변환·대입 개수를 반환합니다. 정수 하나를 읽으면 1, 형식이 맞지 않으면 0, 입력 전에 파일 끝에 도달하거나 읽기 오류가 발생하면 EOF가 가능합니다. 종료 후 <code>feof(fp)</code>와 <code>ferror(fp)</code>를 구분합니다.</p></details></div>
+</section>
 </section>
 <section class="stage" data-stage="5" hidden>
 <div class="topic">7.5 · STRUCTURE RECORDS</div><h2>구조체는 메모리에, 파일에는 문자로 저장됩니다</h2><p class="lead">Structure를 File I/O와 연결하려면 기록할 텍스트 형식을 결정해야 합니다. 저장할 때와 읽을 때 <strong>같은 멤버 순서</strong>를 사용하세요.</p>
@@ -222,4 +184,4 @@ return 0;
 </section>
 <div class="step-footer"><button id="prev-stage">← 이전 단계</button><span id="footer-position">1 / 8</span><button class="primary" id="next-stage">다음 단계 →</button></div>
 <div class="page-note">모든 C 코드 표기의 <code>!=</code>와 <code>==</code>는 실제 C 연산자입니다. 글꼴 ligature로 합쳐 보이지 않도록 설정했습니다. 설명용 실습은 실제 C 컴파일러의 동작을 단순화할 수 있으므로 각 예제의 가정을 함께 확인하세요. Self-study companion for <strong>171_C_File_IO_Rev8</strong>. 웹 실험은 교육용 모의 실행입니다. 실제 C 컴파일러 실행이나 파일 시스템 접근이 아닙니다. 학습 성취는 이 브라우저의 로컬 저장소에만 기록됩니다.</div>
-</main></div><script src="./app.js?v=20261115qa2" defer></script></body></html>
+</main></div><script src="./app.js?v=unified1" defer></script><script src="./pilot/engine.js?v=unified1" defer></script><script src="./unified-labs.js?v=unified1" defer></script></body></html>
