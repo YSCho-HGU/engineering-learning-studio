@@ -48,6 +48,27 @@ function renderQuiz(stage,l){
   result.textContent=(ok?"Correct. ":"Review your prediction. ")+l.quiz.explain;
  });
 }
+function modelOutput(model,v){
+ switch(model.kind){
+ case "address":return "int x = "+v+";\nint *p = &x;\n&p → 0x1000 (illustrative)\np → 0x1000\n*p → "+v+"\nAddress and value are different.";
+ case "write":return "Before: x = "+v+"\n*p = "+(v+7)+";\nAfter: x = "+(v+7)+"\n*p and x refer to the same object.";
+ case "swap":return "Before: a = "+v+", b = "+(v+3)+"\nAfter swap(&a,&b):\na = "+(v+3)+", b = "+v;
+ case "array":return "a[0] = "+v+" at 0x1000\na[1] = "+(v+1)+" at 0x1004\na[2] = "+(v+2)+" at 0x1008\n*(a+1) = "+(v+1)+"\nAddresses assume sizeof(int)=4 for this illustration.";
+ case "const":return "int x = "+v+";\nconst int *p = &x;\n*p = "+v+" (read allowed)\n*p = 9 (not allowed through p)\nx itself may still be modified.";
+ case "pointer-array":return "scores = {"+v+","+(v+10)+","+(v+20)+"}\nPointer traversal sum = "+(3*v+30)+"\nThe same values as indexed traversal.";
+ case "double-pointer":return "x = "+v+" at 0x1000\np = &x at 0x2000\npp = &p at 0x3000\n**pp = "+v+"\nAll displayed addresses are illustrative.";
+ case "pointer-risk":return "index = "+v+"; valid indices: 0, 1, 2\n"+(v<3?"Access a["+v+"] is valid.":"Out-of-bounds access: undefined behavior. Do not dereference.")+"\nUse index bounds before access.";
+ case "record":return "Student id="+v+"\nscore="+(70+v%25)+"\nmember access: s.id = "+v+"\nFields belong to one record.";
+ case "typedef":return "Student s = {"+v+", 85.0};\nStudent is a typedef name.\nstruct Student is a tag only if declared.\nBoth denote a struct type when tagged typedef is used.";
+ case "member":return "s.score before = "+v+"\nps->score = "+(v+5)+"\nEquivalent: (*ps).score = "+(v+5)+"\nThe original s is modified.";
+ case "copy":return "original.score="+v+"\ncopy = original;\ncopy.score="+(v+10)+"\noriginal.score remains "+v+"\nStruct assignment copies member values (not deep-owned resources).";
+ case "record-array":return "Students: {id:1,score:"+v+"}, {id:2,score:"+(v+10)+"}, {id:3,score:"+(v+20)+"}\nAverage = "+(v+10);
+ case "function-record":return "Before: record.score="+v+"\nbyValue(record) changes local copy only.\nbyPointer(&record) adds 10.\nAfter: record.score="+(v+10);
+ case "alignment":return "sizeof(struct) depends on member types and ABI.\nSelected example value="+v+"\nNever assume sizeof(Student) equals the sum of field sizes.\nUse sizeof and portable serialization.";
+ case "sensor":return "sensor.id="+v+"; reading="+(v/10).toFixed(1)+"\nCSV example: "+v+","+(v/10).toFixed(1)+"\nRound-trip needs agreed text format and parse validation.";
+ default:return "Model not configured";
+ }
+}
 function renderModel(stage,l){
  const section=element("section","activity",stage);
  element("span","tag",section,"INTERACTIVE MODEL · 개념 실험");
@@ -61,7 +82,7 @@ function renderModel(stage,l){
  const value=element("p","",left);
  const output=element("output","",right);output.setAttribute("aria-live","polite");
  const insight=element("p","legend",right,l.model.note);
- function refresh(){const v=Number(slider.value);value.textContent=l.model.valueLabel+": "+v;output.textContent=l.model.render(v)}
+ function refresh(){const v=Number(slider.value);value.textContent=l.model.valueLabel+": "+v;output.textContent=modelOutput(l.model,v)}
  slider.addEventListener("input",refresh);refresh();
 }
 function show(i){
