@@ -34,7 +34,20 @@
 - **Whole-course integrity suite added:** `tests/c-site-integrity.mjs` checks catalog IDs, published routes, 18 chapter entries, metadata, and legacy numbering.
 - GitHub Actions workflow: `.github/workflows/c-four-chapters.yml`.
 
-**Execution status:** Test code has been committed; passing CI/browser/GCC results have not been independently verified in this review environment. Static checks are not evidence of actual compiler or browser execution.
+**Execution status:** Eight representative reference programs were independently compiled and executed with local GCC C11 (`-std=c11 -Wall -Wextra -Wpedantic -Werror -lm`) and matched their expected outputs:
+
+| Example | Verified stdout |
+|---|---|
+| 131 2D array | `6` |
+| 131 frequency count | `3` |
+| 132 string copying including NUL | `ABC` |
+| 132 buffer capacity | `10 IoT` |
+| 133 `sqrt(81.0)` | `9.0` |
+| 133 repeatable `srand(1)` sequence | `1` |
+| 141 pass-by-value | `5` |
+| 141 array argument sum | `6` |
+
+These eight local checks passed. **Remaining 24 new examples and complete browser QA still require confirmation from the GitHub Actions workflow.** Static checks are not evidence of actual browser execution.
 
 ## 5. Remaining caveats / educational guardrails
 - Simulator output is illustrative; **a browser static check is not an authentic GCC compilation**.
