@@ -21,7 +21,7 @@ try{
    lessons++;
    const prefix=id+" Step "+(n+1)+" "+l.title;
    if(!l.goal||!l.concept||!l.quiz||!l.transfer||!l.guide||!l.model)issues.push(prefix+" incomplete teaching elements");
-   if(l.quiz?.options?.[l.quiz.correct]!==l.output)issues.push(prefix+" quiz answer differs from output");
+   if(!Number.isInteger(l.quiz?.correct)||!l.quiz?.options?.[l.quiz.correct]||!l.quiz?.explain)issues.push(prefix+" concept quiz answer or explanation missing");
    if(!l.trace?.length||l.trace.some(t=>!l.code.includes(t.match)))issues.push(prefix+" trace match not found in actual code");
    const src=join(tmp,slug+"-"+n+".c"),exe=join(tmp,slug+"-"+n);
    writeFileSync(src,l.code);
