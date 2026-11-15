@@ -1,27 +1,47 @@
-/* Chapter 181 conceptual heap explorer (not a C runtime). */
+/* Chapter 181: conceptual heap, NOT a C compiler. Addresses are illustrative. */
 (()=>{
 "use strict";
-window.renderDynamicHeap=function(stage,lesson){
- const host=document.createElement("section");host.className="dm-heap";host.setAttribute("aria-label","Interactive allocation lifecycle");
- host.innerHTML='<div class="dm-heap-top"><div><span class="dm-label">INTERACTIVE HEAP MEMORY</span><h3>malloc() → use → free()</h3><p>포인터와 메모리 객체의 수명을 단계별로 확인합니다.</p></div><span class="dm-simulation">Concept model · Not real C execution</span></div><div class="dm-switch" role="group" aria-label="Memory lifecycle"><button type="button" data-phase="allocated">1 · malloc()</button><button type="button" data-phase="used">2 · Use</button><button type="button" data-phase="released">3 · free()</button></div><div class="dm-heap-diagram"><div class="dm-pointer"><strong>int *p</strong><output id="dm-pointer-value">p → block</output></div><div class="dm-arrow" aria-hidden="true">→</div><div class="dm-block"><strong>HEAP · int[5]</strong><div class="dm-cells" id="dm-cells"></div><span id="dm-lifetime"></span></div></div><p class="dm-heap-explanation" id="dm-heap-explanation" role="status" aria-live="polite"></p>';
- const before=stage.querySelector(".activity.trace-lab");
- if(before)before.before(host);else stage.append(host);
- const buttons=[...host.querySelectorAll("[data-phase]")],cells=host.querySelector("#dm-cells"),ptr=host.querySelector("#dm-pointer-value"),life=host.querySelector("#dm-lifetime"),explain=host.querySelector("#dm-heap-explanation");
- const values=[10,20,30,40,50];
- function render(phase){
-  host.dataset.phase=phase;
-  buttons.forEach(b=>{const active=b.dataset.phase===phase;b.setAttribute("aria-pressed",String(active));b.classList.toggle("active",active)});
+window.renderDynamicHeap=function(stage){
+ const host=document.createElement("section");host.className="dm-heap";host.setAttribute("aria-label","Heap memory lifecycle visualization");
+ host.innerHTML='<div class="dm-heap-top"><div><span class="dm-label">INTERACTIVE HEAP MEMORY</span><h3>malloc() → Use → free()</h3><p>포인터와 가상의 Heap 메모리의 관계를 관찰합니다.</p></div><span class="dm-simulation">Conceptual addresses · Not real C memory</span></div><div class="dm-switch" role="group" aria-label="Memory lifecycle"><button data-phase="allocated" type="button">1 · malloc()</button><button data-phase="used" type="button">2 · Use</button><button data-phase="released" type="button">3 · free()</button><button id="dm-play" type="button">▶ 자동 재생</button></div><div class="dm-heap-diagram"><div class="dm-pointer"><strong>int *p</strong><output id="dm-pointer-value"></output><small>Pointer</small></div><div class="dm-arrow" id="dm-arrow" aria-hidden="true">→</div><div class="dm-block"><strong>HEAP · int[5]</strong><div class="dm-cells" id="dm-cells"></div><span id="dm-lifetime"></span></div></div><p id="dm-detail" class="dm-detail" aria-live="polite"></p><p id="dm-heap-explanation" class="dm-heap-explanation" role="status"></p><details class="dm-leak"><summary>선택 실험 · Memory Leak</summary><p>free 없이 포인터 값을 덮어쓰면 이전 블록에 접근할 방법을 잃을 수 있습니다.</p><div class="dm-switch" role="group" aria-label="Memory leak demonstration"><button data-leak="start" type="button">1 · malloc A</button><button data-leak="lost" type="button">2 · p = malloc B</button><button data-leak="clean" type="button">3 · 올바른 해제</button></div><div class="dm-leak-board" id="dm-leak-board"></div><p class="dm-leak-note" id="dm-leak-note" aria-live="polite"></p></details>';
+ const old=stage.querySelector(".activity.trace-lab");if(old)old.before(host);else stage.append(host);
+ const $=q=>host.querySelector(q),buttons=[...host.querySelectorAll("[data-phase]")],play=$("#dm-play"),cells=$("#dm-cells"),values=[10,20,30,40,50];
+ let timer=null,selected=0;
+ const addr=i=>"0x"+(4096+i*4).toString(16).toUpperCase();
+ function stop(){if(timer!==null){clearTimeout(timer);timer=null}play.textContent="▶ 자동 재생";play.setAttribute("aria-pressed","false")}
+ function render(phase,index=selected){
+  selected=index;host.dataset.phase=phase;
+  buttons.forEach(b=>{const active=b.dataset.phase===phase;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active))});
+  $("#dm-pointer-value").textContent=phase==="released"?"NULL (별도 대입)":"0x1000 (가상)";
+  $("#dm-arrow").textContent=phase==="released"?"×":"→";
   cells.replaceChildren();
-  values.forEach((v,i)=>{const el=document.createElement("div");el.className="dm-cell";const label=document.createElement("small");label.textContent="p["+i+"]";const val=document.createElement("strong");val.textContent=phase==="allocated"?"?":phase==="used"?String(v):"×";el.append(label,val);cells.append(el)});
-  if(phase==="allocated"){
-   ptr.textContent="p → allocated block";life.textContent="Allocated · uninitialized";explain.textContent="malloc(5 * sizeof *p)가 성공했다고 가정합니다. 다섯 개의 int 값을 읽기 전에 반드시 초기화해야 합니다.";
-  }else if(phase==="used"){
-   ptr.textContent="p → valid int[5]";life.textContent="Lifetime active";explain.textContent="p[i]와 *(p+i)는 같은 원소입니다. 배열 경계 안에서 값을 초기화하고 읽을 수 있습니다.";
-  }else{
-   ptr.textContent="p = NULL (explicitly set)";life.textContent="Released · object no longer exists";explain.textContent="free(p)로 할당을 해제했습니다. free만으로 p가 NULL이 되지는 않으며, 이후 p = NULL을 별도로 실행한 개념 모델입니다. 해제 후에는 어떤 별칭으로도 접근하면 안 됩니다.";
-  }
+  values.forEach((value,i)=>{
+   const b=document.createElement("button");b.type="button";b.className="dm-cell";b.disabled=phase==="released";b.classList.toggle("selected",i===selected&&phase!=="released");b.setAttribute("aria-pressed",String(i===selected&&phase!=="released"));
+   const name=document.createElement("small"),v=document.createElement("strong"),address=document.createElement("em");
+   name.textContent="p["+i+"]";v.textContent=phase==="allocated"?"?":phase==="used"?String(value):"×";address.textContent=addr(i);
+   b.append(name,v,address);b.addEventListener("click",()=>{stop();render(phase,i)});cells.append(b);
+  });
+  $("#dm-lifetime").textContent=phase==="allocated"?"Allocated · 초기화 전":phase==="used"?"Allocated · 초기화 후":"Released · 객체 수명 종료";
+  $("#dm-detail").textContent=phase==="released"?"메모리를 해제했습니다. 이전 주소를 역참조하지 마세요.":"p["+selected+"] = *(p+"+selected+") → "+addr(selected)+" (가상 주소) · "+(phase==="used"?"값 "+values[selected]:"읽기 금지");
+  $("#dm-heap-explanation").textContent=phase==="allocated"?"malloc(5 * sizeof *p)가 성공했다고 가정합니다. 각 원소는 아직 초기화되지 않았으므로 읽으면 안 됩니다.":phase==="used"?"원소를 초기화하였습니다. p[i]와 *(p+i)는 같은 요소에 접근합니다. 인덱스 범위는 0~4입니다.":"free(p) 후 메모리 수명은 끝납니다. free 자체가 p를 NULL로 바꾸지는 않으므로 p = NULL을 별도로 수행한 상태를 보여 줍니다.";
  }
- buttons.forEach(b=>b.addEventListener("click",()=>render(b.dataset.phase)));
- render("allocated");
+ buttons.forEach(b=>b.addEventListener("click",()=>{stop();render(b.dataset.phase)}));
+ const phases=["allocated","used","released"];
+ function advance(i){if(!host.isConnected||i>=phases.length){stop();return}render(phases[i],i===1?2:0);timer=setTimeout(()=>advance(i+1),1400)}
+ play.addEventListener("click",()=>{if(timer!==null){stop();return}play.textContent="■ 중지";play.setAttribute("aria-pressed","true");advance(0)});
+ const leakButtons=[...host.querySelectorAll("[data-leak]")],board=$("#dm-leak-board"),note=$("#dm-leak-note");
+ function leak(phase){
+  leakButtons.forEach(b=>{const active=b.dataset.leak===phase;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active))});
+  board.replaceChildren();
+  for(const [name,address,state] of [["Block A","0x1000",phase==="lost"?"lost":phase==="clean"?"freed":"allocated"],["Block B","0x2000",phase==="lost"?"allocated":phase==="clean"?"freed":"pending"]]){
+   const card=document.createElement("div");card.className="dm-leak-block "+state;
+   const head=document.createElement("strong"),desc=document.createElement("span");head.textContent=name+" · "+address;
+   desc.textContent=state==="lost"?"⚠ 해제 경로 상실":state==="freed"?"해제 완료":state==="allocated"?"할당됨":"미할당";card.append(head,desc);board.append(card);
+  }
+  note.textContent=phase==="start"?"p는 첫 번째 할당 블록 A를 가리킵니다.":phase==="lost"?"free(p)를 실행하지 않고 p에 블록 B의 주소를 저장하면 A를 잃습니다. B를 해제해도 A 누수는 해결되지 않습니다.":"안전한 순서: malloc A → 사용 → free A → malloc B → 사용 → free B. 각 할당을 정확히 한 번 해제합니다.";
+ }
+ leakButtons.forEach(b=>b.addEventListener("click",()=>leak(b.dataset.leak)));leak("start");render("allocated");
+ const observer=new MutationObserver(()=>{if(!host.isConnected){stop();observer.disconnect()}});
+ observer.observe(stage,{childList:true});
 };
 })();
