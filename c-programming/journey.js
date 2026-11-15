@@ -125,7 +125,7 @@ function init(){
  $("hero-count").textContent="8 Essential Steps · "+D.book;
  $("course-number").textContent=D.book;
  $("phase-one").textContent=D.phases[0];$("phase-two").textContent=D.phases[1];$("phase-three").textContent=D.phases[2];
- $("back-link").href="../";
+ const back=$("back-link");if(back)back.href="../";
  $("related-link").href=D.related; $("related-link").textContent="Related "+D.relatedTitle+" →";
  $("practice").replaceChildren();
  D.practice.forEach((p,i)=>{
