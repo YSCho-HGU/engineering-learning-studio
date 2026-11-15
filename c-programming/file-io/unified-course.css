@@ -167,3 +167,43 @@
 .els-design .sensor-robust-code pre{background:var(--els-code-bg);color:var(--els-code-ink);padding:13px;border-radius:9px;overflow-x:auto;font:14px/1.8 Consolas,"Liberation Mono",monospace}
 @media(max-width:750px){.els-design .sensor-compare-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.els-design .sensor-compare-results{grid-template-columns:1fr}}
 @media(max-width:550px){.els-design .sensor-step-grid{grid-template-columns:1fr}.els-design .sensor-step-controls button{flex:1 1 40%}}
+
+/* Step 07 source/variable synchronized learning environment and formative assessment */
+.els-design .sensor-code-walkthrough{margin:15px 0;padding:13px;border:1px solid var(--els-border);background:var(--els-surface-alt);border-radius:11px}
+.els-design .sensor-code-walkthrough-head{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:baseline;margin-bottom:10px}
+.els-design .sensor-code-walkthrough-head strong{font-size:1rem;color:var(--els-ink)}
+.els-design .sensor-code-walkthrough-head span{font-size:.8rem;color:var(--els-muted)}
+.els-design .sensor-code-walkthrough-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(235px,.8fr);gap:12px}
+.els-design .sensor-code-lines{background:var(--els-code-bg);color:var(--els-code-ink);border:1px solid var(--els-border);border-radius:9px;min-width:0;max-height:465px;overflow:auto;padding:8px 0;font:14px/1.85 Consolas,"Liberation Mono",monospace;font-feature-settings:"liga" 0,"calt" 0}
+.els-design .sensor-live-line{display:grid;grid-template-columns:39px minmax(max-content,1fr);white-space:pre;border-left:5px solid transparent}
+.els-design .sensor-live-line .sensor-live-number{padding-right:9px;text-align:right;color:#b7c8df;user-select:none}
+.els-design .sensor-live-line code{padding:0 12px;color:inherit;background:none;font:inherit}
+.els-design .sensor-live-line.active{background:#594720;color:#fff3d5;border-left-color:#ffdc75;font-weight:800}
+.els-design .sensor-live-line.active .sensor-live-number{color:#ffe49b}
+.els-design .sensor-code-vars{display:grid;align-content:start;gap:11px;color:var(--els-ink)}
+.els-design .sensor-code-vars>strong{font-size:.92rem}
+.els-design .sensor-code-values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.els-design .sensor-code-values>div{background:var(--els-surface);border:1px solid var(--els-border);border-radius:8px;padding:9px;display:grid;gap:3px}
+.els-design .sensor-code-values span{font-size:.72rem;color:var(--els-muted)}
+.els-design .sensor-code-values strong{font:750 .92rem/1.6 Consolas,"Liberation Mono",monospace;color:var(--els-ink);overflow-wrap:anywhere}
+.els-design .sensor-code-vars>div>strong{font-size:.81rem}
+.els-design .sensor-code-vars pre{background:var(--els-code-bg);color:var(--els-code-ink);border-radius:8px;padding:11px;font:13px/1.6 Consolas,"Liberation Mono",monospace;white-space:pre-wrap;overflow-wrap:anywhere;min-height:48px;max-height:120px;overflow-y:auto}
+.els-design #sensor-code-explanation{border-left:4px solid var(--els-link);background:var(--els-info-bg);color:var(--els-info-ink);padding:11px 12px;margin:0;line-height:1.65;border-radius:7px}
+.els-design .sensor-assessment{padding:15px;border:1px solid var(--els-border);border-radius:12px;background:var(--els-surface);margin:18px 0}
+.els-design .sensor-assessment-form{display:grid;gap:12px}
+.els-design .sensor-assessment-form fieldset{margin:0;border:1px solid var(--els-border);background:var(--els-surface-alt);border-radius:10px;padding:12px}
+.els-design .sensor-assessment-form legend{font-size:.91rem;font-weight:800;color:var(--els-ink);padding:0 5px}
+.els-design .sensor-assessment-form fieldset label{display:flex;gap:8px;margin:6px 0;padding:10px;border-radius:8px;background:var(--els-surface);color:var(--els-ink);border:1px solid var(--els-border);cursor:pointer;line-height:1.6}
+.els-design .sensor-assessment-form fieldset label:has(input:checked){border:2px solid var(--els-link);background:var(--els-info-bg);color:var(--els-info-ink)}
+.els-design .sensor-assessment-form fieldset label input{margin-top:4px;flex-shrink:0;accent-color:var(--els-primary)}
+.els-design .sensor-assessment-form fieldset pre{background:var(--els-code-bg);color:var(--els-code-ink);border-radius:7px;padding:9px 12px}
+.els-design .sensor-assessment-form>label{font-size:.9rem;line-height:1.7;color:var(--els-ink)}
+.els-design .sensor-assessment-form textarea{min-height:112px;width:100%;resize:vertical;background:var(--els-surface);color:var(--els-ink);border:1px solid var(--els-border);border-radius:8px;padding:12px}
+.els-design .sensor-assessment-form button{min-height:44px;padding:11px 16px;border:1px solid var(--els-border);border-radius:8px;background:var(--els-surface-alt);color:var(--els-ink)}
+.els-design .sensor-assessment-form button.primary{background:var(--els-primary);color:var(--els-primary-text);border-color:var(--els-primary)}
+.els-design .sensor-assessment-feedback{white-space:normal;padding:13px;border:1px solid var(--els-border);border-radius:9px;background:var(--els-info-bg);color:var(--els-info-ink);line-height:1.65}
+.els-design .sensor-assessment-feedback p{margin:5px 0}
+.els-design .sensor-assessment-feedback[data-state=good]{border-left:4px solid var(--els-success)}
+.els-design .sensor-assessment-feedback[data-state=review],.els-design .sensor-assessment-feedback[data-state=attention]{border-left:4px solid var(--els-warning)}
+@media(max-width:850px){.els-design .sensor-code-walkthrough-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:480px){.els-design .sensor-code-values{grid-template-columns:repeat(2,minmax(0,1fr))}}
