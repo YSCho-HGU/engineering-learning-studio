@@ -6,7 +6,7 @@ const D=window.C_JOURNEY;
 if(!D||!Array.isArray(D.lessons)||D.lessons.length!==8)throw Error("Journey must contain exactly 8 lessons");
 const $=id=>document.getElementById(id);
 const key="els-journey-"+D.slug+"-v1";
-let completed=[],current=0,theme=localStorage.getItem("els-c-theme")||"auto";
+let completed=[],current=0;
 const assessmentKey="els-concept-"+D.slug+"-v1";
 let concepts=[];
 try{const v=JSON.parse(localStorage.getItem(assessmentKey)||"[]");if(Array.isArray(v))concepts=[...new Set(v.filter(n=>Number.isInteger(n)&&n>=0&&n<8))]}catch(e){}
@@ -276,9 +276,12 @@ function init(){
   btn.addEventListener("click",()=>navigator.clipboard?.writeText(p.starter));
  });
  $("theme").addEventListener("click",()=>{
-  theme=theme==="dark"?"light":"dark";document.documentElement.dataset.mode=theme;$("theme").setAttribute("aria-pressed",String(theme==="dark"));
-  try{localStorage.setItem("els-c-theme",theme)}catch(e){}
- });document.documentElement.dataset.mode=theme;$("theme").setAttribute("aria-pressed",String(theme==="dark"));
+  if(window.ELSTheme){
+   const next=window.ELSTheme.get()==="warm-neutral"?"neutral-dark":"warm-neutral";
+   window.ELSTheme.set(next);
+   $("theme").setAttribute("aria-pressed",String(next!=="warm-neutral"));
+  }
+ });
  renderNav();show(0);updateAssessmentSummary();
 }
 init();
