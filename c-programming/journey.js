@@ -96,8 +96,8 @@ function renderMemoryDiagram(host, step, lesson){
   values.push("State: "+state);
  }
  const take=(str,max=80)=>str.length>max?str.slice(0,max-1)+"…":str;
- const addCell=(name,value,kind)=>{
-  const card=element("div","mem-cell "+kind,board);
+ const addCell=(name,value,kind,parent=board)=>{
+  const card=element("div","mem-cell "+kind,parent);
   const top=element("div","mem-cell-head",card);
   element("span","mem-cell-name",top,take(name,42));
   element("span","mem-cell-address",top,"illustrative");
@@ -106,10 +106,11 @@ function renderMemoryDiagram(host, step, lesson){
  };
  for(const [from,to] of relationships){
   const link=element("div","mem-pointer-link",board);
-  addCell(from,"address / reference","mem-pointer");
-  const arrow=element("div","mem-arrow",link,"→");arrow.setAttribute("aria-hidden","true");
-  element("span","mem-link-label",link,"points to");
-  addCell(to,"target object / value","mem-target");
+  addCell(from,"address / reference","mem-pointer",link);
+  const connector=element("div","mem-connector",link);
+  const arrow=element("div","mem-arrow",connector,"→");arrow.setAttribute("aria-hidden","true");
+  element("span","mem-link-label",connector,"points to");
+  addCell(to,"target object / value","mem-target",link);
  }
  for(const statement of values){
   const equal=/^([^=:]+)[=:]\s*(.*)$/.exec(statement);
