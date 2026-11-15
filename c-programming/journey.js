@@ -36,7 +36,7 @@ function renderNav(){
   const coreA=completed.filter(i=>i<4).length,coreC=concepts.filter(i=>i<4).length;
   $("progress-text").textContent="필수 Activity "+coreA+"/4 · Concept "+coreC+"/4 · 선택 "+completed.filter(i=>i>=4).length+"/4";
  }else $("progress-text").textContent="Activity "+completed.length+"/"+total+" · Concept "+concepts.length+"/"+total;
- $("progress-bar").style.width=(D.slug==="dynamic-memory"?completed.filter(i=>i<4).length/4:completed.length/8)*100+"%";
+ $("progress-bar").style.width=(D.slug==="dynamic-memory"?completed.filter(i=>i<4).length/4:completed.length/total)*100+"%";
  const meter=$("progress-bar").parentElement;if(meter){meter.setAttribute("aria-valuenow",String(D.slug==="dynamic-memory"?completed.filter(i=>i<4).length:completed.length));meter.setAttribute("aria-valuemax",String(coreCount));}
 }
 function createCode(host,source){
@@ -68,7 +68,7 @@ function renderQuiz(stage,l){
 }
 function updateAssessmentSummary(){
  const target=$("assessment-status");if(!target)return;
- target.textContent=D.slug==="dynamic-memory"?"필수 Activity "+completed.filter(i=>i<4).length+"/4 · 필수 Concept "+concepts.filter(i=>i<4).length+"/4 · 선택 심화 Activity "+completed.filter(i=>i>=4).length+"/4 · Coding은 GCC 자기보고": "Activity Reviewed "+completed.length+"/"+total+" · Concept Check Passed "+concepts.length+"/"+total · Coding Practice: self-reported GCC checks only.";
+ target.textContent=D.slug==="dynamic-memory"?"필수 Activity "+completed.filter(i=>i<4).length+"/4 · 필수 Concept "+concepts.filter(i=>i<4).length+"/4 · 선택 심화 Activity "+completed.filter(i=>i>=4).length+"/4 · Coding은 GCC 자기보고": "Activity Reviewed "+completed.length+"/"+total+" · Concept Check Passed "+concepts.length+"/"+total+" · Coding Practice: self-reported GCC checks only.";
 }
 function modelOutput(model,v){
  switch(model.kind){
