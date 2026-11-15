@@ -3,7 +3,7 @@
 "use strict";
 const $ = id => document.getElementById(id);
 const stages = [...document.querySelectorAll(".stage")];
-const keys = ["b","b","b","b","b","b","c","b"];
+const keys = ["b","b",null,"b",null,"b","c","b"];
 const explanations = [
 "파일에 기록된 데이터는 프로그램 종료 후에도 다음 실행에서 읽을 수 있습니다. 변수의 실행 중 메모리 상태와 구분하세요.",
 "FILE *는 열린 Stream을 다루는 라이브러리 객체를 가리킵니다. 파일 이름 문자열 자체가 아닙니다.",
@@ -17,12 +17,13 @@ const explanations = [
 let current=0;let done=new Set();
 try{const stored=JSON.parse(localStorage.getItem("els-fileio-progress-v1")||"[]");if(Array.isArray(stored))done=new Set(stored.filter(x=>Number.isInteger(x)&&x>=0&&x<8))}catch(e){}
 const persist=()=>{try{localStorage.setItem("els-fileio-progress-v1",JSON.stringify([...done]))}catch(e){}};
+window.addEventListener("els:labEvidence",e=>{const n=e.detail?.mission==="m3"?2:e.detail?.mission==="m4"?4:-1;if(n<0||e.detail?.state!=="reflected")return;done.add(n);persist();navigate(current,false);const status=$("step-status");if(status)status.textContent="예측·실험·설명 기록";});
 function navigate(i,doScroll=true){current=Math.max(0,Math.min(7,i));stages.forEach((s,j)=>s.hidden=j!==current);
 document.querySelectorAll("[data-nav]").forEach((b,j)=>{b.classList.toggle("current",j===current);b.classList.toggle("completed",done.has(j));if(j===current)b.setAttribute("aria-current","step");else b.removeAttribute("aria-current")});
 $("step-label").textContent="STEP "+String(current+1).padStart(2,"0")+" / 08";
-$("step-status").textContent=done.has(current)?"학습 완료":"학습 중";
+$("step-status").textContent=done.has(current)?"개념 확인 완료":"학습 중";
 $("footer-position").textContent=(current+1)+" / 8";$("prev-stage").disabled=current===0;$("next-stage").disabled=current===7;
-$("progress-text").textContent=done.size+" / 8";$("progress-fill").style.width=(done.size*12.5)+"%";$("progress-meter").setAttribute("aria-valuenow",done.size);$("completion-message").hidden=done.size<8;
+$("progress-text").textContent=done.size+" / 8 (학습 활동)";$("progress-fill").style.width=(done.size*12.5)+"%";$("progress-meter").setAttribute("aria-valuenow",done.size);$("completion-message").hidden=done.size<8;
 if(doScroll){const target=$("lesson");if(target)target.scrollIntoView({block:"start",behavior:"instant"});if(target)target.focus({preventScroll:true});}}
 document.querySelectorAll("[data-nav]").forEach(b=>b.addEventListener("click",()=>navigate(Number(b.dataset.nav))));
 $("prev-stage").onclick=()=>navigate(current-1);$("next-stage").onclick=()=>navigate(current+1);
