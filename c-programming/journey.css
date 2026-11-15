@@ -69,3 +69,10 @@ body{overflow-x:hidden}
 .layout-padding{border-style:dashed;border-color:#b57a2a}
 .layout-disclaimer{color:var(--muted);font-size:13px;line-height:1.65;border-left:3px solid var(--blue);padding:8px 11px;margin:9px 0}
 @media(max-width:560px){.layout-cell{flex-basis:105px;padding:8px}.layout-cell-offset{font-size:10px}}
+
+.journey-assessment{background:var(--soft);border:1px solid var(--line);border-radius:9px;padding:10px 13px;color:var(--ink);font-size:13px;font-weight:700}
+.concept-indicator{font-size:10px;color:#207b5b;white-space:nowrap}
+.journey-practice-link{display:inline-flex;align-items:center;min-height:44px;background:#1e6ca4;color:#fff!important;text-decoration:none;border-radius:9px;padding:10px 14px;font-weight:800}
+.journey-next{border-top:1px solid var(--line);margin-top:24px;padding:18px 0;display:flex;align-items:center;flex-wrap:wrap;gap:13px}
+.journey-next span{font-size:12px;color:var(--muted);font-weight:800;letter-spacing:.06em}
+.journey-next a{font-weight:800}
