@@ -8,7 +8,7 @@
 - **Five-step practice:** Understand → Predict → Explore/Trace → Practice → Check; directly supports concept comprehension rather than memorizing syntax.
 - **Published chapters appear in chapter-number order**, independently of the development/commit sequence.
 - **Unfinished chapters remain visible only in Course Overview**, not the first-page available-chapter cards.
-- Every new chapter has **8 interactive lessons, 8 concept checks, and 6 coding tasks** (32 lessons and 24 tasks total). Code-editor hints do not claim compilation.
+- The reviewed chapters have **7, 7, 6 and 8 learning steps**, with 6 coding tasks per chapter (**28 lessons and 24 tasks**). Code-editor hints do not claim compilation.
 
 ## 2. Four newly built chapters
 | Unit | Main learning outcomes | Real-world relevance |
@@ -22,14 +22,14 @@
 1. **Chapter numbering:** An earlier File I/O view incorrectly showed "Chapter 7"; changed its visible page heading/metadata to **Chapter 17**, consistent with unit 171.
 2. **Array curriculum:** Removed function-array parameter material from Chapter 131 in favor of **2D arrays**, since user-defined functions are addressed in Chapter 141.
 3. **String safety:** Separated buffer capacity from actual stdin reads; the fixed example has deterministic output, and P5 uses `fgets` with a concrete input/output comparison.
-4. **Interactive correctness:** Replaced generic shared simulation results with **32 lesson-specific parameterized conceptual scenarios**. Each scenario is explicitly labeled as a pedagogical model, **not an actual C interpreter**.
+4. **Interactive correctness:** Replaced generic shared simulation results with **28 lesson-specific parameterized conceptual scenarios**. Each scenario is explicitly labeled as a pedagogical model, **not an actual C interpreter**.
 5. **Math linking:** Added GCC `-lm` instruction where standard-library math exercises may require it.
 6. **Value-dependent outputs:** `rand` exercises test only defined range/repeatability properties, **not a specific implementation-dependent random number**.
 7. **Null termination:** String examples distinguish the logical length (`strlen`) from array capacity (`sizeof`) and reserve storage for `'\\0'`.
 
 ## 4. Verification and regression coverage
 - **Static content inspection performed:** eight published chapter paths, lesson and exercise counts, mandatory quiz/model/trace fields, matching trace substrings, and 18-entry catalog structure.
-- **Automated GCC C11 suite added:** `tests/c-four-chapters.mjs` compiles all 32 new C reference examples with `-std=c11 -Wall -Wextra -Wpedantic -Werror -lm`, compares actual stdout with published expected results, and validates 24 practice prompts. Results require running the workflow and checking the outcome.
+- **Automated GCC C11 suite added:** `tests/c-four-chapters.mjs` compiles all 28 revised C reference examples with `-std=c11 -Wall -Wextra -Wpedantic -Werror -lm`, compares actual stdout with published expected results, and validates 24 practice prompts. Results require running the workflow and checking the outcome.
 - **Automated browser suite added:** `tests/c-four-chapters-browser.mjs` checks two widths, eight lesson steps per chapter, models, quizzes, six practice editors, and home-card counts.
 - **Whole-course integrity suite added:** `tests/c-site-integrity.mjs` checks catalog IDs, published routes, 18 chapter entries, metadata, and legacy numbering.
 - GitHub Actions workflow: `.github/workflows/c-four-chapters.yml`.
@@ -47,7 +47,7 @@
 | 141 pass-by-value | `5` |
 | 141 array argument sum | `6` |
 
-These eight local checks passed. **Remaining 24 new examples and complete browser QA still require confirmation from the GitHub Actions workflow.** Static checks are not evidence of actual browser execution.
+These eight local checks passed. **Remaining 20 new examples and complete browser QA still require confirmation from the GitHub Actions workflow.** Static checks are not evidence of actual browser execution.
 
 ## 5. Remaining caveats / educational guardrails
 - Simulator output is illustrative; **a browser static check is not an authentic GCC compilation**.
