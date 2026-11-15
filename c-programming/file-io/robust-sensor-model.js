@@ -10,7 +10,7 @@
  function simulate(text,threshold=3.0){
    if(typeof text!=="string"||text.length>20000)throw Error("Maximum input length is 20,000 characters.");
    if(!Number.isFinite(threshold))throw Error("Finite threshold required.");
-   const lines=text.split("\n");
+   const lines=text===""?[]:text.split("\n");
    if(text.endsWith("\n"))lines.pop();
    let count=0,sum=0,stdout="",stderr="",records=[],trace=[];
    let exitCode=0;
