@@ -152,7 +152,7 @@ int main(void) {
 <section class="stage" data-stage="6" hidden>
 <div class="topic">7.5.3 · ENGINEERING APPLICATION</div><h2>센서 데이터로 File I/O의 활용을 확인해 봅시다</h2><p class="lead">온도·전압·환경 센서에서는 데이터를 시간 순서대로 저장합니다. 여기서는 Sensor Log를 읽어 평균을 구하고 임계값을 넘는 측정치를 찾아봅니다.</p>
 <div class="sensor-format els-card">
-<div class="sensor-format-head"><div><strong>INPUT FILE · sensor_log.txt</strong><p class="els-meta">Text File · 한 줄에 측정 시각과 값 두 개 · 숫자는 저장된 문자열</p></div><a href="./data/sensor_log.txt" download="sensor_log.txt">sensor_log.txt 다운로드</a></div>
+<div class="sensor-format-head"><div><strong>INPUT FILE · sensor_log.txt (editable)</strong><p class="els-meta">Text File · 한 줄에 측정 시각과 값 두 개 · 숫자는 저장된 문자열</p></div><a href="./data/sensor_log.txt" download="sensor_log.txt">sensor_log.txt 다운로드</a></div>
 <div class="sensor-editor-toolbar">
 <div class="field"><label for="sensor-scenario">Sample scenario</label><select id="sensor-scenario">
 <option value="original">기본 센서 데이터 · 정상</option>
@@ -227,7 +227,7 @@ int main(void) {
 <div class="activity"><div class="activity-head"><span>ENGINEERING LAB 07</span><h3>Sensor Log Analyzer</h3><p>임계값을 바꿔 경보 개수와 평균을 관찰하세요. 실제 파일을 읽는 대신 위에 표시한 <code>sensor_log.txt</code>와 동일한 네 행의 데이터를 사용합니다. 앞의 <code>readings.txt</code>(숫자 한 열)와는 별도의 파일 예제입니다.</p></div><div class="field"><label for="sensor-threshold">Alert threshold: <output id="threshold-label">3.00</output></label><input id="sensor-threshold" type="range" min="2.0" max="4.2" step="0.1" value="3.0"></div><div class="sensor-execute-controls">
 <button type="button" class="primary" id="sensor-run">▶ Simulate Run · 입력 파일 분석</button>
 <span class="sensor-execution-label">SIMULATED · 실제 C/GCC 실행이 아닙니다</span>
-</div><div class="sensor-run-status" id="sensor-run-status" aria-live="polite">파일을 변경하고 평균·경보 개수를 예측한 다음 실행하세요.</div><div class="sensor-summary"><div><span>Count</span><strong id="sensor-count">4</strong></div><div><span>Average</span><strong id="sensor-mean">2.840</strong></div><div><span>Alerts (value &gt; threshold)</span><strong id="sensor-alerts">1</strong></div></div><div class="data-list" id="sensor-list" aria-live="polite"></div><div class="sensor-output-grid">
+</div><div class="sensor-run-status" id="sensor-run-status" aria-live="polite">파일을 변경하고 평균·경보 개수를 예측한 다음 실행하세요.</div><div class="sensor-summary"><div><span>Count</span><strong id="sensor-count">—</strong></div><div><span>Average</span><strong id="sensor-mean">—</strong></div><div><span>Alerts (value &gt; threshold)</span><strong id="sensor-alerts">—</strong></div></div><div class="data-list" id="sensor-list" aria-live="polite"></div><div class="sensor-output-grid">
 <div class="sensor-output"><strong>stdout · 일반 출력</strong><pre id="sensor-stdout" aria-live="polite">(not executed)</pre></div>
 <div class="sensor-output"><strong>stderr · 오류 진단</strong><pre id="sensor-stderr" aria-live="polite">(not executed)</pre></div>
 </div>
