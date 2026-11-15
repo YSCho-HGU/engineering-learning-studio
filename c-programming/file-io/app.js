@@ -83,9 +83,21 @@ $("rec-load").onclick=()=>{
 const sensorModel=window.SensorModel;
 if(!sensorModel)throw Error("SensorModel must load before app.js");
 let sensorHasRun=false;
+const baseSensorCSource=$("sensor-c-source").textContent;
+function updateDisplayedSensorC(){
+ const threshold=Number($("sensor-threshold").value).toFixed(1);
+ $("sensor-c-source").textContent=baseSensorCSource.replace('const double threshold = 3.0;','const double threshold = '+threshold+';');
+}
+function downloadSensorBlob(text,filename,type){
+ const blob=new Blob([text],{type:type||"text/plain;charset=utf-8"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
 function sensorInputsChanged(){
  sensorHasRun=false;
  $("threshold-label").textContent=Number($("sensor-threshold").value).toFixed(2);
+ updateDisplayedSensorC();
  $("sensor-run-status").textContent="내용이 바뀌었습니다. 새 결과를 확인하려면 Simulate Run을 누르세요.";
  $("sensor-run-status").dataset.state="dirty";
  $("sensor-count").textContent="—";$("sensor-mean").textContent="—";$("sensor-alerts").textContent="—";
@@ -159,12 +171,8 @@ $("sensor-restore").onclick=()=>{
  sensorInputsChanged();
  $("sensor-run-status").textContent="원본 sensor_log.txt가 복원되었습니다. 실행을 누르면 결과를 확인할 수 있습니다.";
 };
-$("sensor-download").onclick=()=>{
- const blob=new Blob([$("sensor-edit").value],{type:"text/plain;charset=utf-8"});
- const url=URL.createObjectURL(blob),a=document.createElement("a");
- a.href=url;a.download="sensor_log.txt";document.body.append(a);a.click();a.remove();
- setTimeout(()=>URL.revokeObjectURL(url),2000);
-};
+$("sensor-download").onclick=()=>downloadSensorBlob($("sensor-edit").value,"sensor_log.txt");
+$("sensor-download-c").onclick=()=>downloadSensorBlob($("sensor-c-source").textContent,"sensor_log_analyzer.c","text/x-csrc;charset=utf-8");
 sensorInputsChanged();
 $("build-check").onclick=()=>{const good=$("blank-mode").value==="r"&&$("blank-read").value==="good"&&$("blank-close").value==="fclose";$("build-feedback").textContent=good?"올바른 선택입니다. fopen 실패 확인, 읽기 반환값, fclose를 모두 갖췄습니다.":"수정이 필요합니다: 읽기 모드 r, fscanf 반환값 == 1, fclose(fp)를 선택하세요."};
 navigate(0,false);
