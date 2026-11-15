@@ -65,3 +65,13 @@ GitHub Actions: `.github/workflows/c-journey-qa.yml`; results in `qa-output/c-jo
 3. Select quiz answer and verify on-screen explanation, then navigate forward/back without state corruption.
 4. Code text is not cut at 390px and copy-starter link provides the whole C11 starter.
 5. Verify GCC expected output across all 16 examples and verify student explanations for pointer aliasing and structure-copy semantics.
+
+## Q1/Q2 follow-up: runtime evidence and memory visualization
+
+- Added labeled memory diagram cards directly to each step of the C source walkthrough, with **virtual addresses**, value labels and pointer arrows (never actual runtime addresses).
+- Retained line highlighting, Previous/Next/Restart, and scope disclaimers.
+- Added responsive styling for phone width and updated the browser regression suite to assert diagram presence and memory-state changes during step navigation.
+- Confirmed source files on `main`: JavaScript renderer parses and all 16 lessons retain source-matched trace steps (13/13 targeted source predicates passed in this review).
+- **Important:** GitHub source changes are verified, but GitHub Pages URLs and workflow output were inaccessible from the available browser/network tools. Local Chromium/GCC binaries exist in the runtime, but repository checkout failed due DNS restrictions. Do **not** claim a successful real Chromium screenshot inspection or production deployment.
+- Release gate **Q1 browser verification: PENDING** until 12 screenshots and report from `c-journey-qa` are actually available and reviewed.
+- Release gate **Q2 memory diagram implementation: SOURCE VERIFIED**, interactive presentation pending Chromium confirmation.
