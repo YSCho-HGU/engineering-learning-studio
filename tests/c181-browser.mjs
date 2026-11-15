@@ -22,6 +22,10 @@ for(const width of [390,1280]){
  await page.locator('#course-roadmap-link').click();
  if(!await page.locator('#course-overview-details').evaluate(e=>e.open))problems.push(width+' roadmap link did not open overview');
  if(await page.locator('#units .unit').count()!==18)problems.push(width+' expected 18 roadmap chapters');
+ const groupHeads=await page.locator('#units .course-group h3').allTextContents();
+ if(groupHeads.join('|')!=='기초 문법|배열 · 함수|포인터 · 구조체 · 메모리|자료구조 · 종합 응용')problems.push(width+' course overview grouping incorrect: '+groupHeads.join('|'));
+ const groupCounts=await page.locator('#units .course-group .unit').count();
+ if(groupCounts!==18)problems.push(width+' grouped course count mismatch');
  await page.goto('http://127.0.0.1:8765/c-programming/#roadmap',{waitUntil:'networkidle'});
  if(!await page.locator('#course-overview-details').evaluate(e=>e.open))problems.push(width+' direct #roadmap link did not open overview');
 
