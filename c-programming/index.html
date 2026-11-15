@@ -283,48 +283,4 @@ html{scroll-padding-top:90px}#roadmap{scroll-margin-top:90px}
  <p class="disclosure">교재 링크는 Google Drive 공유 권한이 필요할 수 있습니다. 학습 완료 기록은 사용 중인 브라우저에 저장됩니다. 준비 중인 단원은 공개 후 학습 카드로 자동 추가할 수 있습니다.</p>
 </section></main>
 <footer class="site-footer"><div class="wrap">C Programming · Engineering Learning Studio · 2026</div></footer>
-<script>
-const units=[["101","Getting Started"],["110","Data I/O & Expressions"],["121","if Statements"],["122","switch Statements"],["123","Loops"],["131","Arrays"],["132","Strings"],["133","Standard Library Functions"],["141","User-Defined Functions"],["151","Pointers"],["161","Structures"],["169","Supplementary Topics"],["171","File I/O"],["181","Dynamic Memory"],["182","Linked Lists"],["191","Practical Low-Level C"],["201","Progressive Integration Practice"],["202","CRUD Integration"]];
-const current={
-"151":{chapter:15,url:"./pointer/",description:"주소, 역참조, 포인터와 배열, 함수의 주소 전달",book:"https://drive.google.com/file/d/1o7bzzH32a2gMwjFZ-SdYCtaUcdjxMK4H/view"},
-"161":{chapter:16,url:"./structure/",description:"struct와 typedef, 멤버 접근, 구조체 배열",book:"https://drive.google.com/file/d/1lINKdMeBQgnnnfisq8ekTLCntl4QJI4A/view"},
-"171":{chapter:17,url:"./file-io/",description:"파일 열기, Stream, EOF, 레코드와 센서 로그",book:"https://drive.google.com/file/d/1gnBNypCu4ntdnffhvf_mQ4g6gyfjLCzV/view"},
-"181":{chapter:18,url:"./dynamic-memory/",description:"malloc, free, 포인터와 동적 배열 · 필수 4단계 + 선택 4단계"}
-};
-const available=Object.entries(current).map(([id,chapter])=>({id,...chapter,name:units.find(row=>row[0]===id)?.[1]||id})).sort((a,b)=>a.chapter-b.chapter);
-document.getElementById("available-count").textContent=available.length+"개 단원 공개";
-document.getElementById("available-chapters").innerHTML=available.map(ch=>'<article class="path-card"><span class="number">'+ch.chapter+' / Chapter '+ch.chapter+'</span><h3>'+ch.name+'</h3><p>'+ch.description+'</p><a class="open stretch-link" href="'+ch.url+'" aria-label="Chapter '+ch.chapter+' '+ch.name+' 학습 열기">학습 시작 <span aria-hidden="true">→</span></a><div class="resource-links">'+(ch.book?'<a href="'+ch.book+'" target="_blank" rel="noopener noreferrer">교재 '+ch.id+' ↗</a>':'')+'</div></article>').join("");
-const chapterGroups=[
- {title:"기초 문법",en:"FOUNDATIONS",description:"입출력과 연산, 조건문, 반복문",ids:["101","110","121","122","123"]},
- {title:"배열 · 함수",en:"DATA & FUNCTIONS",description:"배열, 문자열, 라이브러리 함수와 사용자 정의 함수",ids:["131","132","133","141"]},
- {title:"포인터 · 구조체 · 메모리",en:"POINTERS & MEMORY",description:"포인터와 구조체를 기반으로 파일 처리와 동적 메모리까지 확장",ids:["151","161","169","171","181"]},
- {title:"자료구조 · 종합 응용",en:"ADVANCED & INTEGRATION",description:"연결 리스트, 저수준 C, 통합 실습과 CRUD 프로젝트",ids:["182","191","201","202"]}
-];
-const unitMap=new Map(units);
-const publicCount=units.filter(([id])=>Boolean(current[id])).length;
-document.getElementById("available-overview-count").textContent=publicCount+"개";
-document.getElementById("pending-overview-count").textContent=(units.length-publicCount)+"개";
-document.getElementById("units").innerHTML=chapterGroups.map((group,index)=>{
- const entries=group.ids.map(id=>{
-  const name=unitMap.get(id),c=current[id];
-  const body='<span class="id">'+id+'</span><span class="details"><strong>'+name+'</strong><small>'+(c?(id==="181"?"필수 4단계 · 선택 심화 4단계":"인터랙티브 학습 공개"):"학습 콘텐츠 준비 중")+'</small></span>';
-  return c?'<a class="unit unit-live" href="'+c.url+'" aria-label="'+id+' '+name+' 학습 열기"><span class="unit-status live" aria-label="학습 가능"><span class="status-dot" aria-hidden="true"></span>학습 가능</span>'+body+'<span class="unit-action" aria-hidden="true">열기 →</span></a>':'<article class="unit unit-pending" aria-label="'+id+' '+name+' 준비 중"><span class="unit-status pending"><span class="status-dot" aria-hidden="true"></span>준비 중</span>'+body+'</article>';
- }).join("");
- const ready=group.ids.filter(id=>Boolean(current[id])).length;
- return '<section class="course-group'+(ready===0?' course-group-upcoming':'')+'" aria-labelledby="course-group-'+index+'"><div class="course-group-head"><div><span class="course-group-kicker">'+String(index+1).padStart(2,"0")+' · '+group.en+'</span><h3 id="course-group-'+index+'">'+group.title+'</h3><p>'+group.description+'</p></div><span class="course-group-count'+(ready>0?' has-live':'')+'">'+(ready>0?ready+' / '+group.ids.length+' 학습 가능':'공개 준비 중')+'</span></div><div class="unit-grid">'+entries+'</div></section>';
-}).join("");
-
-function openCourseOverview(){
- const details=document.getElementById("course-overview-details");
- details.open=true;
- requestAnimationFrame(()=>document.getElementById("roadmap").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth",block:"start"}));
-}
-for(const id of ["course-roadmap-link","overview-action"]){
- document.getElementById(id)?.addEventListener("click",event=>{
-  event.preventDefault();history.replaceState(null,"","#roadmap");openCourseOverview();
- });
-}
-if(location.hash==="#roadmap")openCourseOverview();
-
-
-</script><script src="../assets/els-theme-v2.js?v=2" defer></script></body></html>
+<script src="./course-catalog.js?v=1" defer></script><script src="../assets/els-theme-v2.js?v=2" defer></script></body></html>
