@@ -21,3 +21,27 @@
 .dm-heap[data-phase="released"] .dm-cell{opacity:.45;border-style:dashed}
 .dm-heap-explanation{padding:12px 14px;border-left:3px solid var(--els-link,var(--blue));background:var(--els-info-bg,var(--soft));color:var(--els-info-ink,var(--ink));margin:14px 0 0;font-size:13px;line-height:1.7;border-radius:5px}
 @media(max-width:630px){.dm-heap{padding:14px}.dm-heap-diagram{flex-wrap:wrap}.dm-pointer{min-width:110px}.dm-arrow{font-size:20px}.dm-cells{gap:3px}.dm-cell{padding:7px 1px}.dm-cell strong{font-size:13px}}
+
+/* Chapter 181 heap explorer v2: pointer selection, guided motion and leak states. */
+.dm-pointer small{display:block;font-size:10px;margin-top:5px;color:var(--els-muted,var(--muted))}
+.dm-cells .dm-cell{cursor:pointer;color:var(--els-ink,var(--ink));min-height:79px}
+.dm-cells .dm-cell:disabled{cursor:not-allowed}
+.dm-cell em{font:normal 10px/1.5 Consolas,monospace;display:block;color:var(--els-muted,var(--muted));margin-top:4px}
+.dm-cell.selected{outline:2px solid var(--els-link,var(--blue));outline-offset:1px;background:var(--els-surface-alt,var(--soft))}
+.dm-cell:focus-visible,.dm-switch button:focus-visible{outline:3px solid var(--els-focus,#ead18b);outline-offset:2px}
+.dm-detail{font:600 12px/1.65 Consolas,"Malgun Gothic",monospace;color:var(--els-ink,var(--ink));margin:10px 0 2px;overflow-wrap:anywhere}
+.dm-heap[data-phase="released"] .dm-arrow{color:var(--els-muted,var(--muted))}
+.dm-heap[data-phase="released"] .dm-cell{pointer-events:none}
+.dm-leak{margin-top:18px;border:1px solid var(--els-border,var(--line));border-radius:10px;padding:13px;background:var(--els-surface-alt,var(--soft))}
+.dm-leak summary{font-size:13px;font-weight:800;cursor:pointer;color:var(--els-link,var(--blue))}
+.dm-leak p{font-size:12px;color:var(--els-muted,var(--muted));line-height:1.7}
+.dm-leak-board{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.dm-leak-block{border:1px solid var(--els-border,var(--line));border-radius:9px;background:var(--els-surface,var(--surface));padding:14px;min-width:0}
+.dm-leak-block strong,.dm-leak-block span{display:block;overflow-wrap:anywhere}
+.dm-leak-block strong{font-size:13px}.dm-leak-block span{font-size:12px;margin-top:6px;color:var(--els-muted,var(--muted))}
+.dm-leak-block.lost{border:2px dashed var(--els-focus,#ead18b);background:var(--els-info-bg,var(--soft))}
+.dm-leak-block.freed{opacity:.58}
+.dm-leak-block.pending{opacity:.5;border-style:dotted}
+.dm-leak-note{background:var(--els-info-bg,var(--soft));padding:10px 12px;border-radius:7px;color:var(--els-info-ink,var(--ink))!important}
+@media(max-width:550px){.dm-heap-diagram{gap:9px}.dm-cells .dm-cell{min-height:65px}.dm-cells .dm-cell em{font-size:9px}.dm-leak-board{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.dm-heap *{animation:none!important;transition:none!important}}
