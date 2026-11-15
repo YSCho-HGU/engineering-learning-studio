@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "groups": [
+    {
+      "id": "foundations",
+      "title": "기초 문법",
+      "en": "FOUNDATIONS",
+      "description": "입출력과 연산, 조건문, 반복문"
+    },
+    {
+      "id": "data",
+      "title": "배열 · 함수",
+      "en": "DATA & FUNCTIONS",
+      "description": "배열, 문자열, 라이브러리 함수와 사용자 정의 함수"
+    },
+    {
+      "id": "memory",
+      "title": "포인터 · 구조체 · 메모리",
+      "en": "POINTERS & MEMORY",
+      "description": "포인터와 구조체를 기반으로 파일 처리와 동적 메모리까지 확장"
+    },
+    {
+      "id": "advanced",
+      "title": "자료구조 · 종합 응용",
+      "en": "ADVANCED & INTEGRATION",
+      "description": "연결 리스트, 저수준 C, 통합 실습과 CRUD 프로젝트"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "101",
+      "chapter": 10,
+      "title": "Getting Started",
+      "group": "foundations",
+      "url": "./getting-started/",
+      "published": false,
+      "description": ""
+    },
+    {
+      "id": "110",
+      "chapter": 11,
+      "title": "Data I/O & Expressions",
+      "group": "foundations",
+      "url": "./data-io-expressions/",
+      "published": false,
+      "description": ""
+    },
+    {
+      "id": "121",
+      "chapter": 12,
+      "title": "if Statements",
+      "group": "foundations",
+      "url": "./if-statements/",
+      "published": false,
+      "description": ""
+    },
+    {
+      "id": "122",
+      "chapter": 12,
+      "title": "switch Statements",
+      "group": "foundations",
+      "url": "./switch-statements/",
+      "published": false,
+      "description": ""
+    },
+    {
+      "id": "123",
+      "chapter": 12,
+      "title": "Loops",
+      "group": "foundations",
+      "url": "./loops/",
+      "published": false,
+      "description": ""
+    },
+    {
+      "id": "131",
+      "chapter": 13,
+      "title": "Arrays",
+      "group": "data",
+      "url": "./arrays/",
+      "published": false,
+      "description": ""
+    },
+    {
+      "id": "132",
+      "chapter": 13,
+      "title": "Strings",
+      "group": "data",
+      "url": "./strings/",
+      "published": false,
+      "description": ""
+    },
+    {
+      "id": "133",
+      "chapter": 13,
+      "title": "Standard Library Functions",
+      "group": "data",
+      "url": "./standard-library/",
+      "published": false,
+      "description": ""
+    },
+    {
+      "id": "141",
+      "chapter": 14,
+      "title": "User-Defined Functions",
+      "group": "data",
+      "url": "./functions/",
+      "published": false,
+      "description": ""
+    },
+    {
+      "id": "151",
+      "chapter": 15,
+      "title": "Pointers",
+      "group": "memory",
+      "url": "./pointer/",
+      "published": true,
+      "description": "주소, 역참조, 포인터와 배열, 함수의 주소 전달",
+      "book": "https://drive.google.com/file/d/1o7bzzH32a2gMwjFZ-SdYCtaUcdjxMK4H/view"
+    },
+    {
+      "id": "161",
+      "chapter": 16,
+      "title": "Structures",
+      "group": "memory",
+      "url": "./structure/",
+      "published": true,
+      "description": "struct와 typedef, 멤버 접근, 구조체 배열",
+      "book": "https://drive.google.com/file/d/1lINKdMeBQgnnnfisq8ekTLCntl4QJI4A/view"
+    },
+    {
+      "id": "169",
+      "chapter": 16,
+      "title": "Supplementary Topics",
+      "group": "memory",
+      "url": "./supplementary-topics/",
+      "published": false,
+      "description": ""
+    },
+    {
+      "id": "171",
+      "chapter": 17,
+      "title": "File I/O",
+      "group": "memory",
+      "url": "./file-io/",
+      "published": true,
+      "description": "파일 열기, Stream, EOF, 레코드와 센서 로그",
+      "book": "https://drive.google.com/file/d/1gnBNypCu4ntdnffhvf_mQ4g6gyfjLCzV/view"
+    },
+    {
+      "id": "181",
+      "chapter": 18,
+      "title": "Dynamic Memory",
+      "group": "memory",
+      "url": "./dynamic-memory/",
+      "published": true,
+      "description": "malloc, free, 포인터와 동적 배열 · 필수 4단계 + 선택 4단계"
+    },
+    {
+      "id": "182",
+      "chapter": 18,
+      "title": "Linked Lists",
+      "group": "advanced",
+      "url": "./linked-lists/",
+      "published": false,
+      "description": ""
+    },
+    {
+      "id": "191",
+      "chapter": 19,
+      "title": "Practical Low-Level C",
+      "group": "advanced",
+      "url": "./low-level-c/",
+      "published": false,
+      "description": ""
+    },
+    {
+      "id": "201",
+      "chapter": 20,
+      "title": "Progressive Integration Practice",
+      "group": "advanced",
+      "url": "./integration-practice/",
+      "published": false,
+      "description": ""
+    },
+    {
+      "id": "202",
+      "chapter": 20,
+      "title": "CRUD Integration",
+      "group": "advanced",
+      "url": "./crud-integration/",
+      "published": false,
+      "description": ""
+    }
+  ]
+}
