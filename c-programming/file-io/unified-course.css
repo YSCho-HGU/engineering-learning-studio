@@ -137,3 +137,33 @@
 .els-design .sensor-practice-note{margin:12px 0 14px;border-left:4px solid var(--els-link);background:var(--els-info-bg);color:var(--els-info-ink);padding:12px 14px;border-radius:8px;font-size:.85rem;line-height:1.8}
 .els-design .sensor-editor-toolbar button:hover,.els-design #sensor-run:hover{filter:brightness(.95)}
 @media(max-width:680px){.els-design .sensor-output-grid{grid-template-columns:1fr}.els-design .sensor-editor-toolbar>button{flex:1 1 200px}}
+
+/* Step 07 — sequential C parsing and optional robust file-processing lab */
+.els-design .sensor-step-lab,.els-design .sensor-robust-lab{margin:18px 0;padding:18px;background:var(--els-surface);border:1px solid var(--els-border);border-radius:12px;color:var(--els-ink)}
+.els-design .sensor-part-title span{display:block;font-size:.78rem;font-weight:850;letter-spacing:.04em;color:var(--els-link);margin-bottom:6px}
+.els-design .sensor-part-title h3{font-size:1.25rem;color:var(--els-ink);margin:0 0 5px}
+.els-design .sensor-part-title p{color:var(--els-muted);font-size:.9rem;line-height:1.8;margin:4px 0 12px}
+.els-design .sensor-step-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:13px 0}
+.els-design .sensor-step-controls button{border:1px solid var(--els-border);background:var(--els-surface-alt);color:var(--els-ink);border-radius:8px;padding:9px 13px;min-height:44px}
+.els-design .sensor-step-controls button.primary,.els-design #sensor-compare-run{background:var(--els-primary)!important;color:var(--els-primary-text)!important;border-color:var(--els-primary)}
+.els-design .sensor-step-controls output{font-weight:800;color:var(--els-ink);padding:8px}
+.els-design .sensor-step-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.els-design .sensor-step-card{background:var(--els-surface-alt);border:1px solid var(--els-border);border-radius:9px;padding:12px;display:grid;gap:4px;overflow-wrap:anywhere}
+.els-design .sensor-step-card span{font-size:.79rem;color:var(--els-muted)}
+.els-design .sensor-step-card strong{font:750 1.02rem/1.5 Consolas,"Liberation Mono",monospace;color:var(--els-ink)}
+.els-design .sensor-step-card small{font-size:.81rem;color:var(--els-muted);line-height:1.6}
+.els-design .sensor-step-source{margin:11px 0;border:1px solid var(--els-border);border-radius:9px;padding:12px;background:var(--els-surface-alt)}
+.els-design .sensor-step-source strong{font-size:.86rem;color:var(--els-ink)}
+.els-design .sensor-step-source pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--els-code-bg);color:var(--els-code-ink);font:14px/1.8 Consolas,"Liberation Mono",monospace;padding:12px;border-radius:8px}
+.els-design .sensor-compare-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:13px 0}
+.els-design .sensor-compare-steps>div{border:1px solid var(--els-border);background:var(--els-surface-alt);border-radius:9px;padding:11px;display:grid;gap:5px}
+.els-design .sensor-compare-steps strong{font-size:.87rem;color:var(--els-ink)}
+.els-design .sensor-compare-steps span{font-size:.79rem;line-height:1.6;color:var(--els-muted)}
+.els-design .sensor-compare-question{padding:13px;background:var(--els-info-bg);color:var(--els-info-ink);border-left:4px solid var(--els-link);border-radius:8px}
+.els-design .sensor-compare-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:13px 0}
+.els-design .sensor-robust-lab .sensor-execute-controls a{color:var(--els-link);font-weight:750;min-height:44px;display:inline-flex;align-items:center}
+.els-design .sensor-robust-code{margin:13px 0}
+.els-design .sensor-robust-code summary{cursor:pointer;color:var(--els-link);font-weight:750;padding:10px}
+.els-design .sensor-robust-code pre{background:var(--els-code-bg);color:var(--els-code-ink);padding:13px;border-radius:9px;overflow-x:auto;font:14px/1.8 Consolas,"Liberation Mono",monospace}
+@media(max-width:750px){.els-design .sensor-compare-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.els-design .sensor-compare-results{grid-template-columns:1fr}}
+@media(max-width:550px){.els-design .sensor-step-grid{grid-template-columns:1fr}.els-design .sensor-step-controls button{flex:1 1 40%}}
