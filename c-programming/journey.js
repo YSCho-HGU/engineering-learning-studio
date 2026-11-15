@@ -9,10 +9,10 @@ const hasOptional=Number.isInteger(D.coreCount)&&D.coreCount>0&&D.coreCount<tota
 const coreCount=hasOptional?D.coreCount:total;
 const phaseBreaks=Array.isArray(D.phaseBreaks)&&D.phaseBreaks.length===2?D.phaseBreaks:[Math.ceil(total/2),Math.max(Math.ceil(total/2)+1,total-1)];
 const $=id=>document.getElementById(id);
-const version=D.contentRevision||1;
-const key="els-journey-"+D.slug+"-v"+(D.slug==="dynamic-memory"?2:version);
+const version=D.contentRevision||(D.slug==="dynamic-memory"?2:1);
+const key="els-journey-"+D.slug+"-v"+version;
 let completed=[],current=0;
-const assessmentKey="els-concept-"+D.slug+"-v"+(D.slug==="dynamic-memory"?2:version);
+const assessmentKey="els-concept-"+D.slug+"-v"+version;
 let concepts=[];
 try{const v=JSON.parse(localStorage.getItem(assessmentKey)||"[]");if(Array.isArray(v))concepts=[...new Set(v.filter(n=>Number.isInteger(n)&&n>=0&&n<total))]}catch(e){}
 const persistConcepts=()=>{try{localStorage.setItem(assessmentKey,JSON.stringify(concepts))}catch(e){}};
