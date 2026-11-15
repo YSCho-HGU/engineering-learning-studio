@@ -129,6 +129,23 @@ function renderMemoryDiagram(host, step, lesson){
  return host;
 }
 
+
+function renderMemoryLayout(stage,l){
+ if(!l.layout)return;
+ const section=element("section","activity layout-lesson",stage);
+ element("span","tag",section,"MEMORY LAYOUT · ARRAYS & STRUCTURES");
+ element("h3","",section,l.layout.title);
+ const meta=element("p","legend",section,l.layout.base);
+ const strip=element("div","layout-cells",section);
+ for(const cell of l.layout.cells){
+  const panel=element("div","layout-cell"+(cell.label.includes("padding")?" layout-padding":""),strip);
+  element("strong","layout-cell-label",panel,cell.label);
+  element("span","layout-cell-value",panel,cell.value);
+  element("small","layout-cell-offset",panel,cell.offset);
+ }
+ element("p","layout-disclaimer",section,l.layout.note);
+}
+
 function renderTrace(stage,l){
  const section=element("section","activity trace-lab",stage);
  element("span","tag",section,"GUIDED EXECUTION · LINE-BY-LINE");
@@ -211,7 +228,7 @@ function show(i){
  const out=element("div","explain",e);out.hidden=true;
  const outPre=element("pre","",out);outPre.style.whiteSpace="pre-wrap";outPre.textContent=l.output;
  reveal.addEventListener("click",()=>{out.hidden=!out.hidden;reveal.setAttribute("aria-expanded",String(!out.hidden))});reveal.setAttribute("aria-expanded","false");
- renderTrace(stage,l);renderModel(stage,l);renderQuiz(stage,l);
+ renderTrace(stage,l);renderMemoryLayout(stage,l);renderModel(stage,l);renderQuiz(stage,l);
  const transfer=element("section","transfer",stage);
  element("h3","",transfer,"Transfer · 응용 및 설명");
  element("p","",transfer,l.transfer);
