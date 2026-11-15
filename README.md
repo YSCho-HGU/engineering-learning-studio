@@ -41,7 +41,7 @@ The authoring policy is a structural quality gate, not a substitute for instruct
 
 ## C Programming — Chapter Creation
 
-New C chapters follow [the flexible authoring standard](docs/C_PROGRAMMING_AUTHORING_STANDARD.md).
+New C chapters follow [the flexible authoring standard](docs/C_PROGRAMMING_AUTHORING_STANDARD.md). For the instructor evaluation of Chapters 151–181, see [the first-year Core/Optional review](docs/C_CH151_181_FIRST_YEAR_REVIEW.md).
 Copy [the chapter data template](c-programming/_template/data.js), select the number of lessons and coding tasks **from learning objectives (never from a fixed numeric quota)**, validate with the shared tools, then publish via the [Course Manager](admin/).
 
 ```bash
