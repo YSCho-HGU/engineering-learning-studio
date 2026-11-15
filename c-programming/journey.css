@@ -23,3 +23,20 @@
 body{overflow-x:hidden}
 @media(max-width:830px){.topbar{padding:12px 16px}.toplinks{gap:10px}.route-heading{margin-top:16px}}
 @media(max-width:580px){.hero{padding:24px 20px}.stage .code{font-size:12px}.stage{padding:16px}.topbar .brand{font-size:.94rem}.toplinks{font-size:.78rem}.route-heading span{font-size:.75rem}}
+
+/* Guided C trace: independent highlighted source line and persistent state panel */
+.trace-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:13px;margin:14px 0}
+.trace-code{border:1px solid var(--line);border-radius:10px;overflow:auto;max-height:490px;background:#101b2b;color:#e8f2fd}
+.trace-lines{padding:8px 0;min-width:max-content;font:14px/1.8 Consolas,"Liberation Mono",monospace;white-space:pre}
+.trace-line{display:grid;grid-template-columns:42px minmax(max-content,1fr);border-left:4px solid transparent;min-width:max-content}
+.trace-number{text-align:right;padding:1px 9px;color:#b5cbe2;user-select:none}.trace-source{padding:1px 11px}
+.trace-line.active{background:#59451c;color:#fff3d6;border-left-color:#ffda72;font-weight:800}
+.trace-line.active .trace-number{color:#fff2bb}
+.trace-state{border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0;background:var(--surface)}
+.trace-status{margin:0 0 10px;font-size:.87rem;font-weight:800;color:var(--blue)}
+.trace-memory{font:14px/1.7 Consolas,"Liberation Mono",monospace;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--soft);padding:13px;border-radius:9px;min-height:100px}
+.trace-explanation{font-size:.9rem;line-height:1.6}
+.trace-controls{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.trace-controls button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:800px){.trace-layout{grid-template-columns:1fr}.trace-code{max-height:350px}}
+@media(max-width:520px){.trace-lines{font-size:12px}.trace-memory{font-size:12px}}
