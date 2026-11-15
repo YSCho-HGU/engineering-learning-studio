@@ -7,9 +7,10 @@ if(!D||!Array.isArray(D.lessons)||D.lessons.length<1)throw Error("Journey must c
 const total=D.lessons.length, coreCount=D.slug==="dynamic-memory"?(D.coreCount||4):total;
 const phaseBreaks=Array.isArray(D.phaseBreaks)&&D.phaseBreaks.length===2?D.phaseBreaks:[Math.ceil(total/2),Math.max(Math.ceil(total/2)+1,total-1)];
 const $=id=>document.getElementById(id);
-const key="els-journey-"+D.slug+(D.slug==="dynamic-memory"?"-v2":"-v1");
+const version=D.contentRevision||1;
+const key="els-journey-"+D.slug+"-v"+(D.slug==="dynamic-memory"?2:version);
 let completed=[],current=0;
-const assessmentKey="els-concept-"+D.slug+(D.slug==="dynamic-memory"?"-v2":"-v1");
+const assessmentKey="els-concept-"+D.slug+"-v"+(D.slug==="dynamic-memory"?2:version);
 let concepts=[];
 try{const v=JSON.parse(localStorage.getItem(assessmentKey)||"[]");if(Array.isArray(v))concepts=[...new Set(v.filter(n=>Number.isInteger(n)&&n>=0&&n<total))]}catch(e){}
 const persistConcepts=()=>{try{localStorage.setItem(assessmentKey,JSON.stringify(concepts))}catch(e){}};
@@ -20,24 +21,24 @@ function element(tag,cls,parent,text){const n=document.createElement(tag);if(cls
 function renderNav(){
  $("lesson-nav").replaceChildren();
  D.lessons.forEach((l,i)=>{
-  if(D.slug==="dynamic-memory"&&(i===0||i===4)){
-   const group=element("div","dm-nav-group",$("lesson-nav"),i===0?"필수 학습 · CORE (01–04)":"선택 심화 · OPTIONAL (05–08)");
+  if(D.slug==="dynamic-memory"&&(i===0||i===coreCount)){
+   const group=element("div","dm-nav-group",$("lesson-nav"),i===0?"필수 학습 · CORE (01–"+String(coreCount).padStart(2,"0")+")":"선택 심화 · OPTIONAL ("+String(coreCount+1).padStart(2,"0")+"–"+String(total).padStart(2,"0")+")");
    group.setAttribute("aria-label",i===0?"Core lessons":"Optional advanced lessons");
   }
   const b=element("button",(i===current?"active ":"")+(completed.includes(i)?"done":""),$("lesson-nav"));
   b.type="button";b.dataset.lesson=i;
   element("span","n",b,String(i+1).padStart(2,"0"));
   element("span","",b,l.title);
-  if(D.slug==="dynamic-memory")element("span","dm-level",b,i<4?"필수":"선택");
+  if(D.slug==="dynamic-memory")element("span","dm-level",b,i<coreCount?"필수":"선택");
   if(concepts.includes(i))element("span","concept-indicator",b,"✓ Concept");
   b.addEventListener("click",()=>show(i));
  });
  if(D.slug==="dynamic-memory"){
-  const coreA=completed.filter(i=>i<4).length,coreC=concepts.filter(i=>i<4).length;
-  $("progress-text").textContent="필수 Activity "+coreA+"/4 · Concept "+coreC+"/4 · 선택 "+completed.filter(i=>i>=4).length+"/4";
+  const coreA=completed.filter(i=>i<coreCount).length,coreC=concepts.filter(i=>i<coreCount).length;
+  $("progress-text").textContent="필수 Activity "+coreA+"/"+coreCount+" · Concept "+coreC+"/"+coreCount+" · 선택 "+completed.filter(i=>i>=coreCount).length+"/"+(total-coreCount);
  }else $("progress-text").textContent="Activity "+completed.length+"/"+total+" · Concept "+concepts.length+"/"+total;
  $("progress-bar").style.width=(D.slug==="dynamic-memory"?completed.filter(i=>i<4).length/4:completed.length/total)*100+"%";
- const meter=$("progress-bar").parentElement;if(meter){meter.setAttribute("aria-valuenow",String(D.slug==="dynamic-memory"?completed.filter(i=>i<4).length:completed.length));meter.setAttribute("aria-valuemax",String(coreCount));}
+ const meter=$("progress-bar").parentElement;if(meter){meter.setAttribute("aria-valuenow",String(D.slug==="dynamic-memory"?completed.filter(i=>i<coreCount).length:completed.length));meter.setAttribute("aria-valuemax",String(coreCount));}
 }
 function createCode(host,source){
  const pre=element("pre","code",host);
@@ -68,7 +69,7 @@ function renderQuiz(stage,l){
 }
 function updateAssessmentSummary(){
  const target=$("assessment-status");if(!target)return;
- target.textContent=D.slug==="dynamic-memory"?"필수 Activity "+completed.filter(i=>i<4).length+"/4 · 필수 Concept "+concepts.filter(i=>i<4).length+"/4 · 선택 심화 Activity "+completed.filter(i=>i>=4).length+"/4 · Coding은 GCC 자기보고": "Activity Reviewed "+completed.length+"/"+total+" · Concept Check Passed "+concepts.length+"/"+total+" · Coding Practice: self-reported GCC checks only.";
+ target.textContent=D.slug==="dynamic-memory"?"필수 Activity "+completed.filter(i=>i<coreCount).length+"/"+coreCount+" · 필수 Concept "+concepts.filter(i=>i<coreCount).length+"/"+coreCount+" · 선택 심화 Activity "+completed.filter(i=>i>=coreCount).length+"/"+(total-coreCount) · Coding은 GCC 자기보고": "Activity Reviewed "+completed.length+"/"+total+" · Concept Check Passed "+concepts.length+"/"+total+" · Coding Practice: self-reported GCC checks only.";
 }
 function modelOutput(model,v){
  switch(model.kind){
@@ -251,7 +252,7 @@ function show(i){
  current=Math.max(0,Math.min(total-1,i));renderNav();
  const l=D.lessons[current];
  const stage=$("lesson");stage.replaceChildren();
- element("div","tag",stage,"STEP "+String(current+1).padStart(2,"0")+" / "+String(total).padStart(2,"0")+" · "+(D.slug==="dynamic-memory"?(current<4?"필수 학습 · CORE":"선택 심화 · OPTIONAL"):(current<phaseBreaks[0]?"BEFORE CLASS":current<phaseBreaks[1]?"IN CLASS":"AFTER CLASS")));
+ element("div","tag",stage,"STEP "+String(current+1).padStart(2,"0")+" / "+String(total).padStart(2,"0")+" · "+(D.slug==="dynamic-memory"?(current<coreCount?"필수 학습 · CORE":"선택 심화 · OPTIONAL"):(current<phaseBreaks[0]?"BEFORE CLASS":current<phaseBreaks[1]?"IN CLASS":"AFTER CLASS")));
  element("h2","",stage,l.title);element("p","lead",stage,l.goal);
  const concept=element("section","concept",stage);
  element("h3","",concept,"Understand · 핵심 개념");element("p","",concept,l.concept);
@@ -283,7 +284,11 @@ function init(){
  $("site-title").textContent=D.title+" Learning Journey";
  $("hero-title").textContent=D.title+" Learning Journey";
  $("hero-summary").textContent=D.summary;
- $("hero-count").textContent=(D.slug==="dynamic-memory"?"4 Core + 4 Optional · ":total+" Learning Steps · ")+D.book;
+ $("hero-count").textContent=(D.slug==="dynamic-memory"?coreCount+" Core + "+(total-coreCount)+" Optional · ":total+" Learning Steps · ")+D.book;
+ const stepLabel=document.querySelector(".hero-aside small");if(stepLabel)stepLabel.textContent=total+" LEARNING STEPS";
+ const heading=document.querySelector(".route-heading span");if(heading)heading.textContent=total+" Learning Steps / "+D.practice.length+" Coding Practices";
+ const intro=document.querySelector("#coding-practice h2");if(intro)intro.textContent="P1–P"+D.practice.length+" · Coding Practice";
+ const meter=$("progress-bar")?.parentElement;if(meter)meter.setAttribute("aria-valuemax",String(D.slug==="dynamic-memory"?coreCount:total));
  $("course-number").textContent=D.book;
  $("phase-one").textContent=D.phases[0];$("phase-two").textContent=D.phases[1];$("phase-three").textContent=D.phases[2];
  const back=$("back-link");if(back)back.href="../";
