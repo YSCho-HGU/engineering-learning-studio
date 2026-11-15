@@ -298,7 +298,7 @@ function init(){
  $("related-link").href=D.related; $("related-link").textContent="Related "+D.relatedTitle+" →";
  $("practice").replaceChildren();
  D.practice.forEach((p,i)=>{
-  const article=element("article","",$("practice"));element("strong","",article,"P"+(i+1)+" · "+(D.slug==="dynamic-memory"?(i<3?"[필수] ":"[선택] "):"")+p.title);
+  const article=element("article","",$("practice"));element("strong","",article,"P"+(i+1)+" · "+(hasOptional?(i<Number(D.practiceCoreCount??3)?"[필수] ":"[선택] "):"")+p.title);
   element("p","",article,p.task);
   const details=element("details","",article);element("summary","",details,"Starter code and test case");
   createCode(details,p.starter);
