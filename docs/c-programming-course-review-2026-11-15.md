@@ -60,3 +60,18 @@ These eight local checks passed. **Remaining 24 new examples and complete browse
 
 ## 6. Next quality gate
 Before describing the whole platform as verified, confirm the GitHub Actions **GCC and browser workflows pass**, review 390px and 1280px screenshots, and perform a human reading pass for content clarity and expected student work time.
+
+
+## 2026-11-15 Instructor revision: outcome-based lesson counts
+
+New first-year curriculum review removes the mandatory eight-step format.
+- 131 Arrays: **7 lessons** — array updates integrated into indexing/initialization; 2D arrays, frequency counts and sensor application remain.
+- 132 Strings: **7 lessons** — duplicate sensor-name comparison merged with strcmp; null terminator, length, buffer capacity and copying remain.
+- 133 Standard Library: **6 lessons** — duplicate strlen omitted; rand/srand and toupper/isdigit paired by teaching purpose.
+- 141 User-Defined Functions: **8 lessons retained** because prototypes, parameters, returns, pass-by-value, scope, array parameters and composition are distinct outcomes.
+
+New total: **28 concept lessons**, plus **24 coding exercises**. The earlier 32-lesson count refers to the prior version.
+Lesson navigation, progress bars, phase classification and quiz checks now derive from the current chapter lesson count.
+Concept quizzes and transfer questions have been rewritten to assess specific learning outcomes; an estimated concept-study time is displayed for each step.
+Previous progress records for the redesigned chapters are versioned to prevent mapping completion to a different lesson.
+New QA requires the GCC C11 and browser workflow to run with the dynamic 7/7/6/8 counts. Test registrations and JavaScript syntax checks are not equivalent to passing real browser or compiler runs.
