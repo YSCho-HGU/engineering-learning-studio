@@ -1,0 +1,35 @@
+name: C Pointer and Structure Journey QA
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'c-programming/journey.*'
+      - 'c-programming/pointer/**'
+      - 'c-programming/structure/**'
+      - 'c-programming/index.html'
+      - 'tests/c-journey-qa.mjs'
+      - '.github/workflows/c-journey-qa.yml'
+jobs:
+  cross-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chromium and Playwright
+        run: |
+          npm install --no-save playwright@1.56.0
+          npx playwright install --with-deps chromium
+      - name: Run C11 GCC oracle and browser interaction tests
+        run: C_JOURNEY_BROWSER=1 node tests/c-journey-qa.mjs
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: c-journey-cross-validation
+          path: qa-output/
+          if-no-files-found: warn
+          retention-days: 14
