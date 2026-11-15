@@ -18,7 +18,21 @@
    ["alert","경보 조건 · 표시값"],["exitCode","종료 코드"]
  ];
  const guidanceKeys=new Set(["read","sum","count","condition","alert","finalCount","finalAverage","noRecords","failureReturn","successReturn"]);
- function chooseSteps(){return $("sensor-step-view").value==="all"?allSteps:allSteps.filter(x=>guidanceKeys.has(x.key))}
+ function chooseSteps(){
+   const mode=$("sensor-step-view").value;
+   if(mode==="all")return allSteps;
+   const core=allSteps.filter(x=>guidanceKeys.has(x.key));
+   if(mode==="core")return core;
+   // The first successful fscanf iteration only; avoid showing a partial
+   // data set as if it were a complete program run.
+   const first=core.findIndex(x=>x.key==="read");
+   if(first<0)return [];
+   const bound=core.findIndex((x,i)=>i>first&&x.key==="condition");
+   const stop=bound<0?first:bound;
+   let output=core.slice(first,stop+1);
+   if(core[stop+1]?.key==="alert")output=core.slice(first,stop+2);
+   return output;
+ }
  function renderVariableDiff(before,snapshot){
    const root=$("sensor-variable-diff-list");
    root.replaceChildren();
@@ -41,14 +55,14 @@
  function switchDepth(){
    if(!allSteps.length){steps=[];reset();return}
    steps=chooseSteps();step=-1;
-   $("sensor-step-counter").textContent="보기 방식 변경 · 다음 C 문장을 선택하세요";
+   $("sensor-step-counter").textContent="선택한 학습 범위 "+steps.length+"개 문장 · 다음 C 문장으로 시작";
    $("sensor-step-next").disabled=!steps.length;
    $("sensor-step-last").disabled=!steps.length;
    $("sensor-step-first").disabled=true;
    $("sensor-step-prev").disabled=true;
    paintCode();
    $("sensor-variable-diff-list").textContent="이전 값 → 새로운 값은 실행 후 표시됩니다.";
-   $("sensor-code-explanation").textContent="학습 깊이를 바꿨습니다. 첫 C 문장부터 다시 확인하세요.";
+   $("sensor-code-explanation").textContent="학습 깊이를 바꿨습니다. 첫 C 문장부터 다시 확인하세요. 기초 모드는 전체 실행이 아닌 첫 레코드 처리만 보여줍니다.";
  }
 
  function paintCode(line=-1){
@@ -138,7 +152,7 @@
    }catch(err){reset();$("sensor-step-source").textContent="시뮬레이션 제한: "+err.message;return;}
    step=-1;
    paintCode();
-   $("sensor-step-counter").textContent="준비 완료 · 다음 C 문장을 눌러 시작하세요";
+   $("sensor-step-counter").textContent="준비 완료 · "+steps.length+"개 문장 · 다음 C 문장을 누르세요";
    $("sensor-step-next").disabled=!steps.length;
    $("sensor-step-last").disabled=!steps.length;
  }
