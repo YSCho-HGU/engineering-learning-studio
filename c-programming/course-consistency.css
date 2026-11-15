@@ -1,0 +1,40 @@
+/* Shared C Programming UX. Neutral Dark tokens are inherited from els-theme-v2. */
+.c-course-journey,.c-course-practice{--cx-bg:var(--els-surface,#1e2422);--cx-border:var(--els-border,#505852);--cx-accent:var(--els-link,#b9d7c8);--cx-muted:var(--els-muted,#c1c7c1);--cx-ink:var(--els-ink,#f0f2ee);--cx-alt:var(--els-surface-alt,#303734)}
+.c-course-journey .hero,.c-course-practice .hero{background:var(--cx-bg);color:var(--cx-ink);border:1px solid var(--cx-border);padding:18px 22px;grid-template-columns:minmax(0,1fr) minmax(180px,.42fr);gap:12px;border-radius:14px}
+.c-course-journey .hero h1,.c-course-practice .hero h1{font-size:clamp(24px,3vw,35px);margin:5px 0}
+.c-course-journey .hero p,.c-course-practice .hero p{font-size:13px;line-height:1.55;color:var(--cx-muted)}
+.c-course-journey .over,.c-course-practice .over{color:var(--cx-accent);letter-spacing:.06em}
+.c-course-journey .hero-aside,.c-course-practice .hero-aside{background:var(--cx-alt);border:1px solid var(--cx-border);padding:12px;color:var(--cx-ink)}
+.c-course-journey .hero-aside small,.c-course-practice .hero-aside small{color:var(--cx-muted)}
+.c-course-journey .crumb,.c-course-practice .crumb{font-size:11px;color:var(--cx-muted);margin:8px 0}
+.c-course-journey .toplinks,.c-course-practice .toplinks{gap:10px;font-size:12px}
+.c-course-journey .course-core-links{display:flex;gap:7px;align-items:center;flex-wrap:wrap;padding:9px 11px;margin:10px 0 8px;border:1px solid var(--cx-border);border-radius:10px;background:var(--cx-bg)}
+.c-course-journey .course-core-links strong{font-size:11px;color:var(--cx-muted);margin-right:6px}
+.c-course-journey .course-core-links a{border:1px solid var(--cx-border);border-radius:8px;padding:7px 10px;color:var(--cx-ink);text-decoration:none;font-size:12px;font-weight:700;min-height:34px;display:inline-flex;align-items:center}
+.c-course-journey .course-core-links a:hover{border-color:var(--cx-accent);background:var(--cx-alt)}
+.c-course-journey .course-phase-details{margin:8px 0 11px;border:1px solid var(--cx-border);border-radius:10px;background:var(--cx-bg)}
+.c-course-journey .course-phase-details>summary{padding:9px 13px;cursor:pointer;color:var(--cx-muted);font-size:12px;font-weight:700}
+.c-course-journey .course-phase-details[open]>summary{border-bottom:1px solid var(--cx-border)}
+.c-course-journey .course-phase-details .route-heading{margin:10px 13px 7px}
+.c-course-journey .course-phase-details .route{margin:10px 13px}
+.c-course-journey .course-phase-details .phase{padding:13px;background:var(--cx-alt)}
+.c-course-journey .course-phase-details .phase strong{color:var(--cx-accent)}
+.c-course-journey .layout{grid-template-columns:246px minmax(0,1fr);gap:16px;margin-top:12px}
+.c-course-journey .side{padding:12px;border-color:var(--cx-border)}
+.c-course-journey .side nav{gap:4px}
+.c-course-journey .side nav button{padding:8px;font-size:12px;line-height:1.4}
+.c-course-journey .side nav button.active{border-color:var(--cx-accent);background:var(--cx-alt)}
+.c-course-journey .stage{padding:clamp(14px,1.7vw,22px);border-color:var(--cx-border)}
+.c-course-journey .stage .concept,.c-course-journey .stage .activity,.c-course-journey .stage .quiz,.c-course-journey .stage .transfer{margin:13px 0;padding:clamp(12px,1.5vw,17px)}
+.c-course-journey .journey-assessment,.c-course-journey .side .progress{font-size:11px}
+.c-course-practice .cp-layout{display:block;margin:12px 0 45px}
+.c-course-practice .cp-menu{position:static;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:12px;margin-bottom:12px;border-color:var(--cx-border)}
+.c-course-practice .cp-nav-item{padding:10px;text-align:left;font-size:12px;line-height:1.4;min-width:0;overflow-wrap:anywhere;border:1px solid var(--cx-border)}
+.c-course-practice .cp-nav-item.active{border-color:var(--cx-accent);background:var(--cx-alt);color:var(--cx-ink)}
+.c-course-practice .cp-content{width:100%;padding:clamp(14px,2vw,22px);border-color:var(--cx-border)}
+.c-course-practice .cp-content h2{font-size:clamp(19px,2.4vw,27px)}
+.c-course-practice .cp-editor{min-height:350px;width:100%;max-width:100%}
+.c-course-practice .notice{margin:10px 0;border-color:var(--cx-border);border-radius:9px;background:var(--cx-bg);font-size:12px}
+.c-course-practice .hero-aside{align-self:stretch}
+@media(max-width:900px){.c-course-journey .layout{grid-template-columns:1fr}.c-course-journey .side{position:static}.c-course-journey .side nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:680px){.c-course-journey .hero,.c-course-practice .hero{grid-template-columns:1fr;padding:13px}.c-course-journey .wrap,.c-course-practice .wrap{padding:0 12px}.c-course-journey .course-core-links strong{width:100%}.c-course-journey .course-core-links a{flex:1 1 42%;justify-content:center;text-align:center;font-size:11px;padding:7px 5px}.c-course-journey .side nav{grid-template-columns:repeat(2,minmax(0,1fr))}.c-course-journey .side nav button{min-width:0;overflow-wrap:anywhere}.c-course-journey .stage{padding:12px}.c-course-practice .cp-menu{grid-template-columns:repeat(2,minmax(0,1fr));padding:8px}.c-course-practice .cp-content{padding:12px}.c-course-practice .cp-editor{min-height:300px}}
