@@ -62,6 +62,13 @@ function updateAssessmentSummary(){
 }
 function modelOutput(model,v){
  switch(model.kind){
+ case "alloc":return "Request: "+v+" int elements\nHeap: ["+Array.from({length:v},(_,i)=>"slot "+i).join(" | ")+"]\nmalloc: uninitialized until you write each element\nOwner pointer must be checked for NULL; free once after use.";
+ case "calloc":return "calloc("+v+", sizeof(int))\nConceptual int array: ["+Array(v).fill("0").join(", ")+"]\nAll allocated bytes initialized to zero; always check allocation result.";
+ case "failure":return "Request: "+v+" int elements\nSuccess → pointer to allocated block; initialize and use\nFailure → NULL, skip dereference, handle error\nSimulation shows both branches, not a real failure.";
+ case "realloc":return "Original array: [4, 8]\nGrow to "+v+" int slots with temporary pointer\nSuccess → old values preserved; new elements uninitialized\nFailure → original allocation remains valid; free original when finished.";
+ case "free":return "Allocated block of "+v+" int slot(s)\nBefore free: valid if allocation succeeded\nAfter free: object lifetime ended; do NOT dereference or free again\nAssign p=NULL to prevent accidental reuse of this pointer.";
+ case "sensor":return "Allocate "+v+" Sensor record(s)\nExample values: "+Array.from({length:v},(_,i)=>12+6*i).join(", ")+"\nMean: "+(12+3*(v-1)).toFixed(1)+"\nUse records, calculate results, and free the allocation.";
+
  case "address":return "int x = "+v+";\nint *p = &x;\n&x → 0x1000 (illustrative)\np → 0x1000\n*p → "+v+"\nAddress and value are different.";
  case "write":return "Before: x = "+v+"\n*p = "+(v+7)+";\nAfter: x = "+(v+7)+"\n*p and x refer to the same object.";
  case "swap":return "Before: a = "+v+", b = "+(v+3)+"\nAfter swap(&a,&b):\na = "+(v+3)+", b = "+v;
