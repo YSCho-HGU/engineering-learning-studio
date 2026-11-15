@@ -79,8 +79,16 @@ async function save(){
   const book=$("book-"+ch.id).value.trim();
   if(book)ch.book=book;else delete ch.book;
   if(!ch.title){status(ch.id+"번 단원 제목은 비워둘 수 없습니다.");return}
-  if(book&&!/^https:\/\/drive\.google\.com\/file\/d\/[a-zA-Z0-9_-]+\/view(?:\?[^#\s]*)?$/.test(book)){
-   status(ch.id+"번 교재 URL은 Google Drive 공유 링크 형식이어야 합니다.");return
+  if(book){
+   let valid=false;
+   try{
+    const u=new URL(book);
+    valid=u.protocol==="https:"&&(
+     (u.hostname==="drive.google.com"&&/^\/file\/d\/[A-Za-z0-9_-]+\/view$/.test(u.pathname))||
+     (u.hostname==="docs.google.com"&&/^\/(document|presentation|spreadsheets)\/d\/[A-Za-z0-9_-]+\/.+/.test(u.pathname))
+    );
+   }catch(e){}
+   if(!valid){status(ch.id+"번 교재 링크는 Google Drive 또는 Docs 공유 URL이어야 합니다.");return}
   }
  }
  const changed=next.chapters.filter((ch,i)=>["published","title","description","book"].some(k=>(ch[k]??"")!==(catalog.chapters[i][k]??"")));
