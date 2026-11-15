@@ -21,6 +21,7 @@ function renderNav(){
  });
  $("progress-text").textContent=completed.length+" / 8";
  $("progress-bar").style.width=completed.length/8*100+"%";
+ const meter=$("progress-bar").parentElement;if(meter)meter.setAttribute("aria-valuenow",String(completed.length));
 }
 function createCode(host,source){
  const pre=element("pre","code",host);
@@ -137,9 +138,9 @@ function init(){
   btn.addEventListener("click",()=>navigator.clipboard?.writeText(p.starter));
  });
  $("theme").addEventListener("click",()=>{
-  theme=theme==="dark"?"light":"dark";document.documentElement.dataset.mode=theme;
+  theme=theme==="dark"?"light":"dark";document.documentElement.dataset.mode=theme;$("theme").setAttribute("aria-pressed",String(theme==="dark"));
   try{localStorage.setItem("els-c-theme",theme)}catch(e){}
- });document.documentElement.dataset.mode=theme;
+ });document.documentElement.dataset.mode=theme;$("theme").setAttribute("aria-pressed",String(theme==="dark"));
  renderNav();show(0);
 }
 init();
