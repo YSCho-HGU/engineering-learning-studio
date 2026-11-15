@@ -19,6 +19,9 @@ for(const kind of ['pointer','structure']){
  check(new Set(data.lessons.map(l=>l.quiz.correct)).size===3,kind+': nonfixed answer position');
  check(data.lessons.every(l=>l.goal&&l.concept&&l.transfer&&l.guide&&l.model&&l.code),kind+': complete pedagogical evidence');
  check(data.practice.every(p=>p.starter.includes('TODO')&&p.expected),kind+': standalone practice starter and reference');
+ check(data.lessons.every(l=>Array.isArray(l.trace)&&l.trace.length>=2),kind+': every C lesson has a line-by-line trace');
+ check(data.lessons.every(l=>l.trace.every(t=>l.code.includes(t.match)&&t.state&&t.meaning)),kind+': every trace line matches the literal C reference');
+ check(data.lessons.every(l=>new Set(l.quiz.options).size===3),kind+': distinct conceptual distractors');
  const html=fs.readFileSync(path.join(base,'index.html'),'utf8');
  for(const id of ['lesson','lesson-nav','progress-text','progress-bar','practice','theme'])
   check(html.includes('id="'+id+'"'),kind+': DOM target '+id);
@@ -63,6 +66,12 @@ if(process.env.C_JOURNEY_BROWSER==='1'){
     await page.locator('#lesson .question label').nth(1).click();
     await page.locator('#lesson .quiz button').click();
     check(await page.locator('#lesson .feedback').isVisible(),kind+'/'+width+'/'+theme+': prediction feedback');
+    check(await page.locator('#lesson .trace-line.active').count()===1,kind+'/'+width+'/'+theme+': one highlighted C line');
+    const before=await page.locator('#lesson .trace-status').innerText();
+    await page.locator('#lesson .trace-controls button').nth(1).click();
+    check((await page.locator('#lesson .trace-status').innerText())!==before,kind+'/'+width+'/'+theme+': trace next changes state');
+    await page.locator('#lesson .trace-controls button').nth(0).click();
+    check((await page.locator('#lesson .trace-status').innerText())===before,kind+'/'+width+'/'+theme+': trace previous restores initial step');
     await page.locator('#lesson-nav button').nth(7).click();
     check((await page.locator('#lesson h2').innerText())===lessons.find(x=>x.kind===kind).data.lessons[7].title,kind+'/'+width+'/'+theme+': last lesson navigation');
     check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+6),kind+'/'+width+'/'+theme+': no horizontal overflow');
