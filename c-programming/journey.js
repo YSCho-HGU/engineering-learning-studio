@@ -3,16 +3,18 @@
 (()=>{
 "use strict";
 const D=window.C_JOURNEY;
-if(!D||!Array.isArray(D.lessons)||D.lessons.length!==8)throw Error("Journey must contain exactly 8 lessons");
+if(!D||!Array.isArray(D.lessons)||D.lessons.length<1)throw Error("Journey must contain at least one lesson");
+const total=D.lessons.length, coreCount=D.slug==="dynamic-memory"?(D.coreCount||4):total;
+const phaseBreaks=Array.isArray(D.phaseBreaks)&&D.phaseBreaks.length===2?D.phaseBreaks:[Math.ceil(total/2),Math.max(Math.ceil(total/2)+1,total-1)];
 const $=id=>document.getElementById(id);
 const key="els-journey-"+D.slug+(D.slug==="dynamic-memory"?"-v2":"-v1");
 let completed=[],current=0;
 const assessmentKey="els-concept-"+D.slug+(D.slug==="dynamic-memory"?"-v2":"-v1");
 let concepts=[];
-try{const v=JSON.parse(localStorage.getItem(assessmentKey)||"[]");if(Array.isArray(v))concepts=[...new Set(v.filter(n=>Number.isInteger(n)&&n>=0&&n<8))]}catch(e){}
+try{const v=JSON.parse(localStorage.getItem(assessmentKey)||"[]");if(Array.isArray(v))concepts=[...new Set(v.filter(n=>Number.isInteger(n)&&n>=0&&n<total))]}catch(e){}
 const persistConcepts=()=>{try{localStorage.setItem(assessmentKey,JSON.stringify(concepts))}catch(e){}};
 
-try{const v=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(v))completed=[...new Set(v.filter(n=>Number.isInteger(n)&&n>=0&&n<8))]}catch(e){}
+try{const v=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(v))completed=[...new Set(v.filter(n=>Number.isInteger(n)&&n>=0&&n<total))]}catch(e){}
 function safe(x){return String(x??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;")}
 function element(tag,cls,parent,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;parent.appendChild(n);return n}
 function renderNav(){
@@ -33,9 +35,9 @@ function renderNav(){
  if(D.slug==="dynamic-memory"){
   const coreA=completed.filter(i=>i<4).length,coreC=concepts.filter(i=>i<4).length;
   $("progress-text").textContent="필수 Activity "+coreA+"/4 · Concept "+coreC+"/4 · 선택 "+completed.filter(i=>i>=4).length+"/4";
- }else $("progress-text").textContent="Activity "+completed.length+"/8 · Concept "+concepts.length+"/8";
+ }else $("progress-text").textContent="Activity "+completed.length+"/"+total+" · Concept "+concepts.length+"/"+total;
  $("progress-bar").style.width=(D.slug==="dynamic-memory"?completed.filter(i=>i<4).length/4:completed.length/8)*100+"%";
- const meter=$("progress-bar").parentElement;if(meter){meter.setAttribute("aria-valuenow",String(D.slug==="dynamic-memory"?completed.filter(i=>i<4).length:completed.length));if(D.slug==="dynamic-memory")meter.setAttribute("aria-valuemax","4");}
+ const meter=$("progress-bar").parentElement;if(meter){meter.setAttribute("aria-valuenow",String(D.slug==="dynamic-memory"?completed.filter(i=>i<4).length:completed.length));meter.setAttribute("aria-valuemax",String(coreCount));}
 }
 function createCode(host,source){
  const pre=element("pre","code",host);
@@ -66,7 +68,7 @@ function renderQuiz(stage,l){
 }
 function updateAssessmentSummary(){
  const target=$("assessment-status");if(!target)return;
- target.textContent=D.slug==="dynamic-memory"?"필수 Activity "+completed.filter(i=>i<4).length+"/4 · 필수 Concept "+concepts.filter(i=>i<4).length+"/4 · 선택 심화 Activity "+completed.filter(i=>i>=4).length+"/4 · Coding은 GCC 자기보고": "Activity Reviewed "+completed.length+"/8 · Concept Check Passed "+concepts.length+"/8 · Coding Practice: self-reported GCC checks only.";
+ target.textContent=D.slug==="dynamic-memory"?"필수 Activity "+completed.filter(i=>i<4).length+"/4 · 필수 Concept "+concepts.filter(i=>i<4).length+"/4 · 선택 심화 Activity "+completed.filter(i=>i>=4).length+"/4 · Coding은 GCC 자기보고": "Activity Reviewed "+completed.length+"/"+total+" · Concept Check Passed "+concepts.length+"/"+total · Coding Practice: self-reported GCC checks only.";
 }
 function modelOutput(model,v){
  switch(model.kind){
@@ -246,10 +248,10 @@ function renderModel(stage,l){
  if(D.slug==="dynamic-memory"&&typeof window.renderDynamicHeap==="function")window.renderDynamicHeap(stage,l);
 }
 function show(i){
- current=Math.max(0,Math.min(7,i));renderNav();
+ current=Math.max(0,Math.min(total-1,i));renderNav();
  const l=D.lessons[current];
  const stage=$("lesson");stage.replaceChildren();
- element("div","tag",stage,"STEP "+String(current+1).padStart(2,"0")+" / 08 · "+(D.slug==="dynamic-memory"?(current<4?"필수 학습 · CORE":"선택 심화 · OPTIONAL"):(current<4?"BEFORE CLASS":current<7?"IN CLASS":"AFTER CLASS")));
+ element("div","tag",stage,"STEP "+String(current+1).padStart(2,"0")+" / "+String(total).padStart(2,"0")+" · "+(D.slug==="dynamic-memory"?(current<4?"필수 학습 · CORE":"선택 심화 · OPTIONAL"):(current<phaseBreaks[0]?"BEFORE CLASS":current<phaseBreaks[1]?"IN CLASS":"AFTER CLASS")));
  element("h2","",stage,l.title);element("p","lead",stage,l.goal);
  const concept=element("section","concept",stage);
  element("h3","",concept,"Understand · 핵심 개념");element("p","",concept,l.concept);
@@ -273,7 +275,7 @@ function show(i){
  const mark=element("button","action primary",actions,completed.includes(current)?"Activity reviewed ✓":"Mark activity reviewed ✓");
  mark.addEventListener("click",()=>{if(!completed.includes(current)){completed.push(current);completed.sort((a,b)=>a-b);try{localStorage.setItem(key,JSON.stringify(completed))}catch(e){}}
  renderNav();updateAssessmentSummary();mark.textContent="Activity reviewed ✓";$("activity-note").textContent="활동 확인 기록입니다. 실제 C 코딩 숙달을 인증하지 않습니다."});
- const next=element("button","action",actions,"Next →");next.disabled=current===7;next.addEventListener("click",()=>show(current+1));
+ const next=element("button","action",actions,"Next →");next.disabled=current===total-1;next.addEventListener("click",()=>show(current+1));
  $("current-title").textContent=l.title;
  $("activity-note").textContent="학습 활동 표시이며, 퀴즈 정답이나 실제 C 컴파일 성공을 의미하지 않습니다.";
 }
@@ -281,7 +283,7 @@ function init(){
  $("site-title").textContent=D.title+" Learning Journey";
  $("hero-title").textContent=D.title+" Learning Journey";
  $("hero-summary").textContent=D.summary;
- $("hero-count").textContent=(D.slug==="dynamic-memory"?"4 Core + 4 Optional · ":"8 Essential Steps · ")+D.book;
+ $("hero-count").textContent=(D.slug==="dynamic-memory"?"4 Core + 4 Optional · ":total+" Learning Steps · ")+D.book;
  $("course-number").textContent=D.book;
  $("phase-one").textContent=D.phases[0];$("phase-two").textContent=D.phases[1];$("phase-three").textContent=D.phases[2];
  const back=$("back-link");if(back)back.href="../";
