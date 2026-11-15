@@ -15,8 +15,8 @@ try{
   const d=JSON.parse(dataText);
   const page=readFileSync(root+"index.html","utf8"),editor=readFileSync(root+"practice/index.html","utf8");
   if(d.lessons.length!==8||d.practice.length!==6)issues.push(id+" chapter expected 8 steps / 6 tasks");
-  if(!page.includes('src="./data.js"')||!page.includes('src="../journey.js'))issues.push(id+" missing lesson runtime");
-  if(!editor.includes('src="../data.js"')||!editor.includes("practice-engine.js"))issues.push(id+" missing coding editor");
+  if(!page.includes('src="./data.js')||!page.includes('src="../journey.js'))issues.push(id+" missing lesson runtime");
+  if(!editor.includes('src="../data.js')||!editor.includes("practice-engine.js"))issues.push(id+" missing coding editor");
   for(const [n,l] of d.lessons.entries()){
    lessons++;
    const prefix=id+" Step "+(n+1)+" "+l.title;
