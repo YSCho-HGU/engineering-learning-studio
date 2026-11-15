@@ -2,7 +2,7 @@
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="C Programming Chapter 7 File I/O Self-Study: streams, files, EOF, records and sensor logs.">
 <title>Chapter 7 · File I/O Learning Journey</title>
-<link rel="stylesheet" href="./style.css?v=20261115contrast3"><link rel="stylesheet" href="../../assets/design-system.css?v=1"><link rel="stylesheet" href="./unified-course.css?v=14"></head><body class="els-design">
+<link rel="stylesheet" href="./style.css?v=20261115contrast3"><link rel="stylesheet" href="../../assets/design-system.css?v=1"><link rel="stylesheet" href="./unified-course.css?v=15"></head><body class="els-design">
 <a class="skip" href="#lesson">학습 본문으로 건너뛰기</a>
 <header class="topbar"><a class="brand" href="../">◈ C Programming <small>/ Learning Studio</small></a><div class="toplinks"><a href="../">C Learning Home</a><a href="https://drive.google.com/file/d/1pQoUv5072-RW6k7vnjDQULbp1qVNQRDq/view" target="_blank" rel="noopener">교재 171 ↗</a><button id="theme-button" aria-label="Toggle dark mode" aria-pressed="false">◐ Theme</button></div></header>
 <div class="course-header"><div class="eyebrow">2026 · CHAPTER 7 · SELF-STUDY COURSE</div><h1>File I/O <span>Learning Journey</span></h1><p>프로그램이 종료되어도 데이터를 남기려면? Stream의 원리를 이해하고, 실제 센서 로그 프로그램까지 단계별로 완성해 보세요.</p><div class="course-meta"><span>8개의 필수 학습 단계</span><span>선택 심화는 별도 표시</span><span>실험 + 코드 분석 + 자기점검</span><span>교재: 171_C_File_IO_Rev8</span></div></div>
@@ -110,6 +110,20 @@ int main(void) {
 <div id="m3-compare" class="compare-card" hidden aria-live="polite" tabindex="-1"><h3>3 · COMPARE — 내 예측과 관찰 비교</h3><p class="result-line" id="m3-compare-result"></p><p class="compare-diff" id="m3-compare-detail"></p></div><div class="actions"><button id="m3-restart">↻ 새 실행 준비 · 파일 유지</button><button id="m3-reset">⟲ Reset Lab · 원본 샘플 복원</button></div><p class="breadcrumb-note">새 실행 준비는 파일을 그대로 보존하고, 새로운 모드·디렉터리를 선택해 다시 예측하도록 합니다. Reset Lab만 샘플 파일을 원본으로 되돌립니다.</p>
 <div class="learn-check"><h3>4 · EXPLAIN &amp; TRANSFER</h3><p>최초 예측과 관찰이 같았나요? <strong>파일 내용을 보존하면서 다음 실행에서 값을 읽는 과정</strong>을 설명하고, 계속 데이터를 추가할 때 필요한 모드를 적어 보세요.</p><textarea id="m3-reflection" placeholder="내 실험 결과와 C 코드의 관계를 적으세요."></textarea><div class="actions"><button id="m3-save">학습 노트 저장</button><button id="m3-download">학습 노트 다운로드</button></div><details><summary>핵심 원리 힌트</summary><p><code>w</code>는 성공적으로 열 때 기존 데이터를 지웁니다. <code>a</code>는 데이터 보존 후 파일 끝에 기록합니다. 파일은 프로그램의 일반적인 변수와 수명이 다릅니다.</p></details></div>
 </section>
+
+<section class="core-transfer" id="core-transfer-3" data-core-step="3" aria-labelledby="core-transfer-title-3">
+  <div class="core-transfer-heading"><span>필수 적용 · STEP 03</span><h3 id="core-transfer-title-3">열기 실패를 확인한 다음 사용하기</h3><p>파일 모드 실험 다음에는 실제 코드에서 반드시 검사할 조건을 선택합니다.</p></div>
+  <div class="core-transfer-layout">
+    <div class="core-transfer-code"><strong>Code fragment · C 핵심 흐름</strong><pre>FILE *fp = fopen(&quot;readings.txt&quot;, &quot;r&quot;);
+/* ① 파일을 사용하기 전에 검사 */
+if ( /* ① */ ) {
+    return 1;
+}
+/* 여기부터 fp로 파일을 읽습니다. */</pre></div>
+    <div class="core-transfer-questions"><fieldset data-core-q="3a"><legend>①에 들어갈 올바른 조건은?</legend><label><input type="radio" name="core-3-a" value="a"><span>fp != NULL</span></label><label><input type="radio" name="core-3-a" value="b"><span>fp == NULL</span></label><label><input type="radio" name="core-3-a" value="c"><span>feof(fp)</span></label></fieldset><fieldset data-core-q="3b"><legend>현재 작업 폴더에 readings.txt가 없다면?</legend><label><input type="radio" name="core-3-b" value="a"><span>r 모드는 새 빈 파일을 자동 생성한다.</span></label><label><input type="radio" name="core-3-b" value="b"><span>fopen()이 NULL을 반환할 수 있으며 읽기를 시작하면 안 된다.</span></label><label><input type="radio" name="core-3-b" value="c"><span>fclose(fp)를 먼저 호출한 뒤 읽는다.</span></label></fieldset></div>
+  </div>
+  <div class="core-transfer-actions"><button type="button" class="core-transfer-check" data-core-check="3">적용 결과 확인</button><button type="button" class="core-transfer-reset" data-core-reset="3">다시 풀기</button><output class="core-transfer-result" id="core-result-3" aria-live="polite">두 문항을 선택한 뒤 결과를 확인하세요.</output></div>
+</section>
 </section>
 <section class="stage" data-stage="3" hidden>
 <div class="topic">7.4 · TEXT INPUT / OUTPUT</div><h2>무엇을 읽고 쓰는지에 따라 함수를 선택하세요</h2><p class="lead">숫자·문자열·한 줄·한 글자는 다르게 읽습니다. 중요한 것은 함수 이름 암기가 아니라 <strong>데이터 형식과 반환값</strong>을 구분하는 것입니다.</p>
@@ -127,6 +141,21 @@ int main(void) {
 while (fgets(line, sizeof line, fp) != NULL) {
     fputs(line, stdout);
 }</pre></div>
+
+<section class="core-transfer" id="core-transfer-4" data-core-step="4" aria-labelledby="core-transfer-title-4">
+  <div class="core-transfer-heading"><span>필수 적용 · STEP 04</span><h3 id="core-transfer-title-4">한 줄 읽기와 숫자 변환을 실제 입력에 적용</h3><p>같은 입력 파일을 처음부터 각각 새로 읽는 두 경우를 생각해 보세요.</p></div>
+  <div class="core-transfer-layout">
+    <div class="core-transfer-code"><strong>Code fragment · C 핵심 흐름</strong><pre>/* input.txt: Hello World\n */
+/* 두 호출은 파일을 새로 연 각각의 독립 예제입니다. */
+fscanf(fp, &quot;%19s&quot;, word);
+fgets(line, sizeof line, fp);
+
+/* 별도 예제: ID(정수)와 점수(double) 읽기 */
+fscanf(fp, &quot;%d %lf&quot;, &amp;id, &amp;score);</pre></div>
+    <div class="core-transfer-questions"><fieldset data-core-q="4a"><legend>입력 파일을 처음부터 읽을 때 어떤 설명이 맞나요?</legend><label><input type="radio" name="core-4-a" value="a"><span>fscanf(%19s)는 Hello만, fgets는 Hello World와 줄바꿈까지 읽을 수 있다.</span></label><label><input type="radio" name="core-4-a" value="b"><span>두 함수 모두 공백 이전 Hello만 읽는다.</span></label><label><input type="radio" name="core-4-a" value="c"><span>fgets는 숫자 입력에만 사용할 수 있다.</span></label></fieldset><fieldset data-core-q="4b"><legend>ID와 점수가 모두 성공적으로 변환되었다면 마지막 fscanf()의 반환값은?</legend><label><input type="radio" name="core-4-b" value="a"><span>1</span></label><label><input type="radio" name="core-4-b" value="b"><span>2</span></label><label><input type="radio" name="core-4-b" value="c"><span>EOF</span></label></fieldset></div>
+  </div>
+  <div class="core-transfer-actions"><button type="button" class="core-transfer-check" data-core-check="4">적용 결과 확인</button><button type="button" class="core-transfer-reset" data-core-reset="4">다시 풀기</button><output class="core-transfer-result" id="core-result-4" aria-live="polite">두 문항을 선택한 뒤 결과를 확인하세요.</output></div>
+</section>
 <div class="check" data-check="3"><div class="check-eyebrow">CHECK YOURSELF · 7.4</div><h3><code>fscanf(fp, "%d %lf", &amp;id, &amp;score)</code>가 두 값을 모두 읽었는지 검사하려면?</h3><label><input type="radio" name="q3" value="a"> 반환값이 1인지 검사한다.</label><label><input type="radio" name="q3" value="b"> 반환값이 2인지 검사한다.</label><label><input type="radio" name="q3" value="c"> <code>feof(fp)</code>만 검사한다.</label><button class="check-btn" data-grade="3">답 확인 및 설명</button><div class="answer" id="answer-3" aria-live="polite"></div></div>
 </section>
 <section class="stage" data-stage="4" hidden>
@@ -145,6 +174,20 @@ while (fgets(line, sizeof line, fp) != NULL) {
 30</pre></div><fieldset><legend>읽기 반복이 끝나는 원인을 예측하세요</legend><label><input type="radio" name="m4-pred" value="eof">정상 EOF (추가 입력 없음)</label><label><input type="radio" name="m4-pred" value="mismatch">형식 불일치 (정수 변환 실패)</label><label><input type="radio" name="m4-pred" value="ioError">읽기 I/O 오류</label></fieldset><label for="m4-reason">예측 근거 (권장: 한 문장 이상)</label><textarea id="m4-reason" placeholder="fscanf 반환값, feof 또는 ferror 상태를 예상하세요."></textarea><div class="actions"><button id="m4-confirm" class="primary">예측 제출 → 실험 활성화</button><button id="m4-repredict">새 조건으로 다시 예측</button></div><div class="feedback" id="m4-pred-feedback" aria-live="polite"></div></div>
 <div class="focus-banner" id="m4-flow" aria-live="polite" tabindex="-1"><div><strong id="m4-flow-title">Step 1 · 예측부터 제출하세요.</strong><span id="m4-flow-detail">정답 판정은 실험이 끝난 뒤에 표시합니다.</span></div><span class="status-mark">SIMULATED</span></div><div class="grid" id="m4-workspace"><div class="panel experiment-panel"><h3>2 · EXPERIMENT — 반환값 추적</h3><div class="tag">SIMULATED · injected error is artificial</div><div class="actions"><button id="m4-open" class="primary" disabled>① fopen()</button><button id="m4-read" disabled>② fscanf() · 성공 시 printf()</button><button id="m4-close" disabled>③ 진단 및 fclose()</button></div><div class="feedback" id="m4-guide">예측을 제출하면 실험할 수 있습니다.</div><div class="code-box"><div class="code-head">정확한 C 읽기 코드 · 성공한 변환마다 printf 실행</div><div class="code-lines" id="m4-code"></div></div></div><div class="panel"><h3>3 · OBSERVE — 읽기 반환값과 결과</h3><div class="meta"><div><small>fscanf 반환값</small><strong id="m4-return">—</strong></div><div><small>x (마지막 성공 값)</small><strong id="m4-value">—</strong></div><div><small>feof(fp)</small><strong id="m4-eof">0</strong></div><div><small>ferror(fp)</small><strong id="m4-error">0</strong></div></div><div class="panel" style="margin:13px 0"><h3>stdout</h3><pre class="data" id="m4-stdout">(no output)</pre></div><h3>읽기 Trace</h3><div class="trace" id="m4-events"></div></div></div>
 <div id="m4-compare" class="compare-card" hidden aria-live="polite" tabindex="-1"><h3>3 · COMPARE — 종료 원인 확인</h3><p class="result-line" id="m4-compare-result"></p><p class="compare-diff" id="m4-compare-detail"></p></div><div class="learn-check"><h3>4 · EXPLAIN &amp; TRANSFER</h3><p><code>fscanf(...) == 1</code>이 왜 적절할까요? 반환값 <code>0</code>과 <code>EOF</code>가 서로 다른 이유는 무엇일까요? 정상 파일과 <code>ABC</code>가 포함된 파일을 비교해 보세요.</p><textarea id="m4-reflection" placeholder="반환값과 파일 상태를 근거로 설명하세요."></textarea><div class="actions"><button id="m4-save">학습 노트 저장</button><button id="m4-download">학습 노트 다운로드</button></div><details><summary>핵심 원리 힌트</summary><p><code>fscanf</code>는 성공한 변환·대입 개수를 반환합니다. 정수 하나를 읽으면 1, 형식이 맞지 않으면 0, 입력 전에 파일 끝에 도달하거나 읽기 오류가 발생하면 EOF가 가능합니다. 종료 후 <code>feof(fp)</code>와 <code>ferror(fp)</code>를 구분합니다.</p></details></div>
+</section>
+
+<section class="core-transfer" id="core-transfer-5" data-core-step="5" aria-labelledby="core-transfer-title-5">
+  <div class="core-transfer-heading"><span>필수 적용 · STEP 05</span><h3 id="core-transfer-title-5">EOF를 검사하는 올바른 반복 읽기</h3><p>읽기 시도 자체의 성공 여부가 반복 조건이어야 하는 이유를 판단해 보세요.</p></div>
+  <div class="core-transfer-layout">
+    <div class="core-transfer-code"><strong>Code fragment · C 핵심 흐름</strong><pre>int x;
+/* numbers.txt: 10 20 30 */
+while ( /* 안전한 반복 조건 */ ) {
+    printf(&quot;%d\n&quot;, x);
+}
+/* 파일 끝을 넘는 읽기 시도 이후 EOF 표시가 설정됨 */</pre></div>
+    <div class="core-transfer-questions"><fieldset data-core-q="5a"><legend>정수 데이터를 한 개씩 안전하게 읽는 반복 조건은?</legend><label><input type="radio" name="core-5-a" value="a"><span>!feof(fp)</span></label><label><input type="radio" name="core-5-a" value="b"><span>fp != NULL</span></label><label><input type="radio" name="core-5-a" value="c"><span>fscanf(fp, &quot;%d&quot;, &amp;x) == 1</span></label></fieldset><fieldset data-core-q="5b"><legend>마지막 정수 30을 성공적으로 읽은 직후 feof(fp)는 일반적으로?</legend><label><input type="radio" name="core-5-b" value="a"><span>아직 0이다. 이후 읽기가 EOF로 실패할 때 EOF 표시가 설정된다.</span></label><label><input type="radio" name="core-5-b" value="b"><span>이미 1이며 읽기 전에 반드시 검사해야 한다.</span></label><label><input type="radio" name="core-5-b" value="c"><span>파일이 열려 있으면 항상 1이다.</span></label></fieldset></div>
+  </div>
+  <div class="core-transfer-actions"><button type="button" class="core-transfer-check" data-core-check="5">적용 결과 확인</button><button type="button" class="core-transfer-reset" data-core-reset="5">다시 풀기</button><output class="core-transfer-result" id="core-result-5" aria-live="polite">두 문항을 선택한 뒤 결과를 확인하세요.</output></div>
 </section>
 </section>
 <section class="stage" data-stage="5" hidden>
@@ -203,6 +246,25 @@ int main(void) {
 }</pre></div>
 </details>
 <div class="activity"><div class="activity-head"><span>BUILD 06</span><h3>Structure → Text → Structure</h3><p>레코드를 직접 수정한 다음 Serialize / Load를 눌러 변환 관계를 확인하세요. 이 예제는 <code>FILE *fp = fopen(...)</code>으로 선언과 초기화를 합친 실무형 스타일을 사용합니다. <a href="./examples/student_record_middle.c" download>실행 가능한 C 소스 다운로드</a> 이름은 공백 없는 단어만 지원합니다. 저장 형식은 ID·이름·점수 순서이고 점수는 소수 첫째 자리까지 저장됩니다. 저장 후 입력값을 바꿔도 Load는 저장된 텍스트를 기준으로 복원해야 합니다.</p></div><div class="record-inputs"><div class="field"><label for="rec-id">Student ID</label><input id="rec-id" type="number" value="101" min="0" max="999999"></div><div class="field"><label for="rec-name">Name (no spaces)</label><input id="rec-name" value="Mina" maxlength="39"></div><div class="field"><label for="rec-score">Score</label><input id="rec-score" type="number" value="92.5" min="0" max="100" step="0.1"></div></div><div class="button-row"><button class="primary" id="rec-save">Serialize · fprintf()</button><button id="rec-load">Load · fscanf()</button></div><div class="two-col"><div class="state-box"><div class="box-name">students.txt · saved record</div><pre id="rec-file">(not saved yet)</pre></div><div class="state-box"><div class="box-name">LOADED STRUCTURE</div><pre id="rec-result">(not loaded yet)</pre></div></div><p class="activity-feedback" id="rec-message" aria-live="polite">먼저 Serialize를 누르세요.</p></div>
+
+<section class="core-transfer" id="core-transfer-6" data-core-step="6" aria-labelledby="core-transfer-title-6">
+  <div class="core-transfer-heading"><span>필수 적용 · STEP 06</span><h3 id="core-transfer-title-6">구조체 파일 저장을 함수로 분리하기</h3><p>교재 §7.5.2: main()은 작업 순서를, saveStudent()는 파일 저장 세부 처리를 담당합니다.</p></div>
+  <div class="core-transfer-layout">
+    <div class="core-transfer-code"><strong>Code fragment · C 핵심 흐름</strong><pre>/* struct Student 정의와 #include &lt;stdio.h&gt; 가 있다고 가정 */
+int saveStudent(struct Student s) {
+    FILE *fp = fopen(&quot;students.txt&quot;, &quot;w&quot;);
+    int written;
+    if (fp == NULL) return 0;
+    written = fprintf(fp, &quot;%d %s %.1f\n&quot;,
+                      s.id, s.name, s.score);
+    if (fclose(fp) == EOF) return 0;
+    return written &gt;= 0;
+}
+/* main() 안에서는 if (!saveStudent(s)) ... */</pre></div>
+    <div class="core-transfer-questions"><fieldset data-core-q="6a"><legend>main()에서 저장 성공 여부를 확인하는 호출은?</legend><label><input type="radio" name="core-6-a" value="a"><span>if (!saveStudent(s)) { /* 실패 처리 */ }</span></label><label><input type="radio" name="core-6-a" value="b"><span>if (fclose(s) == EOF) { /* 실패 */ }</span></label><label><input type="radio" name="core-6-a" value="c"><span>if (s.name == NULL) { /* 저장 */ }</span></label></fieldset><fieldset data-core-q="6b"><legend>saveStudent()가 분리되었을 때 올바른 설명은?</legend><label><input type="radio" name="core-6-b" value="a"><span>main()에 fopen, fprintf, fclose 코드를 계속 복사한다.</span></label><label><input type="radio" name="core-6-b" value="b"><span>파일 열기·쓰기·닫기를 함수 안에 두고 main()은 결과를 확인한다.</span></label><label><input type="radio" name="core-6-b" value="c"><span>함수를 쓰면 fopen의 NULL 검사는 생략해도 된다.</span></label></fieldset></div>
+  </div>
+  <div class="core-transfer-actions"><button type="button" class="core-transfer-check" data-core-check="6">적용 결과 확인</button><button type="button" class="core-transfer-reset" data-core-reset="6">다시 풀기</button><output class="core-transfer-result" id="core-result-6" aria-live="polite">두 문항을 선택한 뒤 결과를 확인하세요.</output></div>
+</section>
 <div class="check" data-check="5"><div class="check-eyebrow">CHECK YOURSELF · 7.5</div><h3><code>fscanf()</code>에서 <code>s.name</code>에 <code>&amp;</code>가 없는 주된 이유는?</h3><label><input type="radio" name="q5" value="a"> 문자열 이름에는 읽기가 불가능하기 때문이다.</label><label><input type="radio" name="q5" value="b"> 배열 이름이 이 함수 호출에서 첫 원소의 주소로 변환되기 때문이다.</label><label><input type="radio" name="q5" value="c"> <code>fscanf()</code>가 자동으로 변수를 생성하기 때문이다.</label><button class="check-btn" data-grade="5">답 확인 및 설명</button><div class="answer" id="answer-5" aria-live="polite"></div></div>
 </section>
 <section class="stage" data-stage="6" hidden>
@@ -421,15 +483,32 @@ int main(void) {
     /* 심화: 반환값·형식 오류·fclose() 실패 진단 */
     return 0;
 }</pre></div><button class="primary" id="build-check">핵심 구문 선택 확인</button><p class="activity-feedback" id="build-feedback" aria-live="polite"></p></div>
+
+<section class="core-transfer" id="core-transfer-8" data-core-step="8" aria-labelledby="core-transfer-title-8">
+  <div class="core-transfer-heading"><span>필수 적용 · STEP 08</span><h3 id="core-transfer-title-8">배운 내용을 새로운 데이터에 독립적으로 적용</h3><p>기존 코드를 그대로 따라 쓰지 않고 파일 내용과 반환값을 예측합니다.</p></div>
+  <div class="core-transfer-layout">
+    <div class="core-transfer-code"><strong>Code fragment · C 핵심 흐름</strong><pre>/* values.txt: 세 줄은 4.0 / 6.0 / ABC */
+double x, sum = 0.0;
+int count = 0;
+while (fscanf(fp, &quot;%lf&quot;, &amp;x) == 1) {
+    sum += x;
+    count++;
+}
+/* 다음 변환 시도는 ABC를 만나 실패 */</pre></div>
+    <div class="core-transfer-questions"><fieldset data-core-q="8a"><legend>반복문이 멈췄을 때 count와 sum은?</legend><label><input type="radio" name="core-8-a" value="a"><span>count=3, sum=10.0</span></label><label><input type="radio" name="core-8-a" value="b"><span>count=2, sum=10.0</span></label><label><input type="radio" name="core-8-a" value="c"><span>count=2, sum=0.0</span></label></fieldset><fieldset data-core-q="8b"><legend>ABC 때문에 중단된 fscanf()의 반환값과 파일 상태는?</legend><label><input type="radio" name="core-8-b" value="a"><span>EOF이므로 반드시 정상 파일 끝이다.</span></label><label><input type="radio" name="core-8-b" value="b"><span>2개의 숫자가 변환되었으므로 반환값 2이다.</span></label><label><input type="radio" name="core-8-b" value="c"><span>변환 성공 개수 0일 수 있으며, 정상 EOF와 구별해야 한다.</span></label></fieldset></div>
+  </div>
+  <div class="core-transfer-actions"><button type="button" class="core-transfer-check" data-core-check="8">적용 결과 확인</button><button type="button" class="core-transfer-reset" data-core-reset="8">다시 풀기</button><output class="core-transfer-result" id="core-result-8" aria-live="polite">두 문항을 선택한 뒤 결과를 확인하세요.</output></div>
+</section>
 <div class="check" data-check="7"><div class="check-eyebrow">FINAL CHECK · 7.7</div><h3>파일을 읽어 구조체 배열에 저장하는 프로그램의 안전한 순서는?</h3><label><input type="radio" name="q7" value="a"> 읽기 → 모드 선택 → 파일 열기 → 닫기</label><label><input type="radio" name="q7" value="b"> 파일 열기 → NULL 확인 → 읽기 반환값 확인 → 닫기</label><label><input type="radio" name="q7" value="c"> 파일 열기 → feof() 먼저 검사 → 읽기 → 닫지 않기</label><button class="check-btn" data-grade="7">답 확인 및 설명</button><div class="answer" id="answer-7" aria-live="polite"></div></div>
 <details class="study-advanced-content"><summary>선택 심화 · Persistent Record Manager 설계 과제</summary><div class="concept"><strong>Mini Challenge · Persistent Record Manager</strong><p>교재의 연습 과제와 연결하여 <code>struct Student records[]</code>를 텍스트 파일로 저장하고 다시 불러오는 프로그램을 직접 작성해 보세요. 경로 오류, 빈 파일, 비정상 데이터도 테스트하세요.</p><details><summary>코드 작성 시 확인할 항목</summary><ul><li>읽기/쓰기 모드를 목적에 맞게 선택했는가?</li><li><code>fopen()</code>의 <code>NULL</code> 여부를 확인했는가?</li><li><code>fscanf()</code>의 변환 개수가 기대한 값인지 검사하는가?</li><li>구조체 배열의 용량을 초과하지 않는가?</li><li><code>fclose()</code>를 호출하는가?</li></ul></details><p><a href="https://drive.google.com/file/d/1pQoUv5072-RW6k7vnjDQULbp1qVNQRDq/view" target="_blank" rel="noopener">참고 교재 · 171_C_File_IO_Rev8 ↗</a></p></div>
 </details>
 <div class="concept"><strong>직접 코드 작성하기 · P1–P6 Practice Lab</strong><p>교재의 6개 과제를 C 소스 편집기로 작성하고 핵심 구문을 점검할 수 있습니다. 테스트 데이터와 참조 결과를 비교한 뒤 <code>.c</code>를 다운로드하여 GCC로 실제 실행해 보세요. 웹의 점검은 C 컴파일이나 실행이 아닙니다.</p><p><a href="./practice/" style="font-weight:800">P1–P6 Coding Practice Lab 열기 →</a></p></div>
 <details class="study-advanced-content"><summary>선택 심화 · P1~P6 확장 학습과 오류 진단 체크리스트</summary><div class="concept"><strong>교재 연결 · 부족한 부분을 보완하는 학습 체크리스트</strong><p>앞의 8단계는 개념과 실행 흐름을 확인하는 기초 과정입니다. 실제 C 프로그래밍 능력은 아래 교재 과제를 직접 작성하고 컴파일하여 확인해야 합니다.</p><ol><li><strong>P1 Write Numbers:</strong> 정수 5개를 파일에 저장하고 다시 열어 검증</li><li><strong>P2 Read and Average:</strong> 실수 읽기, 개수와 평균, 빈 파일 처리</li><li><strong>P3 Copy Lines:</strong> <code>fgets()</code>와 <code>fputs()</code>로 텍스트 복사</li><li><strong>P4 Save Students:</strong> 구조체 배열을 텍스트 레코드로 저장</li><li><strong>P5 Load Students:</strong> 레코드 형식과 배열 크기를 확인하며 최고 점수 찾기</li><li><strong>P6 Sensor Alert:</strong> 시간·측정값을 읽고 <code>alerts.txt</code>에 경보 기록</li></ol><p><strong>함수 분리:</strong> P4·P5를 <code>saveRecords()</code>와 <code>loadRecords()</code>로 나눠보세요. <strong>선택 학습:</strong> CSV는 쉼표로 구분한 텍스트 형식이고, <code>fread()</code>/<code>fwrite()</code>의 이진 파일은 자료형 표현과 구조체 패딩·이식성에 주의해야 합니다.</p><p><strong>오류 진단 질문:</strong> 파일이 없으면? <code>fscanf()</code>가 0을 반환하면? <code>fgets()</code>의 버퍼보다 한 줄이 길면? <code>fclose()</code>가 실패하면?</p></div>
 </details>
+<div class="core-next-coding"><strong>개념을 이해했다면 실제 C 코드로 확인하기</strong><p>1학년 권장 최소 연습: <strong>P1 Write Numbers</strong>(쓰기·닫기)와 <strong>P2 Read and Average</strong>(읽기·반환값·평균). P3~P6은 수업 운영과 학습 진도에 맞춰 추가로 연습합니다. 웹의 구문 점검은 컴파일·실행 결과가 아니므로 작성한 C 소스를 GCC로 확인해야 합니다.</p></div>
 <p><a class="practice-link" href="./practice/">교재 P1~P6 · 직접 코드 작성 Practice Lab →</a></p>
 <div id="completion-message" class="completion" hidden><strong>Chapter 7 Learning Activities Recorded!</strong><p>여덟 단계의 개념 확인 또는 예측·설명 활동이 기록되었습니다. 이는 실제 코딩 능력이나 설명의 정확성을 인증하지 않습니다. 교재의 P1~P6을 직접 작성하고 GCC로 검증해 보세요.</p></div>
 </section>
 <div class="step-footer"><button id="prev-stage">← 이전 단계</button><span id="footer-position">1 / 8</span><button class="primary" id="next-stage">다음 단계 →</button></div>
 <div class="page-note">모든 C 코드 표기의 <code>!=</code>와 <code>==</code>는 실제 C 연산자입니다. 글꼴 ligature로 합쳐 보이지 않도록 설정했습니다. 설명용 실습은 실제 C 컴파일러의 동작을 단순화할 수 있으므로 각 예제의 가정을 함께 확인하세요. Self-study companion for <strong>171_C_File_IO_Rev8</strong>. 웹 실험은 교육용 모의 실행입니다. 실제 C 컴파일러 실행이나 파일 시스템 접근이 아닙니다. 학습 성취는 이 브라우저의 로컬 저장소에만 기록됩니다.</div>
-</main></div><script src="./sensor-model.js?v=2" defer></script><script src="./robust-sensor-model.js?v=1" defer></script><script src="./app.js?v=trace-robust1" defer></script><script src="./sensor-code-trace.js?v=1" defer></script><script src="./sensor-variable-diff.js?v=1" defer></script><script src="./sensor-trace-ui.js?v=5" defer></script><script src="./sensor-assessment.js?v=1" defer></script><script src="./pilot/engine.js?v=unified2" defer></script><script src="./unified-labs.js?v=unified2" defer></script></body></html>
+</main></div><script src="./sensor-model.js?v=2" defer></script><script src="./robust-sensor-model.js?v=1" defer></script><script src="./app.js?v=trace-robust1" defer></script><script src="./core-transfer.js?v=1" defer></script><script src="./sensor-code-trace.js?v=1" defer></script><script src="./sensor-variable-diff.js?v=1" defer></script><script src="./sensor-trace-ui.js?v=5" defer></script><script src="./sensor-assessment.js?v=1" defer></script><script src="./pilot/engine.js?v=unified2" defer></script><script src="./unified-labs.js?v=unified2" defer></script></body></html>
