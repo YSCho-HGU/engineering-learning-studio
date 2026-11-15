@@ -15,6 +15,13 @@ const explanations = [
 "안전한 순서는 파일 열기 → NULL 확인 → 읽기 결과 확인 → fclose()입니다."
 ];
 let current=0;let done=new Set();
+const conceptKey="els-concept-fileio-v1";
+let conceptDone=new Set();
+try{const c=JSON.parse(localStorage.getItem(conceptKey)||"[]");if(Array.isArray(c))conceptDone=new Set(c.filter(n=>Number.isInteger(n)&&n>=0&&n<8))}catch(e){}
+function markConcept(n){conceptDone.add(n);try{localStorage.setItem(conceptKey,JSON.stringify([...conceptDone]))}catch(e){};updateConceptStatus()}
+function updateConceptStatus(){const el=$("concept-count");if(el)el.textContent="Concept Check Passed "+conceptDone.size+"/8 (별도 기록)"}
+window.addEventListener("els:conceptPassed",e=>{const n=Number(e.detail?.stage);if(Number.isInteger(n)&&n>=0&&n<8)markConcept(n)});
+
 try{
  const newer=localStorage.getItem("els-fileio-progress-v2");
  const stored=JSON.parse(newer ?? localStorage.getItem("els-fileio-progress-v1") ?? "[]");
@@ -32,14 +39,14 @@ document.querySelectorAll("[data-nav]").forEach((b,j)=>{b.classList.toggle("curr
 $("step-label").textContent="STEP "+String(current+1).padStart(2,"0")+" / 08";
 $("step-status").textContent=done.has(current)?"개념 확인 완료":"학습 중";
 $("footer-position").textContent=(current+1)+" / 8";$("prev-stage").disabled=current===0;$("next-stage").disabled=current===7;
-$("progress-text").textContent=done.size+" / 8 (학습 활동)";$("progress-fill").style.width=(done.size*12.5)+"%";$("progress-meter").setAttribute("aria-valuenow",done.size);$("completion-message").hidden=done.size<8;
+$("progress-text").textContent=done.size+" / 8 (학습 활동)";$("progress-fill").style.width=(done.size*12.5)+"%";$("progress-meter").setAttribute("aria-valuenow",done.size);$("completion-message").hidden=done.size<8;updateConceptStatus();
 if(doScroll){const target=$("lesson");if(target)target.scrollIntoView({block:"start",behavior:"instant"});if(target)target.focus({preventScroll:true});}}
 document.querySelectorAll("[data-nav]").forEach(b=>b.addEventListener("click",()=>navigate(Number(b.dataset.nav))));
 $("prev-stage").onclick=()=>navigate(current-1);$("next-stage").onclick=()=>navigate(current+1);
 document.querySelectorAll("[data-grade]").forEach(btn=>btn.onclick=()=>{const n=Number(btn.dataset.grade),picked=document.querySelector('input[name="q'+n+'"]:checked'),box=$("answer-"+n);if(!picked){box.textContent="먼저 답을 선택해 보세요.";box.classList.add("incorrect");return;}
 const good=picked.value===keys[n];box.classList.toggle("incorrect",!good);box.textContent=(good?"정답입니다. ":"다시 생각해 보세요. ")+explanations[n];
-if(good){done.add(n);persist();navigate(current,false);}});
-$("clear-progress").onclick=()=>{if(!confirm("현재 브라우저의 학습 진도를 초기화할까요?"))return;done.clear();persist();document.querySelectorAll(".answer").forEach(el=>{el.textContent="";el.classList.remove("incorrect")});document.querySelectorAll('input[type="radio"]').forEach(el=>el.checked=false);navigate(0)};
+if(good){done.add(n);markConcept(n);persist();navigate(current,false);}});
+$("clear-progress").onclick=()=>{if(!confirm("현재 브라우저의 학습 진도를 초기화할까요?"))return;done.clear();conceptDone.clear();try{localStorage.setItem(conceptKey,"[]")}catch(e){}updateConceptStatus();persist();document.querySelectorAll(".answer").forEach(el=>{el.textContent="";el.classList.remove("incorrect")});document.querySelectorAll('input[type="radio"]').forEach(el=>el.checked=false);navigate(0)};
 $("theme-button").onclick=()=>{const root=document.documentElement;const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;$("theme-button").setAttribute("aria-pressed",String(next==="dark"));try{localStorage.setItem("els-theme",next)}catch(e){}};
 try{const theme=localStorage.getItem("els-theme");if(theme==="dark"||theme==="light"){document.documentElement.dataset.theme=theme;$("theme-button").setAttribute("aria-pressed",String(theme==="dark"))}}catch(e){}
 $("end-process").onclick=()=>{$("memory-value").textContent="(program ended)";$("memory-msg").textContent="실행 중 변수는 사라졌지만, scores.txt 데이터는 그대로 남습니다."};
