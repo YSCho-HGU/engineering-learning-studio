@@ -2,7 +2,7 @@
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="C Programming Chapter 7 File I/O Self-Study: streams, files, EOF, records and sensor logs.">
 <title>Chapter 7 · File I/O Learning Journey</title>
-<link rel="stylesheet" href="./style.css?v=20261115contrast3"><link rel="stylesheet" href="../../assets/design-system.css?v=1"><link rel="stylesheet" href="./unified-course.css?v=13"></head><body class="els-design">
+<link rel="stylesheet" href="./style.css?v=20261115contrast3"><link rel="stylesheet" href="../../assets/design-system.css?v=1"><link rel="stylesheet" href="./unified-course.css?v=14"></head><body class="els-design">
 <a class="skip" href="#lesson">학습 본문으로 건너뛰기</a>
 <header class="topbar"><a class="brand" href="../">◈ C Programming <small>/ Learning Studio</small></a><div class="toplinks"><a href="../">C Learning Home</a><a href="https://drive.google.com/file/d/1pQoUv5072-RW6k7vnjDQULbp1qVNQRDq/view" target="_blank" rel="noopener">교재 171 ↗</a><button id="theme-button" aria-label="Toggle dark mode" aria-pressed="false">◐ Theme</button></div></header>
 <div class="course-header"><div class="eyebrow">2026 · CHAPTER 7 · SELF-STUDY COURSE</div><h1>File I/O <span>Learning Journey</span></h1><p>프로그램이 종료되어도 데이터를 남기려면? Stream의 원리를 이해하고, 실제 센서 로그 프로그램까지 단계별로 완성해 보세요.</p><div class="course-meta"><span>8개의 필수 학습 단계</span><span>선택 심화는 별도 표시</span><span>실험 + 코드 분석 + 자기점검</span><span>교재: 171_C_File_IO_Rev8</span></div></div>
@@ -45,7 +45,7 @@
 </section>
 <div class="concept"><strong>Core idea</strong><p><code>int value</code> 같은 변수는 실행 중인 프로그램의 메모리 상태를 나타냅니다. 저장된 파일은 프로그램 외부의 데이터를 표현하므로 다음 실행에서도 사용할 수 있습니다.</p></div>
 <div class="activity"><div class="activity-head"><span>EXPLORE 01</span><h3>프로그램 종료 시뮬레이션</h3><p>아래 두 데이터를 비교한 다음 <strong>End program</strong>을 누르세요.</p></div><div class="two-col"><div class="state-box"><div class="box-name">PROCESS MEMORY</div><div class="big" id="memory-value">score = 92.5</div><small>실행 중인 변수</small></div><div class="state-box"><div class="box-name">FILE: scores.txt</div><div class="big" id="stored-value">101 Mina 92.5</div><small>외부 저장 데이터 (가상 파일)</small></div></div><div class="button-row"><button class="primary" id="end-process">End program</button><button id="start-process">Start new program</button></div><p class="activity-feedback" id="memory-msg" aria-live="polite">프로그램이 실행 중입니다.</p></div>
-<div class="snippet"><div class="code-head">BEGINNER STYLE · OPEN → CHECK → WRITE → CLOSE · complete C example</div>
+<details class="study-advanced-content"><summary>참고 코드 펼치기 · 프로그램 종료 후 파일 저장 원리</summary><div class="snippet"><div class="code-head">BEGINNER STYLE · OPEN → CHECK → WRITE → CLOSE · complete C example</div>
 <pre>#include &lt;stdio.h&gt;
 
 int main(void) {
@@ -71,6 +71,7 @@ int main(void) {
 
     return 0;
 }</pre><p class="code-fragment-note">처음 배우는 단계이므로 <code>FILE *fp;</code> 선언과 <code>fp = fopen(...);</code> 대입을 분리했습니다. 파일에 저장된 값과 실행 중 변수의 수명이 다른 이유를 확인하세요. <a href="./examples/persistence_beginner.c" download>전체 C 소스 다운로드</a></p></div>
+</details>
 <div class="check" data-check="0"><div class="check-eyebrow">CHECK YOURSELF · 7.1</div><h3>프로그램을 종료하고 다시 실행했을 때 일반적으로 남는 것은?</h3><label><input type="radio" name="q0" value="a"> 메모리 변수 <code>score</code>의 값만 남는다.</label><label><input type="radio" name="q0" value="b"> 저장된 파일 내용은 다음 실행에서도 읽을 수 있다.</label><label><input type="radio" name="q0" value="c"> 둘 다 반드시 자동 복원된다.</label><button class="check-btn" data-grade="0">답 확인 및 설명</button><div class="answer" id="answer-0" aria-live="polite"></div></div>
 </section>
 <section class="stage" data-stage="1" hidden>
@@ -157,7 +158,7 @@ while (fgets(line, sizeof line, fp) != NULL) {
     <summary>선택 심화 · 더 알아보기</summary><p>입력 필드 검증, 문자열 길이 제한, 파일 열기·닫기 오류 처리의 필요성을 생각해 보세요.</p>
   </details>
 </section>
-<div class="snippet"><div class="code-head">MIDDLE STYLE · INITIALIZE + CHECK · write, close, reopen, read</div><pre>#include &lt;stdio.h&gt;
+<details class="study-advanced-content"><summary>참고 코드 펼치기 · Structure 저장·복원 전체 C 예제</summary><div class="snippet"><div class="code-head">MIDDLE STYLE · INITIALIZE + CHECK · write, close, reopen, read</div><pre>#include &lt;stdio.h&gt;
 
 struct Student {
     int id;
@@ -200,6 +201,7 @@ int main(void) {
     }
     return 0;
 }</pre></div>
+</details>
 <div class="activity"><div class="activity-head"><span>BUILD 06</span><h3>Structure → Text → Structure</h3><p>레코드를 직접 수정한 다음 Serialize / Load를 눌러 변환 관계를 확인하세요. 이 예제는 <code>FILE *fp = fopen(...)</code>으로 선언과 초기화를 합친 실무형 스타일을 사용합니다. <a href="./examples/student_record_middle.c" download>실행 가능한 C 소스 다운로드</a> 이름은 공백 없는 단어만 지원합니다. 저장 형식은 ID·이름·점수 순서이고 점수는 소수 첫째 자리까지 저장됩니다. 저장 후 입력값을 바꿔도 Load는 저장된 텍스트를 기준으로 복원해야 합니다.</p></div><div class="record-inputs"><div class="field"><label for="rec-id">Student ID</label><input id="rec-id" type="number" value="101" min="0" max="999999"></div><div class="field"><label for="rec-name">Name (no spaces)</label><input id="rec-name" value="Mina" maxlength="39"></div><div class="field"><label for="rec-score">Score</label><input id="rec-score" type="number" value="92.5" min="0" max="100" step="0.1"></div></div><div class="button-row"><button class="primary" id="rec-save">Serialize · fprintf()</button><button id="rec-load">Load · fscanf()</button></div><div class="two-col"><div class="state-box"><div class="box-name">students.txt · saved record</div><pre id="rec-file">(not saved yet)</pre></div><div class="state-box"><div class="box-name">LOADED STRUCTURE</div><pre id="rec-result">(not loaded yet)</pre></div></div><p class="activity-feedback" id="rec-message" aria-live="polite">먼저 Serialize를 누르세요.</p></div>
 <div class="check" data-check="5"><div class="check-eyebrow">CHECK YOURSELF · 7.5</div><h3><code>fscanf()</code>에서 <code>s.name</code>에 <code>&amp;</code>가 없는 주된 이유는?</h3><label><input type="radio" name="q5" value="a"> 문자열 이름에는 읽기가 불가능하기 때문이다.</label><label><input type="radio" name="q5" value="b"> 배열 이름이 이 함수 호출에서 첫 원소의 주소로 변환되기 때문이다.</label><label><input type="radio" name="q5" value="c"> <code>fscanf()</code>가 자동으로 변수를 생성하기 때문이다.</label><button class="check-btn" data-grade="5">답 확인 및 설명</button><div class="answer" id="answer-5" aria-live="polite"></div></div>
 </section>
@@ -420,9 +422,11 @@ int main(void) {
     return 0;
 }</pre></div><button class="primary" id="build-check">핵심 구문 선택 확인</button><p class="activity-feedback" id="build-feedback" aria-live="polite"></p></div>
 <div class="check" data-check="7"><div class="check-eyebrow">FINAL CHECK · 7.7</div><h3>파일을 읽어 구조체 배열에 저장하는 프로그램의 안전한 순서는?</h3><label><input type="radio" name="q7" value="a"> 읽기 → 모드 선택 → 파일 열기 → 닫기</label><label><input type="radio" name="q7" value="b"> 파일 열기 → NULL 확인 → 읽기 반환값 확인 → 닫기</label><label><input type="radio" name="q7" value="c"> 파일 열기 → feof() 먼저 검사 → 읽기 → 닫지 않기</label><button class="check-btn" data-grade="7">답 확인 및 설명</button><div class="answer" id="answer-7" aria-live="polite"></div></div>
-<div class="concept"><strong>Mini Challenge · Persistent Record Manager</strong><p>교재의 연습 과제와 연결하여 <code>struct Student records[]</code>를 텍스트 파일로 저장하고 다시 불러오는 프로그램을 직접 작성해 보세요. 경로 오류, 빈 파일, 비정상 데이터도 테스트하세요.</p><details><summary>코드 작성 시 확인할 항목</summary><ul><li>읽기/쓰기 모드를 목적에 맞게 선택했는가?</li><li><code>fopen()</code>의 <code>NULL</code> 여부를 확인했는가?</li><li><code>fscanf()</code>의 변환 개수가 기대한 값인지 검사하는가?</li><li>구조체 배열의 용량을 초과하지 않는가?</li><li><code>fclose()</code>를 호출하는가?</li></ul></details><p><a href="https://drive.google.com/file/d/1pQoUv5072-RW6k7vnjDQULbp1qVNQRDq/view" target="_blank" rel="noopener">참고 교재 · 171_C_File_IO_Rev8 ↗</a></p></div>
+<details class="study-advanced-content"><summary>선택 심화 · Persistent Record Manager 설계 과제</summary><div class="concept"><strong>Mini Challenge · Persistent Record Manager</strong><p>교재의 연습 과제와 연결하여 <code>struct Student records[]</code>를 텍스트 파일로 저장하고 다시 불러오는 프로그램을 직접 작성해 보세요. 경로 오류, 빈 파일, 비정상 데이터도 테스트하세요.</p><details><summary>코드 작성 시 확인할 항목</summary><ul><li>읽기/쓰기 모드를 목적에 맞게 선택했는가?</li><li><code>fopen()</code>의 <code>NULL</code> 여부를 확인했는가?</li><li><code>fscanf()</code>의 변환 개수가 기대한 값인지 검사하는가?</li><li>구조체 배열의 용량을 초과하지 않는가?</li><li><code>fclose()</code>를 호출하는가?</li></ul></details><p><a href="https://drive.google.com/file/d/1pQoUv5072-RW6k7vnjDQULbp1qVNQRDq/view" target="_blank" rel="noopener">참고 교재 · 171_C_File_IO_Rev8 ↗</a></p></div>
+</details>
 <div class="concept"><strong>직접 코드 작성하기 · P1–P6 Practice Lab</strong><p>교재의 6개 과제를 C 소스 편집기로 작성하고 핵심 구문을 점검할 수 있습니다. 테스트 데이터와 참조 결과를 비교한 뒤 <code>.c</code>를 다운로드하여 GCC로 실제 실행해 보세요. 웹의 점검은 C 컴파일이나 실행이 아닙니다.</p><p><a href="./practice/" style="font-weight:800">P1–P6 Coding Practice Lab 열기 →</a></p></div>
-<div class="concept"><strong>교재 연결 · 부족한 부분을 보완하는 학습 체크리스트</strong><p>앞의 8단계는 개념과 실행 흐름을 확인하는 기초 과정입니다. 실제 C 프로그래밍 능력은 아래 교재 과제를 직접 작성하고 컴파일하여 확인해야 합니다.</p><ol><li><strong>P1 Write Numbers:</strong> 정수 5개를 파일에 저장하고 다시 열어 검증</li><li><strong>P2 Read and Average:</strong> 실수 읽기, 개수와 평균, 빈 파일 처리</li><li><strong>P3 Copy Lines:</strong> <code>fgets()</code>와 <code>fputs()</code>로 텍스트 복사</li><li><strong>P4 Save Students:</strong> 구조체 배열을 텍스트 레코드로 저장</li><li><strong>P5 Load Students:</strong> 레코드 형식과 배열 크기를 확인하며 최고 점수 찾기</li><li><strong>P6 Sensor Alert:</strong> 시간·측정값을 읽고 <code>alerts.txt</code>에 경보 기록</li></ol><p><strong>함수 분리:</strong> P4·P5를 <code>saveRecords()</code>와 <code>loadRecords()</code>로 나눠보세요. <strong>선택 학습:</strong> CSV는 쉼표로 구분한 텍스트 형식이고, <code>fread()</code>/<code>fwrite()</code>의 이진 파일은 자료형 표현과 구조체 패딩·이식성에 주의해야 합니다.</p><p><strong>오류 진단 질문:</strong> 파일이 없으면? <code>fscanf()</code>가 0을 반환하면? <code>fgets()</code>의 버퍼보다 한 줄이 길면? <code>fclose()</code>가 실패하면?</p></div>
+<details class="study-advanced-content"><summary>선택 심화 · P1~P6 확장 학습과 오류 진단 체크리스트</summary><div class="concept"><strong>교재 연결 · 부족한 부분을 보완하는 학습 체크리스트</strong><p>앞의 8단계는 개념과 실행 흐름을 확인하는 기초 과정입니다. 실제 C 프로그래밍 능력은 아래 교재 과제를 직접 작성하고 컴파일하여 확인해야 합니다.</p><ol><li><strong>P1 Write Numbers:</strong> 정수 5개를 파일에 저장하고 다시 열어 검증</li><li><strong>P2 Read and Average:</strong> 실수 읽기, 개수와 평균, 빈 파일 처리</li><li><strong>P3 Copy Lines:</strong> <code>fgets()</code>와 <code>fputs()</code>로 텍스트 복사</li><li><strong>P4 Save Students:</strong> 구조체 배열을 텍스트 레코드로 저장</li><li><strong>P5 Load Students:</strong> 레코드 형식과 배열 크기를 확인하며 최고 점수 찾기</li><li><strong>P6 Sensor Alert:</strong> 시간·측정값을 읽고 <code>alerts.txt</code>에 경보 기록</li></ol><p><strong>함수 분리:</strong> P4·P5를 <code>saveRecords()</code>와 <code>loadRecords()</code>로 나눠보세요. <strong>선택 학습:</strong> CSV는 쉼표로 구분한 텍스트 형식이고, <code>fread()</code>/<code>fwrite()</code>의 이진 파일은 자료형 표현과 구조체 패딩·이식성에 주의해야 합니다.</p><p><strong>오류 진단 질문:</strong> 파일이 없으면? <code>fscanf()</code>가 0을 반환하면? <code>fgets()</code>의 버퍼보다 한 줄이 길면? <code>fclose()</code>가 실패하면?</p></div>
+</details>
 <p><a class="practice-link" href="./practice/">교재 P1~P6 · 직접 코드 작성 Practice Lab →</a></p>
 <div id="completion-message" class="completion" hidden><strong>Chapter 7 Learning Activities Recorded!</strong><p>여덟 단계의 개념 확인 또는 예측·설명 활동이 기록되었습니다. 이는 실제 코딩 능력이나 설명의 정확성을 인증하지 않습니다. 교재의 P1~P6을 직접 작성하고 GCC로 검증해 보세요.</p></div>
 </section>
