@@ -43,7 +43,7 @@
      if(first.kind!=="ok"){
        const fields=first.kind==="eof"?"EOF":0;
        lastReturn=String(fields);
-       trace.push({attempt,fields,lastReturn,detail:first.kind==="eof"?"새 입력 전에 파일 끝에 도달: clean EOF":"첫 번째 double 변환 실패: matching failure"});
+       trace.push({attempt,fields,lastReturn,startOffset:pos,endOffset:first.end,count,sum,average:count?sum/count:null,detail:first.kind==="eof"?"새 입력 전에 파일 끝에 도달: clean EOF":"첫 번째 double 변환 실패: matching failure"});
        if(fields!== "EOF")stderr="Invalid sensor record: 0 field(s) read\n";
        finished=true;break;
      }
@@ -53,14 +53,14 @@
        pos=second.end;
        lastReturn="1";
        stderr="Invalid sensor record: 1 field(s) read\n";
-       trace.push({attempt,fields:1,lastReturn,detail:second.kind==="eof"?"첫 번째 값만 읽은 후 EOF: 부분 변환 (1)":"두 번째 double 변환 실패: 부분 변환 (1)"});
+       trace.push({attempt,fields:1,lastReturn,startOffset:pos,endOffset:first.end,time:first.value,count,sum,average:count?sum/count:null,detail:second.kind==="eof"?"첫 번째 값만 읽은 후 EOF: 부분 변환 (1)":"두 번째 double 변환 실패: 부분 변환 (1)"});
        finished=true;break;
      }
      pos=second.end;lastReturn="2";count++;sum+=second.value;
      const isAlert=second.value>threshold;
      if(isAlert){stdout+="ALERT "+first.value.toFixed(1)+": "+second.value.toFixed(2)+"\n";alerts.push({time:first.value,value:second.value});}
      records.push({time:first.value,value:second.value,alert:isAlert});
-     trace.push({attempt,fields:2,lastReturn:"2",detail:"2개 변환 성공 → time="+first.value+", value="+second.value+(isAlert?" → ALERT":"")});
+     trace.push({attempt,fields:2,lastReturn:"2",startOffset:pos,endOffset:second.end,time:first.value,value:second.value,count,sum,average:sum/count,alert:isAlert,detail:"2개 변환 성공 → time="+first.value+", value="+second.value+(isAlert?" → ALERT":"")});
    }
    if(!finished)throw Error("Simulation exceeded safety limit.");
    const successful=stderr==="";
