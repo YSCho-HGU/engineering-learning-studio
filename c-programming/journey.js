@@ -71,6 +71,62 @@ function modelOutput(model,v){
  }
 }
 
+
+/* Visual memory model from instructor-authored trace snapshots.
+   Deliberately illustrative: virtual addresses are NOT actual GCC addresses. */
+function renderMemoryDiagram(host, step, lesson){
+ host.replaceChildren();
+ const header=element("div","mem-diagram-title",host);
+ element("strong","",header,"Memory Diagram · 메모리 상태");
+ element("small","",header,"Virtual addresses / conceptual view");
+ const board=element("div","mem-diagram-board",host);
+ const state=step.state.replaceAll("\\n","\n");
+ const statements=state.split(/[\n;]+/).map(s=>s.trim()).filter(Boolean);
+ const relationships=[];
+ const values=[];
+ const outputs=[];
+ for(const statement of statements){
+  if(/^(?:stdout|output):/i.test(statement)){outputs.push(statement);continue}
+  const arrow=/^(.+?)\s*(?:→|->)\s*(.+)$/.exec(statement);
+  if(arrow && !/^i=/.test(statement)){relationships.push([arrow[1].trim(),arrow[2].trim()]);continue}
+  if(/[=:]/.test(statement)){values.push(statement);continue}
+  outputs.push(statement);
+ }
+ if(!relationships.length && !values.length){
+  values.push("State: "+state);
+ }
+ const take=(str,max=80)=>str.length>max?str.slice(0,max-1)+"…":str;
+ const addCell=(name,value,kind)=>{
+  const card=element("div","mem-cell "+kind,board);
+  const top=element("div","mem-cell-head",card);
+  element("span","mem-cell-name",top,take(name,42));
+  element("span","mem-cell-address",top,"illustrative");
+  element("strong","mem-cell-value",card,take(value,110));
+  return card;
+ };
+ for(const [from,to] of relationships){
+  const link=element("div","mem-pointer-link",board);
+  addCell(from,"address / reference","mem-pointer");
+  const arrow=element("div","mem-arrow",link,"→");arrow.setAttribute("aria-hidden","true");
+  element("span","mem-link-label",link,"points to");
+  addCell(to,"target object / value","mem-target");
+ }
+ for(const statement of values){
+  const equal=/^([^=:]+)[=:]\s*(.*)$/.exec(statement);
+  addCell(equal?equal[1].trim():"state",equal?equal[2].trim():statement,"mem-value");
+ }
+ if(outputs.length){
+  const footer=element("div","mem-diagram-output",host);
+  element("strong","",footer,"Output / interpretation");
+  element("span","",footer,outputs.join(" · "));
+ }
+ const note=element("p","mem-diagram-note",host,
+   lesson.model?.kind==="alignment"?
+    "sizeof(struct) and padding depend on the implementation. No fixed address or size is asserted.":
+    "Addresses and arrows illustrate relationships only. Actual layout depends on compiler, ABI, and execution.");
+ return host;
+}
+
 function renderTrace(stage,l){
  const section=element("section","activity trace-lab",stage);
  element("span","tag",section,"GUIDED EXECUTION · LINE-BY-LINE");
@@ -97,6 +153,7 @@ function renderTrace(stage,l){
  }
  const status=element("p","trace-status",right);
  const currentState=element("pre","trace-memory",right);
+ const diagram=element("div","mem-diagram",right);
  const explanation=element("p","trace-explanation",right);
  const position=element("p","legend",right);
  const controls=element("div","trace-controls",section);
@@ -109,6 +166,7 @@ function renderTrace(stage,l){
   rendered.forEach((row,i)=>{row.classList.toggle("active",i+1===step.line);if(i+1===step.line)row.setAttribute("aria-current","step");else row.removeAttribute("aria-current")});
   status.textContent="Step "+(pointer+1)+" / "+steps.length+" · Line "+step.line;
   currentState.textContent=step.state.replaceAll("\\n","\n");
+  renderMemoryDiagram(diagram,step,l);
   explanation.textContent=step.meaning;
   position.textContent="Read the highlighted C line, then explain how the stored values change.";
   previous.disabled=pointer===0;next.disabled=pointer===steps.length-1;
