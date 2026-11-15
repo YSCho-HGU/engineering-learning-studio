@@ -3,14 +3,54 @@
 (() => {
  "use strict";
  const $=id=>document.getElementById(id);
- const basic=window.SensorModel, robust=window.RobustSensorModel, walkthrough=window.SensorCodeTrace;
- if(!basic||!robust||!walkthrough||!$("sensor-step-next"))return;
- let steps=[],step=-1,readText="";
+ const basic=window.SensorModel, robust=window.RobustSensorModel, walkthrough=window.SensorCodeTrace, variableDiff=window.SensorVariableDiff;
+ if(!basic||!robust||!walkthrough||!variableDiff||!$("sensor-step-next"))return;
+ let steps=[],allSteps=[],step=-1,readText="";
  const sourceElement=$("sensor-c-source");
  const codeContainer=$("sensor-step-code");
  const buttons=["sensor-step-first","sensor-step-prev","sensor-step-next","sensor-step-last"];
  const valueIds=["sensor-code-fields","sensor-code-time","sensor-code-value","sensor-code-sum","sensor-code-count","sensor-code-mean","sensor-code-alert","sensor-code-exit"];
  const codeHtmlEscape=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+ const vars=[
+   ["fields","fields"],["time","time_s"],["value","value"],
+   ["sum","sum"],["count","count"],["runningMean","sum / count · 계산값"],
+   ["alert","경보 조건 · 표시값"],["exitCode","종료 코드"]
+ ];
+ const guidanceKeys=new Set(["read","sum","count","condition","alert","finalCount","finalAverage","noRecords","failureReturn","successReturn"]);
+ function chooseSteps(){return $("sensor-step-view").value==="all"?allSteps:allSteps.filter(x=>guidanceKeys.has(x.key))}
+ function renderVariableDiff(before,snapshot){
+   const root=$("sensor-variable-diff-list");
+   root.replaceChildren();
+   const diffs=variableDiff.diff(before,snapshot);
+   for(const row of diffs){
+     const item=document.createElement("div");
+     item.className="sensor-variable-change "+row.status;
+     item.dataset.change=row.status;
+     const label=document.createElement("strong");
+     label.textContent=vars.find(([key])=>key===row.key)?.[1]||row.key;
+     const values=document.createElement("span");
+     values.className="sensor-variable-change-values";
+     values.textContent=row.before+" → "+row.after;
+     const status=document.createElement("small");
+     status.textContent=row.note;
+     item.append(label,values,status);
+     root.append(item);
+   }
+ }
+ function switchDepth(){
+   if(!allSteps.length){steps=[];reset();return}
+   steps=chooseSteps();step=-1;
+   $("sensor-step-counter").textContent="보기 방식 변경 · 다음 C 문장을 선택하세요";
+   $("sensor-step-next").disabled=!steps.length;
+   $("sensor-step-last").disabled=!steps.length;
+   $("sensor-step-first").disabled=true;
+   $("sensor-step-prev").disabled=true;
+   paintCode();
+   $("sensor-variable-diff-list").textContent="이전 값 → 새로운 값은 실행 후 표시됩니다.";
+   $("sensor-code-explanation").textContent="학습 깊이를 바꿨습니다. 첫 C 문장부터 다시 확인하세요.";
+ }
+
  function paintCode(line=-1){
    const source=sourceElement.textContent;
    const rows=source.split(/\r?\n/);
@@ -35,7 +75,7 @@
    $("sensor-code-stderr").textContent=state.stderr||"(오류 없음)";
  }
  function reset(){
-   steps=[];step=-1;
+   steps=[];allSteps=[];step=-1;
    for(const id of buttons)$(id).disabled=true;
    $("sensor-step-counter").textContent="실행 전";
    $("sensor-step-attempt").textContent="—";
@@ -48,6 +88,7 @@
    $("sensor-code-explanation").textContent="현재 실행한 문장의 의미를 여기에 설명합니다.";
    displayState({fields:"—",time:null,value:null,sum:0,count:0,runningMean:null,alert:false,exitCode:null,stdout:"",stderr:""});
    paintCode();
+   $("sensor-variable-diff-list").textContent="실행 전 · 각 변수의 이전 값과 새로운 값이 여기에 표시됩니다.";
    $("sensor-compare-basic").textContent="다시 비교 실행하세요.";
    $("sensor-compare-robust").textContent="다시 비교 실행하세요.";
    $("sensor-compare-status").textContent="입력 조건이 바뀌었습니다. 비교 실행을 다시 누르세요.";
@@ -74,6 +115,8 @@
    $("sensor-step-detail").textContent=snapshot.explain;
    $("sensor-code-explanation").textContent=snapshot.explain;
    displayState(snapshot.state);
+   const prior=step>0?steps[step-1].state:variableDiff.base;
+   renderVariableDiff(prior,snapshot);
    const line=walkthrough.codeLineIndex(sourceElement.textContent,snapshot.lineMarker);
    paintCode(line);
    if(ev){
@@ -90,7 +133,8 @@
    try{
      const result=basic.simulate(readText,threshold);
      if(!result.supported){reset();$("sensor-step-source").textContent=result.reason;return}
-     steps=walkthrough.build(result,threshold);
+     allSteps=walkthrough.build(result,threshold);
+     steps=chooseSteps();
    }catch(err){reset();$("sensor-step-source").textContent="시뮬레이션 제한: "+err.message;return;}
    step=-1;
    paintCode();
@@ -98,6 +142,7 @@
    $("sensor-step-next").disabled=!steps.length;
    $("sensor-step-last").disabled=!steps.length;
  }
+ $("sensor-step-view").addEventListener("change",switchDepth);
  $("sensor-run").addEventListener("click",prepare);
  for(const id of ["sensor-edit","sensor-threshold","sensor-scenario"]){
    $(id).addEventListener(id==="sensor-edit"||id==="sensor-threshold"?"input":"change",reset);
