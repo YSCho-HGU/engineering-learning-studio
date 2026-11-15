@@ -78,8 +78,8 @@
       "title": "Arrays",
       "group": "data",
       "url": "./arrays/",
-      "published": false,
-      "description": ""
+      "published": true,
+      "description": "1차원·2차원 배열, 인덱스, 반복문, 빈도 계산과 센서 데이터 분석"
     },
     {
       "id": "132",
@@ -87,8 +87,8 @@
       "title": "Strings",
       "group": "data",
       "url": "./strings/",
-      "published": false,
-      "description": ""
+      "published": true,
+      "description": "char 배열, 널 종료 문자, strlen·strcmp, 안전한 문자열 처리"
     },
     {
       "id": "133",
@@ -96,8 +96,8 @@
       "title": "Standard Library Functions",
       "group": "data",
       "url": "./standard-library/",
-      "published": false,
-      "description": ""
+      "published": true,
+      "description": "math.h, ctype.h, stdlib.h, string.h의 주요 함수와 실제 응용"
     },
     {
       "id": "141",
@@ -105,8 +105,8 @@
       "title": "User-Defined Functions",
       "group": "data",
       "url": "./functions/",
-      "published": false,
-      "description": ""
+      "published": true,
+      "description": "함수 원형·정의·호출, 인수와 매개변수, 반환값, 배열 인수"
     },
     {
       "id": "151",
