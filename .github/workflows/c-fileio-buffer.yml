@@ -1,9 +1,10 @@
-name: C File I/O M1 Buffer Explorer QA
+name: C File I/O Core Explorers QA
 on:
   push:
     paths:
       - 'c-programming/file-io/practice/**'
       - 'tests/c-fileio-buffer-browser.mjs'
+      - 'tests/c-fileio-core-browser.mjs'
       - '.github/workflows/c-fileio-buffer.yml'
   workflow_dispatch:
 jobs:
@@ -18,9 +19,12 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: python3 -m http.server 8765 --bind 127.0.0.1 &
       - run: node tests/c-fileio-buffer-browser.mjs
+      - run: node tests/c-fileio-core-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: fileio-m1-buffer-screenshots
-          path: qa-fileio-buffer-*.png
+          name: fileio-core-visual-qa
+          path: |
+            qa-fileio-buffer-*.png
+            qa-fileio-core-*.png
           retention-days: 7
