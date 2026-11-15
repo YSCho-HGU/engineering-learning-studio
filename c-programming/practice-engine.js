@@ -146,7 +146,7 @@ function showGuidance(i){
 }
 const more=txt("details","cp-hint",content);
 txt("summary","",more,"GCC 실행 방법 및 검증 절차");
-txt("p","",more,"① .c 파일을 다운로드하세요. ② gcc -std=c11 -Wall -Wextra -Wpedantic -Werror task.c -o task ③ 실행 후 참조 출력과 대조하세요. 데이터 파일이 필요한 과제는 같은 폴더에 준비하세요.");
+txt("p","",more,"① .c 파일을 다운로드하세요. ② gcc -std=c11 -Wall -Wextra -Wpedantic -Werror task.c -o task"+(d.slug==="standard-library"?" -lm":"")+" ③ 실행 후 참조 출력과 대조하세요. 데이터 파일이 필요한 과제는 같은 폴더에 준비하세요.");
 const navButtons=[];
 function show(i){
  selection=i;const task=d.practice[i];title.textContent="P"+(i+1)+" · "+(d.slug==="dynamic-memory"?(i<3?"[필수] ":"[선택 심화] "):"")+task.title;description.textContent=task.task;expected.textContent=task.expected;
