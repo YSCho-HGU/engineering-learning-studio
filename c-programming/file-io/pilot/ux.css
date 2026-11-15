@@ -63,3 +63,66 @@
  .tabs button{min-width:135px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}}
+
+/* UX 2.2 — explicit dark-mode tokens to avoid low-contrast light-dark() inheritance.
+   Form controls and nested lesson panels use defined surfaces instead of user-agent colors. */
+@media (prefers-color-scheme:dark) {
+ :root {
+  color-scheme:dark;
+  --bg:#0e1726;--panel:#1b2a3e;--soft:#253850;--line:#526c88;
+  --ink:#edf5ff;--muted:#c3d2e4;--pilot-blue:#a6dbff;--pilot-green:#a8efc3;
+ }
+ body{background:#0e1726!important;color:#edf5ff!important}
+ header,.lesson,.panel,.prediction-box fieldset,.prediction-box fieldset label,
+ .learn-check textarea,.step textarea,select,textarea,button:not(.primary),
+ .tabs button {background:#1b2a3e!important;color:#edf5ff!important;border-color:#526c88!important}
+ .hero h1,.lesson h2,.panel h3,.learn-check h3,
+ .prediction-box legend,.prediction-box label,.field label,
+ .step-title,.eyebrow,.learning-map span,.focus-banner strong{color:#edf5ff!important}
+ .hero p,.caption,.small,.footer,.breadcrumb-note,.reflection-hint,
+ .field label,.panel .meta small,.focus-banner span{color:#c3d2e4!important}
+ .step,.prediction-box,.experiment-panel .actions,.meta div,
+ .trace div,.learning-map span,.hero .learning-goal{background:#253850!important;color:#edf5ff!important;border-color:#526c88!important}
+ .prediction-box fieldset label{background:#203147!important;color:#edf5ff!important}
+ .prediction-box fieldset label:has(input:checked){background:#314e6c!important;border-color:#9bd8ff!important;color:#fff!important}
+ .prediction-box.answered{background:#21344b!important}
+ .tabs button.active,.learning-map span.current{background:#315778!important;border-color:#80c8f5!important;color:#fff!important}
+ .learning-map span.completed{background:#244c40!important;border-color:#65bc96!important;color:#c9ffdc!important}
+ .tabs button:not(.active){color:#cbd9ec!important}
+ .tabs button:not(.active):hover,.actions button:not(:disabled):hover,
+ .nav a:hover{background:#344c67!important;color:#fff!important}
+ button.primary{background:#2b79b8!important;border-color:#83c9ff!important;color:#fff!important}
+ button:disabled{opacity:1!important;background:#273344!important;border-color:#41536b!important;color:#93a9c2!important;cursor:not-allowed!important}
+ button.next-action:not(:disabled){box-shadow:0 0 0 3px #67bfff!important;border-color:#b4e0ff!important}
+ .focus-banner,.feedback{background:#26425b!important;border-color:#6282a0!important;color:#f0f8ff!important}
+ .focus-banner strong{color:#fff!important}
+ .focus-banner span{color:#d2e3f5!important}
+ .compare-card,.learn-check{background:#1c3b36!important;border-color:#69b49b!important;color:#edfff8!important}
+ .compare-card h3,.compare-card p,.learn-check h3,.learn-check p{color:#edfff8!important}
+ .compare-card .compare-diff{color:#d8f7e9!important}
+ input[type="radio"]{accent-color:#7ad1ff}
+ textarea,select{caret-color:#f9fdff}
+ textarea::placeholder{color:#b6c8dc!important;opacity:1}
+ .code-box{background:#101a2b!important;border:1px solid #5b728d!important}
+ .code-head{background:#253c58!important;color:#eef6ff!important}
+ .code-row{color:#ecf3ff!important}
+ .code-row span:first-child{color:#b0c4df!important}
+ .code-row.active{background:#59471e!important;color:#fff6d9!important;border-left-color:#ffda69!important}
+ .code-row.active span:first-child{color:#ffe49c!important}
+ .panel pre.data{background:#17263a!important;color:#f2f8ff!important;border:1px solid #48627e!important;border-radius:8px;padding:10px}
+ .meta strong{color:#fff!important}
+ .trace div:last-child{border:1px solid #8ac6ed!important}
+ a{color:#a8d9ff}
+ a:hover{text-decoration:underline}
+ .tag,.status-mark{background:#2d435c!important;color:#dcecff!important;border-color:#7693ae!important}
+}
+@media (prefers-color-scheme:light) {
+ :root{color-scheme:light}
+ .prediction-box fieldset label{color:#192d41}
+ .code-box{border:1px solid #435670}
+ .panel pre.data{color:#182b41}
+}
+/* Always improve affordances of focus and input controls across themes */
+.prediction-box input[type=radio]{min-width:16px;min-height:16px}
+textarea,select{font-size:16px}
+textarea:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid #6ab7ff;outline-offset:2px}
