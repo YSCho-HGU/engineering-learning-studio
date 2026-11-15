@@ -7,6 +7,11 @@ if(!D||!Array.isArray(D.lessons)||D.lessons.length!==8)throw Error("Journey must
 const $=id=>document.getElementById(id);
 const key="els-journey-"+D.slug+"-v1";
 let completed=[],current=0,theme=localStorage.getItem("els-c-theme")||"auto";
+const assessmentKey="els-concept-"+D.slug+"-v1";
+let concepts=[];
+try{const v=JSON.parse(localStorage.getItem(assessmentKey)||"[]");if(Array.isArray(v))concepts=[...new Set(v.filter(n=>Number.isInteger(n)&&n>=0&&n<8))]}catch(e){}
+const persistConcepts=()=>{try{localStorage.setItem(assessmentKey,JSON.stringify(concepts))}catch(e){}};
+
 try{const v=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(v))completed=[...new Set(v.filter(n=>Number.isInteger(n)&&n>=0&&n<8))]}catch(e){}
 function safe(x){return String(x??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;")}
 function element(tag,cls,parent,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;parent.appendChild(n);return n}
@@ -17,9 +22,10 @@ function renderNav(){
   b.type="button";b.dataset.lesson=i;
   element("span","n",b,String(i+1).padStart(2,"0"));
   element("span","",b,l.title);
+  if(concepts.includes(i))element("span","concept-indicator",b,"✓ Concept");
   b.addEventListener("click",()=>show(i));
  });
- $("progress-text").textContent=completed.length+" / 8";
+ $("progress-text").textContent="Activity "+completed.length+"/8 · Concept "+concepts.length+"/8";
  $("progress-bar").style.width=completed.length/8*100+"%";
  const meter=$("progress-bar").parentElement;if(meter)meter.setAttribute("aria-valuenow",String(completed.length));
 }
@@ -47,7 +53,12 @@ function renderQuiz(stage,l){
   if(!answer){result.textContent="먼저 답을 선택하세요. / Select an answer first.";return}
   const ok=Number(answer.value)===l.quiz.correct;
   result.textContent=(ok?"Correct. ":"Review your prediction. ")+l.quiz.explain;
+  if(ok&&!concepts.includes(current)){concepts.push(current);concepts.sort((a,b)=>a-b);persistConcepts();renderNav();updateAssessmentSummary();}
  });
+}
+function updateAssessmentSummary(){
+ const target=$("assessment-status");if(!target)return;
+ target.textContent="Activity Reviewed "+completed.length+"/8 · Concept Check Passed "+concepts.length+"/8 · Coding Practice: self-reported GCC checks only.";
 }
 function modelOutput(model,v){
  switch(model.kind){
@@ -240,7 +251,7 @@ function show(i){
  const prev=element("button","action",actions,"← Previous");prev.disabled=current===0;prev.addEventListener("click",()=>show(current-1));
  const mark=element("button","action primary",actions,completed.includes(current)?"Activity reviewed ✓":"Mark activity reviewed ✓");
  mark.addEventListener("click",()=>{if(!completed.includes(current)){completed.push(current);completed.sort((a,b)=>a-b);try{localStorage.setItem(key,JSON.stringify(completed))}catch(e){}}
- renderNav();mark.textContent="Activity reviewed ✓";$("activity-note").textContent="활동 확인 기록입니다. 실제 C 코딩 숙달을 인증하지 않습니다."});
+ renderNav();updateAssessmentSummary();mark.textContent="Activity reviewed ✓";$("activity-note").textContent="활동 확인 기록입니다. 실제 C 코딩 숙달을 인증하지 않습니다."});
  const next=element("button","action",actions,"Next →");next.disabled=current===7;next.addEventListener("click",()=>show(current+1));
  $("current-title").textContent=l.title;
  $("activity-note").textContent="학습 활동 표시이며, 퀴즈 정답이나 실제 C 컴파일 성공을 의미하지 않습니다.";
@@ -268,7 +279,7 @@ function init(){
   theme=theme==="dark"?"light":"dark";document.documentElement.dataset.mode=theme;$("theme").setAttribute("aria-pressed",String(theme==="dark"));
   try{localStorage.setItem("els-c-theme",theme)}catch(e){}
  });document.documentElement.dataset.mode=theme;$("theme").setAttribute("aria-pressed",String(theme==="dark"));
- renderNav();show(0);
+ renderNav();show(0);updateAssessmentSummary();
 }
 init();
 })();
