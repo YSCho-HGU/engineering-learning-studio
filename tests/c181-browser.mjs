@@ -26,6 +26,16 @@ for(const width of [390,1280]){
  if(groupHeads.join('|')!=='기초 문법|배열 · 함수|포인터 · 구조체 · 메모리|자료구조 · 종합 응용')problems.push(width+' course overview grouping incorrect: '+groupHeads.join('|'));
  const groupCounts=await page.locator('#units .course-group .unit').count();
  if(groupCounts!==18)problems.push(width+' grouped course count mismatch');
+ const liveCards=page.locator('#units a.unit-live'),pendingCards=page.locator('#units article.unit-pending');
+ if(await liveCards.count()!==4)problems.push(width+' 4 published cards required');
+ if(await pendingCards.count()!==14)problems.push(width+' 14 pending cards required');
+ if(await page.locator('.course-availability .availability-item').count()!==2)problems.push(width+' status legend missing');
+ if(await page.locator('#available-overview-count').innerText()!=='4개')problems.push(width+' published count mismatch');
+ if(await page.locator('#pending-overview-count').innerText()!=='14개')problems.push(width+' pending count mismatch');
+ if(await pendingCards.locator('a').count())problems.push(width+' pending cards must not contain links');
+ if(await liveCards.locator('.unit-status.live').count()!==4)problems.push(width+' published badges missing');
+ if(await pendingCards.locator('.unit-status.pending').count()!==14)problems.push(width+' pending badges missing');
+
  await page.goto('http://127.0.0.1:8765/c-programming/#roadmap',{waitUntil:'networkidle'});
  if(!await page.locator('#course-overview-details').evaluate(e=>e.open))problems.push(width+' direct #roadmap link did not open overview');
 
