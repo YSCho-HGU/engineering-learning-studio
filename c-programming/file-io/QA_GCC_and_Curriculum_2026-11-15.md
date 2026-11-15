@@ -57,3 +57,10 @@ Five representative complete programs compiled with zero warnings and seven runt
 ## Pedagogical acceptance criteria
 
 For each chapter task: **explain the goal → predict outcome → interact/execute → inspect C return values → debug a wrong case → complete code → self-check**. A correct multiple-choice response alone does not establish C programming proficiency.
+
+## 2026-11-15 Follow-up: Q1 and Q3 remediation
+
+- Updated the three complete teaching programs to report **malformed input** separately from clean EOF or I/O errors. The examples now use `ferror(fp)` and `!feof(fp)` after a failed formatted-read loop; the Student example checks `fscanf(...) != 3` and prints a diagnostic.
+- Added textbook P1–P6 practice requirements, function decomposition, CSV/binary preview and error-case checklist to the final stage; renamed the completion label **Concept Checks Complete** rather than claiming programming mastery.
+- GCC compile and execution test run in an isolated Linux environment with `-std=c11 -Wall -Wextra -Wpedantic -Werror`: **5 representative reconstructed C programs compiled, 8/8 runtime assertions passed**, including valid integer data, malformed integer data, empty file, student record, normal sensor data, malformed sensor data, read lines, and append. These tests verify the corresponding C logic, not a complete browser E2E or automatic extraction of every code snippet.
+- Remaining work: turn P1–P6 into interactive coding exercises, implement browser E2E tests, and test long lines, stream errors and partial record conversion. The file-mode simulator simplifies some failure paths for beginners.
