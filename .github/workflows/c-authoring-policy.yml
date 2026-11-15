@@ -9,6 +9,8 @@ on:
       - 'tests/c-course-gcc.mjs'
       - 'tests/c-advanced-review.mjs'
       - 'c-programming/file-io/index.html'
+      - 'c-programming/file-io/practice/**'
+      - 'tests/c-fileio-mini-lab.mjs'
       - 'c-programming/practice-engine.js'
       - 'docs/C_PROGRAMMING_AUTHORING_STANDARD.md'
       - '.github/workflows/c-authoring-policy.yml'
@@ -25,5 +27,7 @@ jobs:
         run: node tests/c-authoring-policy.mjs
       - name: Verify 151-181 Core/Optional curriculum consistency
         run: node tests/c-advanced-review.mjs
+      - name: Test required File I/O fgets and fputs mini lab
+        run: node tests/c-fileio-mini-lab.mjs
       - name: GCC C11 verify published lesson reference programs
         run: node tests/c-course-gcc.mjs
