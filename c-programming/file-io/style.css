@@ -33,3 +33,37 @@
 .route-card strong{font-size:.83rem}.practice-link{display:inline-block;background:#126da8;color:white!important;padding:10px 14px;border-radius:9px;font-size:.88rem;font-weight:750;text-decoration:none}
 .practice-link:hover{background:#0b5483}.route-note{margin:10px 0}
 @media(max-width:720px){.route-cards{grid-template-columns:1fr}.route-heading{align-items:start;flex-direction:column}}
+
+/* Dark-mode readability hotfix: roadmap cards must not use undefined --panel.
+   light-dark() follows both OS theme and the page's manual color-scheme toggle. */
+.learning-route .route-card{
+ background:light-dark(#ffffff,#1c2c40)!important;
+ color:light-dark(#1b2c40,#edf5ff)!important;
+ border:1px solid light-dark(#d3deeb,#526e8d)!important;
+ box-shadow:0 4px 16px light-dark(#14263c0d,#00000024);
+}
+.learning-route .route-card .route-number{
+ color:light-dark(#185d96,#9fd4ff)!important;
+}
+.learning-route .route-card h2{
+ color:light-dark(#17283e,#ffffff)!important;
+ font-weight:800;
+}
+.learning-route .route-card p,
+.learning-route .route-card strong{
+ color:light-dark(#43556b,#d9e8f7)!important;
+}
+.learning-route .route-heading strong{
+ color:light-dark(#182b41,#f3f8ff)!important;
+}
+.learning-route .route-note,
+.learning-route .route-heading span{
+ color:light-dark(#53647a,#c5d7e8)!important;
+}
+.learning-route .route-card .practice-link{
+ background:#176da7!important;
+ color:#fff!important;
+}
+.learning-route .route-card .practice-link:hover{
+ background:#135683!important;
+}
