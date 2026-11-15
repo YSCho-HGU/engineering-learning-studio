@@ -79,8 +79,93 @@ $("rec-load").onclick=()=>{
  $("rec-result").textContent="struct Student loaded = {\n  id: "+loaded.id+",\n  name: \""+loaded.name+"\",\n  score: "+loaded.score.toFixed(1)+"\n}";
  $("rec-message").textContent="파일의 텍스트를 다시 파싱해 세 항목을 복원했습니다. 원래 입력 폼이나 저장 직전 메모리 값을 다시 사용하지 않았습니다.";
 };
-const sensor=[[0.0,2.51],[0.1,2.55],[0.2,2.48],[0.3,3.82]];
-function renderSensor(){const threshold=Number($("sensor-threshold").value),avg=sensor.reduce((s,x)=>s+x[1],0)/sensor.length;const alerts=sensor.filter(x=>x[1]>threshold);$("threshold-label").textContent=threshold.toFixed(2);$("sensor-count").textContent=sensor.length;$("sensor-mean").textContent=avg.toFixed(3);$("sensor-alerts").textContent=String(alerts.length);$("sensor-list").innerHTML=sensor.map(([t,v])=>'<div class="data-item'+(v>threshold?' alert':'')+'"><span>time '+t.toFixed(1)+' s</span><strong>'+v.toFixed(2)+(v>threshold?' · ALERT':'')+'</strong></div>').join("");$("sensor-msg").textContent="평균 "+avg.toFixed(3)+", 임계값 "+threshold.toFixed(2)+" 초과 "+alerts.length+"개";} $("sensor-threshold").oninput=renderSensor;
+/* Lesson 07: edited text is the only input for the browser teaching model. */
+const sensorModel=window.SensorModel;
+if(!sensorModel)throw Error("SensorModel must load before app.js");
+let sensorHasRun=false;
+function sensorInputsChanged(){
+ sensorHasRun=false;
+ $("threshold-label").textContent=Number($("sensor-threshold").value).toFixed(2);
+ $("sensor-run-status").textContent="내용이 바뀌었습니다. 새 결과를 확인하려면 Simulate Run을 누르세요.";
+ $("sensor-run-status").dataset.state="dirty";
+ $("sensor-count").textContent="—";$("sensor-mean").textContent="—";$("sensor-alerts").textContent="—";
+ $("sensor-list").replaceChildren();
+ $("sensor-stdout").textContent="(not executed)";$("sensor-stderr").textContent="(not executed)";
+ $("sensor-trace").textContent="파일을 수정했습니다. 다음 실행 후 반환값이 표시됩니다.";
+ $("sensor-return").textContent="최종 반환값: — · 프로그램 종료 코드: —";
+ $("sensor-msg").textContent="먼저 평균과 경보 횟수를 예측하세요.";
+}
+function runSensor(){
+ const data=$("sensor-edit").value;
+ const threshold=Number($("sensor-threshold").value);
+ $("threshold-label").textContent=threshold.toFixed(2);
+ let result;
+ try{result=sensorModel.simulate(data,threshold)}catch(err){
+  $("sensor-run-status").textContent="실습 입력 제한: "+err.message;
+  $("sensor-run-status").dataset.state="error";return;
+ }
+ if(!result.supported){
+  $("sensor-run-status").textContent="시뮬레이션 범위 밖의 데이터입니다.";
+  $("sensor-run-status").dataset.state="error";
+  $("sensor-msg").textContent=result.reason;
+  $("sensor-count").textContent="—";$("sensor-mean").textContent="—";$("sensor-alerts").textContent="—";
+  $("sensor-list").replaceChildren();
+  $("sensor-stdout").textContent="(unsupported)";$("sensor-stderr").textContent="(unsupported)";
+  $("sensor-trace").textContent="숫자 형식이 지원되지 않아 계산을 중단했습니다.";
+  $("sensor-return").textContent="최종 반환값: 지원 범위 밖 · 프로그램 종료 코드: —";
+  return;
+ }
+ sensorHasRun=true;
+ $("sensor-count").textContent=String(result.count);
+ $("sensor-mean").textContent=result.successful?(result.average===null?"N/A":result.average.toFixed(3)):"—";
+ $("sensor-alerts").textContent=String(result.alerts.length);
+ $("sensor-list").replaceChildren();
+ for(const r of result.records){
+  const item=document.createElement("div");item.className="data-item"+(r.alert?" alert":"");
+  const tm=document.createElement("span");tm.textContent="time "+r.time.toFixed(1)+" s";
+  const val=document.createElement("strong");val.textContent=r.value.toFixed(2)+(r.alert?" · ALERT":"");
+  item.append(tm,val);$("sensor-list").append(item);
+ }
+ $("sensor-stdout").textContent=result.stdout||"(no output)";
+ $("sensor-stderr").textContent=result.stderr||"(no error)";
+ $("sensor-trace").replaceChildren();
+ for(const event of result.trace){
+  const row=document.createElement("div");
+  row.className="sensor-trace-row"+(event.fields===2?"":" sensor-trace-terminal");
+  const code=document.createElement("strong");
+  code.textContent="READ "+event.attempt+" · fscanf → "+event.lastReturn;
+  const message=document.createElement("span");message.textContent=event.detail;
+  row.append(code,message);$("sensor-trace").append(row);
+ }
+ $("sensor-return").textContent="최종 fscanf 반환값: "+result.lastReturn+" · 종료 코드: "+result.exitCode;
+ $("sensor-run-status").textContent=result.successful?"시뮬레이션 정상 종료 · 정상 EOF":"시뮬레이션 입력 오류 · 파일을 수정하고 다시 실행해 보세요";
+ $("sensor-run-status").dataset.state=result.successful?"ok":"error";
+ $("sensor-msg").textContent=result.successful?
+ "성공한 레코드 "+result.count+"개, 평균 "+(result.average===null?"N/A":result.average.toFixed(3))+", 임계값 "+threshold.toFixed(2)+" 초과 "+result.alerts.length+"개":
+ "오류 이전에 읽은 정상 레코드는 "+result.count+"개입니다. 프로그램은 오류를 보고하고 평균 결과를 출력하지 않습니다. 원인: "+result.reason;
+}
+$("sensor-run").onclick=runSensor;
+$("sensor-edit").oninput=sensorInputsChanged;
+$("sensor-threshold").oninput=sensorInputsChanged;
+$("sensor-scenario").onchange=()=>{
+ const key=$("sensor-scenario").value;
+ $("sensor-edit").value=sensorModel.cases[key]??sensorModel.sample;
+ sensorInputsChanged();
+};
+$("sensor-restore").onclick=()=>{
+ $("sensor-scenario").value="original";
+ $("sensor-edit").value=sensorModel.sample;
+ $("sensor-threshold").value="3.0";
+ sensorInputsChanged();
+ $("sensor-run-status").textContent="원본 sensor_log.txt가 복원되었습니다. 실행을 누르면 결과를 확인할 수 있습니다.";
+};
+$("sensor-download").onclick=()=>{
+ const blob=new Blob([$("sensor-edit").value],{type:"text/plain;charset=utf-8"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="sensor_log.txt";document.body.append(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),2000);
+};
+sensorInputsChanged();
 $("build-check").onclick=()=>{const good=$("blank-mode").value==="r"&&$("blank-read").value==="good"&&$("blank-close").value==="fclose";$("build-feedback").textContent=good?"올바른 선택입니다. fopen 실패 확인, 읽기 반환값, fclose를 모두 갖췄습니다.":"수정이 필요합니다: 읽기 모드 r, fscanf 반환값 == 1, fclose(fp)를 선택하세요."};
-renderSensor();navigate(0,false);
+navigate(0,false);
 })();
