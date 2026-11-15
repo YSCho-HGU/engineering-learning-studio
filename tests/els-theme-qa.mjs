@@ -49,6 +49,9 @@ if(process.env.C_JOURNEY_BROWSER==='1'){
     const rsp=await page.goto('http://127.0.0.1:8891/'+path,{waitUntil:'domcontentloaded'});
     check(rsp?.status()===200,path+'/'+w+': HTTP 200');
     check(await page.evaluate(()=>document.documentElement.dataset.elsTheme)==='neutral-dark',path+'/'+w+': neutral-dark default');
+    const appearance=await page.evaluate(()=>({background:getComputedStyle(document.body).backgroundColor,text:getComputedStyle(document.body).color}));
+    check(appearance.background==='rgb(16, 16, 16)',path+'/'+w+': actual Neutral Dark background computed');
+    check(appearance.text==='rgb(240, 240, 237)',path+'/'+w+': actual Neutral Dark text computed');
     const themeSelect=page.locator('[data-els-theme-picker]').first();
     check(await themeSelect.count()===1,path+'/'+w+': theme picker visible');
     await themeSelect.selectOption('warm-neutral');
