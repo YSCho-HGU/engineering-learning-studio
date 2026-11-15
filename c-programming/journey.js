@@ -70,6 +70,7 @@ function updateAssessmentSummary(){
 }
 function modelOutput(model,v){
  switch(model.kind){
+ case "scenario":return model.cases?.[v-1]||"Scenario not configured";
  case "alloc":return "Request: "+v+" int elements\nHeap: ["+Array.from({length:v},(_,i)=>"slot "+i).join(" | ")+"]\nmalloc: uninitialized until you write each element\nOwner pointer must be checked for NULL; free once after use.";
  case "calloc":return "calloc("+v+", sizeof(int))\nConceptual int array: ["+Array(v).fill("0").join(", ")+"]\nAll allocated bytes initialized to zero; always check allocation result.";
  case "failure":return "Request: "+v+" int elements\nSuccess → pointer to allocated block; initialize and use\nFailure → NULL, skip dereference, handle error\nSimulation shows both branches, not a real failure.";
