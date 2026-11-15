@@ -2,7 +2,7 @@
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="C Programming Chapter 7 File I/O Self-Study: streams, files, EOF, records and sensor logs.">
 <title>Chapter 7 · File I/O Learning Journey</title>
-<link rel="stylesheet" href="./style.css?v=20261115contrast3"><link rel="stylesheet" href="../../assets/design-system.css?v=1"><link rel="stylesheet" href="./unified-course.css?v=11"></head><body class="els-design">
+<link rel="stylesheet" href="./style.css?v=20261115contrast3"><link rel="stylesheet" href="../../assets/design-system.css?v=1"><link rel="stylesheet" href="./unified-course.css?v=12"></head><body class="els-design">
 <a class="skip" href="#lesson">학습 본문으로 건너뛰기</a>
 <header class="topbar"><a class="brand" href="../">◈ C Programming <small>/ Learning Studio</small></a><div class="toplinks"><a href="../">C Learning Home</a><a href="https://drive.google.com/file/d/1pQoUv5072-RW6k7vnjDQULbp1qVNQRDq/view" target="_blank" rel="noopener">교재 171 ↗</a><button id="theme-button" aria-label="Toggle dark mode" aria-pressed="false">◐ Theme</button></div></header>
 <div class="course-header"><div class="eyebrow">2026 · CHAPTER 7 · SELF-STUDY COURSE</div><h1>File I/O <span>Learning Journey</span></h1><p>프로그램이 종료되어도 데이터를 남기려면? Stream의 원리를 이해하고, 실제 센서 로그 프로그램까지 단계별로 완성해 보세요.</p><div class="course-meta"><span>8개의 연결된 학습 단계</span><span>실험 + 코드 분석 + 자기점검</span><span>교재: 171_C_File_IO_Rev8</span></div></div>
@@ -150,7 +150,7 @@ int main(void) {
 <div class="check" data-check="5"><div class="check-eyebrow">CHECK YOURSELF · 7.5</div><h3><code>fscanf()</code>에서 <code>s.name</code>에 <code>&amp;</code>가 없는 주된 이유는?</h3><label><input type="radio" name="q5" value="a"> 문자열 이름에는 읽기가 불가능하기 때문이다.</label><label><input type="radio" name="q5" value="b"> 배열 이름이 이 함수 호출에서 첫 원소의 주소로 변환되기 때문이다.</label><label><input type="radio" name="q5" value="c"> <code>fscanf()</code>가 자동으로 변수를 생성하기 때문이다.</label><button class="check-btn" data-grade="5">답 확인 및 설명</button><div class="answer" id="answer-5" aria-live="polite"></div></div>
 </section>
 <section class="stage" data-stage="6" hidden>
-<div class="topic">7.5.3 · ENGINEERING APPLICATION</div><h2>센서 데이터로 File I/O의 활용을 확인해 봅시다</h2><p class="lead">온도·전압·환경 센서에서는 데이터를 시간 순서대로 저장합니다. 여기서는 Sensor Log를 읽어 평균을 구하고 임계값을 넘는 측정치를 찾아봅니다.</p>
+<div class="topic">7.5.3 · ENGINEERING APPLICATION</div><h2>센서 데이터로 File I/O의 활용을 확인해 봅시다</h2><div class="sensor-course-scope"><strong>1학년 학습 목표</strong><span>필수 (약 20~25분 권장): 두 숫자 읽기 → 평균·경보 계산 → 변수 변화 이해</span><span>선택 심화 (약 20~30분 권장): EOF·부분 변환, 행별 검증, fgets()/strtod() 비교</span></div><p class="lead">온도·전압·환경 센서에서는 데이터를 시간 순서대로 저장합니다. 여기서는 Sensor Log를 읽어 평균을 구하고 임계값을 넘는 측정치를 찾아봅니다.</p>
 <div class="sensor-format els-card">
 <div class="sensor-format-head"><div><strong>INPUT FILE · sensor_log.txt (editable)</strong><p class="els-meta">Text File · 한 줄에 측정 시각과 값 두 개 · 숫자는 저장된 문자열</p></div><a href="./data/sensor_log.txt" download="sensor_log.txt">sensor_log.txt 다운로드</a></div>
 <div class="sensor-editor-toolbar">
@@ -176,6 +176,7 @@ int main(void) {
 <p><strong>중요:</strong> <code>.txt</code>에는 <code>int</code> 또는 <code>double</code> 객체가 바이너리 형태로 저장된 것이 아니라 문자 <code>0</code>, <code>.</code>, <code>1</code> 등이 저장됩니다. <code>fscanf(fp, "%lf %lf", &amp;time_s, &amp;value)</code>로 읽을 때 두 값을 <code>double</code>로 변환합니다. 정수 입력 전용 <code>%d</code>는 이 예제에 맞지 않습니다.</p>
 <div class="sensor-expected"><strong>계산 전 예측</strong><span>Threshold = 3.0일 때 평균값과 경보 발생 횟수를 먼저 생각해 보세요. 아래 실습에서 확인할 수 있습니다.</span></div>
 </div>
+<details class="sensor-reference-code"><summary><strong>완성형 C 코드 참고하기</strong><span>먼저 입력 파일과 실험을 확인한 뒤 펼쳐 보세요. 필요한 학생은 전체 소스도 다운로드할 수 있습니다.</span></summary>
 <div class="snippet"><div class="code-head">PRACTICAL C11 EXAMPLE · GCC verified · 아래 threshold와 코드 연동</div><pre id="sensor-c-source">#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 
@@ -224,6 +225,7 @@ int main(void) {
     return EXIT_SUCCESS;
 }</pre>
 <p class="sensor-code-notes"><strong>코드 스타일:</strong> 실무에서 흔히 볼 수 있는 <code>FILE *fp = fopen(...);</code> 초기화 → <code>if (fp == NULL)</code> 검사 → 입력 반환값 검사 → <code>fclose()</code> 검사 형식입니다. <code>fields != EOF</code>는 파일 끝이 아닌 불완전·부정확한 센서 레코드를 탐지합니다. 입력 도중 실제 I/O 오류는 <code>ferror(fp)</code>로 별도 검사합니다.</p><a href="./examples/sensor_log_analyzer.c" download>검증된 C 코드 다운로드</a> <button type="button" id="sensor-download-c" class="sensor-download-c">현재 임계값으로 C 소스 다운로드</button></div>
+</details>
 <div class="activity"><div class="activity-head"><span>ENGINEERING LAB 07</span><h3>Sensor Log Analyzer</h3><p>1학년 필수: 파일에 있는 시간·측정값 쌍을 읽고 <code>count</code>, 평균, 경보를 예측한 후 실행으로 확인합니다. 이 실습은 학생이 직접 편집한 텍스트를 사용하며, 실제 GCC 실행이 아닌 교육용 시뮬레이션입니다.</p></div><div class="field"><label for="sensor-threshold">Alert threshold: <output id="threshold-label">3.00</output></label><input id="sensor-threshold" type="range" min="2.0" max="4.2" step="0.1" value="3.0"></div><div class="sensor-execute-controls">
 <button type="button" class="primary" id="sensor-run">▶ Simulate Run · 입력 파일 분석</button>
 <span class="sensor-execution-label">SIMULATED · 실제 C/GCC 실행이 아닙니다</span>
