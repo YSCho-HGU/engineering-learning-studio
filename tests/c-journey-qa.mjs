@@ -62,7 +62,10 @@ if(process.env.C_JOURNEY_BROWSER==='1'){
     const page=await browser.newPage({viewport:{width,height:820},colorScheme:theme});
     const pageErrors=[];
     page.on('pageerror',e=>pageErrors.push(String(e)));
-    await page.goto('http://127.0.0.1:8776/c-programming/'+kind+'/',{waitUntil:'domcontentloaded'});
+    const response=await page.goto('http://127.0.0.1:8776/c-programming/'+kind+'/',{waitUntil:'domcontentloaded'});
+    check(response?.status()===200,kind+'/'+width+'/'+theme+': route serves HTTP 200');
+    check(await page.evaluate(()=>[...document.styleSheets].some(x=>x.href?.includes('journey.css'))),kind+'/'+width+'/'+theme+': course CSS loaded');
+    check(await page.evaluate(()=>getComputedStyle(document.body).fontSize!=='0px'),kind+'/'+width+'/'+theme+': body text computed style');
     await page.locator('#theme').click();
     if(theme==='light')await page.locator('#theme').click();
     check(await page.locator('#lesson-nav button').count()===8,kind+'/'+width+'/'+theme+': eight nav items');
@@ -101,9 +104,11 @@ if(process.env.C_JOURNEY_BROWSER==='1'){
    for(const width of [390,1280])for(const theme of ['light','dark']){
     const page=await browser.newPage({viewport:{width,height:820},colorScheme:theme});
     const errs=[];page.on('pageerror',e=>errs.push(String(e)));
-    await page.goto('http://127.0.0.1:8776/c-programming/file-io/',{waitUntil:'domcontentloaded'});
+    const response=await page.goto('http://127.0.0.1:8776/c-programming/file-io/',{waitUntil:'domcontentloaded'});
+    check(response?.status()===200,'File I/O / '+width+'/'+theme+': route serves HTTP 200');
     check(await page.locator('h1').count()>0,'File I/O / '+width+'/'+theme+': header exists');
     check(errs.length===0,'File I/O / '+width+'/'+theme+': no page errors '+errs.join(';'));
+    check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+8),'File I/O / '+width+'/'+theme+': no horizontal overflow');
     await page.screenshot({path:'qa-output/c-journey-screens/file-io-'+width+'-'+theme+'.png',fullPage:true});
     await page.close();
    }
