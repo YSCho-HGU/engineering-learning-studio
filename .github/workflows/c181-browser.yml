@@ -3,6 +3,9 @@ on:
   push:
     paths:
       - 'c-programming/index.html'
+      - 'c-programming/course-catalog.js'
+      - 'c-programming/course-catalog.json'
+      - 'c-programming/admin/**'
       - 'c-programming/dynamic-memory/**'
       - 'c-programming/journey.js'
       - 'c-programming/practice-engine.js'
