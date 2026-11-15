@@ -1,0 +1,24 @@
+name: C Chapter Authoring Standard
+on:
+  push:
+    paths:
+      - 'c-programming/**/data.js'
+      - 'c-programming/course-catalog.json'
+      - 'c-programming/journey.js'
+      - 'tests/c-authoring-policy.mjs'
+      - 'tests/c-course-gcc.mjs'
+      - 'docs/C_PROGRAMMING_AUTHORING_STANDARD.md'
+      - '.github/workflows/c-authoring-policy.yml'
+  workflow_dispatch:
+jobs:
+  authoring-and-c11:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check flexible C chapter data and lesson quality
+        run: node tests/c-authoring-policy.mjs
+      - name: GCC C11 verify published lesson reference programs
+        run: node tests/c-course-gcc.mjs
