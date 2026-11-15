@@ -1,0 +1,44 @@
+import {chromium} from "playwright";
+const browser=await chromium.launch({headless:true});
+const errors=[];
+for(const width of [390,1280]){
+ const ctx=await browser.newContext({viewport:{width,height:850}});
+ const page=await ctx.newPage();
+ page.on("pageerror",e=>errors.push(width+" JS: "+e.message));
+ await page.goto("http://127.0.0.1:8765/c-programming/file-io/practice/#m1",{waitUntil:"networkidle"});
+ const explorer=page.locator("#m1-buffer-explorer");
+ if(!await explorer.isVisible())errors.push(width+" direct #m1 navigation did not show explorer");
+ const next=page.locator("#buffer-next");
+ await next.click();await next.click();await next.click();
+ if(!await page.locator("#buffer-memory-state").innerText().then(s=>s.includes("널 종료")))errors.push(width+" fgets did not populate buffer");
+ const text=await page.locator("#buffer-used").innerText();
+ if(!text.includes("14개"))errors.push(width+" normal fgets length unexpected: "+text);
+ await next.click();
+ const preview=await page.locator("#buffer-dest").innerText();
+ if(preview!=="Sensor online\n".trimEnd())errors.push(width+" fputs data unexpected: "+JSON.stringify(preview));
+ await page.locator("#buffer-scenario").selectOption("empty");for(let i=0;i<4;i++)await next.click();
+ if(!(await page.locator("#buffer-result").innerText()).includes("쓰기 생략"))errors.push(width+" empty file must skip fputs");
+ if((await page.locator("#buffer-dest").innerText())!=="∅ 빈 파일")errors.push(width+" empty file expected empty output");
+ await page.locator("#buffer-scenario").selectOption("no-newline");for(let i=0;i<4;i++)await next.click();
+ if((await page.locator("#buffer-dest").innerText())!=="Sensor online")errors.push(width+" no-newline copy changed input");
+ await page.locator("#buffer-scenario").selectOption("long");for(let i=0;i<3;i++)await next.click();
+ const used=await page.locator("#buffer-used").innerText();
+ if(!used.includes("79개"))errors.push(width+" fgets should read 79 bytes from long line: "+used);
+ if(!(await page.locator("#buffer-cells .buffer-cell.null").innerText()).includes("79"))errors.push(width+" terminator must be at index 79");
+ await page.locator("#buffer-scenario").selectOption("missing");await next.click();
+ if(!(await page.locator("#buffer-source-state").innerText()).includes("실패"))errors.push(width+" missing file should show fopen failure");
+ await page.locator("#task-nav button[data-task='0']").click();
+ if(await explorer.isVisible())errors.push(width+" M1 explorer should hide on P1");
+ await page.locator("#task-nav button[data-task='6']").click();
+ if(!await explorer.isVisible())errors.push(width+" M1 explorer should return on M1");
+ await page.locator("#buffer-play").click();
+ if(await page.locator("#buffer-play").getAttribute("aria-pressed")!=="true")errors.push(width+" autoplay not activated");
+ await page.locator("#buffer-reset").click();
+ if(await page.locator("#buffer-play").getAttribute("aria-pressed")!=="false")errors.push(width+" reset did not stop playback");
+ if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+3))errors.push(width+" horizontal page overflow");
+ await page.screenshot({path:"qa-fileio-buffer-"+width+".png",fullPage:false});
+ await ctx.close();
+}
+await browser.close();
+if(errors.length){console.error(errors.join("\n"));process.exit(1)}
+console.log("PASS: M1 File I/O buffer explorer normal, empty, long, no-newline, missing, autoplay, mobile/desktop.");
