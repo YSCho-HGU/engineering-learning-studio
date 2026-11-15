@@ -60,3 +60,12 @@ body{overflow-x:hidden}
 .mem-diagram-output{display:grid;gap:3px;border-radius:8px;background:var(--soft);padding:8px;margin-top:9px;font-size:.78rem;overflow-wrap:anywhere}
 .mem-diagram-note{color:var(--muted);font-size:.74rem;line-height:1.5;margin:8px 0 0}
 @media(max-width:570px){.mem-pointer-link{grid-template-columns:minmax(0,1fr) 35px minmax(0,1fr)}.mem-link-label{font-size:8px}.mem-cell{padding:5px}.mem-cell-name,.mem-cell-value{font-size:10px}.mem-diagram{padding:9px}}
+
+.layout-cells{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+.layout-cell{flex:1 1 125px;min-width:0;background:var(--soft);border:2px solid var(--blue);border-radius:10px;padding:11px;display:grid;align-content:start;gap:7px}
+.layout-cell-label{font:700 13px Consolas,monospace;overflow-wrap:anywhere}
+.layout-cell-value{font-size:14px;font-weight:700;overflow-wrap:anywhere}
+.layout-cell-offset{color:var(--muted);font:11px/1.4 Consolas,monospace;overflow-wrap:anywhere}
+.layout-padding{border-style:dashed;border-color:#b57a2a}
+.layout-disclaimer{color:var(--muted);font-size:13px;line-height:1.65;border-left:3px solid var(--blue);padding:8px 11px;margin:9px 0}
+@media(max-width:560px){.layout-cell{flex-basis:105px;padding:8px}.layout-cell-offset{font-size:10px}}
