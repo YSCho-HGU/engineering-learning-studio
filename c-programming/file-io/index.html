@@ -93,9 +93,7 @@ struct Student {
 
 int main(void) {
     struct Student s = {101, "Mina", 92.5};
-    FILE *fp;
-
-    fp = fopen("students.txt", "w");
+    FILE *fp = fopen("students.txt", "w");
     if (fp == NULL) return 1;
     if (fprintf(fp, "%d %s %.1f\n",
                 s.id, s.name, s.score) &lt; 0) {
@@ -116,7 +114,7 @@ int main(void) {
     if (fclose(fp) == EOF) return 1;
     return 0;
 }</pre></div>
-<div class="activity"><div class="activity-head"><span>BUILD 06</span><h3>Structure → Text → Structure</h3><p>레코드를 직접 수정한 다음 Serialize / Load를 눌러 변환 관계를 확인하세요. 이 예제의 이름은 공백 없는 단어만 지원합니다. 저장 형식은 ID·이름·점수 순서이고 점수는 소수 첫째 자리까지 저장됩니다. 저장 후 입력값을 바꿔도 Load는 저장된 텍스트를 기준으로 복원해야 합니다.</p></div><div class="record-inputs"><div class="field"><label for="rec-id">Student ID</label><input id="rec-id" type="number" value="101" min="0" max="999999"></div><div class="field"><label for="rec-name">Name (no spaces)</label><input id="rec-name" value="Mina" maxlength="39"></div><div class="field"><label for="rec-score">Score</label><input id="rec-score" type="number" value="92.5" min="0" max="100" step="0.1"></div></div><div class="button-row"><button class="primary" id="rec-save">Serialize · fprintf()</button><button id="rec-load">Load · fscanf()</button></div><div class="two-col"><div class="state-box"><div class="box-name">students.txt · saved record</div><pre id="rec-file">(not saved yet)</pre></div><div class="state-box"><div class="box-name">LOADED STRUCTURE</div><pre id="rec-result">(not loaded yet)</pre></div></div><p class="activity-feedback" id="rec-message" aria-live="polite">먼저 Serialize를 누르세요.</p></div>
+<div class="activity"><div class="activity-head"><span>BUILD 06</span><h3>Structure → Text → Structure</h3><p>레코드를 직접 수정한 다음 Serialize / Load를 눌러 변환 관계를 확인하세요. 이 예제는 <code>FILE *fp = fopen(...)</code>으로 선언과 초기화를 합친 실무형 스타일을 사용합니다. 이름은 공백 없는 단어만 지원합니다. 저장 형식은 ID·이름·점수 순서이고 점수는 소수 첫째 자리까지 저장됩니다. 저장 후 입력값을 바꿔도 Load는 저장된 텍스트를 기준으로 복원해야 합니다.</p></div><div class="record-inputs"><div class="field"><label for="rec-id">Student ID</label><input id="rec-id" type="number" value="101" min="0" max="999999"></div><div class="field"><label for="rec-name">Name (no spaces)</label><input id="rec-name" value="Mina" maxlength="39"></div><div class="field"><label for="rec-score">Score</label><input id="rec-score" type="number" value="92.5" min="0" max="100" step="0.1"></div></div><div class="button-row"><button class="primary" id="rec-save">Serialize · fprintf()</button><button id="rec-load">Load · fscanf()</button></div><div class="two-col"><div class="state-box"><div class="box-name">students.txt · saved record</div><pre id="rec-file">(not saved yet)</pre></div><div class="state-box"><div class="box-name">LOADED STRUCTURE</div><pre id="rec-result">(not loaded yet)</pre></div></div><p class="activity-feedback" id="rec-message" aria-live="polite">먼저 Serialize를 누르세요.</p></div>
 <div class="check" data-check="5"><div class="check-eyebrow">CHECK YOURSELF · 7.5</div><h3><code>fscanf()</code>에서 <code>s.name</code>에 <code>&amp;</code>가 없는 주된 이유는?</h3><label><input type="radio" name="q5" value="a"> 문자열 이름에는 읽기가 불가능하기 때문이다.</label><label><input type="radio" name="q5" value="b"> 배열 이름이 이 함수 호출에서 첫 원소의 주소로 변환되기 때문이다.</label><label><input type="radio" name="q5" value="c"> <code>fscanf()</code>가 자동으로 변수를 생성하기 때문이다.</label><button class="check-btn" data-grade="5">답 확인 및 설명</button><div class="answer" id="answer-5" aria-live="polite"></div></div>
 </section>
 <section class="stage" data-stage="6" hidden>
