@@ -7,6 +7,9 @@ on:
       - 'c-programming/journey.js'
       - 'tests/c-authoring-policy.mjs'
       - 'tests/c-course-gcc.mjs'
+      - 'tests/c-advanced-review.mjs'
+      - 'c-programming/file-io/index.html'
+      - 'c-programming/practice-engine.js'
       - 'docs/C_PROGRAMMING_AUTHORING_STANDARD.md'
       - '.github/workflows/c-authoring-policy.yml'
   workflow_dispatch:
@@ -20,5 +23,7 @@ jobs:
           node-version: '22'
       - name: Check flexible C chapter data and lesson quality
         run: node tests/c-authoring-policy.mjs
+      - name: Verify 151-181 Core/Optional curriculum consistency
+        run: node tests/c-advanced-review.mjs
       - name: GCC C11 verify published lesson reference programs
         run: node tests/c-course-gcc.mjs
