@@ -149,6 +149,8 @@ $("m3-confirm").onclick=()=>{
  m3Evidence={mode,cwd,expected,choice:selected.value,correct:expected===selected.value,reason:$("m3-reason").value.trim(),at:new Date().toISOString()};
  $("m3-pred-feedback").textContent="예측을 기록했습니다. 정답은 프로그램 실행이 끝난 뒤 비교 단계에서 확인합니다. 먼저 fopen()을 눌러 보세요.";
  updateM3();
+ $("m3-flow").scrollIntoView({block:"center",behavior:"instant"});
+ $("m3-flow").focus({preventScroll:true});
 };
 $("m4-confirm").onclick=()=>{
  const selected=document.querySelector('input[name="m4-pred"]:checked');
@@ -159,6 +161,8 @@ $("m4-confirm").onclick=()=>{
  m4Evidence={scenario,choice:selected.value,correct:correctM4[scenario]===selected.value,reason:$("m4-reason").value.trim(),at:new Date().toISOString()};
  $("m4-pred-feedback").textContent="예측을 기록했습니다. 정답은 실행을 마친 뒤 확인합니다. fopen()부터 시작해 보세요.";
  updateM4();
+ $("m4-flow").scrollIntoView({block:"center",behavior:"instant"});
+ $("m4-flow").focus({preventScroll:true});
 };
 $("m3-repredict").onclick=()=>resetPrediction("m3",true);
 $("m4-repredict").onclick=()=>resetPrediction("m4");
