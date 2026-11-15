@@ -35,19 +35,26 @@
  }
  function renderVariableDiff(before,snapshot){
    const root=$("sensor-variable-diff-list");
+   const summary=$("sensor-diff-highlight");
    root.replaceChildren();
    const diffs=variableDiff.diff(before,snapshot);
-   for(const row of diffs){
+   const changed=diffs.filter(x=>x.changed || x.assigned);
+   const shown=$("sensor-show-unchanged").checked?diffs:changed;
+   const labelFor=key=>vars.find(([k])=>key===k)?.[1]||key;
+   const important=changed.filter(x=>!x.derived);
+   const text=important.length?
+       important.map(x=>labelFor(x.key)+": "+x.before+" → "+x.after+" ("+x.note+")").join(" · "):
+       changed.length?changed.map(x=>labelFor(x.key)+": "+x.before+" → "+x.after+" ("+x.note+")").join(" · "):
+       "이번 문장은 표시 중인 변수 값을 변경하지 않았습니다.";
+   summary.textContent=text;
+   if(!shown.length){const p=document.createElement("p");p.className="sensor-diff-empty";p.textContent="변경 없음 · 모든 변수의 상태를 보려면 아래 체크박스를 선택하세요.";root.append(p);return}
+   for(const row of shown){
      const item=document.createElement("div");
      item.className="sensor-variable-change "+row.status;
      item.dataset.change=row.status;
-     const label=document.createElement("strong");
-     label.textContent=vars.find(([key])=>key===row.key)?.[1]||row.key;
-     const values=document.createElement("span");
-     values.className="sensor-variable-change-values";
-     values.textContent=row.before+" → "+row.after;
-     const status=document.createElement("small");
-     status.textContent=row.note;
+     const label=document.createElement("strong");label.textContent=labelFor(row.key);
+     const values=document.createElement("span");values.className="sensor-variable-change-values";values.textContent=row.before+" → "+row.after;
+     const status=document.createElement("small");status.textContent=row.note;
      item.append(label,values,status);
      root.append(item);
    }
@@ -62,6 +69,7 @@
    $("sensor-step-prev").disabled=true;
    paintCode();
    $("sensor-variable-diff-list").textContent="이전 값 → 새로운 값은 실행 후 표시됩니다.";
+   $("sensor-diff-highlight").textContent="보기 방식을 변경했습니다. 다음 문장을 선택하세요.";
    $("sensor-code-explanation").textContent="학습 깊이를 바꿨습니다. 첫 C 문장부터 다시 확인하세요. 기초 모드는 전체 실행이 아닌 첫 레코드 처리만 보여줍니다.";
  }
 
@@ -103,6 +111,7 @@
    displayState({fields:"—",time:null,value:null,sum:0,count:0,runningMean:null,alert:false,exitCode:null,stdout:"",stderr:""});
    paintCode();
    $("sensor-variable-diff-list").textContent="실행 전 · 각 변수의 이전 값과 새로운 값이 여기에 표시됩니다.";
+   $("sensor-diff-highlight").textContent="Simulate Run 후 다음 C 문장을 선택하세요.";
    $("sensor-compare-basic").textContent="다시 비교 실행하세요.";
    $("sensor-compare-robust").textContent="다시 비교 실행하세요.";
    $("sensor-compare-status").textContent="입력 조건이 바뀌었습니다. 비교 실행을 다시 누르세요.";
@@ -157,6 +166,11 @@
    $("sensor-step-last").disabled=!steps.length;
  }
  $("sensor-step-view").addEventListener("change",switchDepth);
+ $("sensor-show-unchanged").addEventListener("change",()=>{
+   if(step>=0 && steps[step]){
+     renderVariableDiff(step>0?steps[step-1].state:variableDiff.base,steps[step]);
+   }
+ });
  $("sensor-run").addEventListener("click",prepare);
  for(const id of ["sensor-edit","sensor-threshold","sensor-scenario"]){
    $(id).addEventListener(id==="sensor-edit"||id==="sensor-threshold"?"input":"change",reset);
