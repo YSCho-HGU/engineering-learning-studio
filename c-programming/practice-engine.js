@@ -21,6 +21,36 @@ structure:[
 const rules=rulebook[d.slug]||[];
 function assess(code,idx){
  const findings=[];
+ if(d.slug==="dynamic-memory"&&idx<3){
+  const tests=[
+   [
+    [code.includes("malloc("),"동적 배열 공간: malloc(...) 호출을 작성하세요."],
+    [/sizeof\s*(?:\*\s*a|\(\s*int\s*\))/.test(code),"n개 int 공간은 n * sizeof *a와 같이 계산하세요."],
+    [/if\s*\(\s*(?:a\s*==\s*NULL|!a)\s*\)/.test(code),"할당 실패 검사: if (a == NULL) ..."],
+    [/\bfor\s*\(/.test(code)&&/a\s*\[/.test(code),"반복문에서 각 원소를 초기화하세요."],
+    [/\bfree\s*\(\s*a\s*\)/.test(code),"사용한 배열에 free(a)를 호출하세요."]
+   ],
+   [
+    [code.includes("malloc("),"동적 배열을 malloc으로 생성하세요."],
+    [/if\s*\(\s*(?:p\s*==\s*NULL|!p)\s*\)/.test(code),"p의 NULL 여부를 검사하세요."],
+    [/p\s*\[\s*[0-3]\s*\]\s*=/.test(code),"p[0]부터 p[3]까지 값을 저장하세요."],
+    [/\*\s*\(\s*p\s*\+\s*3\s*\)/.test(code),"*(p+3)으로 네 번째 원소를 읽으세요."],
+    [/\bfree\s*\(\s*p\s*\)/.test(code),"free(p)로 메모리를 반납하세요."]
+   ],
+   [
+    [/printf\s*\(/.test(code),"메모리를 해제하기 전에 값을 출력하세요."],
+    [/\bfree\s*\(\s*p\s*\)/.test(code),"free(p)를 정확히 한 번 작성하세요."],
+    [/p\s*=\s*NULL\s*;/.test(code),"free 이후 p = NULL;을 추가하세요."],
+    [code.indexOf("printf(")<code.indexOf("free("),"printf로 값을 읽은 후 free를 호출하세요."]
+   ]
+  ];
+  const add=(pass,desc)=>findings.push({pass,desc});
+  add(/#include\s*<stdlib\.h>/.test(code),"stdlib.h 헤더 포함");
+  add(/\bint\s+main\s*\(\s*void\s*\)/.test(code),"int main(void)");
+  add(!/\/\*\s*TODO|\/\/\s*TODO/.test(code),"남은 TODO를 완성하세요.");
+  for(const [pass,desc] of tests[idx])add(pass,desc);
+  return {findings,ok:findings.every(x=>x.pass)};
+ }
  const add=(pass,desc)=>findings.push({pass,desc});
  add(code.includes("#include <stdio.h>"),"stdio.h 헤더");
  add(/\bint\s+main\s*\(\s*void\s*\)/.test(code),"int main(void)");
@@ -56,6 +86,48 @@ const verified=txt("input","",proof);verified.type="checkbox";verified.id="cp-ve
 const verificationLabel=txt("label","",proof,"GCC에서 직접 컴파일·실행하고 참조 출력과 비교했습니다 (자기보고).");
 verificationLabel.htmlFor="cp-verified";
 txt("p","cp-disclaimer",content,"이 체크는 자기보고입니다. 이 브라우저는 GCC를 실행하지 않으며, 제출된 C 코드의 정답을 자동 인증하지 않습니다.");
+const coach=d.slug==="dynamic-memory"?txt("section","cp-coach",content):null;
+const coachTitle=coach?txt("h3","",coach,"단계별 힌트 · Guided Coding"):null;
+const coachDesc=coach?txt("p","",coach,"필수 과제는 힌트를 순서대로 열어 핵심 코드를 직접 완성하세요."):null;
+const coachSteps=coach?txt("div","cp-coach-steps",coach):null;
+const coachProgress=coach?txt("p","cp-coach-progress",coach,""):null;
+const guidedHints=[
+ [
+  ["1. 크기 계산", "n개 정수에 필요한 크기는 n * sizeof *a 입니다. 실제 할당 전 n이 유효한 범위인지 확인하세요."],
+  ["2. 할당과 실패 검사", "a = malloc(n * sizeof *a); 다음에 if (a == NULL)로 실패를 확인하세요."],
+  ["3. 사용과 반납", "for로 a[i]에 값을 저장한 후 합계를 출력하고 반드시 free(a)를 호출하세요."]
+ ],
+ [
+  ["1. 배열 확보", "int *p에 malloc(n * sizeof *p)의 반환값을 저장하고 NULL을 검사하세요."],
+  ["2. 배열 초기화", "p[0]부터 p[3]까지 차례로 10, 20, 30, 40을 저장하세요."],
+  ["3. 포인터 산술", "p[1]과 *(p+3)은 각각 어느 원소일까요? printf로 출력하고 free하세요."]
+ ],
+ [
+  ["1. 출력 순서", "객체를 읽는 printf 문은 free(p)보다 앞에 있어야 합니다."],
+  ["2. 정확히 한 번 해제", "malloc으로 성공적으로 확보한 블록을 free(p)로 한 번만 해제하세요."],
+  ["3. 포인터 변수 정리", "free(p); 다음 p = NULL;을 작성하세요. free 자체가 p를 NULL로 변경하지는 않습니다."]
+ ]
+];
+function showGuidance(i){
+ if(!coach)return;
+ coach.hidden=i>=3;coachSteps.replaceChildren();
+ if(i>=3)return;
+ const steps=guidedHints[i];let exposed=0;
+ const guideButtons=steps.map(([heading,hint],j)=>{
+  const box=txt("div","cp-coach-step",coachSteps);
+  const control=txt("button","cp-coach-reveal",box,(j+1)+" / 3 · "+heading+" · 힌트 보기");
+  control.type="button";control.setAttribute("aria-expanded","false");
+  const help=txt("p","cp-coach-help",box,hint);help.hidden=true;
+  control.addEventListener("click",()=>{
+   const next=help.hidden;help.hidden=!next;control.setAttribute("aria-expanded",String(next));
+   control.textContent=(j+1)+" / 3 · "+heading+(next?" · 힌트 닫기":" · 힌트 보기");
+   exposed+=next?1:-1;
+   coachProgress.textContent=exposed+" / 3 힌트 펼침 · 설명은 답안 코드가 아닙니다.";
+  });
+  return control;
+ });
+ coachProgress.textContent="0 / 3 힌트 펼침 · 먼저 직접 시도해 보세요.";
+}
 const more=txt("details","cp-hint",content);
 txt("summary","",more,"GCC 실행 방법 및 검증 절차");
 txt("p","",more,"① .c 파일을 다운로드하세요. ② gcc -std=c11 -Wall -Wextra -Wpedantic -Werror task.c -o task ③ 실행 후 참조 출력과 대조하세요. 데이터 파일이 필요한 과제는 같은 폴더에 준비하세요.");
@@ -63,7 +135,7 @@ const navButtons=[];
 function show(i){
  selection=i;const task=d.practice[i];title.textContent="P"+(i+1)+" · "+(d.slug==="dynamic-memory"?(i<3?"[필수] ":"[선택 심화] "):"")+task.title;description.textContent=task.task;expected.textContent=task.expected;
  editor.value=Object.prototype.hasOwnProperty.call(drafts,i)?drafts[i]:task.starter;verified.checked=!!evidence[i];
- status.textContent="정적 점검은 구문 누락을 알려주는 힌트이며 컴파일·실행 검증이 아닙니다.";
+ status.textContent="정적 점검은 구문 누락을 알려주는 힌트이며 컴파일·실행 검증이 아닙니다.";showGuidance(i);
  navButtons.forEach((b,j)=>{b.classList.toggle("active",i===j);if(i===j)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
 }
 function persistDraft(){drafts[selection]=editor.value;store()}
