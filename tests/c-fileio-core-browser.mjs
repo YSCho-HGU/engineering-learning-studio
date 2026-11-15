@@ -25,7 +25,7 @@ for(const width of [390,1280]){
  await page.locator("#coreio-scenario").selectOption("open-fail");
  await finish(page);
  if(!await page.locator("#coreio-result").innerText().then(x=>x.includes("오류")))errors.push(width+" P1 open fail missing");
- await page.locator("#task-nav button[data-task='1']").click();
+ await page.locator("[data-go-task="1"]").click();
  if(!await panel.isVisible())errors.push(width+" P2 explorer missing");
  await finish(page);
  const p2=await page.locator("#coreio-dest").innerText();
@@ -41,10 +41,10 @@ for(const width of [390,1280]){
  if(await page.locator("#coreio-play").getAttribute("aria-pressed")!=="true")errors.push(width+" autoplay start");
  await page.locator("#coreio-reset").click();
  if(await page.locator("#coreio-play").getAttribute("aria-pressed")!=="false")errors.push(width+" autoplay reset");
- await page.locator("#task-nav button[data-task='6']").click();
+ await page.locator("[data-go-task="6"]").click();
  if(await panel.isVisible())errors.push(width+" P1/P2 explorer visible on M1");
  if(!await page.locator("#m1-buffer-explorer").isVisible())errors.push(width+" M1 explorer hidden");
- await page.locator("#task-nav button[data-task='0']").click();
+ await page.locator("[data-go-task="0"]").click();
  if(!await panel.isVisible())errors.push(width+" P1 explorer not restored");
  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+3))errors.push(width+" horizontal overflow");
  await page.screenshot({path:"qa-fileio-core-"+width+".png",fullPage:false});
