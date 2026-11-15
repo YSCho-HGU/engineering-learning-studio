@@ -5,7 +5,7 @@
 const $=id=>document.getElementById(id);
 const escape=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const safeLocalPath=url=>typeof url==="string"&&/^\.\/[a-z0-9-]+\/$/.test(url)?url:null;
-const safeBook=url=>typeof url==="string"&&/^https:\/\/drive\.google\.com\/file\/d\/[a-zA-Z0-9_-]+\/view$/.test(url)?url:null;
+const safeBook=url=>typeof url==="string"&&/^https:\/\/(?:drive\.google\.com\/file\/d\/[a-zA-Z0-9_-]+\/view(?:\?[^#\\s]*)?|docs\.google\.com\/(?:document|presentation|spreadsheets)\/d\/[a-zA-Z0-9_-]+\/[a-zA-Z0-9/?=&_.-]*)$/.test(url)?url:null;
 function roadmapNavigation(){
  function show(){
   const pane=$("course-overview-details");if(!pane)return;
