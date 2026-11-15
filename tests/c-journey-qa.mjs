@@ -67,11 +67,20 @@ if(process.env.C_JOURNEY_BROWSER==='1'){
     await page.locator('#lesson .quiz button').click();
     check(await page.locator('#lesson .feedback').isVisible(),kind+'/'+width+'/'+theme+': prediction feedback');
     check(await page.locator('#lesson .trace-line.active').count()===1,kind+'/'+width+'/'+theme+': one highlighted C line');
+    check(await page.locator('#lesson .mem-diagram-title').count()===1,kind+'/'+width+'/'+theme+': memory diagram rendered');
+    check(await page.locator('#lesson .mem-cell').count()>=1,kind+'/'+width+'/'+theme+': labeled memory cells rendered');
+    check(await page.locator('#lesson .mem-diagram-note').count()===1,kind+'/'+width+'/'+theme+': conceptual address disclaimer');
+
     const before=await page.locator('#lesson .trace-status').innerText();
+    const memoryBefore=await page.locator('#lesson .trace-memory').innerText();
     await page.locator('#lesson .trace-controls button').nth(1).click();
     check((await page.locator('#lesson .trace-status').innerText())!==before,kind+'/'+width+'/'+theme+': trace next changes state');
+    check((await page.locator('#lesson .trace-memory').innerText())!==memoryBefore,kind+'/'+width+'/'+theme+': trace next updates memory values');
+
     await page.locator('#lesson .trace-controls button').nth(0).click();
     check((await page.locator('#lesson .trace-status').innerText())===before,kind+'/'+width+'/'+theme+': trace previous restores initial step');
+    await page.locator('#lesson-nav button').nth(2).click();
+    check(await page.locator('#lesson .mem-diagram-title').count()===1,kind+'/'+width+'/'+theme+': memory diagram survives lesson navigation');
     await page.locator('#lesson-nav button').nth(7).click();
     check((await page.locator('#lesson h2').innerText())===lessons.find(x=>x.kind===kind).data.lessons[7].title,kind+'/'+width+'/'+theme+': last lesson navigation');
     check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+6),kind+'/'+width+'/'+theme+': no horizontal overflow');
