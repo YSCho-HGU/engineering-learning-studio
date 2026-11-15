@@ -39,10 +39,18 @@ function render(){
   for(const ch of (byGroup.get(group.id)||[]).sort((a,b)=>a.chapter-b.chapter||Number(a.id)-Number(b.id))){
    const row=document.createElement("div");row.className="entry";
    const input=document.createElement("input");input.type="checkbox";input.id="c-"+ch.id;input.checked=Boolean(ch.published);input.dataset.chapterId=ch.id;
-   const label=document.createElement("label");label.htmlFor=input.id;
+   const label=document.createElement("div");label.className="entry-fields";
    const title=document.createElement("strong");title.textContent=ch.id+" · "+ch.title;
    const caption=document.createElement("small");caption.textContent=(ch.published?"현재 공개":"현재 비공개")+" · "+ch.url;
-   label.append(title,caption);row.append(input,label);grid.append(row);
+   label.append(title,caption);
+   for(const [field,captionText,multiline] of [["title","단원 제목",false],["description","카드 설명",true],["book","교재 URL (선택)",false]]){
+     const fieldLabel=document.createElement("label");fieldLabel.className="field-label";fieldLabel.htmlFor=field+"-"+ch.id;fieldLabel.textContent=captionText;
+     const control=document.createElement(multiline?"textarea":"input");if(!multiline)control.type="text";control.id=field+"-"+ch.id;control.dataset.field=field;control.dataset.forChapter=ch.id;
+     control.value=ch[field]||"";if(field==="book")control.placeholder="https://drive.google.com/file/d/.../view";
+     control.maxLength=field==="title"?120:field==="description"?600:400;
+     fieldLabel.append(control);label.append(fieldLabel);
+   }
+   row.append(input,label);grid.append(row);
    input.addEventListener("change",updateCount);
   }
   root.append(section);
@@ -64,17 +72,27 @@ async function ensurePage(ch){
 async function save(){
  if(busy||!catalog)return;
  const next=structuredClone(catalog);
- for(const ch of next.chapters)ch.published=Boolean($("c-"+ch.id)?.checked);
- const changed=next.chapters.filter((ch,i)=>ch.published!==catalog.chapters[i].published);
+ for(const ch of next.chapters){
+  ch.published=Boolean($("c-"+ch.id)?.checked);
+  ch.title=$("title-"+ch.id).value.trim();
+  ch.description=$("description-"+ch.id).value.trim();
+  const book=$("book-"+ch.id).value.trim();
+  if(book)ch.book=book;else delete ch.book;
+  if(!ch.title){status(ch.id+"번 단원 제목은 비워둘 수 없습니다.");return}
+  if(book&&!/^https:\/\/drive\.google\.com\/file\/d\/[a-zA-Z0-9_-]+\/view(?:\?[^#\s]*)?$/.test(book)){
+   status(ch.id+"번 교재 URL은 Google Drive 공유 링크 형식이어야 합니다.");return
+  }
+ }
+ const changed=next.chapters.filter((ch,i)=>["published","title","description","book"].some(k=>(ch[k]??"")!==(catalog.chapters[i][k]??"")));
  if(!changed.length){status("변경된 공개 상태가 없습니다.");return}
- const newlyPublished=changed.filter(ch=>ch.published);
- if(!confirm("공개 "+next.chapters.filter(ch=>ch.published).length+"개로 변경합니다.\nGitHub Pages의 학생 화면에 반영되도록 저장할까요?"))return;
+ const newlyPublished=changed.filter(ch=>ch.published&&!catalog.chapters.find(old=>old.id===ch.id)?.published);
+ if(!confirm("총 "+changed.length+"개 단원의 공개 상태와 정보를 GitHub에 저장할까요?"))return;
  try{
   busy=true;$("save").disabled=true;$("reload").disabled=true;
   for(const ch of newlyPublished){status(ch.id+"번 학습 파일 존재 여부 확인 중...");await ensurePage(ch)}
   const content=JSON.stringify(next,null,2)+"\n";
   status("GitHub에 공개 상태 저장 중...");
-  const r=await fetch(api,{method:"PUT",headers:{...headers(),"Content-Type":"application/json"},body:JSON.stringify({message:"Update C course publication: "+changed.map(ch=>ch.id+"="+(ch.published?"public":"draft")).join(", "),content:encodeUtf8(content),sha})});
+  const r=await fetch(api,{method:"PUT",headers:{...headers(),"Content-Type":"application/json"},body:JSON.stringify({message:"Update C course catalog: "+changed.map(ch=>ch.id).join(", "),content:encodeUtf8(content),sha})});
   if(!r.ok){let detail="";try{detail=(await r.json()).message}catch(e){}throw Error("저장 실패 (HTTP "+r.status+"): "+detail+". 최신 상태 다시 읽기로 충돌 여부를 확인하세요.")}
   const saved=await r.json();catalog=next;sha=saved.content.sha;baseVersion=JSON.stringify(next.chapters.map(ch=>[ch.id,ch.published]));render();
   status("공개 상태를 GitHub에 저장했습니다. GitHub Pages 배포 후 학생 화면에 반영됩니다.");
