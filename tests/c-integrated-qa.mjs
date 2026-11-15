@@ -72,6 +72,21 @@ if(process.env.C_JOURNEY_BROWSER==="1"){
    assert(practiceErrors.length===0,kind+" coding practice no runtime error "+practiceErrors.join(";"));
    await practice.close();
   }
+  const fileio=await browser.newPage({viewport:{width:390,height:850}});
+  const fileioErrors=[];fileio.on("pageerror",e=>fileioErrors.push(String(e)));
+  await fileio.goto("http://127.0.0.1:8876/"+base+"file-io/",{waitUntil:"domcontentloaded"});
+  await fileio.locator('input[name="q0"][value="b"]').check();
+  await fileio.locator('[data-grade="0"]').click();
+  assert((await fileio.locator("#concept-count").innerText()).includes("1/8"),"File I/O concept correct answer is separately recorded");
+  assert(fileioErrors.length===0,"File I/O new concept evidence no runtime errors "+fileioErrors.join(";"));
+  await fileio.close();
+  const filePractice=await browser.newPage({viewport:{width:390,height:850}});
+  await filePractice.goto("http://127.0.0.1:8876/"+base+"file-io/practice/",{waitUntil:"domcontentloaded"});
+  assert(await filePractice.locator('#task-nav button').count()===6,"File I/O six tasks retained");
+  await filePractice.locator("#gcc-confirm").check();
+  await filePractice.locator("#editor").fill("/* changed code */");
+  assert(!(await filePractice.locator("#gcc-confirm").isChecked()),"File I/O code edit revokes GCC self-report");
+  await filePractice.close();
   const page=await browser.newPage();
   await page.goto("http://127.0.0.1:8876/"+base+"learning-journey/",{waitUntil:"domcontentloaded"});
   assert(await page.locator("[data-course]").count()===3,"integrated dashboard renders all courses");
