@@ -14,12 +14,12 @@ for(const theme of ['neutral-dark','warm-neutral']){
    const doc=document.documentElement;
    const overflow=doc.scrollWidth>innerWidth+2;
    const nav=document.querySelector('.header-nav');
-   const hero=document.querySelector('.hero');
+   const hero=document.querySelector('.course-intro');
    const cards=[...document.querySelectorAll('.path-card')];
    return {overflow,scrollWidth:doc.scrollWidth,viewport:innerWidth,navWidth:nav.getBoundingClientRect().width,heroWidth:hero.getBoundingClientRect().width,cardCount:cards.length,theme:doc.dataset.elsTheme,links:[...document.querySelectorAll('a[href^="./"]')].map(a=>a.getAttribute('href'))};
   });
   if(result.overflow)failures.push(theme+' '+width+' horizontal overflow: '+result.scrollWidth);
-  if(result.cardCount!==3)failures.push(theme+' '+width+' missing learning cards');
+  if(result.cardCount!==8)failures.push(theme+' '+width+' missing learning cards');
   if(result.theme!==theme)failures.push(theme+' '+width+' theme not applied: '+result.theme);
   await page.screenshot({path:'qa-c-'+theme+'-'+width+'.png',fullPage:true});
   if(width===375){
