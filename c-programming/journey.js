@@ -100,7 +100,8 @@ function renderMemoryDiagram(host, step, lesson){
   const card=element("div","mem-cell "+kind,parent);
   const top=element("div","mem-cell-head",card);
   element("span","mem-cell-name",top,take(name,42));
-  element("span","mem-cell-address",top,"illustrative");
+  const virtualAddress=/\bpp\b/.test(name)?"0x3000":/\b(?:p|ps)\b/.test(name)?"0x2000":/\ba\[2\]/.test(name)?"0x1008":/\ba\[1\]/.test(name)?"0x1004":"0x1000";
+  element("span","mem-cell-address",top,"virtual "+virtualAddress);
   element("strong","mem-cell-value",card,take(value,110));
   return card;
  };
