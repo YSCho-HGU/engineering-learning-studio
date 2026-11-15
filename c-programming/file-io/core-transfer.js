@@ -17,7 +17,6 @@
  };
  const state=new Map();
  const storageKey="els-fileio-core-transfer-v1";
- const mark=String(x=>x);
  function evaluate(step){
   const card=document.querySelector('[data-core-step="'+step+'"]');
   const box=document.getElementById("core-result-"+step);
