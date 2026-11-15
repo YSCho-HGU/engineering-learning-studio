@@ -70,6 +70,56 @@ function modelOutput(model,v){
  default:return "Model not configured";
  }
 }
+
+function renderTrace(stage,l){
+ const section=element("section","activity trace-lab",stage);
+ element("span","tag",section,"GUIDED EXECUTION · LINE-BY-LINE");
+ element("h3","",section,"Trace the code · 코드 실행 흐름 추적");
+ element("p","legend",section,"Educational execution walkthrough aligned to the C example. Each snapshot is manually specified, not obtained from a JavaScript C interpreter.");
+ const panel=element("div","trace-layout",section),left=element("div","trace-code",panel),right=element("div","trace-state",panel);
+ const lines=l.code.split("\n");
+ const code=element("div","trace-lines",left);
+ const rendered=lines.map((line,i)=>{
+  const row=element("div","trace-line",code);
+  row.dataset.line=String(i+1);
+  const num=element("span","trace-number",row,String(i+1));
+  num.setAttribute("aria-hidden","true");
+  element("span","trace-source",row,line||" ");
+  return row;
+ });
+ const trace=l.trace||[],steps=[];
+ let searchFrom=0;
+ for(const item of trace){
+  let ix=lines.findIndex((line,i)=>i>=searchFrom&&line.includes(item.match));
+  if(ix<0)ix=lines.findIndex(line=>line.includes(item.match));
+  steps.push({...item,line:ix+1});
+  if(ix>=0)searchFrom=ix+1;
+ }
+ const status=element("p","trace-status",right);
+ const currentState=element("pre","trace-memory",right);
+ const explanation=element("p","trace-explanation",right);
+ const position=element("p","legend",right);
+ const controls=element("div","trace-controls",section);
+ const previous=element("button","action",controls,"← Previous");
+ const next=element("button","action primary",controls,"Next →");
+ const restart=element("button","action",controls,"Restart");
+ let pointer=0;
+ function showTrace(){
+  const step=steps[pointer];
+  rendered.forEach((row,i)=>{row.classList.toggle("active",i+1===step.line);if(i+1===step.line)row.setAttribute("aria-current","step");else row.removeAttribute("aria-current")});
+  status.textContent="Step "+(pointer+1)+" / "+steps.length+" · Line "+step.line;
+  currentState.textContent=step.state.replaceAll("\\n","\n");
+  explanation.textContent=step.meaning;
+  position.textContent="Read the highlighted C line, then explain how the stored values change.";
+  previous.disabled=pointer===0;next.disabled=pointer===steps.length-1;
+  rendered.find((row,i)=>i+1===step.line)?.scrollIntoView({block:"nearest",behavior:"instant"});
+ }
+ previous.addEventListener("click",()=>{pointer=Math.max(0,pointer-1);showTrace()});
+ next.addEventListener("click",()=>{pointer=Math.min(steps.length-1,pointer+1);showTrace()});
+ restart.addEventListener("click",()=>{pointer=0;showTrace()});
+ if(steps.length)showTrace();else section.hidden=true;
+}
+
 function renderModel(stage,l){
  const section=element("section","activity",stage);
  element("span","tag",section,"INTERACTIVE MODEL · 개념 실험");
@@ -101,7 +151,7 @@ function show(i){
  const out=element("div","explain",e);out.hidden=true;
  const outPre=element("pre","",out);outPre.style.whiteSpace="pre-wrap";outPre.textContent=l.output;
  reveal.addEventListener("click",()=>{out.hidden=!out.hidden;reveal.setAttribute("aria-expanded",String(!out.hidden))});reveal.setAttribute("aria-expanded","false");
- renderModel(stage,l);renderQuiz(stage,l);
+ renderTrace(stage,l);renderModel(stage,l);renderQuiz(stage,l);
  const transfer=element("section","transfer",stage);
  element("h3","",transfer,"Transfer · 응용 및 설명");
  element("p","",transfer,l.transfer);
