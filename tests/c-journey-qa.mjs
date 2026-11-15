@@ -22,6 +22,10 @@ for(const kind of ['pointer','structure']){
  check(data.lessons.every(l=>Array.isArray(l.trace)&&l.trace.length>=2),kind+': every C lesson has a line-by-line trace');
  check(data.lessons.every(l=>l.trace.every(t=>l.code.includes(t.match)&&t.state&&t.meaning)),kind+': every trace line matches the literal C reference');
  check(data.lessons.every(l=>new Set(l.quiz.options).size===3),kind+': distinct conceptual distractors');
+ check(data.lessons.every((l,i)=>!l.layout||Array.isArray(l.layout.cells)&&l.layout.cells.every(cell=>cell.label&&cell.offset&&cell.value)),kind+': array/struct layout cells carry labels and symbolic offsets');
+ check(data.lessons.every((l,i)=>!l.layout||l.layout.note&&/(sizeof|ABI|offset|padding|pointer)/i.test(l.layout.note)),kind+': each layout includes platform caveat');
+ check(data.lessons.every((l,i)=>kind==='structure'&&i===6 || l.trace.some(t=>t.state.replaceAll('\\\\n','\\n').includes(l.output))),kind+': trace output corresponds to reference C stdout');
+
  const html=fs.readFileSync(path.join(base,'index.html'),'utf8');
  for(const id of ['lesson','lesson-nav','progress-text','progress-bar','practice','theme'])
   check(html.includes('id="'+id+'"'),kind+': DOM target '+id);
@@ -70,6 +74,11 @@ if(process.env.C_JOURNEY_BROWSER==='1'){
     check(await page.locator('#lesson .mem-diagram-title').count()===1,kind+'/'+width+'/'+theme+': memory diagram rendered');
     check(await page.locator('#lesson .mem-cell').count()>=1,kind+'/'+width+'/'+theme+': labeled memory cells rendered');
     check(await page.locator('#lesson .mem-diagram-note').count()===1,kind+'/'+width+'/'+theme+': conceptual address disclaimer');
+    const layoutIndex=kind==='pointer'?4:6;
+    await page.locator('#lesson-nav button').nth(layoutIndex).click();
+    check(await page.locator('#lesson .layout-cell').count()>=3,kind+'/'+width+'/'+theme+': memory layout has labeled array/member cells');
+    check(await page.locator('#lesson .layout-disclaimer').count()===1,kind+'/'+width+'/'+theme+': ABI caveat shown');
+    await page.locator('#lesson-nav button').nth(0).click();
 
     const before=await page.locator('#lesson .trace-status').innerText();
     const memoryBefore=await page.locator('#lesson .trace-memory').innerText();
