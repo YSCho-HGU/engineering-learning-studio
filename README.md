@@ -39,6 +39,18 @@ Browser QA: `tests/c-four-chapters-browser.mjs`. CI workflow: `.github/workflows
 
 The authoring policy is a structural quality gate, not a substitute for instructor content review or actual browser QA.
 
+## C Programming — Chapter Creation
+
+New C chapters follow [the flexible authoring standard](docs/C_PROGRAMMING_AUTHORING_STANDARD.md).
+Copy [the chapter data template](c-programming/_template/data.js), select the number of lessons and coding tasks **from learning objectives (never from a fixed numeric quota)**, validate with the shared tools, then publish via the [Course Manager](admin/).
+
+```bash
+node tests/c-authoring-policy.mjs
+node tests/c-course-gcc.mjs
+```
+
+Continuous checks: [.github/workflows/c-authoring-policy.yml](.github/workflows/c-authoring-policy.yml). The CLI checks are complementary to browser and instructor review.
+
 ## Deployment
 
 Static GitHub Pages site published from the repository root. Module data and browser learning experiences are independent; the admin writes course catalog data through authenticated GitHub APIs.
