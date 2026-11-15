@@ -42,6 +42,7 @@ $("footer-position").textContent=(current+1)+" / 8";$("prev-stage").disabled=cur
 $("progress-text").textContent=done.size+" / 8 (학습 활동)";$("progress-fill").style.width=(done.size*12.5)+"%";$("progress-meter").setAttribute("aria-valuenow",done.size);$("completion-message").hidden=done.size<8;updateConceptStatus();
 if(doScroll){const target=$("lesson");if(target)target.scrollIntoView({block:"start",behavior:"instant"});if(target)target.focus({preventScroll:true});}}
 document.querySelectorAll("[data-nav]").forEach(b=>b.addEventListener("click",()=>navigate(Number(b.dataset.nav))));
+document.querySelectorAll("[data-jump-stage]").forEach(b=>b.addEventListener("click",()=>navigate(Number(b.dataset.jumpStage))));
 $("prev-stage").onclick=()=>navigate(current-1);$("next-stage").onclick=()=>navigate(current+1);
 document.querySelectorAll("[data-grade]").forEach(btn=>btn.onclick=()=>{const n=Number(btn.dataset.grade),picked=document.querySelector('input[name="q'+n+'"]:checked'),box=$("answer-"+n);if(!picked){box.textContent="먼저 답을 선택해 보세요.";box.classList.add("incorrect");return;}
 const good=picked.value===keys[n];box.classList.toggle("incorrect",!good);box.textContent=(good?"정답입니다. ":"다시 생각해 보세요. ")+explanations[n];
