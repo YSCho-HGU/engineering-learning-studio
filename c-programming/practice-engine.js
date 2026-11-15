@@ -10,9 +10,6 @@ let drafts=get(K,{}),evidence=get(E,{});
 const $=(s)=>document.querySelector(s);
 const txt=(tag,cls,host,value)=>{let n=document.createElement(tag);if(cls)n.className=cls;if(value!==undefined)n.textContent=value;host.append(n);return n};
 const store=()=>{try{localStorage.setItem(K,JSON.stringify(drafts));localStorage.setItem(E,JSON.stringify(evidence))}catch(e){}};
-const selectors=[
- ["#include <stdio.h>","int main(void)"],
-];
 const rulebook={
 pointer:[
  ["printf","*p"],["*a","*b","temp"],["sum","for","*"],["out","for","if"],["i","if","printf"],["samples","for","printf"]
@@ -79,7 +76,7 @@ verified.addEventListener("change",()=>{if(verified.checked)evidence[selection]=
 reset.addEventListener("click",()=>{if(!confirm("현재 과제의 초안을 Starter Code로 복원할까요?"))return;delete drafts[selection];delete evidence[selection];store();show(selection)});
 download.addEventListener("click",()=>{
  persistDraft();const file=new Blob([editor.value],{type:"text/x-c;charset=utf-8"}),url=URL.createObjectURL(file),a=document.createElement("a");
- a.href=url;a.download=d.slug+"_p"+(selection+1)+".c";a.click();URL.revokeObjectURL(url);
+ a.href=url;a.download=d.slug+"_p"+(selection+1)+".c";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500);
 });
 show(0);
 })();
