@@ -45,3 +45,10 @@
 .dm-leak-note{background:var(--els-info-bg,var(--soft));padding:10px 12px;border-radius:7px;color:var(--els-info-ink,var(--ink))!important}
 @media(max-width:550px){.dm-heap-diagram{gap:9px}.dm-cells .dm-cell{min-height:65px}.dm-cells .dm-cell em{font-size:9px}.dm-leak-board{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.dm-heap *{animation:none!important;transition:none!important}}
+
+/* Pointer link motion and focused memory-cell transition. */
+.dm-heap[data-phase="used"] .dm-arrow{animation:dm-link-pulse .9s ease-in-out 2}
+.dm-heap[data-phase="used"] .dm-cell.selected{animation:dm-cell-focus .8s ease-in-out 2}
+@keyframes dm-link-pulse{0%,100%{opacity:1;transform:translateX(0)}50%{opacity:.58;transform:translateX(5px)}}
+@keyframes dm-cell-focus{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 0 4px var(--els-border,var(--line))}}
+@media(prefers-reduced-motion:reduce){.dm-heap[data-phase="used"] .dm-arrow,.dm-heap[data-phase="used"] .dm-cell.selected{animation:none!important}}
