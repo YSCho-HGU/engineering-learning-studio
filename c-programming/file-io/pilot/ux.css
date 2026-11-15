@@ -1,0 +1,65 @@
+/* Pilot v2.1 UX: prediction-first learning and adjacent evidence */
+:root{--pilot-blue:light-dark(#146497,#b3e1ff);--pilot-green:light-dark(#166546,#a0ebbd)}
+.hero{padding-bottom:22px}
+.hero h1{letter-spacing:-.025em}
+.hero .learning-goal{font-size:.87rem;max-width:850px;background:light-dark(#e6f3fe,#213852);border:1px solid var(--line);border-radius:10px;padding:12px 15px;color:var(--ink);margin-top:13px}
+.lesson-header{display:flex;gap:14px;flex-wrap:wrap;align-items:start;justify-content:space-between}
+.lesson-header>div{flex:1;min-width:250px}
+.learning-map{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:15px 0 19px}
+.learning-map span{border:1px solid var(--line);background:var(--soft);font-weight:720;font-size:.8rem;padding:6px 10px;border-radius:7px}
+.learning-map span::before{content:"✓ ";opacity:.45}
+.learning-map span.current{background:light-dark(#dcecff,#254866);border-color:#358bc4;color:var(--ink)}
+.learning-map span.completed{color:var(--pilot-green);border-color:light-dark(#7dbf9b,#4e7d62)}
+.prediction-box{border:1px solid light-dark(#c3d6eb,#4a6886);background:light-dark(#f2f7fd,#243347)}
+.prediction-box .step-title{font-size:.91rem}
+.prediction-box.locked{border-left:5px solid #358bc4}
+.prediction-box.answered{background:light-dark(#f4f7fb,#202f43)}
+.prediction-box fieldset{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;background:var(--panel)}
+.prediction-box fieldset legend{margin-bottom:4px}
+.prediction-box fieldset label{background:var(--panel);border:1px solid var(--line);border-radius:8px;margin:0;padding:9px 11px;cursor:pointer;line-height:1.45}
+.prediction-box fieldset label:has(input:checked){background:light-dark(#dfedfc,#294561);border-color:#4e97cd;font-weight:720}
+.prediction-box input[type=radio]{margin-right:8px}
+.prediction-box .feedback{font-weight:600}
+.prediction-box textarea{min-height:60px}
+.prediction-box .actions{margin-bottom:0}
+.focus-banner{border-left:5px solid light-dark(#2e88bd,#75bde9);background:light-dark(#e8f3fe,#233b51);padding:12px 15px;border-radius:9px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:16px 0}
+.focus-banner strong{font-size:.95rem;display:block}
+.focus-banner span{font-size:.86rem;color:var(--muted)}
+.experiment-panel{scroll-margin-top:16px}
+.experiment-panel .actions{position:relative;padding:10px;background:var(--soft);border-radius:10px}
+.experiment-panel .actions button{flex:1 1 auto}
+.experiment-panel .actions button.next-action{box-shadow:0 0 0 3px light-dark(#a9d7ff,#527e9e);border-color:light-dark(#1a74b6,#9bd6ff);font-weight:850}
+.experiment-panel .actions button[hidden]{display:none!important}
+.experiment-panel .code-head{display:flex;justify-content:space-between;flex-wrap:wrap;gap:7px}
+.code-box{scrollbar-color:#607a9e #122139}
+.code-row{font-size:clamp(13px,1.15vw,16px);line-height:1.9}
+.code-row.active{box-shadow:inset 0 0 0 1px #e4bb47}
+.code-row.active span:first-child::before{content:"▶";padding-right:3px;color:#ffdb71}
+.meta div{padding:12px 10px}
+.meta small{font-size:.76rem}
+.meta strong{font-size:1.02rem;font-family:Consolas,"Liberation Mono",monospace;font-variant-ligatures:none;letter-spacing:0}
+.panel .data{white-space:pre-wrap;line-height:1.7}
+.panel .trace{margin-top:7px}
+.trace div:last-child{outline:1px solid light-dark(#5da1c8,#8ac6ec);font-weight:650}
+.compare-card{border:2px solid light-dark(#6bb68e,#4a9968);border-radius:13px;background:light-dark(#edfaf2,#1b3a2d);padding:17px;margin:17px 0;scroll-margin-top:15px}
+.compare-card h3{margin:0 0 5px}
+.compare-card p{margin:7px 0}
+.compare-card .result-line{font-size:.9rem;font-weight:740}
+.compare-card .compare-diff{font-size:.89rem;line-height:1.7}
+.compare-card[hidden]{display:none!important}
+.learn-check{margin-top:23px}
+.learn-check h3{margin:0 0 8px}
+.learn-check textarea{min-height:100px}
+.learn-check .reflection-hint{font-size:.85rem;color:var(--muted)}
+.breadcrumb-note{font-size:.8rem;color:var(--muted)}
+.status-mark{display:inline-block;font-size:.72rem;border:1px solid var(--line);border-radius:100px;padding:3px 8px;vertical-align:middle}
+[hidden]{display:none!important}
+@media(max-width:760px){
+ .prediction-box fieldset{grid-template-columns:1fr}
+ .experiment-panel .actions button{flex:1 1 calc(50% - 8px)}
+ .hero{padding-top:24px}
+ .lesson-header{display:block}
+ .code-box{max-height:350px}
+ .tabs button{min-width:135px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}}
