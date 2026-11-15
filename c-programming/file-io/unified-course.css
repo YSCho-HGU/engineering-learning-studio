@@ -207,3 +207,31 @@
 .els-design .sensor-assessment-feedback[data-state=review],.els-design .sensor-assessment-feedback[data-state=attention]{border-left:4px solid var(--els-warning)}
 @media(max-width:850px){.els-design .sensor-code-walkthrough-grid{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:480px){.els-design .sensor-code-values{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* First-year-focused guided trace and per-variable changes. Shared semantic tokens. */
+.els-design .sensor-step-mode{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:12px 0;padding:11px 12px;background:var(--els-info-bg);border:1px solid var(--els-border);border-radius:9px;color:var(--els-info-ink)}
+.els-design .sensor-step-mode label{font-weight:800;font-size:.86rem}
+.els-design .sensor-step-mode select{flex:1 1 260px;max-width:390px;border:1px solid var(--els-border);padding:10px;font-size:.9rem;color:var(--els-ink);background:var(--els-surface);border-radius:8px;min-height:44px}
+.els-design .sensor-step-mode span{font-size:.8rem;line-height:1.55;color:var(--els-info-ink)}
+.els-design .sensor-variable-diff{border:1px solid var(--els-border);padding:11px;border-radius:10px;background:var(--els-surface)}
+.els-design .sensor-variable-diff-head{display:grid;gap:4px;margin-bottom:8px}
+.els-design .sensor-variable-diff-head strong{font-size:.85rem;color:var(--els-ink)}
+.els-design .sensor-variable-diff-head span{font-size:.77rem;color:var(--els-muted)}
+.els-design .sensor-variable-diff-list{display:grid;gap:5px;max-height:375px;overflow-y:auto;align-content:start}
+.els-design .sensor-variable-change{display:grid;grid-template-columns:minmax(84px,.9fr) minmax(130px,1.3fr);gap:3px 7px;align-items:center;padding:8px;border:1px solid var(--els-border);border-radius:8px;background:var(--els-surface-alt);font-size:.78rem}
+.els-design .sensor-variable-change>strong{font:750 .82rem/1.5 Consolas,"Liberation Mono",monospace;color:var(--els-ink)}
+.els-design .sensor-variable-change-values{font:700 .82rem/1.5 Consolas,"Liberation Mono",monospace;color:var(--els-ink);overflow-wrap:anywhere}
+.els-design .sensor-variable-change>small{grid-column:1/-1;font-size:.73rem;color:var(--els-muted)}
+.els-design .sensor-variable-change.changed{border-left:5px solid var(--els-success);background:var(--els-info-bg)}
+.els-design .sensor-variable-change.changed>small{color:var(--els-info-ink);font-weight:800}
+.els-design .sensor-variable-change.reassigned{border-left:5px solid var(--els-link)}
+.els-design .sensor-variable-change.unchanged{border-left:5px solid var(--els-border)}
+.els-design .sensor-variable-diff-note{color:var(--els-muted);font-size:.76rem;line-height:1.6;margin:8px 0 0}
+.els-design .sensor-advanced-optional{margin-top:18px;border:2px solid var(--els-border);border-radius:12px;background:var(--els-surface);overflow:hidden;color:var(--els-ink)}
+.els-design .sensor-advanced-optional>summary{display:grid;gap:6px;padding:16px 18px;cursor:pointer;background:var(--els-surface-alt);list-style-position:inside}
+.els-design .sensor-advanced-optional>summary::marker{color:var(--els-link)}
+.els-design .sensor-advanced-optional>summary strong{font-size:1.05rem;color:var(--els-ink)}
+.els-design .sensor-advanced-optional>summary small{font-size:.85rem;color:var(--els-muted);line-height:1.6}
+.els-design .sensor-optional-tag{font-size:.75rem;font-weight:850;letter-spacing:.02em;color:var(--els-link)}
+.els-design .sensor-advanced-optional>.sensor-robust-lab{margin:0;border:0;border-top:1px solid var(--els-border);border-radius:0}
+@media(max-width:680px){.els-design .sensor-variable-change{grid-template-columns:1fr}.els-design .sensor-variable-change>small{grid-column:auto}}
