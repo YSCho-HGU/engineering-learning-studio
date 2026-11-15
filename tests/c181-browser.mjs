@@ -8,7 +8,14 @@ for(const width of [390,1280]){
  page.on('pageerror',e=>problems.push(width+' JS error: '+e.message));
  await page.goto('http://127.0.0.1:8765/c-programming/',{waitUntil:'networkidle'});
  const cards=page.locator('#available-chapters .path-card');
+ await page.locator('#available-count').waitFor({state:'visible'});
+ await page.waitForFunction(()=>document.querySelectorAll('#available-chapters .path-card').length===4);
  if(await cards.count()!==4)problems.push(width+' expected four available chapter cards');
+ const catalogResponse=await page.request.get('http://127.0.0.1:8765/c-programming/course-catalog.json');
+ const catalog=await catalogResponse.json();
+ if(catalog.chapters.length!==18||catalog.chapters.filter(c=>c.published).length!==4)problems.push(width+' catalog public state mismatch');
+ if(!catalog.chapters.every(c=>/^\.\/[a-z0-9-]+\/$/.test(c.url)))problems.push(width+' invalid catalog route');
+
  const chapters=await cards.locator('.number').allTextContents();
  if(chapters.join('|')!=='15 / Chapter 15|16 / Chapter 16|17 / Chapter 17|18 / Chapter 18')problems.push(width+' order incorrect: '+chapters);
  if(await page.getByText('세 단원을 하나의 흐름으로').count())problems.push(width+' obsolete heading');
@@ -74,6 +81,9 @@ for(const width of [390,1280]){
  await page.locator('.cp-nav-item').nth(3).click();
  if(await help.isVisible())problems.push(width+' P4 coaching should be hidden');
  await page.screenshot({path:'qa-c-practice-'+width+'.png',fullPage:true});
+ await page.goto('http://127.0.0.1:8765/c-programming/admin/',{waitUntil:'networkidle'});
+ if(await page.locator('#chapters').isVisible())problems.push(width+' administrator settings shown without authentication');
+ if(!await page.locator('#token').isVisible())problems.push(width+' admin token field missing');
  await ctx.close();
 }
 await browser.close();
