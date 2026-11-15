@@ -14,15 +14,17 @@ try{
   const dataText=readFileSync(root+"data.js","utf8").replace(/^window\.C_JOURNEY=/,"").replace(/;\s*$/,"");
   const d=JSON.parse(dataText);
   const page=readFileSync(root+"index.html","utf8"),editor=readFileSync(root+"practice/index.html","utf8");
-  if(d.lessons.length!==8||d.practice.length!==6)issues.push(id+" chapter expected 8 steps / 6 tasks");
+  if(d.lessons.length<1||d.practice.length<1)issues.push(id+" chapter requires meaningful lesson and practice content");
+  if(!Array.isArray(d.phaseBreaks)||d.phaseBreaks.length!==2||!(d.phaseBreaks[0]>0&&d.phaseBreaks[0]<d.phaseBreaks[1]&&d.phaseBreaks[1]<d.lessons.length))issues.push(id+" invalid lesson-based phases");
   if(!page.includes('src="./data.js')||!page.includes('src="../journey.js'))issues.push(id+" missing lesson runtime");
   if(!editor.includes('src="../data.js')||!editor.includes("practice-engine.js"))issues.push(id+" missing coding editor");
   for(const [n,l] of d.lessons.entries()){
    lessons++;
    const prefix=id+" Step "+(n+1)+" "+l.title;
-   if(!l.goal||!l.concept||!l.quiz||!l.transfer||!l.guide||!l.model)issues.push(prefix+" incomplete teaching elements");
-   if(!Number.isInteger(l.quiz?.correct)||!l.quiz?.options?.[l.quiz.correct]||!l.quiz?.explain)issues.push(prefix+" concept quiz answer or explanation missing");
+   if(!l.goal||!l.concept||!l.quiz||!l.transfer||!l.guide||!l.model||!l.minutes)issues.push(prefix+" incomplete teaching elements");
+   if(!Number.isInteger(l.quiz?.correct)||!l.quiz?.options?.[l.quiz.correct]||!l.quiz?.explain||new Set(l.quiz.options).size!==l.quiz.options.length)issues.push(prefix+" concept quiz answer or explanation missing");
    if(!l.trace?.length||l.trace.some(t=>!l.code.includes(t.match)))issues.push(prefix+" trace match not found in actual code");
+   if(l.model?.kind==="scenario"&&(!Array.isArray(l.model.cases)||l.model.cases.length!==5))issues.push(prefix+" concept scenario not configured");
    const src=join(tmp,slug+"-"+n+".c"),exe=join(tmp,slug+"-"+n);
    writeFileSync(src,l.code);
    const comp=spawnSync("gcc",["-std=c11","-Wall","-Wextra","-Wpedantic","-Werror",src,"-lm","-o",exe],{encoding:"utf8",timeout:12000});
