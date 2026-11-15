@@ -1,0 +1,16 @@
+"use strict";
+const assert=require("node:assert/strict");
+const M=require("./sensor-model.js");
+let n=0;
+const test=(title,run)=>{run();process.stdout.write("PASS "+title+"\n");n++};
+test("canonical data",()=>{const x=M.simulate(M.sample,3);assert.equal(x.stdout,"ALERT 0.3: 3.82\nCount = 4\nAverage = 2.840\n");assert.equal(x.lastReturn,"EOF");assert.equal(x.exitCode,0)});
+test("additional alerts",()=>{const x=M.simulate(M.cases.moreAlerts,3);assert.equal(x.alerts.length,3);assert.equal(x.stdout.includes("Average = 3.478"),true)});
+test("malformed second field returns one conversion",()=>{const x=M.simulate(M.cases.malformed,3);assert.equal(x.lastReturn,"1");assert.equal(x.exitCode,1);assert.equal(x.stderr,"Invalid sensor record: 1 field(s) read\n")});
+test("partial final pair returns one conversion",()=>{const x=M.simulate(M.cases.partial,3);assert.equal(x.lastReturn,"1");assert.equal(x.exitCode,1)});
+test("empty file yields clean EOF",()=>{const x=M.simulate("",3);assert.equal(x.lastReturn,"EOF");assert.equal(x.stdout,"No sensor records\n");assert.equal(x.count,0)});
+test("newline is scanf whitespace, not record boundary",()=>{const x=M.simulate(M.cases.crossLine,3);assert.equal(x.count,2);assert.equal(x.average,2.53)});
+test("invalid first field returns zero",()=>{const x=M.simulate("ERROR 25.0\n",3);assert.equal(x.lastReturn,"0");assert.equal(x.exitCode,1)});
+test("strictly greater threshold",()=>{const x=M.simulate("0.0 3.00\n0.1 3.01\n",3);assert.equal(x.alerts.length,1)});
+test("unsupported non-decimal numeric formats shown as unsupported",()=>{assert.equal(M.simulate("0.0 NaN\n",3).supported,false)});
+test("too large input fails safely",()=>assert.throws(()=>M.simulate("0".repeat(20001),3)));
+process.stdout.write("All "+n+" deterministic-model tests passed.\n");
