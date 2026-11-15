@@ -3,7 +3,8 @@
 "use strict";
 const d=window.C_JOURNEY,root=document.getElementById("practice-root");
 if(!d||!root)return;
-const K="els-code-"+d.slug+"-v1",E="els-code-evidence-"+d.slug+"-v1";
+const practiceVersion=Number.isInteger(d.practiceRevision)?d.practiceRevision:1;
+const K="els-code-"+d.slug+"-v"+practiceVersion,E="els-code-evidence-"+d.slug+"-v"+practiceVersion;
 const optionalPractice=Number.isInteger(d.practiceCoreCount)&&d.practiceCoreCount>=0&&d.practiceCoreCount<d.practice.length;
 const corePracticeCount=Number.isInteger(d.practiceCoreCount)?d.practiceCoreCount:d.practice.length;
 const practiceLabel=i=>optionalPractice?(i<corePracticeCount?"[필수] ":"[선택 심화] "):"";
