@@ -5,7 +5,16 @@
 const $=id=>document.getElementById(id);
 const escape=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const safeLocalPath=url=>typeof url==="string"&&/^\.\/[a-z0-9-]+\/$/.test(url)?url:null;
-const safeBook=url=>typeof url==="string"&&/^https:\/\/(?:drive\.google\.com\/file\/d\/[a-zA-Z0-9_-]+\/view(?:\?[^#\\s]*)?|docs\.google\.com\/(?:document|presentation|spreadsheets)\/d\/[a-zA-Z0-9_-]+\/[a-zA-Z0-9/?=&_.-]*)$/.test(url)?url:null;
+const safeBook=url=>{
+ if(typeof url!=="string")return null;
+ try{
+  const u=new URL(url);
+  if(u.protocol!=="https:")return null;
+  if(u.hostname==="drive.google.com"&&/^\/file\/d\/[a-zA-Z0-9_-]+\/view$/.test(u.pathname))return url;
+  if(u.hostname==="docs.google.com"&&/^\/(?:document|presentation|spreadsheets)\/d\/[a-zA-Z0-9_-]+\/.+/.test(u.pathname))return url;
+ }catch(e){}
+ return null;
+};
 function roadmapNavigation(){
  function show(){
   const pane=$("course-overview-details");if(!pane)return;
