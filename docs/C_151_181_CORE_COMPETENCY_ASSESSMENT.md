@@ -16,7 +16,7 @@ The site currently offers stepwise interactive examples and starter-code TODO ta
 |---|---:|---:|---|---|
 | **151 Pointers** | 6 | 4 | Distinguish value/address/dereference, modify caller via pointer, traverse array safely, prevent out-of-range access | Adequate *guided* evidence; independent creation untested |
 | **161 Structures** | 6 | 5 | Model a student/sensor record, update through pointer, process record arrays, explain copy semantics | Adequate *guided* evidence; integration and input validation limited |
-| **171 File I/O** | 8 topic stages (with Core/Optional elements embedded) | **P1–P2 recommended priority** | Open/close streams, write/read text, check I/O success, distinguish EOF from malformed input, compute summary | Good conceptual breadth; two prioritized practical tasks do not cover all text-file use cases |
+| **171 File I/O** | 8 topic stages (with Core/Optional elements embedded) | **P1–P2 and required M1 fgets/fputs micro-lab** | Open/close streams, write/read text, check I/O success, distinguish EOF from malformed input, compute summary | Good conceptual breadth; two prioritized practical tasks do not cover all text-file use cases |
 | **181 Dynamic Memory** | 4 | 3 | Allocate `n` ints with `malloc`, check NULL, initialize/read/write within bounds, `free` once before losing ownership | Sound minimum for introductory heap usage; independent lifecycle debugging untested |
 
 **Total unique guiding steps:** 24 Core lessons (151:6 + 161:6 + 171:8 + 181:4).  
@@ -33,7 +33,7 @@ These are **learning activities and practice coverage counts**, not a measured p
 | Safe pointer indexing and object lifetime | Ch151 P4; Ch181 P2–P3 | **Covered conceptually**, untrusted input handling limited |
 | Modeling and processing arrays of structures | Ch161 P1–P5 | **Covered**, verify one independent integrated task |
 | Persistent text-file read and write | Ch171 P1–P2 | **Covered minimally**, error behavior needs explicit checks |
-| Character/line-based input via `fgets` | Ch171 concept; P3 optional | **Gap for practical text-file breadth**; recommend promoting a short `fgets` exercise to a required micro-lab, without adding a full six-task project |
+| Character/line-based input via `fgets` | Ch171 concept; P3 optional | **Addressed:** added required M1 mini lab for a single-line `fgets`/`fputs` copy. P3 remains optional full-file copy |
 | Runtime-sized arrays with `malloc` and `free` | Ch181 P1–P3 | **Covered**, check NULL and ownership independently |
 | Multiple errors handled consistently | Spread across Ch151/171/181 | **Partial**; require at least one missing-file/malformed-input and one failed-allocation reasoning case |
 | Independent problem decomposition and debugging | Guided TODO tasks only | **Not established**; standalone GCC assessment required |
@@ -73,7 +73,7 @@ Suggested rubric across problems: **correct behavior 55%**, **proper C construct
 
 - **151:** Keep 6 Core + 2 Optional lessons. Keep 4 Core coding tasks; output-parameter and sensor extra work can remain Optional.
 - **161:** Keep 6 Core + 2 Optional. **Fixed P5**: earlier text asked to modify the original through a pointer, but starter and reference output only demonstrate independent copying; now the prompt matches `b.score=90`, leaving `a.score=70`. Pointer updates are already exercised by P2.
-- **171:** Keep current 8 distinct stages and their independent interactive models. P1 and P2 are Core practice priorities; **recommend one short required `fgets`/`fputs` micro-exercise** if the intended exit outcome includes copying/processing lines. Keep full P3–P6 as optional extensions. **Fixed Chapter number** on the coding-practice page: 7 → 17.
+- **171:** Keep current 8 distinct stages and their independent interactive models. P1 and P2 are Core practice priorities; **Implemented M1:** a required 10–15 minute `fgets`/`fputs` single-line copy micro-exercise, separate from optional P3 full-file copy. Keep full P3–P6 as optional extensions. **Fixed Chapter number** on the coding-practice page: 7 → 17.
 - **181:** Keep 4 Core + 4 Optional. `malloc`/`free`, `NULL`, element initialization and correct lifetime are sufficient for the basic goal. Do not require `calloc`/`realloc` or size-overflow arithmetic in the first Core coding assessment.
 - **Progress interpretation:** a checked activity or browser self-reported GCC confirmation **does not certify independent proficiency**. Use an externally proctored or in-class compiled program as proof.
 
@@ -82,3 +82,9 @@ Suggested rubric across problems: **correct behavior 55%**, **proper C construct
 Reviewed current source files and lesson metadata directly from GitHub; content-to-task alignment and critical Core coverage inspected. JavaScript-generated feedback and interactive simulations are not actual compiler execution.
 
 Changes during this review: corrected Structures P5 wording, refreshed its practice data version, and corrected File I/O practice Chapter heading. This report is a **curriculum/assessment judgment**, not an empirical student learning outcome study. Comprehensive CI, browser QA, and all individual GCC samples were **not** rerun in this review.
+
+## 2026-11-16 M1 implementation
+
+Added **required M1 One-Line Copy** to `c-programming/file-io/practice/` without renumbering P1–P6 or replacing existing student draft storage keys. Students download `message.txt`, read one line with `fgets(line,sizeof line,src)`, use `fputs` into `preview.txt`, validate file-open/write results, and close both streams. The second input line must not be copied. Optional P3 remains the complete multi-line copier.
+
+The roadmap links directly to `practice/#m1`. The `tests/c-fileio-mini-lab.mjs` automated GCC reference checks cover normal input, empty files, missing newline, and missing input file. CI execution status must be verified separately.
