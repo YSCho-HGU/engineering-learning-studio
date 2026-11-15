@@ -1,0 +1,30 @@
+/* Chapter 17: compact learning-first layout; preserves all eight steps and assessments. */
+.els-design .course-header{padding-top:19px;padding-bottom:18px;background:var(--els-surface,var(--surface))}
+.els-design .course-header h1{font-size:clamp(25px,3vw,37px);margin:5px 0 8px}
+.els-design .course-header p{font-size:clamp(13px,1.1vw,15px);line-height:1.6}
+.els-design .course-meta{margin-top:10px;gap:6px}
+.els-design .course-meta span{padding:3px 9px;font-size:11px}
+.els-design .learning-route{margin:12px auto 0;padding:0 20px}
+.els-design .core-quick-path{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:10px 12px;border:1px solid var(--border);border-radius:11px;background:var(--surface)}
+.els-design .path-key{font-size:11px;font-weight:800;color:var(--muted);margin-right:3px}
+.els-design .core-quick-path a,.els-design .core-quick-path button{padding:7px 10px;border:1px solid var(--border);border-radius:7px;background:transparent;color:inherit;font-size:12px;font-weight:650;text-decoration:none;line-height:1.35;min-height:34px;display:inline-flex;align-items:center}
+.els-design .core-quick-path a:hover,.els-design .core-quick-path button:hover{border-color:var(--els-link,var(--accent));background:var(--els-info-bg,var(--surface))}
+.els-design .core-quick-path :is(a,button):focus-visible{outline:3px solid var(--els-link,var(--accent));outline-offset:2px}
+.els-design .route-more{margin-top:7px;border:1px solid var(--border);border-radius:10px;padding:0;background:var(--surface)}
+.els-design .route-more>summary{cursor:pointer;padding:9px 13px;font-size:12px;font-weight:700;color:var(--muted)}
+.els-design .route-more[open]>summary{border-bottom:1px solid var(--border)}
+.els-design .route-more .route-heading{padding:12px 13px 0}
+.els-design .route-more .route-cards{padding:10px 13px 0}
+.els-design .route-more .route-note{padding:0 13px 12px}
+.els-design .shell{padding-top:15px;gap:16px;grid-template-columns:246px minmax(0,1fr)}
+.els-design .sidebar{padding:11px;box-shadow:none}
+.els-design .progress-panel{padding:7px 5px 11px}
+.els-design .progress-panel small{font-size:11px;line-height:1.45}
+.els-design .lesson-nav{margin:10px 0;gap:3px}
+.els-design .lesson-nav button{padding:8px;gap:8px;font-size:12px}
+.els-design .lesson-nav small{font-size:10px}
+.els-design .stage{padding:clamp(14px,2vw,23px)}
+.els-design .lesson-top{margin-bottom:6px}
+.els-design .stage .concept,.els-design .stage .activity,.els-design .stage .check{margin:14px 0;padding:clamp(13px,1.7vw,18px)}
+@media(max-width:960px){.els-design .shell{grid-template-columns:1fr}.els-design .sidebar{position:static}.els-design .lesson-nav{grid-template-columns:repeat(4,minmax(0,1fr))}.els-design .lesson-nav button{align-items:flex-start}.els-design .lesson-nav button small{display:none}}
+@media(max-width:680px){.els-design .learning-route{padding:0 10px;margin-top:9px}.els-design .course-header{padding:14px 12px}.els-design .course-meta span{font-size:10px}.els-design .core-quick-path{gap:6px;padding:9px}.els-design .path-key{width:100%}.els-design .core-quick-path :is(a,button){flex:1 1 43%;justify-content:center;padding:9px 6px;text-align:center;font-size:11px}.els-design .shell{padding:12px 10px 40px;gap:10px}.els-design .sidebar{padding:9px}.els-design .lesson-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}.els-design .lesson-nav button{padding:7px 4px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;min-width:0;overflow-wrap:anywhere}.els-design .lesson-nav .num{font-size:11px}.els-design .lesson-nav .done{margin:0}.els-design .progress-panel small{display:none}.els-design .progress-panel #concept-count{display:block}.els-design .toplinks{gap:8px;font-size:12px}.els-design .stage{padding:13px}.els-design .route-more .route-cards{grid-template-columns:1fr}}
