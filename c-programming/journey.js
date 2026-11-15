@@ -18,16 +18,24 @@ function element(tag,cls,parent,text){const n=document.createElement(tag);if(cls
 function renderNav(){
  $("lesson-nav").replaceChildren();
  D.lessons.forEach((l,i)=>{
+  if(D.slug==="dynamic-memory"&&(i===0||i===4)){
+   const group=element("div","dm-nav-group",$("lesson-nav"),i===0?"필수 학습 · CORE (01–04)":"선택 심화 · OPTIONAL (05–08)");
+   group.setAttribute("aria-label",i===0?"Core lessons":"Optional advanced lessons");
+  }
   const b=element("button",(i===current?"active ":"")+(completed.includes(i)?"done":""),$("lesson-nav"));
   b.type="button";b.dataset.lesson=i;
   element("span","n",b,String(i+1).padStart(2,"0"));
   element("span","",b,l.title);
+  if(D.slug==="dynamic-memory")element("span","dm-level",b,i<4?"필수":"선택");
   if(concepts.includes(i))element("span","concept-indicator",b,"✓ Concept");
   b.addEventListener("click",()=>show(i));
  });
- $("progress-text").textContent="Activity "+completed.length+"/8 · Concept "+concepts.length+"/8";
- $("progress-bar").style.width=completed.length/8*100+"%";
- const meter=$("progress-bar").parentElement;if(meter)meter.setAttribute("aria-valuenow",String(completed.length));
+ if(D.slug==="dynamic-memory"){
+  const coreA=completed.filter(i=>i<4).length,coreC=concepts.filter(i=>i<4).length;
+  $("progress-text").textContent="필수 Activity "+coreA+"/4 · Concept "+coreC+"/4 · 선택 "+completed.filter(i=>i>=4).length+"/4";
+ }else $("progress-text").textContent="Activity "+completed.length+"/8 · Concept "+concepts.length+"/8";
+ $("progress-bar").style.width=(D.slug==="dynamic-memory"?completed.filter(i=>i<4).length/4:completed.length/8)*100+"%";
+ const meter=$("progress-bar").parentElement;if(meter){meter.setAttribute("aria-valuenow",String(D.slug==="dynamic-memory"?completed.filter(i=>i<4).length:completed.length));if(D.slug==="dynamic-memory")meter.setAttribute("aria-valuemax","4");}
 }
 function createCode(host,source){
  const pre=element("pre","code",host);
@@ -58,7 +66,7 @@ function renderQuiz(stage,l){
 }
 function updateAssessmentSummary(){
  const target=$("assessment-status");if(!target)return;
- target.textContent="Activity Reviewed "+completed.length+"/8 · Concept Check Passed "+concepts.length+"/8 · Coding Practice: self-reported GCC checks only.";
+ target.textContent=D.slug==="dynamic-memory"?"필수 Activity "+completed.filter(i=>i<4).length+"/4 · 필수 Concept "+concepts.filter(i=>i<4).length+"/4 · 선택 심화 Activity "+completed.filter(i=>i>=4).length+"/4 · Coding은 GCC 자기보고": "Activity Reviewed "+completed.length+"/8 · Concept Check Passed "+concepts.length+"/8 · Coding Practice: self-reported GCC checks only.";
 }
 function modelOutput(model,v){
  switch(model.kind){
@@ -230,12 +238,13 @@ function renderModel(stage,l){
  const insight=element("p","legend",right,l.model.note);
  function refresh(){const v=Number(slider.value);value.textContent=l.model.valueLabel+": "+v;output.textContent=modelOutput(l.model,v)}
  slider.addEventListener("input",refresh);refresh();
+ if(D.slug==="dynamic-memory"&&typeof window.renderDynamicHeap==="function")window.renderDynamicHeap(stage,l);
 }
 function show(i){
  current=Math.max(0,Math.min(7,i));renderNav();
  const l=D.lessons[current];
  const stage=$("lesson");stage.replaceChildren();
- element("div","tag",stage,"STEP "+String(current+1).padStart(2,"0")+" / 08 · "+(current<4?"BEFORE CLASS":current<7?"IN CLASS":"AFTER CLASS"));
+ element("div","tag",stage,"STEP "+String(current+1).padStart(2,"0")+" / 08 · "+(D.slug==="dynamic-memory"?(current<4?"필수 학습 · CORE":"선택 심화 · OPTIONAL"):(current<4?"BEFORE CLASS":current<7?"IN CLASS":"AFTER CLASS")));
  element("h2","",stage,l.title);element("p","lead",stage,l.goal);
  const concept=element("section","concept",stage);
  element("h3","",concept,"Understand · 핵심 개념");element("p","",concept,l.concept);
@@ -267,14 +276,14 @@ function init(){
  $("site-title").textContent=D.title+" Learning Journey";
  $("hero-title").textContent=D.title+" Learning Journey";
  $("hero-summary").textContent=D.summary;
- $("hero-count").textContent="8 Essential Steps · "+D.book;
+ $("hero-count").textContent=(D.slug==="dynamic-memory"?"4 Core + 4 Optional · ":"8 Essential Steps · ")+D.book;
  $("course-number").textContent=D.book;
  $("phase-one").textContent=D.phases[0];$("phase-two").textContent=D.phases[1];$("phase-three").textContent=D.phases[2];
  const back=$("back-link");if(back)back.href="../";
  $("related-link").href=D.related; $("related-link").textContent="Related "+D.relatedTitle+" →";
  $("practice").replaceChildren();
  D.practice.forEach((p,i)=>{
-  const article=element("article","",$("practice"));element("strong","",article,"P"+(i+1)+" · "+p.title);
+  const article=element("article","",$("practice"));element("strong","",article,"P"+(i+1)+" · "+(D.slug==="dynamic-memory"?(i<3?"[필수] ":"[선택] "):"")+p.title);
   element("p","",article,p.task);
   const details=element("details","",article);element("summary","",details,"Starter code and test case");
   createCode(details,p.starter);
