@@ -1,4 +1,4 @@
-name: C Arrays Strings Libraries Functions QA
+name: C Programming Authoring and Chapter QA
 on:
   push:
     paths:
@@ -10,6 +10,10 @@ on:
       - 'c-programming/practice-engine.js'
       - 'c-programming/course-catalog.json'
       - 'tests/c-four-chapters.mjs'
+      - 'tests/c-authoring-policy.mjs'
+      - 'tests/c-course-gcc.mjs'
+      - 'c-programming/_template/**'
+      - 'docs/C_PROGRAMMING_AUTHORING_STANDARD.md'
       - 'tests/c-site-integrity.mjs'
       - 'tests/c-four-chapters-browser.mjs'
       - '.github/workflows/c-four-chapters.yml'
@@ -22,10 +26,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Verify C11 examples and pedagogical content
+      - name: Verify chapter structure and all common-engine GCC C11 examples
         run: |
           node tests/c-site-integrity.mjs
-          node tests/c-four-chapters.mjs
+          node tests/c-authoring-policy.mjs
+          node tests/c-course-gcc.mjs
 
   browser-ui:
     runs-on: ubuntu-latest
