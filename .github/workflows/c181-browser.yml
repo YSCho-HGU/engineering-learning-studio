@@ -1,0 +1,31 @@
+name: C Chapter 181 Browser QA
+on:
+  push:
+    paths:
+      - 'c-programming/index.html'
+      - 'c-programming/dynamic-memory/**'
+      - 'c-programming/journey.js'
+      - 'c-programming/practice-engine.js'
+      - 'tests/c181-browser.mjs'
+      - '.github/workflows/c181-browser.yml'
+  workflow_dispatch:
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save playwright@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - name: Serve
+        run: python3 -m http.server 8765 --bind 127.0.0.1 &
+      - name: Test Chapter 181 and course cards
+        run: node tests/c181-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: c181-browser-screenshots
+          path: qa-*.png
+          retention-days: 7
