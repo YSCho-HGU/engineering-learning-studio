@@ -254,6 +254,7 @@ function show(i){
  const stage=$("lesson");stage.replaceChildren();
  element("div","tag",stage,"STEP "+String(current+1).padStart(2,"0")+" / "+String(total).padStart(2,"0")+" · "+(D.slug==="dynamic-memory"?(current<coreCount?"필수 학습 · CORE":"선택 심화 · OPTIONAL"):(current<phaseBreaks[0]?"BEFORE CLASS":current<phaseBreaks[1]?"IN CLASS":"AFTER CLASS")));
  element("h2","",stage,l.title);element("p","lead",stage,l.goal);
+ if(l.minutes)element("p","legend",stage,"권장 개념 학습 시간: 약 "+l.minutes+"분 · 코딩 실습은 별도");
  const concept=element("section","concept",stage);
  element("h3","",concept,"Understand · 핵심 개념");element("p","",concept,l.concept);
  const learn=element("div","learn",stage);
