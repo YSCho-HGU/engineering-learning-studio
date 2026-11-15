@@ -104,7 +104,7 @@ function renderTrace(stage,l){
  const next=element("button","action primary",controls,"Next →");
  const restart=element("button","action",controls,"Restart");
  let pointer=0;
- function showTrace(){
+ function showTrace(userAction=false){
   const step=steps[pointer];
   rendered.forEach((row,i)=>{row.classList.toggle("active",i+1===step.line);if(i+1===step.line)row.setAttribute("aria-current","step");else row.removeAttribute("aria-current")});
   status.textContent="Step "+(pointer+1)+" / "+steps.length+" · Line "+step.line;
@@ -112,11 +112,11 @@ function renderTrace(stage,l){
   explanation.textContent=step.meaning;
   position.textContent="Read the highlighted C line, then explain how the stored values change.";
   previous.disabled=pointer===0;next.disabled=pointer===steps.length-1;
-  rendered.find((row,i)=>i+1===step.line)?.scrollIntoView({block:"nearest",behavior:"instant"});
+  if(userAction){const row=rendered.find((r,i)=>i+1===step.line);if(row)code.parentElement.scrollTop=Math.max(0,row.offsetTop-code.offsetTop-65)}
  }
- previous.addEventListener("click",()=>{pointer=Math.max(0,pointer-1);showTrace()});
- next.addEventListener("click",()=>{pointer=Math.min(steps.length-1,pointer+1);showTrace()});
- restart.addEventListener("click",()=>{pointer=0;showTrace()});
+ previous.addEventListener("click",()=>{pointer=Math.max(0,pointer-1);showTrace(true)});
+ next.addEventListener("click",()=>{pointer=Math.min(steps.length-1,pointer+1);showTrace(true)});
+ restart.addEventListener("click",()=>{pointer=0;showTrace(true)});
  if(steps.length)showTrace();else section.hidden=true;
 }
 
