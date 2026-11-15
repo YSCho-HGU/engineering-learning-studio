@@ -46,3 +46,22 @@ node tests/c-journey-qa.mjs
 GitHub Actions: `.github/workflows/c-journey-qa.yml`; results in `qa-output/c-journey-qa.json`.
 
 **Release policy:** neither source-level PASS nor successful automated browser checks alone establish pedagogical effectiveness. Only mark runtime VERIFIED after inspecting actual workflow artifacts. Do not assert student competency without student work.
+
+
+## 2026-11-15 Follow-up: Q1/Q2/Q3 source review and trace controls
+
+- Fixed Pointer/Structure runtime initialization bug: missing `back-link` target no longer aborts `init()`.
+- Added line-highlighted **Guided Execution** with Previous/Next/Restart, manually verified variable/memory snapshots, and no C-code interpreter claims. Source mapping contains **34 pointer trace steps and 27 structure trace steps**, all resolving to the lesson C listings.
+- Improved introductory prediction question distractors: correct answers distributed across positions; alternatives now represent likely output misinterpretations instead of generic compile-failure placeholders.
+- Fixed illustrative `&x` address marker (previously mislabeled as `&p`). Model addresses remain purely illustrative.
+- Prevented initial trace rendering from scrolling learners past the introduction.
+- Extended Chromium QA to capture 12 screenshots: Pointer, Structure, File I/O × 390/1280 widths × light/dark, plus Pointer/Structure trace next/previous interactions and existing navigation/quiz checks.
+- **Source checks completed** (GitHub connector review): 16/16 lessons have 61/61 source-matched trace steps, 16/16 distinct quiz-option sets, 16/16 expected-answer mappings, shared renderer JavaScript syntax parses. This is not the same as live browser confirmation.
+- **Runtime status:** GCC cross-check and real browser screenshot workflow created but run output/artifacts have not been retrieved and examined. Do not mark production browser QA VERIFIED until results and representative screenshots have been reviewed.
+
+### Reviewer priorities after the first complete Chromium run
+1. Each course first screen versus File I/O header/3-phase/left navigation and code card in both themes.
+2. Guided trace active line remains visible on mobile without page-level horizontal overflow.
+3. Select quiz answer and verify on-screen explanation, then navigate forward/back without state corruption.
+4. Code text is not cut at 390px and copy-starter link provides the whole C11 starter.
+5. Verify GCC expected output across all 16 examples and verify student explanations for pointer aliasing and structure-copy semantics.
