@@ -146,7 +146,7 @@ while (fgets(line, sizeof line, fp) != NULL) {
   <div class="core-transfer-heading"><span>필수 적용 · STEP 04</span><h3 id="core-transfer-title-4">한 줄 읽기와 숫자 변환을 실제 입력에 적용</h3><p>같은 입력 파일을 처음부터 각각 새로 읽는 두 경우를 생각해 보세요.</p></div>
   <div class="core-transfer-layout">
     <div class="core-transfer-code"><strong>Code fragment · C 핵심 흐름</strong><pre>/* input.txt: Hello World\n */
-/* 두 호출은 파일을 새로 연 각각의 독립 예제입니다. */
+/* 아래 A, B는 파일을 새로 연 별도 예제입니다. */
 fscanf(fp, &quot;%19s&quot;, word);
 fgets(line, sizeof line, fp);
 
