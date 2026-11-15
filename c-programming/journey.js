@@ -77,6 +77,10 @@ function modelOutput(model,v){
  case "free":return "Allocated block of "+v+" int slot(s)\nBefore free: valid if allocation succeeded\nAfter free: object lifetime ended; do NOT dereference or free again\nAssign p=NULL to prevent accidental reuse of this pointer.";
  case "sensor":return "Allocate "+v+" Sensor record(s)\nExample values: "+Array.from({length:v},(_,i)=>12+6*i).join(", ")+"\nMean: "+(12+3*(v-1)).toFixed(1)+"\nUse records, calculate results, and free the allocation.";
 
+ case "indexed-array":return "int values["+v+"] = {"+Array.from({length:v},(_,i)=>2*(i+1)).join(", ")+"}\\nValid indices: 0 ... "+(v-1)+"\\nRead a[i] only when i is within bounds.\\nSum = "+v*(v+1)+"; average = "+(v+1)+".";
+ case "cstring":return "char s["+ (v+1)+"] = {"+Array.from({length:v},(_,i)=>"'"+String.fromCharCode(65+i)+"'").join(", ")+", '\\0'}\\nstrlen(s) = "+v+"\\nsizeof s = "+(v+1)+"\\nCharacter array needs space for the null terminator.";
+ case "stdlib":return "Input n = "+v+"\\nabs(-n) = "+v+"\\nsqrt(n*n) = "+v+"\\nStandard function behavior depends on the declared input and output types.";
+ case "function-call":return "Call: twice("+v+")\\nParameter x receives a copy of "+v+"\\nreturn 2*x → "+(v*2)+"\\nCaller receives "+(v*2)+"; the original argument is not changed.";
  case "address":return "int x = "+v+";\nint *p = &x;\n&x → 0x1000 (illustrative)\np → 0x1000\n*p → "+v+"\nAddress and value are different.";
  case "write":return "Before: x = "+v+"\n*p = "+(v+7)+";\nAfter: x = "+(v+7)+"\n*p and x refer to the same object.";
  case "swap":return "Before: a = "+v+", b = "+(v+3)+"\nAfter swap(&a,&b):\na = "+(v+3)+", b = "+v;
