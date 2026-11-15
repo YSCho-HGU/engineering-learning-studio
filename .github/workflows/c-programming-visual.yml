@@ -1,0 +1,30 @@
+name: C Programming Landing Page Visual QA
+on:
+  push:
+    paths:
+      - 'c-programming/index.html'
+      - 'assets/els-theme-v2.css'
+      - 'assets/els-theme-v2.js'
+      - 'tests/c-programming-visual.mjs'
+      - '.github/workflows/c-programming-visual.yml'
+  workflow_dispatch:
+jobs:
+  visual-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save playwright@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - name: Serve repository
+        run: python3 -m http.server 8765 --bind 127.0.0.1 &
+      - name: Run viewport and theme checks
+        run: node tests/c-programming-visual.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: c-programming-screenshots
+          path: qa-c-*.png
+          retention-days: 7
