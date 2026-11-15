@@ -51,7 +51,7 @@ function renderQuiz(stage,l){
 }
 function modelOutput(model,v){
  switch(model.kind){
- case "address":return "int x = "+v+";\nint *p = &x;\n&p → 0x1000 (illustrative)\np → 0x1000\n*p → "+v+"\nAddress and value are different.";
+ case "address":return "int x = "+v+";\nint *p = &x;\n&x → 0x1000 (illustrative)\np → 0x1000\n*p → "+v+"\nAddress and value are different.";
  case "write":return "Before: x = "+v+"\n*p = "+(v+7)+";\nAfter: x = "+(v+7)+"\n*p and x refer to the same object.";
  case "swap":return "Before: a = "+v+", b = "+(v+3)+"\nAfter swap(&a,&b):\na = "+(v+3)+", b = "+v;
  case "array":return "a[0] = "+v+" at 0x1000\na[1] = "+(v+1)+" at 0x1004\na[2] = "+(v+2)+" at 0x1008\n*(a+1) = "+(v+1)+"\nAddresses assume sizeof(int)=4 for this illustration.";
