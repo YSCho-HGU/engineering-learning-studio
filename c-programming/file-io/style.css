@@ -21,3 +21,15 @@
 #mode-activity .live-row.selected{background:#5c451e!important;color:#fff3c5!important;border-left:5px solid #ffda65!important}
 #mode-activity .live-row.selected span:last-child{font-weight:750}
 #eof-trace{white-space:pre-wrap;font-family:Consolas,"Liberation Mono",monospace;font-variant-ligatures:none;line-height:1.7}
+
+/* Three-phase self-study route */
+.learning-route{max-width:1180px;margin:24px auto;padding:0 20px}
+.route-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.route-heading strong{font-size:1.05rem}.route-heading span,.route-note{color:var(--muted,#66788b);font-size:.83rem}
+.route-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.route-card{padding:17px;border:1px solid var(--border,#d5e0ed);border-radius:13px;background:var(--panel,#fff);min-width:0}
+.route-number{font-size:.73rem;font-weight:800;letter-spacing:.07em;color:var(--accent,#2273ac)}
+.route-card h2{font-size:1.05rem;margin:7px 0}.route-card p{font-size:.88rem;line-height:1.6;margin:7px 0 13px}
+.route-card strong{font-size:.83rem}.practice-link{display:inline-block;background:#126da8;color:white!important;padding:10px 14px;border-radius:9px;font-size:.88rem;font-weight:750;text-decoration:none}
+.practice-link:hover{background:#0b5483}.route-note{margin:10px 0}
+@media(max-width:720px){.route-cards{grid-template-columns:1fr}.route-heading{align-items:start;flex-direction:column}}
