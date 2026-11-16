@@ -80,6 +80,7 @@ function translate(root){
   const found=dict.get(trim);
   let translated=found?text.replace(trim,found):text;
   if(!found&&/[가-힣]/.test(text))for(const [ko,en] of fragments){if(translated.includes(ko))translated=translated.split(ko).join(en)}
+  if(/[가-힣]/.test(translated))translated=translated.replace(/\[필수\]/g,"[Core]").replace(/\[선택 심화\]|\[선택\]/g,"[Optional]").replace(/필수 Activity/g,"Core Activity").replace(/필수 Concept/g,"Core Concept").replace(/선택 심화 Activity/g,"Optional Activity").replace(/권장 개념 학습 시간: 약\s*(\d+)분 · 코딩 실습은 별도/g,"Suggested concept study: $1 min · Coding practice is separate");
   if(n.textContent!==translated)n.textContent=translated;
  }
 }
