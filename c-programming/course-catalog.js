@@ -15,6 +15,25 @@ const safeBook=url=>{
  }catch(e){}
  return null;
 };
+const groupsEn={
+ foundations:["Foundations","Input/output, expressions, decisions, and loops"],
+ data:["Arrays and Functions","Arrays, strings, standard libraries, and user-defined functions"],
+ memory:["Pointers, Structures, and Memory","Pointers and records, extending to files and dynamic allocation"],
+ advanced:["Data Structures and Integration","Linked lists, low-level C, and integrated applications"]
+};
+const descriptionsEn={
+ "131":"One- and two-dimensional arrays, indexing, loops, frequency counts, and sensor-data analysis",
+ "132":"Character arrays, null terminators, strlen/strcmp, and safe string processing",
+ "133":"Essential functions from math.h, ctype.h, stdlib.h, and string.h",
+ "141":"Function prototypes, definitions, calls, parameters, return values, and array arguments",
+ "151":"Values and addresses, dereferencing, swap, pointer arithmetic and safety · 6 core + 2 optional steps",
+ "161":"Structs and typedefs, member access, record arrays, function parameters and copying · 6 core + 2 optional steps",
+ "171":"Streams, file open/read/write, EOF, error handling and sensor logs · prioritize coding P1–P2",
+ "181":"malloc/free, pointers and dynamic arrays · 4 core + 4 optional steps"
+};
+let catalogCache=null;
+const english=()=>window.CCourseI18n?.get()==="en";
+const label=(ko,en)=>english()?en:ko;
 function roadmapNavigation(){
  function show(){
   const pane=$("course-overview-details");if(!pane)return;
@@ -33,25 +52,25 @@ function render(catalog){
  const lookup=new Map(chapters.map(c=>[c.id,c]));
  const ready=chapters.filter(c=>c.published&&safeLocalPath(c.url));
  const card=c=>{
-  const id=escape(c.id),title=escape(c.title),name=escape(c.chapter),desc=escape(c.description);
+  const id=escape(c.id),title=escape(c.title),name=escape(c.chapter),desc=escape(english()?(descriptionsEn[c.id]||c.title):c.description);
   const book=safeBook(c.book);
-  return '<article class="path-card"><span class="number">'+name+' / Chapter '+name+'</span><h3>'+title+'</h3><p>'+desc+'</p><a class="open stretch-link" href="'+c.url+'" aria-label="Chapter '+name+' '+title+' 학습 열기">학습 시작 <span aria-hidden="true">→</span></a><div class="resource-links">'+(book?'<a href="'+book+'" target="_blank" rel="noopener noreferrer">교재 '+id+' ↗</a>':'')+'</div></article>';
+  return '<article class="path-card"><span class="number">'+name+' / Chapter '+name+'</span><h3>'+title+'</h3><p>'+desc+'</p><a class="open stretch-link" href="'+c.url+'" aria-label="Chapter '+name+' '+title+' '+label(''+label('학습 열기','Open lesson')+'','Open lesson')+'">'+label('학습 시작','Start learning')+' <span aria-hidden="true">→</span></a><div class="resource-links">'+(book?'<a href="'+book+'" target="_blank" rel="noopener noreferrer">교재 '+id+' ↗</a>':'')+'</div></article>';
  };
- $("available-count").textContent=ready.length+"개 단원 공개";
+ $("available-count").textContent=ready.length+label("개 단원 공개"," chapters available");
  $("available-chapters").innerHTML=ready.map(card).join("");
- $("available-overview-count").textContent=ready.length+"개";
- $("pending-overview-count").textContent=(chapters.length-ready.length)+"개";
+ $("available-overview-count").textContent=ready.length+label("개","");
+ $("pending-overview-count").textContent=(chapters.length-ready.length)+label("개","");
  $("units").innerHTML=catalog.groups.map((group,index)=>{
   const entries=chapters.filter(c=>c.group===group.id);
   const body=entries.map(c=>{
    const active=c.published&&safeLocalPath(c.url);
    const title=escape(c.title),id=escape(c.id);
-   const detail=active?(c.id==="181"?"필수 4단계 · 선택 심화 4단계":"인터랙티브 학습 공개"):"학습 콘텐츠 준비 중";
+   const detail=active?(c.id==="181"?label("필수 4단계 · 선택 심화 4단계","4 core steps · 4 optional steps"):label("인터랙티브 학습 공개","Interactive lesson available")):label("학습 콘텐츠 '+label('준비 중','Coming soon')+'","Lesson in preparation");
    const content='<span class="id">'+id+'</span><span class="details"><strong>'+title+'</strong><small>'+detail+'</small></span>';
-   return active?'<a class="unit unit-live" href="'+c.url+'" aria-label="'+id+' '+title+' 학습 열기"><span class="unit-status live" aria-label="학습 가능"><span class="status-dot" aria-hidden="true"></span>학습 가능</span>'+content+'<span class="unit-action" aria-hidden="true">열기 →</span></a>':'<article class="unit unit-pending" aria-label="'+id+' '+title+' 준비 중"><span class="unit-status pending"><span class="status-dot" aria-hidden="true"></span>준비 중</span>'+content+'</article>';
+   return active?'<a class="unit unit-live" href="'+c.url+'" aria-label="'+id+' '+title+' '+label('학습 열기','Open lesson')+'"><span class="unit-status live" aria-label="'+label('학습 가능','Available')+'"><span class="status-dot" aria-hidden="true"></span>'+label('학습 가능','Available')+'</span>'+content+'<span class="unit-action" aria-hidden="true">'+label('열기','Open')+' →</span></a>':'<article class="unit unit-pending" aria-label="'+id+' '+title+' '+label('준비 중','Coming soon')+'"><span class="unit-status pending"><span class="status-dot" aria-hidden="true"></span>'+label('준비 중','Coming soon')+'</span>'+content+'</article>';
   }).join("");
   const count=entries.filter(c=>c.published&&safeLocalPath(c.url)).length;
-  return '<section class="course-group'+(count===0?' course-group-upcoming':'')+'" aria-labelledby="course-group-'+index+'"><div class="course-group-head"><div><span class="course-group-kicker">'+String(index+1).padStart(2,"0")+' · '+escape(group.en)+'</span><h3 id="course-group-'+index+'">'+escape(group.title)+'</h3><p>'+escape(group.description)+'</p></div><span class="course-group-count'+(count>0?' has-live':'')+'">'+(count?count+' / '+entries.length+' 학습 가능':'공개 준비 중')+'</span></div><div class="unit-grid">'+body+'</div></section>';
+  return '<section class="course-group'+(count===0?' course-group-upcoming':'')+'" aria-labelledby="course-group-'+index+'"><div class="course-group-head"><div><span class="course-group-kicker">'+String(index+1).padStart(2,"0")+' · '+escape(group.en)+'</span><h3 id="course-group-'+index+'">'+escape(english()?(groupsEn[group.id]?.[0]||group.en):group.title)+'</h3><p>'+escape(english()?(groupsEn[group.id]?.[1]||group.description):group.description)+'</p></div><span class="course-group-count'+(count>0?' has-live':'')+'">'+(count?count+' / '+entries.length+' '+label('학습 가능','available')+'':'공개 '+label('준비 중','Coming soon')+'')+'</span></div><div class="unit-grid">'+body+'</div></section>';
  }).join("");
 }
 try{
@@ -59,11 +78,12 @@ try{
  if(!response.ok)throw Error("HTTP "+response.status);
  const catalog=await response.json();
  if(!Array.isArray(catalog.chapters)||!Array.isArray(catalog.groups))throw Error("Invalid chapter catalog");
- render(catalog);
+ catalogCache=catalog;render(catalog);
 }catch(e){
  $("available-count").textContent="단원 정보를 불러오지 못했습니다";
  $("available-chapters").textContent="단원 목록을 표시하지 못했습니다. 페이지를 새로고침해 주세요.";
  $("units").textContent="Course Overview를 불러올 수 없습니다.";
  console.error("C course catalog:",e);
 }
+window.CCourseI18n?.subscribe(()=>{if(catalogCache)render(catalogCache)});
 })();
