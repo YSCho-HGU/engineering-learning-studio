@@ -312,22 +312,17 @@ html{scroll-padding-top:90px}#roadmap{scroll-margin-top:90px}
  ];
  const nodes=[...document.querySelectorAll("body *")].filter(n=>n.children.length===0 && n.tagName!=="SCRIPT" && n.tagName!=="STYLE");
  for(const n of nodes){const text=n.textContent;for(const [ko,en] of phrase){if(text===ko){n.dataset.cKo=ko;n.dataset.cEn=en;break;}}}
- let lang="mixed";try{const stored=localStorage.getItem("els-language");if(["en","ko","mixed"].includes(stored))lang=stored}catch(e){}
+ const language=window.ELSLanguage;
+if(!language)throw Error("Shared language module was not loaded");
+let lang=language.get();
  function apply(next){lang=next;select.value=next;document.documentElement.lang=next==="en"?"en":"ko";
  document.getElementById("c-language-label").textContent=next==="ko"?"언어":"Language";
  for(const node of document.querySelectorAll("[data-c-ko]"))node.textContent=next==="en"?node.dataset.cEn:node.dataset.cKo;
  window.dispatchEvent(new CustomEvent("els-language-change",{detail:{lang:next}}));
  }
- select.addEventListener("change",()=>{try{localStorage.setItem("els-language",select.value)}catch(e){}apply(select.value)});
+ language.bindSelect(select);
  window.CCourseI18n={get:()=>lang,subscribe:f=>window.addEventListener("els-language-change",e=>f(e.detail.lang))};
- window.addEventListener("storage",event=>{
-  if(event.key!=="els-language"||!["mixed","en","ko"].includes(event.newValue)||event.newValue===lang)return;
-  apply(event.newValue);
- });
- window.addEventListener("pageshow",()=>{
-  try{const saved=localStorage.getItem("els-language");if(["mixed","en","ko"].includes(saved)&&saved!==lang)apply(saved)}catch(e){}
- });
-
+ language.subscribe(next=>{if(next!==lang)apply(next)});
  apply(lang);
 })();
-</script><script src="./course-catalog.js?v=3" defer></script><script src="../assets/els-theme-v2.js?v=2" defer></script></body></html>
+</script><script src="../assets/els-language.js?v=1"></script><script src="./course-catalog.js?v=3" defer></script><script src="../assets/els-theme-v2.js?v=2" defer></script></body></html>
