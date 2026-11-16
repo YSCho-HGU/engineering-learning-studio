@@ -27,9 +27,9 @@ for(const width of [390,1280]){
  if(!(await page.locator("#buffer-cells .buffer-cell.null").innerText()).includes("79"))errors.push(width+" terminator must be at index 79");
  await page.locator("#buffer-scenario").selectOption("missing");await next.click();
  if(!(await page.locator("#buffer-source-state").innerText()).includes("실패"))errors.push(width+" missing file should show fopen failure");
- await page.locator("[data-go-task="0"]").click();
+ await page.locator('[data-go-task="0"]').click();
  if(await explorer.isVisible())errors.push(width+" M1 explorer should hide on P1");
- await page.locator("[data-go-task="6"]").click();
+ await page.locator('[data-go-task="6"]').click();
  if(!await explorer.isVisible())errors.push(width+" M1 explorer should return on M1");
  await page.locator("#buffer-play").click();
  if(await page.locator("#buffer-play").getAttribute("aria-pressed")!=="true")errors.push(width+" autoplay not activated");
