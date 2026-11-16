@@ -30,7 +30,7 @@ const stages=[...io.matchAll(/<section class="stage" data-stage="(\d+)"/g)].map(
 // File I/O is an independently authored HTML course. Keep its existing 8 purposeful stages.
 const navigation=[...io.matchAll(/<button data-nav="(\d+)"/g)].map(m=>Number(m[1]));
 if(stages.length!==8||navigation.length!==8||stages.some((n,i)=>n!==i)||navigation.some((n,i)=>n!==i))failures.push("file-io: 8 existing stages/navigation must stay aligned");
-if(!io.includes("P1(파일 쓰기)·P2(읽기·평균)"))failures.push("file-io: essential P1/P2 guidance missing");
+if(!["P1(정수 파일 쓰기)","P2(실수 파일 읽기·평균)","M1(한 줄 복사)"].every(token=>io.includes(token)))failures.push("file-io: core P1/P2/M1 guidance missing");
 const engine=readFileSync("c-programming/journey.js","utf8");
 if(!engine.includes("const hasOptional=")||!engine.includes("const total=D.lessons.length"))failures.push("shared journey: dynamic Core/optional support missing");
 const practice=readFileSync("c-programming/practice-engine.js","utf8");
