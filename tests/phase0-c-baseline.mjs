@@ -74,7 +74,7 @@ try{
   const before=await page.evaluate(keys=>Object.fromEntries(keys.map(k=>[k,localStorage.getItem(k)])),Object.keys(fixture));
   for(const mode of ["mixed","en","ko"]){
    await page.goto(base+"c-programming/",{waitUntil:"load"});
-   assert((await page.locator("#units .unit").count())===8,prefix+"-c-home-units-"+mode);
+   assert((await page.locator("#available-chapters .path-card").count())===8,prefix+"-c-home-units-"+mode);
    const selected=await page.evaluate(()=>window.ELSLanguage?.get());
    assert(selected===mode,prefix+"-lang-"+mode,String(selected));
    if(mode!=="ko"){
