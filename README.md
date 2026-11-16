@@ -54,3 +54,7 @@ Continuous checks: [.github/workflows/c-authoring-policy.yml](.github/workflows/
 ## Deployment
 
 Static GitHub Pages site published from the repository root. Module data and browser learning experiences are independent; the admin writes course catalog data through authenticated GitHub APIs.
+
+## Shared language standard for new courses
+
+Use [PLATFORM_LANGUAGE_STANDARD.md](./docs/PLATFORM_LANGUAGE_STANDARD.md) for the common `ENG / 한국어 / ENG + 한국어` contract. New Python and Logic Design courses should include [`assets/els-language.js`](./assets/els-language.js) and follow the [example implementation](./docs/examples/course-language-example.js). The existing Studio, C and Signals & Systems pages already share `localStorage["els-language"]`; do not create a new preference key.
