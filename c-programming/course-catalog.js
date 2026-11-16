@@ -54,7 +54,7 @@ function render(catalog){
  const card=c=>{
   const id=escape(c.id),title=escape(c.title),name=escape(c.chapter),desc=escape(english()?(descriptionsEn[c.id]||c.title):c.description);
   const book=safeBook(c.book);
-  return '<article class="path-card"><span class="number">'+name+' / Chapter '+name+'</span><h3>'+title+'</h3><p>'+desc+'</p><a class="open stretch-link" href="'+c.url+'" aria-label="Chapter '+name+' '+title+' '+label(''+label('학습 열기','Open lesson')+'','Open lesson')+'">'+label('학습 시작','Start learning')+' <span aria-hidden="true">→</span></a><div class="resource-links">'+(book?'<a href="'+book+'" target="_blank" rel="noopener noreferrer">교재 '+id+' ↗</a>':'')+'</div></article>';
+  return '<article class="path-card"><span class="number">'+name+' / Chapter '+name+'</span><h3>'+title+'</h3><p>'+desc+'</p><a class="open stretch-link" href="'+c.url+'" aria-label="Chapter '+name+' '+title+' '+label('학습 열기','Open lesson')+'">'+label('학습 시작','Start learning')+' <span aria-hidden="true">→</span></a><div class="resource-links">'+(book?'<a href="'+book+'" target="_blank" rel="noopener noreferrer">교재 '+id+' ↗</a>':'')+'</div></article>';
  };
  $("available-count").textContent=ready.length+label("개 단원 공개"," chapters available");
  $("available-chapters").innerHTML=ready.map(card).join("");
@@ -65,12 +65,12 @@ function render(catalog){
   const body=entries.map(c=>{
    const active=c.published&&safeLocalPath(c.url);
    const title=escape(c.title),id=escape(c.id);
-   const detail=active?(c.id==="181"?label("필수 4단계 · 선택 심화 4단계","4 core steps · 4 optional steps"):label("인터랙티브 학습 공개","Interactive lesson available")):label("학습 콘텐츠 '+label('준비 중','Coming soon')+'","Lesson in preparation");
+   const detail=active?(c.id==="181"?label("필수 4단계 · 선택 심화 4단계","4 core steps · 4 optional steps"):label("인터랙티브 학습 공개","Interactive lesson available")):label('학습 콘텐츠 준비 중','Lesson in preparation');
    const content='<span class="id">'+id+'</span><span class="details"><strong>'+title+'</strong><small>'+detail+'</small></span>';
    return active?'<a class="unit unit-live" href="'+c.url+'" aria-label="'+id+' '+title+' '+label('학습 열기','Open lesson')+'"><span class="unit-status live" aria-label="'+label('학습 가능','Available')+'"><span class="status-dot" aria-hidden="true"></span>'+label('학습 가능','Available')+'</span>'+content+'<span class="unit-action" aria-hidden="true">'+label('열기','Open')+' →</span></a>':'<article class="unit unit-pending" aria-label="'+id+' '+title+' '+label('준비 중','Coming soon')+'"><span class="unit-status pending"><span class="status-dot" aria-hidden="true"></span>'+label('준비 중','Coming soon')+'</span>'+content+'</article>';
   }).join("");
   const count=entries.filter(c=>c.published&&safeLocalPath(c.url)).length;
-  return '<section class="course-group'+(count===0?' course-group-upcoming':'')+'" aria-labelledby="course-group-'+index+'"><div class="course-group-head"><div><span class="course-group-kicker">'+String(index+1).padStart(2,"0")+' · '+escape(group.en)+'</span><h3 id="course-group-'+index+'">'+escape(english()?(groupsEn[group.id]?.[0]||group.en):group.title)+'</h3><p>'+escape(english()?(groupsEn[group.id]?.[1]||group.description):group.description)+'</p></div><span class="course-group-count'+(count>0?' has-live':'')+'">'+(count?count+' / '+entries.length+' '+label('학습 가능','available')+'':'공개 '+label('준비 중','Coming soon')+'')+'</span></div><div class="unit-grid">'+body+'</div></section>';
+  return '<section class="course-group'+(count===0?' course-group-upcoming':'')+'" aria-labelledby="course-group-'+index+'"><div class="course-group-head"><div><span class="course-group-kicker">'+String(index+1).padStart(2,"0")+' · '+escape(group.en)+'</span><h3 id="course-group-'+index+'">'+escape(english()?(groupsEn[group.id]?.[0]||group.en):group.title)+'</h3><p>'+escape(english()?(groupsEn[group.id]?.[1]||group.description):group.description)+'</p></div><span class="course-group-count'+(count>0?' has-live':'')+'">'+(count?count+' / '+entries.length+' '+label('학습 가능','available')+'':label('공개 준비 중','Coming soon'))+'</span></div><div class="unit-grid">'+body+'</div></section>';
  }).join("");
 }
 try{
