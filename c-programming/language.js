@@ -102,5 +102,18 @@ function setup(){
  }
  renderLang();observer.observe(document.body,{subtree:true,childList:true,characterData:true});
 }
+/* C lesson and practice engines read the language at initialization.
+   Reload only when another tab changes the preference, preserving drafts
+   and progress stored under their existing stable keys. */
+window.addEventListener("storage",event=>{
+ if(event.key!==KEY||!["mixed","ko","en"].includes(event.newValue)||event.newValue===lang)return;
+ location.reload();
+});
+window.addEventListener("pageshow",event=>{
+ try{
+  const saved=localStorage.getItem(KEY);
+  if(["mixed","ko","en"].includes(saved)&&saved!==lang)location.reload();
+ }catch(e){}
+});
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",setup,{once:true});else setup();
 })();
