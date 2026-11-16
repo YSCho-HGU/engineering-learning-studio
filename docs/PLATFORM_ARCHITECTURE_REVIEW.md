@@ -200,3 +200,15 @@ The greatest immediate architectural benefit is a **read-only cross-course progr
 - **Deferred:** Server-based student identity, synchronization and trusted automatic code evaluation.
 - **Deferred:** Physically consolidating two repositories or replacing offline S&S labs with a centralized runtime.
 - **Non-negotiable:** Existing code, lessons, diagrams, graphs, student drafts and assessment semantics must remain correct and accessible.
+
+
+## 11. Implemented read-only progress dashboard (2026-11-16)
+
+- URL: `/engineering-learning-studio/progress/`; source: `progress/index.html`, `progress/dashboard.js`, `progress/dashboard.css`.
+- Shows published C units 131, 132, 133, 141, 151, 161, 171, and 181. Uses the exact current content and practice revisions read from each C data source.
+- Read-only projection of `els-journey-<slug>-v<contentRevision>`, `els-concept-<slug>-v<contentRevision>`, `els-code-<slug>-v<practiceRevision>`, `els-code-evidence-<slug>-v<practiceRevision>`, with dedicated File I/O legacy keys. No source code, draft body or student notes are displayed or transmitted.
+- Activity (marked reviewed), concept checks, saved drafts and GCC self-reports remain separate. The core activity percent is not a grade.
+- **Signals & Systems:** No persistent completed-experiment record was identified in the deployed integration code. Accordingly the dashboard displays *completion tracking not connected*, **not 0%**. It links to the SS lab without fabricating completion data.
+- Dashboard and both course homepages are linked; changes are refreshed when reopening the page, on `storage` events and via the Refresh control.
+- Data is browser-local and same-origin. No account attribution, cross-device sync, server grading or admin access to student progress is implied.
+- Verification: JavaScript syntax checks and GitHub file presence/link checks passed. Full browser E2E and sample-user fixture tests are still pending.
