@@ -66,7 +66,7 @@ function translate(root){
  if(!scope)return;
  const walker=document.createTreeWalker(scope,NodeFilter.SHOW_TEXT);
  let n;while((n=walker.nextNode())){
-  const p=n.parentElement;if(!p||["SCRIPT","STYLE","PRE","CODE","TEXTAREA","OPTION"].includes(p.tagName)||p.closest("pre,code,textarea"))continue;
+  const p=n.parentElement;if(!p||["SCRIPT","STYLE","PRE","CODE","TEXTAREA"].includes(p.tagName)||p.closest("pre,code,textarea,#c-shared-language"))continue;
   if(!originals.has(n))originals.set(n,n.textContent);
   const text=originals.get(n),trim=text.trim();
   const found=dict.get(trim);
