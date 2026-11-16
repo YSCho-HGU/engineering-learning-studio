@@ -18,6 +18,8 @@ function applyContent(mode){
  original.lessons.forEach((l,i)=>{
   const en=english.lessons?.[i];if(!en)return;
   for(const k of ["goal","concept","predict","transfer","guide"]){if(typeof en[k]==="string")l[k]=en[k]}
+  if(en.model && l.model)Object.assign(l.model,en.model);
+  if(Array.isArray(en.trace)&&Array.isArray(l.trace))l.trace.forEach((item,j)=>{if(en.trace[j]?.meaning)item.meaning=en.trace[j].meaning});
   if(en.quiz){for(const k of ["q","explain"])if(typeof en.quiz[k]==="string")l.quiz[k]=en.quiz[k];
    if(Array.isArray(en.quiz.options)&&en.quiz.options.length===l.quiz.options.length)l.quiz.options=en.quiz.options;}
  });
