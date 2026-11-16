@@ -78,7 +78,7 @@ function translate(root){
 }
 function restore(){const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;while((n=walker.nextNode()))if(originals.has(n)&&n.textContent!==originals.get(n))n.textContent=originals.get(n)}
 let pending=false;
-const observer=new MutationObserver(()=>{if(pending)return;pending=true;queueMicrotask(()=>{pending=false;observer.disconnect();translate(document.body);observer.observe(document.body,{subtree:true,childList:true,characterData:true})})});
+const observer=new MutationObserver(mutations=>{for(const change of mutations){if(change.type==="characterData")originals.delete(change.target)}if(pending)return;pending=true;queueMicrotask(()=>{pending=false;observer.disconnect();translate(document.body);observer.observe(document.body,{subtree:true,childList:true,characterData:true})})});
 function renderLang(){document.documentElement.lang=lang==="en"?"en":"ko";restore();translate(document.body);}
 function setup(){
  const nav=document.querySelector(".toplinks,.header-nav,.topbar,.site-header");
