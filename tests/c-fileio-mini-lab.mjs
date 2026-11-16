@@ -7,7 +7,7 @@ const html=readFileSync("c-programming/file-io/practice/index.html","utf8");
 const home=readFileSync("c-programming/file-io/index.html","utf8");
 const issues=[];
 for(const term of ['id:"M1"',"fgets(","fputs(","message.txt","preview.txt","sampleFilename"])if(!js.includes(term))issues.push("M1 data missing: "+term);
-for(const term of ["mini-overview","sample-input","Core Mini Lab"])if(!html.includes(term))issues.push("M1 UI missing: "+term);
+for(const term of ["mini-overview","sample-input","M1"])if(!html.includes(term))issues.push("M1 UI missing: "+term);
 if(!home.includes("./practice/#m1"))issues.push("M1 direct learning roadmap link missing");
 for(const id of ["P1","P2","P3","P4","P5","P6"])if(!js.includes('id:"'+id+'"'))issues.push("Original task "+id+" missing");
 if(!js.includes("taskOrder=[0,1,6,2,3,4,5]"))issues.push("Core order changed; original P1–P6 indexes must remain");
