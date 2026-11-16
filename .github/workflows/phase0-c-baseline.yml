@@ -1,0 +1,39 @@
+name: Phase 0 C and Studio Baseline
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'admin/**'
+      - 'assets/els-language.js'
+      - 'assets/els-theme-v2.js'
+      - 'assets/els-theme-v2.css'
+      - 'c-programming/**'
+      - 'progress/**'
+      - 'tests/phase0-c-baseline.mjs'
+      - 'docs/phase0/c-storage-baseline.json'
+      - '.github/workflows/phase0-c-baseline.yml'
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Run isolated read-only C baseline and storage fixtures
+        run: node tests/phase0-c-baseline.mjs
+      - name: Upload baseline evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase0-c-baseline-evidence
+          path: qa-phase0/
+          if-no-files-found: warn
+          retention-days: 14
