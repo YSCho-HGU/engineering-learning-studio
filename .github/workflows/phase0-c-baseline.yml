@@ -12,6 +12,7 @@ on:
       - 'c-programming/**'
       - 'progress/**'
       - 'tests/phase0-c-baseline.mjs'
+      - 'tests/phase0-storage-scan.mjs'
       - 'docs/phase0/c-storage-baseline.json'
       - '.github/workflows/phase0-c-baseline.yml'
 jobs:
@@ -29,7 +30,7 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Run isolated read-only C baseline and storage fixtures
         run: node tests/phase0-c-baseline.mjs
-      - name: Upload baseline evidence
+      - name: Inventory storage access sites (source only)\n        if: always()\n        run: node tests/phase0-storage-scan.mjs\n      - name: Upload baseline evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
