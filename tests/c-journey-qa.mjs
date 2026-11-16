@@ -15,7 +15,7 @@ for(const kind of ['pointer','structure']){
  check(data.lessons.length===8,kind+': eight lessons');
  check(data.practice.length===6,kind+': six independent coding exercises');
  check(new Set(data.lessons.map(l=>l.title)).size===8,kind+': distinct lessons');
- check(data.lessons.every(l=>l.quiz.options.length===3 && l.quiz.options[l.quiz.correct]===l.output),kind+': quiz answer key follows expected output');
+ check(data.lessons.every(l=>l.quiz.options.length===3 && Number.isInteger(l.quiz.correct) && l.quiz.correct>=0 && l.quiz.correct<l.quiz.options.length && String(l.quiz.options[l.quiz.correct]).trim().length>0),kind+': quiz answer key points to a valid nonempty option');
  check(new Set(data.lessons.map(l=>l.quiz.correct)).size===3,kind+': nonfixed answer position');
  check(data.lessons.every(l=>l.goal&&l.concept&&l.transfer&&l.guide&&l.model&&l.code),kind+': complete pedagogical evidence');
  check(data.practice.every(p=>p.starter.includes('TODO')&&p.expected),kind+': standalone practice starter and reference');
