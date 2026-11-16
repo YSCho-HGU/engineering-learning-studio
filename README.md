@@ -58,3 +58,7 @@ Static GitHub Pages site published from the repository root. Module data and bro
 ## Shared language standard for new courses
 
 Use [PLATFORM_LANGUAGE_STANDARD.md](./docs/PLATFORM_LANGUAGE_STANDARD.md) for the common `ENG / 한국어 / ENG + 한국어` contract. New Python and Logic Design courses should include [`assets/els-language.js`](./assets/els-language.js) and follow the [example implementation](./docs/examples/course-language-example.js). The existing Studio, C and Signals & Systems pages already share `localStorage["els-language"]`; do not create a new preference key.
+
+## Cross-course platform architecture
+
+See [Platform Architecture Review & Migration Plan](./docs/PLATFORM_ARCHITECTURE_REVIEW.md) for the recommended modular structure covering language, theme, learning progress, assessment evidence, catalog publication, and administrator workflows. This is a design review; it does not migrate existing student data or replace the independent learning engines.
