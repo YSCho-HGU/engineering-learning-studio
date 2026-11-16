@@ -62,3 +62,7 @@ Use [PLATFORM_LANGUAGE_STANDARD.md](./docs/PLATFORM_LANGUAGE_STANDARD.md) for th
 ## Cross-course platform architecture
 
 See [Platform Architecture Review & Migration Plan](./docs/PLATFORM_ARCHITECTURE_REVIEW.md) for the recommended modular structure covering language, theme, learning progress, assessment evidence, catalog publication, and administrator workflows. This is a design review; it does not migrate existing student data or replace the independent learning engines.
+
+## Phase 0 — Preservation Baseline
+
+The [Phase 0 Baseline Report](./docs/phase0/PHASE0_BASELINE_REPORT.md) documents source-derived localStorage access, pinned course revisions, read-only isolated Chromium fixtures, C/S&S regression results and remaining pre-existing CI issues. Avoid schema migrations until the Phase 0 compatibility gates remain green.
