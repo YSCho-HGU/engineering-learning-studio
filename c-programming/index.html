@@ -258,29 +258,68 @@ html{scroll-padding-top:90px}#roadmap{scroll-margin-top:90px}
 @media(max-width:590px){.course-availability{padding:11px 12px;gap:7px 13px}.availability-help{width:100%;margin-left:0}.course-groups .unit{min-height:88px;gap:8px;padding:27px 10px 12px}.course-groups .unit-status{left:10px}.course-groups .unit-live .unit-action{padding:6px;font-size:11px}}
 @media(max-width:390px){.course-groups .unit{grid-template-columns:auto minmax(0,1fr)}.course-groups .unit-live .unit-action{grid-column:2;justify-self:start;margin-top:-3px}}
 
+.language-control{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px;font-weight:750;white-space:nowrap}
+.language-control select{color:var(--ink);background:var(--surface);border:1px solid var(--border);border-radius:8px;min-height:38px;padding:5px 8px}
+@media(max-width:590px){.language-control{margin-left:0}.language-control select{min-height:40px}}
 </style><link rel="stylesheet" href="../assets/els-theme-v2.css?v=3"></head>
 <body>
 <header class="site-header"><div class="wrap header-inner">
  <a class="brand" href="../" aria-label="Engineering Learning Studio home"><span class="brand-mark">◈</span><span>Engineering Learning Studio <span class="brand-course"> / C Programming</span></span></a>
- <nav class="header-nav" aria-label="Primary navigation"><a href="#learning">Learning Paths</a><a href="#roadmap" id="course-roadmap-link">Course Roadmap</a><label class="theme-control"><span>Theme</span><select id="theme" data-els-theme-picker aria-label="Theme"></select></label></nav>
+ <nav class="header-nav" aria-label="Primary navigation"><a href="#learning">Learning Paths</a><a href="#roadmap" id="course-roadmap-link">Course Roadmap</a><label class="language-control"><span id="c-language-label">Language</span><select id="c-language" aria-label="C Programming language"><option value="mixed">ENG + 한국어</option><option value="en">ENG</option><option value="ko">한국어</option></select></label><label class="theme-control"><span>Theme</span><select id="theme" data-els-theme-picker aria-label="Theme"></select></label></nav>
 </div></header>
 <main class="wrap">
 <section class="course-intro" aria-labelledby="home-title">
  <div class="overline">C PROGRAMMING · INTERACTIVE LEARNING</div>
  <h1 id="home-title">C Programming <span>Learning Studio</span></h1>
- <p>강의 순서대로 단원을 선택하세요. 개념 이해, 코드 실행 예측, 시각적 실험, 직접 코딩으로 학습합니다. 새 단원이 완성되면 아래 카드에 Chapter 순서대로 추가됩니다.</p>
- <div class="intro-actions"><a class="action primary" href="#learning">학습 가능한 단원 보기 ↓</a><a class="action" href="#roadmap" id="overview-action">전체 강의 로드맵</a></div>
+ <p data-i18n-ko="강의 순서대로 단원을 선택하세요. 개념 이해, 코드 실행 예측, 시각적 실험, 직접 코딩으로 학습합니다. 새 단원이 완성되면 아래 카드에 Chapter 순서대로 추가됩니다." data-i18n-en="Choose chapters in course order. Learn through concepts, output prediction, visual experiments, and hands-on C coding. New chapters appear below in textbook order.">강의 순서대로 단원을 선택하세요. 개념 이해, 코드 실행 예측, 시각적 실험, 직접 코딩으로 학습합니다. 새 단원이 완성되면 아래 카드에 Chapter 순서대로 추가됩니다.</p>
+ <div class="intro-actions"><a class="action primary" href="#learning" data-i18n-ko="학습 가능한 단원 보기 ↓" data-i18n-en="Browse available chapters ↓">학습 가능한 단원 보기 ↓</a><a class="action" href="#roadmap" id="overview-action" data-i18n-ko="전체 강의 로드맵" data-i18n-en="Full course roadmap">전체 강의 로드맵</a></div>
 </section>
 <section class="section" id="learning" aria-labelledby="learning-title">
- <div class="section-top"><div><div class="overline">AVAILABLE CHAPTERS</div><h2 id="learning-title">학습 가능한 단원</h2><p>완성된 단원만 표시합니다. 번호는 개발 순서가 아닌 교재 Chapter 순서입니다.</p></div><span class="available-count" id="available-count"></span></div>
+ <div class="section-top"><div><div class="overline">AVAILABLE CHAPTERS</div><h2 id="learning-title" data-i18n-ko="학습 가능한 단원" data-i18n-en="Available chapters">학습 가능한 단원</h2><p data-i18n-ko="완성된 단원만 표시합니다. 번호는 개발 순서가 아닌 교재 Chapter 순서입니다." data-i18n-en="Only published chapters are shown. Numbers follow textbook chapter order, not development order.">완성된 단원만 표시합니다. 번호는 개발 순서가 아닌 교재 Chapter 순서입니다.</p></div><span class="available-count" id="available-count"></span></div>
  <div class="path" id="available-chapters"></div>
 </section>
-<section class="method-bar" id="method" aria-labelledby="method-title"><h2 id="method-title">학습 방법 · 5-step Learning Cycle</h2><div class="method-steps">
- <div class="method-step"><b>01 Understand</b><span>핵심 개념 이해</span></div><div class="method-step"><b>02 Predict</b><span>실행 결과 예측</span></div><div class="method-step"><b>03 Explore</b><span>변수를 바꾸어 실험</span></div><div class="method-step"><b>04 Practice</b><span>코드 작성과 디버깅</span></div><div class="method-step"><b>05 Check</b><span>결과 설명과 점검</span></div>
+<section class="method-bar" id="method" aria-labelledby="method-title"><h2 id="method-title" data-i18n-ko="학습 방법 · 5-step Learning Cycle" data-i18n-en="Learning Method · Five-Step Cycle">학습 방법 · 5-step Learning Cycle</h2><div class="method-steps">
+ <div class="method-step"><b>01 Understand</b><span data-i18n-ko="핵심 개념 이해" data-i18n-en="Understand core concepts">핵심 개념 이해</span></div><div class="method-step"><b>02 Predict</b><span data-i18n-ko="실행 결과 예측" data-i18n-en="Predict program output">실행 결과 예측</span></div><div class="method-step"><b>03 Explore</b><span data-i18n-ko="변수를 바꾸어 실험" data-i18n-en="Explore by changing variables">변수를 바꾸어 실험</span></div><div class="method-step"><b>04 Practice</b><span data-i18n-ko="코드 작성과 디버깅" data-i18n-en="Write and debug code">코드 작성과 디버깅</span></div><div class="method-step"><b>05 Check</b><span data-i18n-ko="결과 설명과 점검" data-i18n-en="Explain and check results">결과 설명과 점검</span></div>
 </div></section>
-<section class="roadmap" id="roadmap" aria-labelledby="roadmap-title"><div class="section-top"><div><div class="overline">COURSE OVERVIEW</div><h2 id="roadmap-title">전체 강의 로드맵</h2><p>기초 문법에서 포인터·파일 처리, 자료구조와 종합 프로젝트까지</p></div></div>
- <details class="roadmap-panel" id="course-overview-details"><summary><span>전체 18개 단원 · 4개 학습 영역 <span class="hint">· 학습 가능한 단원과 준비 중인 단원을 구분해 표시합니다.</span></span><span class="chevron">⌄</span></summary><div class="course-availability" aria-label="단원 공개 상태 안내"><span class="availability-item availability-live"><span class="availability-dot" aria-hidden="true"></span><strong>학습 가능</strong><span id="available-overview-count"></span></span><span class="availability-item availability-pending"><span class="availability-dot" aria-hidden="true"></span><strong>준비 중</strong><span id="pending-overview-count"></span></span><span class="availability-help">학습 가능한 카드는 전체 영역을 클릭할 수 있습니다.</span></div><div class="course-groups" id="units"></div></details>
- <p class="disclosure">교재 링크는 Google Drive 공유 권한이 필요할 수 있습니다. 학습 완료 기록은 사용 중인 브라우저에 저장됩니다. 준비 중인 단원은 공개 후 학습 카드로 자동 추가할 수 있습니다.</p>
+<section class="roadmap" id="roadmap" aria-labelledby="roadmap-title"><div class="section-top"><div><div class="overline">COURSE OVERVIEW</div><h2 id="roadmap-title">전체 강의 로드맵</h2><p data-i18n-ko="기초 문법에서 포인터·파일 처리, 자료구조와 종합 프로젝트까지" data-i18n-en="From basic syntax to pointers, file processing, data structures, and integrated projects">기초 문법에서 포인터·파일 처리, 자료구조와 종합 프로젝트까지</p></div></div>
+ <details class="roadmap-panel" id="course-overview-details"><summary><span>전체 18개 단원 · 4개 학습 영역 <span class="hint">· 학습 가능한 단원과 준비 중인 단원을 구분해 표시합니다.</span></span><span class="chevron">⌄</span></summary><div class="course-availability" aria-label="단원 공개 상태 안내"><span class="availability-item availability-live"><span class="availability-dot" aria-hidden="true"></span><strong data-i18n-ko="학습 가능" data-i18n-en="Available">학습 가능</strong><span id="available-overview-count"></span></span><span class="availability-item availability-pending"><span class="availability-dot" aria-hidden="true"></span><strong data-i18n-ko="준비 중" data-i18n-en="Coming soon">준비 중</strong><span id="pending-overview-count"></span></span><span class="availability-help" data-i18n-ko="학습 가능한 카드는 전체 영역을 클릭할 수 있습니다." data-i18n-en="Click anywhere on an available chapter card.">학습 가능한 카드는 전체 영역을 클릭할 수 있습니다.</span></div><div class="course-groups" id="units"></div></details>
+ <p class="disclosure" data-i18n-ko="교재 링크는 Google Drive 공유 권한이 필요할 수 있습니다. 학습 완료 기록은 사용 중인 브라우저에 저장됩니다. 준비 중인 단원은 공개 후 학습 카드로 자동 추가할 수 있습니다." data-i18n-en="Textbook links may require Google Drive access. Learning progress is saved in this browser. Upcoming chapters appear when published.">교재 링크는 Google Drive 공유 권한이 필요할 수 있습니다. 학습 완료 기록은 사용 중인 브라우저에 저장됩니다. 준비 중인 단원은 공개 후 학습 카드로 자동 추가할 수 있습니다.</p>
 </section></main>
 <footer class="site-footer"><div class="wrap">C Programming · Engineering Learning Studio · 2026</div></footer>
-<script src="./course-catalog.js?v=2" defer></script><script src="../assets/els-theme-v2.js?v=2" defer></script></body></html>
+<script>
+/* C course language preference: shared with Studio home. */
+(function(){
+ const select=document.getElementById("c-language");
+ const phrase=[
+ ["강의 순서대로 단원을 선택하세요. 개념 이해, 코드 실행 예측, 시각적 실험, 직접 코딩으로 학습합니다. 새 단원이 완성되면 아래 카드에 Chapter 순서대로 추가됩니다.","Choose chapters in course order. Learn concepts, predict output, explore visual models, and practice C coding. New chapters appear in textbook order."],
+ ["학습 가능한 단원 보기 ↓","Browse available chapters ↓"],
+ ["전체 강의 로드맵","Full course roadmap"],
+ ["학습 가능한 단원","Available chapters"],
+ ["완성된 단원만 표시합니다. 번호는 개발 순서가 아닌 교재 Chapter 순서입니다.","Only published chapters are shown, in textbook chapter order."],
+ ["학습 방법 · 5-step Learning Cycle","Learning method · Five-step learning cycle"],
+ ["핵심 개념 이해","Understand core concepts"],
+ ["실행 결과 예측","Predict program output"],
+ ["변수를 바꾸어 실험","Explore by changing variables"],
+ ["코드 작성과 디버깅","Write and debug code"],
+ ["결과 설명과 점검","Explain and check results"],
+ ["기초 문법에서 포인터·파일 처리, 자료구조와 종합 프로젝트까지","From basic C syntax to pointers, file processing, data structures, and integrated projects"],
+ ["전체 18개 단원 · 4개 학습 영역 ","18 chapters · 4 curriculum areas "],
+ ["· 학습 가능한 단원과 준비 중인 단원을 구분해 표시합니다.","· Published and upcoming chapters are distinguished."],
+ ["학습 가능","Available"],
+ ["준비 중","Coming soon"],
+ ["학습 가능한 카드는 전체 영역을 클릭할 수 있습니다.","Click anywhere on an available chapter card."],
+ ["교재 링크는 Google Drive 공유 권한이 필요할 수 있습니다. 학습 완료 기록은 사용 중인 브라우저에 저장됩니다. 준비 중인 단원은 공개 후 학습 카드로 자동 추가할 수 있습니다.","Textbook links may require Google Drive sharing access. Progress is saved in this browser. Upcoming chapters appear once published."]
+ ];
+ const nodes=[...document.querySelectorAll("body *")].filter(n=>n.children.length===0 && n.tagName!=="SCRIPT" && n.tagName!=="STYLE");
+ for(const n of nodes){const text=n.textContent;for(const [ko,en] of phrase){if(text===ko){n.dataset.cKo=ko;n.dataset.cEn=en;break;}}}
+ let lang="mixed";try{const stored=localStorage.getItem("els-language");if(["en","ko","mixed"].includes(stored))lang=stored}catch(e){}
+ function apply(next){lang=next;select.value=next;document.documentElement.lang=next==="en"?"en":"ko";
+ document.getElementById("c-language-label").textContent=next==="ko"?"언어":"Language";
+ for(const node of document.querySelectorAll("[data-c-ko]"))node.textContent=next==="en"?node.dataset.cEn:node.dataset.cKo;
+ window.dispatchEvent(new CustomEvent("els-language-change",{detail:{lang:next}}));
+ }
+ select.addEventListener("change",()=>{try{localStorage.setItem("els-language",select.value)}catch(e){}apply(select.value)});
+ window.CCourseI18n={get:()=>lang,subscribe:f=>window.addEventListener("els-language-change",e=>f(e.detail.lang))};
+ apply(lang);
+})();
+</script><script src="./course-catalog.js?v=3" defer></script><script src="../assets/els-theme-v2.js?v=2" defer></script></body></html>
