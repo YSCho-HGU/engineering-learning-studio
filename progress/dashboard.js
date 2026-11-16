@@ -12,9 +12,9 @@ const catalog=[
 ];
 const $=id=>document.getElementById(id);
 const text={
- en:{heading:"Learning progress",subtitle:"Local records in this browser only — not a gradebook",activity:"Activity reviews",concept:"Correct concept checks",coding:"Self-reported GCC checks",draft:"Saved coding drafts",core:"Core",optional:"Optional",ss:"Signals & Systems",ssNA:"Completion tracking is not connected on the current Signals & Systems site. This does not mean 0% completion.",c:"C Programming",notes:"Activity ≠ correct quiz answer ≠ self-reported execution ≠ verified grading. No source code or notes are transmitted.",refresh:"Refresh local records",none:"No records yet",record:"Recorded",available:"Core learning",updated:"Updated from local browser",visit:"Open lesson",practice:"Coding practice",sslink:"Open Signals & Systems",progress:"Activity completion (core)",local:"Browser-only (same origin)",unavailable:"Unavailable in this browser",revisions:"Course revision"},
- ko:{heading:"학습 진도 통합 대시보드",subtitle:"현재 브라우저의 로컬 기록만 표시하며 성적표가 아닙니다",activity:"학습 활동 확인",concept:"개념 퀴즈 정답",coding:"GCC 실행 자기보고",draft:"저장된 코딩 초안",core:"필수",optional:"선택",ss:"신호 및 시스템",ssNA:"현재 Signals & Systems 사이트에는 완료 기록 기능이 연결되어 있지 않습니다. 학습 진도 0%를 의미하지 않습니다.",c:"C 프로그래밍",notes:"학습 활동 ≠ 퀴즈 정답 ≠ 실행 자기보고 ≠ 검증된 성적입니다. 작성 코드나 학습 노트는 전송하지 않습니다.",refresh:"로컬 기록 새로고침",none:"아직 기록 없음",record:"기록",available:"필수 학습",updated:"브라우저 저장소 기준",visit:"단원 열기",practice:"코딩 실습",sslink:"Signals & Systems 열기",progress:"필수 학습 활동 완료율",local:"동일 출처 브라우저 저장",unavailable:"현재 브라우저에서 사용할 수 없음",revisions:"콘텐츠 버전"},
- mixed:{heading:"Learning Progress · 학습 진도",subtitle:"Browser-local records · 현재 브라우저의 기록 (성적표 아님)",activity:"Activity · 학습 활동",concept:"Concept · 개념 정답",coding:"GCC self-report · 실행 자기보고",draft:"Drafts · 코드 초안",core:"Core · 필수",optional:"Optional · 선택",ss:"Signals & Systems · 신호 및 시스템",ssNA:"SS completion tracking is not connected · SS 완료 기록은 아직 연결되지 않았습니다. 0%가 아닙니다.",c:"C Programming · C 프로그래밍",notes:"Activity, quiz, execution self-report, verified assessment are different evidence types. · 코드와 노트는 전송하지 않습니다.",refresh:"Refresh · 새로고침",none:"No records · 기록 없음",record:"Recorded · 기록",available:"Core learning · 필수",updated:"Local browser · 브라우저 저장소",visit:"Open lesson · 단원 열기",practice:"Coding practice · 실습",sslink:"Open SS · SS 열기",progress:"Core activity completion · 필수 진도",local:"Same-origin local browser · 로컬 저장",unavailable:"Unavailable · 사용 불가",revisions:"Revision · 버전"}
+ en:{ssReviewNote:"Self-reported lab review, not a quiz score or verified assessment.",heading:"Learning progress",subtitle:"Local records in this browser only — not a gradebook",activity:"Activity reviews",concept:"Correct concept checks",coding:"Self-reported GCC checks",draft:"Saved coding drafts",core:"Core",optional:"Optional",ss:"Signals & Systems",ssNA:"Completion tracking is not connected on the current Signals & Systems site. This does not mean 0% completion.",c:"C Programming",notes:"Activity ≠ correct quiz answer ≠ self-reported execution ≠ verified grading. No source code or notes are transmitted.",refresh:"Refresh local records",none:"No records yet",record:"Recorded",available:"Core learning",updated:"Updated from local browser",visit:"Open lesson",practice:"Coding practice",sslink:"Open Signals & Systems",progress:"Activity completion (core)",local:"Browser-only (same origin)",unavailable:"Unavailable in this browser",revisions:"Course revision"},
+ ko:{ssReviewNote:"실험 완료는 학생의 학습 확인 기록이며 평가 점수나 정답 인증이 아닙니다.",heading:"학습 진도 통합 대시보드",subtitle:"현재 브라우저의 로컬 기록만 표시하며 성적표가 아닙니다",activity:"학습 활동 확인",concept:"개념 퀴즈 정답",coding:"GCC 실행 자기보고",draft:"저장된 코딩 초안",core:"필수",optional:"선택",ss:"신호 및 시스템",ssNA:"현재 Signals & Systems 사이트에는 완료 기록 기능이 연결되어 있지 않습니다. 학습 진도 0%를 의미하지 않습니다.",c:"C 프로그래밍",notes:"학습 활동 ≠ 퀴즈 정답 ≠ 실행 자기보고 ≠ 검증된 성적입니다. 작성 코드나 학습 노트는 전송하지 않습니다.",refresh:"로컬 기록 새로고침",none:"아직 기록 없음",record:"기록",available:"필수 학습",updated:"브라우저 저장소 기준",visit:"단원 열기",practice:"코딩 실습",sslink:"Signals & Systems 열기",progress:"필수 학습 활동 완료율",local:"동일 출처 브라우저 저장",unavailable:"현재 브라우저에서 사용할 수 없음",revisions:"콘텐츠 버전"},
+ mixed:{ssReviewNote:"Self-reported review · 학습 확인 기록이며 정답 인증이 아닙니다.",heading:"Learning Progress · 학습 진도",subtitle:"Browser-local records · 현재 브라우저의 기록 (성적표 아님)",activity:"Activity · 학습 활동",concept:"Concept · 개념 정답",coding:"GCC self-report · 실행 자기보고",draft:"Drafts · 코드 초안",core:"Core · 필수",optional:"Optional · 선택",ss:"Signals & Systems · 신호 및 시스템",ssNA:"SS completion tracking is not connected · SS 완료 기록은 아직 연결되지 않았습니다. 0%가 아닙니다.",c:"C Programming · C 프로그래밍",notes:"Activity, quiz, execution self-report, verified assessment are different evidence types. · 코드와 노트는 전송하지 않습니다.",refresh:"Refresh · 새로고침",none:"No records · 기록 없음",record:"Recorded · 기록",available:"Core learning · 필수",updated:"Local browser · 브라우저 저장소",visit:"Open lesson · 단원 열기",practice:"Coding practice · 실습",sslink:"Open SS · SS 열기",progress:"Core activity completion · 필수 진도",local:"Same-origin local browser · 로컬 저장",unavailable:"Unavailable · 사용 불가",revisions:"Revision · 버전"}
 };
 const lang=window.ELSLanguage;
 function t(k){return text[lang?.get()||"mixed"][k]}
@@ -53,6 +53,21 @@ function panel(d){
  const slug=d.slug==="fileio"?"file-io":d.slug;
  for(const [label,url] of [[t("visit"),"../c-programming/"+slug+"/"],[t("practice"),"../c-programming/"+slug+"/practice/"]]){const a=el("a",links,null,label);a.href=url}
 }
+function renderSS(){
+ const sizes=[9,9,7,8,8,6,7,8],valid=new Set(sizes.flatMap((n,i)=>Array.from({length:n},(_,j)=>(i+1)+":"+(j+1))));
+ const raw=parse("els-ss-lab-progress-v1",[]);
+ const completed=new Set(Array.isArray(raw)?raw.filter(k=>valid.has(k)):[]);
+ const count=completed.size,summary=$("ss-progress-summary");
+ summary.textContent=(lang?.get()==="en"?"Reviewed labs":lang?.get()==="ko"?"학습 확인한 실험":"Reviewed labs · 학습 확인")+" "+count+"/62 ("+Math.round(count/62*100)+"%)";
+ const bar=$("ss-progress-bar");bar.setAttribute("aria-valuenow",String(count));$("ss-progress-fill").style.width=(count/62*100)+"%";
+ const grid=$("ss-chapter-grid");grid.replaceChildren();
+ sizes.forEach((size,i)=>{
+  let n=0;for(let j=1;j<=size;j++)if(completed.has((i+1)+":"+j))n++;
+  const card=el("div",grid,"metric");
+  el("span",card,"small","Chapter "+(i+1));
+  el("strong",card,null,n+"/"+size);
+ });
+}
 function render(){
  const list=catalog.map(item);const total=list.reduce((n,d)=>n+d.core,0),reviewed=list.reduce((n,d)=>n+d.activityCore,0),quiz=list.reduce((n,d)=>n+d.conceptCore,0),gcc=list.reduce((n,d)=>n+d.code,0),written=list.reduce((n,d)=>n+d.draft,0);
  document.documentElement.lang=lang?.get()==="en"?"en":"ko";
@@ -63,6 +78,7 @@ function render(){
  metric($("summary"),t("coding"),String(gcc));
  metric($("summary"),t("draft"),String(written));
  $("course-grid").replaceChildren();for(const d of list)panel(d);
+ renderSS();
  $("updated").textContent=t("updated")+" · "+new Date().toLocaleString();
 }
 $("refresh").addEventListener("click",render);
