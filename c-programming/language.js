@@ -1,11 +1,11 @@
 /* Shared C Programming localization: no changes to stored progress or C source. */
 (function(){
 "use strict";
-const KEY="els-language";
+const language=window.ELSLanguage;
+if(!language)throw Error("Load assets/els-language.js before c-programming/language.js");
 const original=window.C_JOURNEY;
 const english=window.C_JOURNEY_EN;
-let lang="mixed";
-try{const v=localStorage.getItem(KEY);if(["mixed","ko","en"].includes(v))lang=v}catch(e){}
+const lang=language.get();
 const pristine=original?JSON.parse(JSON.stringify(original)):null;
 function applyContent(mode){
  if(!original||!pristine)return;
@@ -98,22 +98,15 @@ function setup(){
   select.style.cssText="background:var(--surface,var(--els-surface,#222));color:var(--ink,var(--els-ink,#fff));border:1px solid var(--border,var(--els-border,#666));border-radius:7px;padding:7px;min-height:36px";
   for(const [value,name] of [["mixed","ENG + 한국어"],["en","ENG"],["ko","한국어"]]){const opt=document.createElement("option");opt.value=value;opt.textContent=name;select.append(opt)}
   select.value=lang;label.append(caption,select);nav.append(label);
-  select.addEventListener("change",()=>{try{localStorage.setItem(KEY,select.value)}catch(e){}location.reload()});
+  language.bindSelect(select);
  }
  renderLang();observer.observe(document.body,{subtree:true,childList:true,characterData:true});
 }
-/* C lesson and practice engines read the language at initialization.
-   Reload only when another tab changes the preference, preserving drafts
-   and progress stored under their existing stable keys. */
-window.addEventListener("storage",event=>{
- if(event.key!==KEY||!["mixed","ko","en"].includes(event.newValue)||event.newValue===lang)return;
- location.reload();
-});
-window.addEventListener("pageshow",event=>{
- try{
-  const saved=localStorage.getItem(KEY);
-  if(["mixed","ko","en"].includes(saved)&&saved!==lang)location.reload();
- }catch(e){}
+/* Existing C engines construct lesson and task content at initialization.
+   A language switch requires one page refresh; progress/editor drafts remain
+   under the original stable keys, independent of translation data. */
+language.subscribe(next=>{
+ if(next!==lang)location.reload();
 });
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",setup,{once:true});else setup();
 })();
