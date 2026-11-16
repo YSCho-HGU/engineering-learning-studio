@@ -320,6 +320,14 @@ html{scroll-padding-top:90px}#roadmap{scroll-margin-top:90px}
  }
  select.addEventListener("change",()=>{try{localStorage.setItem("els-language",select.value)}catch(e){}apply(select.value)});
  window.CCourseI18n={get:()=>lang,subscribe:f=>window.addEventListener("els-language-change",e=>f(e.detail.lang))};
+ window.addEventListener("storage",event=>{
+  if(event.key!=="els-language"||!["mixed","en","ko"].includes(event.newValue)||event.newValue===lang)return;
+  apply(event.newValue);
+ });
+ window.addEventListener("pageshow",()=>{
+  try{const saved=localStorage.getItem("els-language");if(["mixed","en","ko"].includes(saved)&&saved!==lang)apply(saved)}catch(e){}
+ });
+
  apply(lang);
 })();
 </script><script src="./course-catalog.js?v=3" defer></script><script src="../assets/els-theme-v2.js?v=2" defer></script></body></html>
