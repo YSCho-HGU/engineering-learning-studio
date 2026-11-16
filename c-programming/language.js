@@ -62,10 +62,10 @@ function translate(root){
   if(!originals.has(n))originals.set(n,n.textContent);
   const text=originals.get(n),trim=text.trim();
   const found=dict.get(trim);
-  if(found)n.textContent=text.replace(trim,found);
+  if(found){const translated=text.replace(trim,found);if(n.textContent!==translated)n.textContent=translated;}
  }
 }
-function restore(){const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;while((n=walker.nextNode()))if(originals.has(n))n.textContent=originals.get(n)}
+function restore(){const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;while((n=walker.nextNode()))if(originals.has(n)&&n.textContent!==originals.get(n))n.textContent=originals.get(n)}
 let pending=false;
 const observer=new MutationObserver(()=>{if(pending)return;pending=true;queueMicrotask(()=>{pending=false;observer.disconnect();translate(document.body);observer.observe(document.body,{subtree:true,childList:true,characterData:true})})});
 function renderLang(){document.documentElement.lang=lang==="en"?"en":"ko";restore();translate(document.body);}
