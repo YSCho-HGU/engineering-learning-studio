@@ -93,8 +93,18 @@ Core technical tokens (`int`, `malloc`, `print`, Boolean algebra operators, gate
 
 ## 6. Migration strategy
 
-- **Now:** Preserve deployed Studio, C, and S&S language behavior; use this API for all new course modules.
-- **When creating Python/Logic Design:** Include the common asset, provide all locale strings, bind one selector, and subscribe to changes.
-- **Later (optional):** Migrate existing course-specific language handlers onto the common API only after browser regression tests; avoid conflicting duplicate listeners.
+- **2026-11-16 implementation:** Studio Home, C Home, C lesson/practice pages, and Signals & Systems now use the shared `ELSLanguage` preference API. All existing subject-specific translation functions remain intact.
+- **C lessons:** Shared module is loaded before `c-programming/language.js`. C lesson/practice pages currently reload on a language change because their instructional content is assembled at startup; editor drafts and lesson progress use their existing storage keys. C Home updates immediately.
+- **Signals & Systems:** The same asset is copied to the `signals-systems-visual-lab` repository and loaded before `assets/ss-language.js`. The Signals translation and iframe state-preserving flow are retained; old query-string language parameters initialize only when no valid saved preference exists.
+- **When creating Python/Logic Design:** Include the common asset, author all locale strings, bind one selector, and subscribe to changes. Reconcile the vendored module whenever its version changes.
+- **Future optimization:** Make C lesson/practice text rerender without reload only after comprehensive browser tests. Avoid merging the distinct subject-specific translation engines into one oversized translation script.
+
+### Regression checklist after this migration
+1. Navigate Studio → C Home → a C lesson → Coding Practice → Studio → Signals & Systems with each of the three modes.
+2. Change language on Studio Home, C Home, a C lesson, and Signals & Systems, checking selector state, translation, back navigation, and multiple tabs.
+3. On C coding practice, edit draft source and mark progress before language switch. Confirm saved work remains intact afterward.
+4. On Signals & Systems, change language while a graph or experiment has nondefault controls. Confirm both values and plots are unchanged.
+5. Verify neutral-dark and other themes independently of language.
+6. Run a browser E2E test in addition to JavaScript syntax and script-loading order checks.
 
 The standard is compatible with existing infrastructure without claiming that Python or the full Logic Design course has been implemented.
