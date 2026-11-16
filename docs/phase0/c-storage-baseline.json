@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 1,
+  "recordType": "phase0-compatibility-baseline",
+  "asOf": "2026-11-16",
+  "readOnly": true,
+  "storageOrigin": "https://yscho-hgu.github.io",
+  "notes": "Browser-local records are user-owned; the fixture uses only a fresh isolated browser context.",
+  "preferences": [
+    {
+      "key": "els-language",
+      "shape": "enum",
+      "values": [
+        "mixed",
+        "en",
+        "ko"
+      ],
+      "owner": "shared ELSLanguage"
+    },
+    {
+      "key": "els-theme-v2",
+      "shape": "enum",
+      "values": [
+        "neutral-dark",
+        "warm-dark",
+        "navy-dark",
+        "warm-neutral"
+      ],
+      "owner": "shared ELSTheme"
+    },
+    {
+      "key": "ss-visual-lab-theme",
+      "shape": "legacy enum",
+      "owner": "theme migration fallback, do not delete"
+    },
+    {
+      "key": "els-theme",
+      "shape": "legacy theme",
+      "owner": "theme migration fallback, do not delete"
+    }
+  ],
+  "publishedUnits": [
+    {
+      "number": "131",
+      "slug": "arrays",
+      "contentRevision": 2,
+      "practiceRevision": 1,
+      "lessons": 7,
+      "practice": 6,
+      "coreLessons": 7,
+      "corePractice": 6
+    },
+    {
+      "number": "132",
+      "slug": "strings",
+      "contentRevision": 2,
+      "practiceRevision": 1,
+      "lessons": 7,
+      "practice": 6,
+      "coreLessons": 7,
+      "corePractice": 6
+    },
+    {
+      "number": "133",
+      "slug": "standard-library",
+      "contentRevision": 2,
+      "practiceRevision": 1,
+      "lessons": 6,
+      "practice": 6,
+      "coreLessons": 6,
+      "corePractice": 6
+    },
+    {
+      "number": "141",
+      "slug": "functions",
+      "contentRevision": 2,
+      "practiceRevision": 1,
+      "lessons": 8,
+      "practice": 6,
+      "coreLessons": 8,
+      "corePractice": 6
+    },
+    {
+      "number": "151",
+      "slug": "pointer",
+      "contentRevision": 2,
+      "practiceRevision": 2,
+      "lessons": 8,
+      "practice": 6,
+      "coreLessons": 6,
+      "corePractice": 4
+    },
+    {
+      "number": "161",
+      "slug": "structure",
+      "contentRevision": 2,
+      "practiceRevision": 3,
+      "lessons": 8,
+      "practice": 6,
+      "coreLessons": 6,
+      "corePractice": 5
+    },
+    {
+      "number": "171",
+      "slug": "file-io",
+      "contentRevision": 1,
+      "practiceRevision": 1,
+      "lessons": 8,
+      "practice": 7,
+      "coreLessons": 8,
+      "corePractice": 3,
+      "storageSlug": "fileio"
+    },
+    {
+      "number": "181",
+      "slug": "dynamic-memory",
+      "contentRevision": 3,
+      "practiceRevision": 2,
+      "lessons": 8,
+      "practice": 6,
+      "coreLessons": 4,
+      "corePractice": 3
+    }
+  ],
+  "cStorageContracts": [
+    {
+      "pattern": "els-journey-<slug>-v<contentRevision>",
+      "value": "JSON integer[]",
+      "meaning": "reviewed lesson indices; not graded",
+      "exception": "File I/O separate"
+    },
+    {
+      "pattern": "els-concept-<slug>-v<contentRevision>",
+      "value": "JSON integer[]",
+      "meaning": "correct quiz indices"
+    },
+    {
+      "pattern": "els-journey-<slug>-v<contentRevision>-note-<index>",
+      "value": "string",
+      "meaning": "student-authored reflection; private local"
+    },
+    {
+      "pattern": "els-code-<slug>-v<practiceRevision>",
+      "value": "JSON object index→C source",
+      "meaning": "draft source; no upload"
+    },
+    {
+      "pattern": "els-code-evidence-<slug>-v<practiceRevision>",
+      "value": "JSON object index→{checked:boolean,...}",
+      "meaning": "self-reported GCC execution, not graded"
+    },
+    {
+      "key": "els-fileio-progress-v2",
+      "value": "JSON integer[]",
+      "meaning": "File I/O reviewed stages"
+    },
+    {
+      "key": "els-fileio-progress-v1",
+      "value": "JSON integer[]",
+      "meaning": "legacy read fallback; do not delete"
+    },
+    {
+      "key": "els-concept-fileio-v1",
+      "value": "JSON integer[]",
+      "meaning": "File I/O concept checks"
+    },
+    {
+      "key": "els-fileio-integrated-m3-reflection",
+      "value": "saved marker",
+      "meaning": "legacy reflection-completion evidence"
+    },
+    {
+      "key": "els-fileio-integrated-m4-reflection",
+      "value": "saved marker",
+      "meaning": "legacy reflection-completion evidence"
+    },
+    {
+      "pattern": "els-fileio-pilot-<m3|m4>-notes",
+      "value": "string",
+      "meaning": "student reflection"
+    },
+    {
+      "key": "els-fileio-core-transfer-v1",
+      "value": "JSON object",
+      "meaning": "core transfer question answers"
+    },
+    {
+      "key": "els-fileio-robust-assessment-v1",
+      "value": "JSON object",
+      "meaning": "robust-read mini assessment responses"
+    },
+    {
+      "pattern": "els-c-fileio-practice-p<1..6>",
+      "value": "C source string",
+      "meaning": "legacy File I/O practice drafts"
+    },
+    {
+      "key": "els-c-fileio-practice-m1-v1",
+      "value": "C source string",
+      "meaning": "File I/O M1 mini-lab draft"
+    },
+    {
+      "key": "els-code-evidence-fileio-v1",
+      "value": "JSON object",
+      "meaning": "File I/O self-reported GCC evidence"
+    }
+  ],
+  "otherCourseContracts": [
+    {
+      "key": "els-ss-lab-progress-v1",
+      "value": "JSON array of chapter:experiment IDs",
+      "meaning": "SS self-reported review; same-origin dashboard view"
+    },
+    {
+      "key": "ss-unified-nav-collapsed",
+      "value": "0 or 1",
+      "meaning": "SS navigation preference"
+    }
+  ],
+  "catalogs": [
+    {
+      "path": "c-programming/course-catalog.json",
+      "schemaVersion": 1,
+      "planned": 18,
+      "published": 8
+    },
+    {
+      "path": "../signals-systems-visual-lab/chapter-catalog.json",
+      "schemaVersion": 1,
+      "planned": 8,
+      "published": 8,
+      "externalRepo": true
+    }
+  ],
+  "limitations": [
+    "localStorage is scoped to browser profile and origin, not to a student account",
+    "published=false only hides menu, not protected access",
+    "No bulk migration or clearing of legacy keys during Phase 0",
+    "Study completion and GCC self-report must not imply verified assessment",
+    "The legacy C integrated learning-journey may use v1 evidence keys; track separately in Phase 1"
+  ]
+}
