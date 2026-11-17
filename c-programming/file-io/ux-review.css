@@ -71,3 +71,25 @@
 .els-design .fileio-advanced-nav summary{font-size:.82rem;font-weight:750;cursor:pointer}
 .els-design .fileio-advanced-nav a{font-size:.8rem}
 @media(min-width:961px){.els-design .sidebar{max-height:calc(100vh - 25px);overflow-y:auto;scrollbar-width:thin}}
+
+/* Clear distinction between course step number and textbook section citation. */
+.els-design .stage .topic:has(.stage-heading-number),
+.els-design .stage .eyebrow:has(.stage-heading-number){
+ display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+ font-weight:800;font-size:.82rem;letter-spacing:.035em;
+}
+.els-design .stage .stage-heading-number{font-weight:850;color:var(--els-link)}
+.els-design .stage .stage-reference{
+ margin-inline-start:auto;color:var(--els-muted);font-size:.74rem;
+ font-weight:500;letter-spacing:0;white-space:nowrap;
+}
+.els-design .lesson-nav .optional-stage-divider{
+ font-size:.74rem;color:var(--els-muted);border-top:1px solid var(--els-border);
+ padding:12px 7px 3px;margin-top:11px;line-height:1.4;
+}
+.els-design .lesson-nav button.optional-stage-nav{
+ border:1px dashed var(--els-border);background:var(--els-surface-alt);
+}
+.els-design .lesson-nav button.optional-stage-nav.current{
+ border:1px solid var(--els-link);background:var(--els-info-bg);
+}
