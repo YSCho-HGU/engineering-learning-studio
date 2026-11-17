@@ -49,7 +49,7 @@ assert(fileio.includes('els-c-fileio-practice-m1-v1')&&fileio.includes('els-code
 assert(fileioHtml.includes('id="fileio-guided"')&&fileioHtml.includes('../../practice-guides.js?v=1'),"File I/O guide panel/script missing");
 for(const id of ["write","read","student"]){
  assert(labHtml.includes('id="'+id+'"')&&labHtml.includes('data-i18n="'+id+'Guide1"')&&labHtml.includes('data-i18n="'+id+'Guide3"'),"File I/O basic lab "+id+" has no three-step guide");
- for(let i=1;i<=3;i++)assert(labJs.includes("\\\""+id+"Guide"+i+"\\\":"),"Missing translation for "+id+" step "+i);
+ for(let i=1;i<=3;i++)assert(labJs.includes('"' + id + 'Guide' + i + '":'),"Missing translation for "+id+" step "+i);
 }
 assert(labHtml.includes('data-i18n="guideSummary"'),"Basic lab step guide not collapsible");
 for(const [file,js] of [["practice-engine.js",practice],["practice-guides.js",read("c-programming/practice-guides.js")],["file-io/practice/app.js",fileio],["file-io/core-labs/labs.js",labJs]]){
