@@ -16,6 +16,10 @@ for(const slug of slugs){
  check(d.slug===slug,slug+": invalid slug");
  check(page.includes("../journey.js"),slug+": shared journey engine missing");
  check(page.includes("../language.js"),slug+": shared localization missing");
+ check(!/eight-step guided learning journey/i.test(page),slug+": misleading fixed 8-step metadata");
+ const progressValue=Number(page.match(/aria-valuemax="(\d+)"/)?.[1]);
+ check(progressValue===(d.coreCount||d.lessons.length),slug+": initial progress meter does not match core lesson count");
+
  check(d.lessons.length===en.lessons.length,slug+": translated lesson count mismatch");
  check(d.practice.length===en.practice.length,slug+": translated practice count mismatch");
  check(d.coreCount===undefined||(d.coreCount>0&&d.coreCount<=d.lessons.length),slug+": core count mismatch");
