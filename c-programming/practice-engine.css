@@ -22,3 +22,13 @@
 .cp-disclaimer,.cp-hint p{line-height:1.7}
 @media(max-width:800px){.cp-layout{grid-template-columns:1fr}.cp-menu{position:static;grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.cp-menu{grid-template-columns:1fr}.cp-content,.cp-menu{padding:12px}.cp-editor{font-size:12px;min-height:280px}}
+
+/* Progressive, optional guidance; placed above the reference output/editor. */
+.cp-guided-lab{margin:14px 0 20px;padding:16px 18px;border:1px solid var(--els-border,var(--line,#6a726e));border-radius:12px;background:var(--els-surface-alt,var(--panel,#252b2c));}
+.cp-guided-lab h3{font-size:.96rem;margin:10px 0 6px;line-height:1.45}
+.cp-guided-lab .cp-guided-lab-scenario,.cp-guided-lab .cp-guided-check{margin:7px 0 14px;line-height:1.75;font-size:.92rem}
+.cp-guided-step-list{margin:4px 0 12px;padding-left:25px}
+.cp-guided-step{padding:3px 0 5px}
+.cp-guided-reveal{border:1px solid var(--els-border,var(--line,#6a726e));border-radius:8px;background:transparent;color:inherit;padding:7px 11px;text-align:left;font-size:.85rem;cursor:pointer}
+.cp-guided-reveal:hover,.cp-guided-reveal:focus-visible{border-color:var(--els-link,var(--accent,#b7a98a))}
+.cp-guided-hint{margin:6px 0 9px;padding:11px 12px;background:var(--els-info-bg,var(--surface,#343b3b));border-left:3px solid var(--els-link,var(--accent,#b7a98a));border-radius:6px;line-height:1.7}
