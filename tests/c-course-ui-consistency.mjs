@@ -53,14 +53,17 @@ for(const slug of slugs){
 function labelFor(slug,i){return slug+" practice "+(i+1)}
 const engine=read("c-programming/journey.js");
 const css=read("c-programming/journey.css");
+const practiceEngine=read("c-programming/practice-engine.js");
 check(engine.includes('element("span","",b,l.title)')&&engine.includes('element("h2","",stage,l.title)'),"Sidebar and lesson heading must derive from same title");
 check(engine.includes('element("p","quiz-context",section,l.quiz.context||l.goal)'),"Context must precede the quiz question");
 check(engine.includes('element("p","quiz-question",section,l.quiz.q)'),"Quiz question must be distinct from context");
 check(engine.includes('createCode(c,l.code)')&&engine.includes('createCode(details,p.starter,"starter")'),"Complete code and starter code must have different labels");
+check(practiceEngine.includes('const taskHeading=i=>')&&practiceEngine.includes('title.textContent=taskHeading(i)')&&practiceEngine.includes('sidebar,taskHeading(i)'),"Practice sidebar and task heading must use same title");
+check(practiceEngine.includes('const K="els-code-"')&&practiceEngine.includes('E="els-code-evidence-"'),"Existing coding drafts and evidence keys must be retained");
 check(engine.includes('const key="els-journey-"')&&engine.includes('const assessmentKey='),"Existing progress storage must be retained");
 check(engine.includes('b.setAttribute("aria-current","step")'),"Navigation must expose current lesson");
 check(css.includes('max-height:none !important')&&css.includes(".quiz-context"),"Full code visibility and question context CSS missing");
-for(const [name,code] of [["journey.js",engine],["language.js",read("c-programming/language.js")]]){
+for(const [name,code] of [["journey.js",engine],["language.js",read("c-programming/language.js")],["practice-engine.js",practiceEngine]]){
  try{new Function(code)}catch(e){errors.push(name+" syntax error: "+e.message)}
 }
 console.log("C UI review:",slugs.length,"published shared chapters,",lessons,"full-program lessons,",practices,"starter exercises.");
