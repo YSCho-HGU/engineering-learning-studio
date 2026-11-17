@@ -7,7 +7,7 @@
   const translateOutput = value => english
     ? englishReplacements.reduce((text, [ko, en]) => text.split(ko).join(en), value)
         .replace(/행 (\d+)/g, "Row $1")
-        .replace(/학생: (\d+)명/g, "students: $1")
+        .replace(/(\d+)명/g, "$1 students")
     : value;
   const writeOutput = (id, value) => {
     $(id).textContent = translateOutput(value);
