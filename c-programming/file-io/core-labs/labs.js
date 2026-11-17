@@ -41,7 +41,7 @@ let lastSaved=null;
 const escapedC=v=>v.replace(/\\/g,"\\\\").replace(/"/g,'\\"').replace(/\n/g,"\\n").replace(/\r/g,"\\r").replace(/\t/g,"\\t");
 function updateWriteCode(){
  const v=$("input-write").value;
- $("code-write").textContent='#include <stdio.h>\nint main(void) {\n    FILE *fp = fopen("message.txt", "w");\n    if (fp == NULL) return 1;\n\n    fprintf(fp, "'+escapedC(v)+'\\n");\n    fclose(fp);\n    return 0;\n}';
+ $("code-write").textContent='#include <stdio.h>\nint main(void) {\n    FILE *fp = fopen("message.txt", "w");\n    if (fp == NULL) return 1;\n\n    fprintf(fp, "%s\\n", "'+escapedC(v)+'");\n    fclose(fp);\n    return 0;\n}';
 }
 $("input-write").addEventListener("input",updateWriteCode);updateWriteCode();
 $("run-write").addEventListener("click",()=>{
