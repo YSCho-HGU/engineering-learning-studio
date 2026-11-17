@@ -28,3 +28,34 @@
 .els-design .stage .concept,.els-design .stage .activity,.els-design .stage .check{margin:14px 0;padding:clamp(13px,1.7vw,18px)}
 @media(max-width:960px){.els-design .shell{grid-template-columns:1fr}.els-design .sidebar{position:static}.els-design .lesson-nav{grid-template-columns:repeat(4,minmax(0,1fr))}.els-design .lesson-nav button{align-items:flex-start}.els-design .lesson-nav button small{display:none}}
 @media(max-width:680px){.els-design .learning-route{padding:0 10px;margin-top:9px}.els-design .course-header{padding:14px 12px}.els-design .course-meta span{font-size:10px}.els-design .core-quick-path{gap:6px;padding:9px}.els-design .path-key{width:100%}.els-design .core-quick-path :is(a,button){flex:1 1 43%;justify-content:center;padding:9px 6px;text-align:center;font-size:11px}.els-design .shell{padding:12px 10px 40px;gap:10px}.els-design .sidebar{padding:9px}.els-design .lesson-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}.els-design .lesson-nav button{padding:7px 4px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;min-width:0;overflow-wrap:anywhere}.els-design .lesson-nav .num{font-size:11px}.els-design .lesson-nav .done{margin:0}.els-design .progress-panel small{display:none}.els-design .progress-panel #concept-count{display:block}.els-design .toplinks{gap:8px;font-size:12px}.els-design .stage{padding:13px}.els-design .route-more .route-cards{grid-template-columns:1fr}}
+
+/* Full-program reading: prevent hidden lines and preserve balanced code/quiz columns. */
+.els-design .core-transfer-code pre{
+  max-height:none;
+  font-size:clamp(12px,0.92vw,13px);
+  line-height:1.65;
+  tab-size:4;
+  overflow-x:auto;
+}
+.els-design .core-transfer-heading p{
+  max-width:90ch;
+  line-height:1.75;
+  margin-bottom:16px;
+}
+.els-design .core-transfer-questions legend{
+  line-height:1.55;
+  font-size:0.91rem;
+}
+.els-design .check .question-context{
+  margin:8px 0 14px;
+  padding:10px 12px;
+}
+@media(min-width:951px){
+  .els-design .core-transfer-layout{
+    grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);
+    gap:18px;
+  }
+}
+@media(max-width:950px){
+  .els-design .core-transfer-layout{grid-template-columns:1fr}
+}
