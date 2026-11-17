@@ -31,3 +31,13 @@ main{padding-top:16px}
 .work textarea{min-height:340px}
 @media(max-width:720px){main{padding:12px 10px 42px}.hero{padding:14px}.practice-core-route>strong{width:100%}.practice-core-route button{flex:1 1 28%;padding:8px 5px;font-size:11px}.practice-core-route>span{width:100%}.practice-full-list .nav{grid-template-columns:repeat(2,minmax(0,1fr))}.work{padding:13px}.work textarea{min-height:330px}}
 @media(max-width:420px){.practice-core-route button{flex:1 1 100%}.practice-full-list .nav{grid-template-columns:1fr}}
+
+/* Shared first-year guidance is shown only on mandatory File I/O coding exercises. */
+.fileio-guided{margin:14px 0 18px;padding:15px 17px;background:var(--panel,var(--surface,#282d2e));border:1px solid var(--line,var(--border,#67716f));border-radius:12px}
+.fileio-guided h3{font-size:.98rem;line-height:1.45;margin:12px 0 6px}
+.fileio-guided>p{line-height:1.75;margin:5px 0 11px}
+.fileio-guided ol{margin:5px 0 14px;padding-left:26px}
+.fileio-guided li{margin:8px 0}
+.fileio-guide-reveal{cursor:pointer;border-radius:8px;padding:7px 10px;color:inherit;background:transparent;border:1px solid var(--line,var(--border,#67716f));text-align:left}
+.fileio-guide-reveal:hover,.fileio-guide-reveal:focus-visible{border-color:var(--accent,#beac8f)}
+.fileio-guide-hint{padding:10px 12px;margin:8px 0;border-left:3px solid var(--accent,#beac8f);background:var(--bg,var(--surface,#1d2324));border-radius:5px;line-height:1.7}
