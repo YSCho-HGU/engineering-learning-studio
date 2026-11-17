@@ -20,6 +20,10 @@ on:
       - 'c-programming/file-io/practice/**'
       - 'tests/c-fileio-mini-lab.mjs'
       - 'c-programming/practice-engine.js'
+      - 'c-programming/practice-guides.js'
+      - 'c-programming/practice-engine.css'
+      - 'tests/c-practice-guides.mjs'
+      - 'c-programming/**/practice/index.html'
       - 'docs/C_PROGRAMMING_AUTHORING_STANDARD.md'
       - '.github/workflows/c-authoring-policy.yml'
   workflow_dispatch:
@@ -43,5 +47,7 @@ jobs:
         run: node tests/c-fileio-ui.mjs
       - name: Verify Textbook Viewer and course link regressions
         run: node tests/textbook-viewer.mjs
+      - name: Validate core C coding guides, localization, and preserved student data
+        run: node tests/c-practice-guides.mjs
       - name: GCC C11 verify published lesson reference programs
         run: node tests/c-course-gcc.mjs
