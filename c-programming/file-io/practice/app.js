@@ -37,7 +37,7 @@ $("save").onclick=()=>{try{localStorage.setItem(key(active),$("editor").value);$
 $("reset").onclick=()=>{if(!confirm("현재 편집 내용을 Starter Code로 바꾸시겠습니까?"))return;try{localStorage.removeItem(key(active))}catch(e){};delete evidence[active];persistEvidence();$("gcc-confirm").checked=false;$("editor").value=tasks[active].starter;$("feedback").textContent="Starter Code와 저장 초안을 함께 초기화했습니다."};
 $("download").onclick=()=>{const blob=new Blob([$("editor").value],{type:"text/x-csrc;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=tasks[active].id.toLowerCase()+"_file_io.c";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500)};
 $("sample-input").addEventListener("click",()=>{const t=tasks[active];if(!t.sampleContent)return;const blob=new Blob([t.sampleContent],{type:"text/plain;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=t.sampleFilename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500)});
-const hashTask=()=>({p1:0,p2:1,m1:6})[location.hash.slice(1).toLowerCase()];
+const hashTask=()=>({p1:0,p2:1,p3:2,p4:3,p5:4,p6:5,m1:6})[location.hash.slice(1).toLowerCase()];
 document.querySelectorAll("[data-go-task]").forEach(btn=>btn.addEventListener("click",()=>{const i=Number(btn.dataset.goTask);if(!Number.isInteger(i))return;load(i);history.replaceState(null,"","#"+tasks[i].id.toLowerCase());document.querySelector(".work")?.scrollIntoView({behavior:"instant",block:"start"})}));
 load(hashTask()??0);
 window.addEventListener("hashchange",()=>{const task=hashTask();if(task!==undefined)load(task)});
