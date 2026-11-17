@@ -90,6 +90,37 @@ const content=txt("section","cp-content",shell);
 txt("div","cp-eyebrow",content,optionalPractice?corePracticeCount+" Core / "+(d.practice.length-corePracticeCount)+" Optional Coding Tasks":"AFTER CLASS · CODING PRACTICE");
 const title=txt("h2","",content,"");
 const description=txt("p","cp-description",content,"");
+const guides=window.C_PRACTICE_GUIDES?.[d.slug]||[];
+const guideSection=txt("section","cp-guided-lab",content);
+const scenarioTitle=txt("h3","cp-guided-lab-heading",guideSection,ui("문제 상황 · 무엇을 만들까요?","Scenario · What are you building?"));
+const scenario=txt("p","cp-guided-lab-scenario",guideSection,"");
+const stepsTitle=txt("h3","cp-guided-steps-heading",guideSection,ui("코드 작성 순서 · 단계별 가이드","Writing the Code · Step by Step"));
+const stepList=txt("ol","cp-guided-step-list",guideSection);
+const checkTitle=txt("h3","cp-guided-check-heading",guideSection,ui("실행 결과 확인","Verify Your Result"));
+const checkText=txt("p","cp-guided-check",guideSection,"");
+function renderTaskGuide(i){
+ const lang=window.ELSLanguage?.get()==="en"?"en":"ko";
+ const guide=guides[i]?.[lang];
+ const isCore=i<corePracticeCount;
+ guideSection.hidden=!isCore||!guide;
+ if(!isCore||!guide)return;
+ scenario.textContent=guide.scene;
+ stepList.replaceChildren();
+ guide.steps.forEach((step,k)=>{
+  const li=txt("li","cp-guided-step",stepList);
+  const reveal=txt("button","cp-guided-reveal",li,ui("단계 ","Step ")+(k+1)+ui(" · 힌트 보기"," · Show hint"));
+  reveal.type="button";reveal.setAttribute("aria-expanded","false");
+  const help=txt("p","cp-guided-hint",li,step);
+  help.hidden=true;
+  reveal.addEventListener("click",()=>{
+   help.hidden=!help.hidden;
+   reveal.setAttribute("aria-expanded",String(!help.hidden));
+   reveal.textContent=ui("단계 ","Step ")+(k+1)+(help.hidden?ui(" · 힌트 보기"," · Show hint"):ui(" · 힌트 닫기"," · Hide hint"));
+  });
+ });
+ checkText.textContent=guide.check;
+}
+
 const inputs=txt("div","cp-reference",content);
 const refLabel=txt("strong","",inputs,"참조 결과 · 예상 출력 (실제 컴파일 결과 아님)");
 const expected=txt("pre","",inputs,"");
@@ -155,7 +186,7 @@ txt("summary","",more,"GCC 실행 방법 및 검증 절차");
 txt("p","",more,"① .c 파일을 다운로드하세요. ② gcc -std=c11 -Wall -Wextra -Wpedantic -Werror task.c -o task"+(d.slug==="standard-library"?" -lm":"")+" ③ 실행 후 참조 출력과 대조하세요. 데이터 파일이 필요한 과제는 같은 폴더에 준비하세요.");
 const navButtons=[];
 function show(i){
- selection=i;const task=d.practice[i];title.textContent=taskHeading(i);description.textContent=task.task;expected.textContent=task.expected;
+ selection=i;const task=d.practice[i];title.textContent=taskHeading(i);description.textContent=task.task;expected.textContent=task.expected;renderTaskGuide(i);
  editor.value=Object.prototype.hasOwnProperty.call(drafts,i)?drafts[i]:task.starter;verified.checked=!!evidence[i];
  status.textContent="정적 점검은 구문 누락을 알려주는 힌트이며 컴파일·실행 검증이 아닙니다.";showGuidance(i);
  navButtons.forEach((b,j)=>{b.classList.toggle("active",i===j);if(i===j)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
