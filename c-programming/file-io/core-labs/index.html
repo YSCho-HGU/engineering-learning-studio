@@ -29,14 +29,20 @@
 <div class="notice"><strong data-i18n="modelTitle">실행 방식</strong><p data-i18n="model">이 페이지는 C 코드를 실제로 컴파일하지 않습니다. 코드는 GCC C11용 전체 예제이며, 버튼은 같은 입력에 대한 교육용 모의 실행을 보여 줍니다. 실제 코딩은 아래의 Practice Lab에서 .c 파일로 저장해 GCC로 확인하세요.</p></div>
 <section id="write" class="lab" aria-labelledby="title-write">
 <div class="lab-head"><span class="step">CORE 01</span><h2 id="title-write" data-i18n="writeTitle">파일에 한 줄 저장하기</h2><p data-i18n="writeIntro">상황: 프로그램이 실행되면 message.txt를 새로 만들거나 기존 내용을 지우고, 한 줄을 기록합니다. 코드를 읽은 뒤 어떤 내용이 파일에 남을지 먼저 예측하세요.</p></div>
-<div class="pipeline"><span>fopen("w")</span><span>fprintf()</span><span>fclose()</span></div>
+<div class="pipeline"><span>fopen("w")</span><span>fprintf()</span><span>fclose()</span></div><details class="core-lab-writing-guide">
+<summary data-i18n="guideSummary">코드 작성 순서 · 3단계로 확인하기</summary>
+<ol><li data-i18n="writeGuide1">파일 이름과 모드 "w"를 확인하고, 기존 파일이 있다면 내용이 어떻게 되는지 예측하세요.</li><li data-i18n="writeGuide2">fopen()의 결과가 NULL인지 검사하고 fprintf()로 문장과 줄바꿈을 기록하세요.</li><li data-i18n="writeGuide3">fclose()로 닫은 뒤 화면의 모의 파일 내용을 확인하고, 입력 문장을 바꿔 다시 실행하세요.</li></ol>
+</details>
 <div class="work-grid">
 <div class="code-panel"><div class="panel-title"><strong data-i18n="fullProgram">전체 C11 프로그램</strong><span data-i18n="codeWriteNote">입력 문장을 바꾸면 fprintf()의 문자열도 바뀝니다.</span></div><pre id="code-write" tabindex="0"></pre><div class="hint" data-i18n="writeExplain">파일을 열고(NULL 검사), 한 줄을 기록한 뒤 닫습니다. "w" 모드는 기존 파일 내용을 덮어씁니다.</div></div>
 <div class="play-panel"><label for="input-write" data-i18n="writeInput">파일에 기록할 한 줄</label><input id="input-write" type="text" maxlength="72" value="Hello, File I/O!" spellcheck="false"><p class="micro" data-i18n="writePredict">예측: fprintf()가 실행된 후 message.txt에는 무엇이 남을까요?</p><button id="run-write" type="button" data-i18n="writeRun">파일 쓰기 모의 실행</button><output id="out-write" class="output" aria-live="polite" data-i18n="beforeRun">실행 전에 결과를 예측해 보세요.</output><a class="next-link" href="#read" data-i18n="toRead">다음: 저장한 파일을 읽어 보기 →</a></div>
 </div></section>
 <section id="read" class="lab" aria-labelledby="title-read">
 <div class="lab-head"><span class="step">CORE 02</span><h2 id="title-read" data-i18n="readTitle">파일에서 한 줄 읽고 출력하기</h2><p data-i18n="readIntro">상황: message.txt에는 여러 줄이 들어 있습니다. fgets()를 단 한 번 호출하면 첫 줄만 읽습니다. 화면에 출력되는 내용을 먼저 예측하세요.</p></div>
-<div class="pipeline"><span>fopen("r")</span><span>fgets()</span><span>fputs()</span><span>fclose()</span></div>
+<div class="pipeline"><span>fopen("r")</span><span>fgets()</span><span>fputs()</span><span>fclose()</span></div><details class="core-lab-writing-guide">
+<summary data-i18n="guideSummary">코드 작성 순서 · 3단계로 확인하기</summary>
+<ol><li data-i18n="readGuide1">"r" 모드로 파일을 열고 fopen() 실패 여부를 먼저 확인하세요.</li><li data-i18n="readGuide2">char line[80] 버퍼에 fgets()를 한 번만 호출하고, 성공한 경우에만 fputs()를 사용하세요.</li><li data-i18n="readGuide3">첫 줄과 둘째 줄을 다르게 입력하고, 한 번의 fgets() 호출로 어느 부분이 출력되는지 확인하세요.</li></ol>
+</details>
 <div class="work-grid">
 <div class="code-panel"><div class="panel-title"><strong data-i18n="fullProgram">전체 C11 프로그램</strong><span data-i18n="codeReadNote">첫 번째 줄만 읽는 기본 프로그램</span></div><pre id="code-read" tabindex="0">#include &lt;stdio.h&gt;
 int main(void) {
@@ -55,7 +61,10 @@ Second line</textarea><button id="use-saved" type="button" class="secondary" dat
 </div></section>
 <section id="student" class="lab" aria-labelledby="title-student">
 <div class="lab-head"><span class="step">CORE 03</span><h2 id="title-student" data-i18n="studentTitle">학생 레코드를 구조체에 읽고 학점 계산하기</h2><p data-i18n="studentIntro">상황: students.txt의 한 레코드에는 학번, 이름, 점수가 기록되어 있습니다. 세 값을 struct Student에 넣고, 점수를 A~F 학점으로 환산해 출력합니다. 먼저 한 명을 정확히 처리하는 법을 익힙니다.</p></div>
-<div class="pipeline"><span>fopen("r")</span><span>fscanf()</span><span>struct Student</span><span>grade()</span><span>fclose()</span></div>
+<div class="pipeline"><span>fopen("r")</span><span>fscanf()</span><span>struct Student</span><span>grade()</span><span>fclose()</span></div><details class="core-lab-writing-guide">
+<summary data-i18n="guideSummary">코드 작성 순서 · 3단계로 확인하기</summary>
+<ol><li data-i18n="studentGuide1">Student 구조체의 id, name, score 멤버와 입력 파일의 세 필드를 대응시키세요.</li><li data-i18n="studentGuide2">fscanf()의 반환값이 3인지 확인하고, 이름에는 %39s로 버퍼 길이를 제한하세요.</li><li data-i18n="studentGuide3">점수를 grade()에 전달해 A–F를 얻고, 학번·이름·점수·학점의 출력값을 비교하세요.</li></ol>
+</details>
 <div class="work-grid">
 <div class="code-panel"><div class="panel-title"><strong data-i18n="fullProgram">전체 C11 프로그램</strong><span data-i18n="codeStudentNote">학생 한 명을 처리하는 기본 형태</span></div><pre id="code-student" tabindex="0">#include &lt;stdio.h&gt;
 struct Student {
