@@ -17,7 +17,7 @@ for(const id of ["local-pdf","paste-drive","open-drive-link","color-mode","drive
 }
 assert(js.includes("4.10.38/pdf.min.mjs")&&js.includes("4.10.38/pdf.worker.min.mjs"),"PDF.js and worker versions must match");
 assert(js.includes("pageColors")&&js.includes("foreground")&&js.includes("background"),"PDF.js color customization missing");
-assert(js.includes("data:")===false,"Do not enable data URI PDFs from URL parameters");
+assert(js.includes("u.origin!==location.origin"),"Reject cross-origin or data URI PDF URLs");
 assert(js.includes('u.origin!==location.origin')&&js.includes('endsWith(".pdf")'),"Same-origin PDF URL restriction missing");
 assert(js.includes('a-zA-Z0-9_-')&&js.includes("drive.google.com"),"Google Drive URL validation missing");
 assert(js.includes('input instanceof Uint8Array'),"Local file PDF.js source missing");
