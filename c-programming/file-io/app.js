@@ -19,7 +19,11 @@ const conceptKey="els-concept-fileio-v1";
 let conceptDone=new Set();
 try{const c=JSON.parse(localStorage.getItem(conceptKey)||"[]");if(Array.isArray(c))conceptDone=new Set(c.filter(n=>Number.isInteger(n)&&n>=0&&n<8))}catch(e){}
 function markConcept(n){conceptDone.add(n);try{localStorage.setItem(conceptKey,JSON.stringify([...conceptDone]))}catch(e){};updateConceptStatus()}
-function updateConceptStatus(){const el=$("concept-count");if(el)el.textContent="Concept Check Passed "+conceptDone.size+"/8 (별도 기록)"}
+const coreStageOrder=[0,1,2,3,4,5,7];
+const isCoreStage=n=>coreStageOrder.includes(n);
+const completedCoreCount=()=>coreStageOrder.filter(n=>done.has(n)).length;
+function updateConceptStatus(){const el=$("concept-count");if(el)el.textContent="Concept Check Passed "+coreStageOrder.filter(n=>conceptDone.has(n)).length+"/7 (필수)"}
+
 window.addEventListener("els:conceptPassed",e=>{const n=Number(e.detail?.stage);if(Number.isInteger(n)&&n>=0&&n<8)markConcept(n)});
 
 try{
@@ -34,16 +38,33 @@ try{
 }catch(e){}
 const persist=()=>{try{localStorage.setItem("els-fileio-progress-v2",JSON.stringify([...done]))}catch(e){}};
 window.addEventListener("els:labEvidence",e=>{const n=e.detail?.mission==="m3"?2:e.detail?.mission==="m4"?4:-1;if(n<0||e.detail?.state!=="reflected")return;done.add(n);persist();navigate(current,false);const status=$("step-status");if(status)status.textContent="예측·실험·설명 기록";});
-function navigate(i,doScroll=true){current=Math.max(0,Math.min(7,i));stages.forEach((s,j)=>s.hidden=j!==current);
-document.querySelectorAll("[data-nav]").forEach((b,j)=>{b.classList.toggle("current",j===current);b.classList.toggle("completed",done.has(j));if(j===current)b.setAttribute("aria-current","step");else b.removeAttribute("aria-current")});
-$("step-label").textContent="STEP "+String(current+1).padStart(2,"0")+" / 08";
-$("step-status").textContent=done.has(current)?"개념 확인 완료":"학습 중";
-$("footer-position").textContent=(current+1)+" / 8";$("prev-stage").disabled=current===0;$("next-stage").disabled=current===7;
-$("progress-text").textContent=done.size+" / 8 (학습 활동)";$("progress-fill").style.width=(done.size*12.5)+"%";$("progress-meter").setAttribute("aria-valuenow",done.size);$("completion-message").hidden=done.size<8;updateConceptStatus();
-if(doScroll){const target=$("lesson");if(target)target.scrollIntoView({block:"start",behavior:"instant"});if(target)target.focus({preventScroll:true});}}
+function navigate(i,doScroll=true){
+current=Math.max(0,Math.min(7,i));
+stages.forEach((stage,j)=>stage.hidden=j!==current);
+document.querySelectorAll("[data-nav]").forEach(b=>{
+ const stage=Number(b.dataset.nav);
+ b.classList.toggle("current",stage===current);
+ b.classList.toggle("completed",done.has(stage));
+ if(stage===current)b.setAttribute("aria-current","step");else b.removeAttribute("aria-current");
+});
+const optional=current===6,position=coreStageOrder.indexOf(current);
+$("step-label").textContent=optional?"OPTIONAL · SENSOR LAB":"STEP "+String(position+1).padStart(2,"0")+" / 07";
+$("step-status").textContent=done.has(current)?"개념 확인 완료":(optional?"선택 심화":"학습 중");
+$("footer-position").textContent=optional?"Optional":(position+1)+" / 7";
+$("prev-stage").disabled=!optional&&position===0;
+$("next-stage").disabled=optional||position===coreStageOrder.length-1;
+const total=completedCoreCount();
+$("progress-text").textContent=total+" / 7 (필수 학습)";
+$("progress-fill").style.width=(total*100/7)+"%";
+$("progress-meter").setAttribute("aria-valuenow",total);
+$("completion-message").hidden=total<7;
+updateConceptStatus();
+if(doScroll){const target=$("lesson");if(target)target.scrollIntoView({block:"start",behavior:"instant"});if(target)target.focus({preventScroll:true});}
+}
 document.querySelectorAll("[data-nav]").forEach(b=>b.addEventListener("click",()=>navigate(Number(b.dataset.nav))));
 document.querySelectorAll("[data-jump-stage]").forEach(b=>b.addEventListener("click",()=>navigate(Number(b.dataset.jumpStage))));
-$("prev-stage").onclick=()=>navigate(current-1);$("next-stage").onclick=()=>navigate(current+1);
+$("prev-stage").onclick=()=>navigate(current===6?7:coreStageOrder[Math.max(0,coreStageOrder.indexOf(current)-1)]);
+$("next-stage").onclick=()=>{const i=coreStageOrder.indexOf(current);if(i>=0&&i<coreStageOrder.length-1)navigate(coreStageOrder[i+1]);};
 document.querySelectorAll("[data-grade]").forEach(btn=>btn.onclick=()=>{const n=Number(btn.dataset.grade),picked=document.querySelector('input[name="q'+n+'"]:checked'),box=$("answer-"+n);if(!picked){box.textContent="먼저 답을 선택해 보세요.";box.classList.add("incorrect");return;}
 const good=picked.value===keys[n];box.classList.toggle("incorrect",!good);box.textContent=(good?"정답입니다. ":"다시 생각해 보세요. ")+explanations[n];
 if(good){done.add(n);markConcept(n);persist();navigate(current,false);}});
