@@ -7,10 +7,13 @@ const transfer=read("c-programming/file-io/core-transfer.js");
 const coreHtml=read("c-programming/file-io/core-labs/index.html");
 const coreJs=read("c-programming/file-io/core-labs/labs.js");
 const practiceJs=read("c-programming/file-io/practice/app.js");
+const practiceHtml=read("c-programming/file-io/practice/index.html");
+const navJs=read("c-programming/file-io/learning-nav.js");
+const navCss=read("c-programming/file-io/learning-nav.css");
 const language=read("c-programming/language.js");
 const failures=[];
 const assert=(condition,message)=>{if(!condition)failures.push(message)};
-for(const [name,code] of [["app",app],["transfer",transfer],["core labs",coreJs],["practice",practiceJs],["language",language]]){
+for(const [name,code] of [["app",app],["transfer",transfer],["core labs",coreJs],["practice",practiceJs],["shared navigation",navJs],["language",language]]){
   try {new Function(code)} catch(error){failures.push(name+" JavaScript syntax: "+error.message)}
 }
 assert(!html.includes("상황 설명 상황"),"Duplicate Korean context label");
@@ -49,6 +52,20 @@ for(const [navId,titleId] of [["navWrite","title-write"],["navRead","title-read"
 }
 assert(!coreHtml.includes('data-go-task'),"Beginner labs must not mix the advanced coding engine.");
 assert(coreHtml.includes("../practice/#p3")&&practiceJs.includes("p3:2,p4:3,p5:4,p6:5"),"Advanced deep link missing");
+const pages=[
+ ["concepts",html,"./learning-nav.js?v=1","./learning-nav.css?v=1"],
+ ["labs",coreHtml,"../learning-nav.js?v=1","../learning-nav.css?v=1"],
+ ["practice",practiceHtml,"../learning-nav.js?v=1","../learning-nav.css?v=1"]
+];
+for(const [name,page,script,style] of pages){
+ assert(page.includes('data-fileio-section="'+name+'"'),name+": learning section is not marked");
+ assert(page.includes(script),name+": shared navigation script missing");
+ assert(page.includes(style),name+": shared navigation stylesheet missing");
+}
+assert(navJs.includes('aria-current="page"'),"Shared navigation must mark current route");
+assert(navJs.includes("window.ELSLanguage?.subscribe(render)"),"Shared navigation must update on language change");
+assert(navJs.includes('previous')&&navJs.includes('next'),"Shared navigation previous/next missing");
+assert(navCss.includes("fileio-learning-path__step.is-current"),"Current step must be visibly distinct");
 assert(app.includes("els-fileio-progress-v2")&&transfer.includes("els-fileio-core-transfer-v1"),"Student progress storage keys changed");
 assert(language.includes("File I/O language coverage")&&transfer.includes("explanationsEn"),"English feedback coverage missing");
 if(failures.length){console.error("FAIL: "+failures.join("\nFAIL: "));process.exitCode=1}
