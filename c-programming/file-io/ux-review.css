@@ -59,3 +59,15 @@
 @media(max-width:950px){
   .els-design .core-transfer-layout{grid-template-columns:1fr}
 }
+
+/* Visually separate first-year core coding from optional advanced tasks. */
+.els-design .fileio-lab-nav{margin:16px 0 12px;padding:13px 10px;border:1px solid var(--els-border,var(--border));border-radius:10px;background:var(--els-surface-alt,var(--surface))}
+.els-design .fileio-lab-nav>strong{display:block;font-size:.83rem;color:var(--els-ink);margin:0 0 8px}
+.els-design .fileio-lab-nav a{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--els-ink);padding:8px;border-radius:7px;font-size:.84rem;line-height:1.4}
+.els-design .fileio-lab-nav a:hover,.els-design .fileio-lab-nav a:focus-visible{background:var(--els-info-bg);outline:1px solid var(--els-link)}
+.els-design .fileio-lab-nav a span{font-size:.74rem;color:var(--els-link);font-weight:800}
+.els-design .fileio-lab-nav p,.els-design .fileio-advanced-nav p{font-size:.77rem;color:var(--els-muted);margin:8px 4px}
+.els-design .fileio-advanced-nav{padding:9px 12px;border:1px solid var(--els-border);border-radius:10px;margin-bottom:14px}
+.els-design .fileio-advanced-nav summary{font-size:.82rem;font-weight:750;cursor:pointer}
+.els-design .fileio-advanced-nav a{font-size:.8rem}
+@media(min-width:961px){.els-design .sidebar{max-height:calc(100vh - 25px);overflow-y:auto;scrollbar-width:thin}}
