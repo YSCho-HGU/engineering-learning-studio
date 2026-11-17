@@ -9,6 +9,7 @@ const hasOptional=Number.isInteger(D.coreCount)&&D.coreCount>0&&D.coreCount<tota
 const coreCount=hasOptional?D.coreCount:total;
 const phaseBreaks=Array.isArray(D.phaseBreaks)&&D.phaseBreaks.length===2?D.phaseBreaks:[Math.ceil(total/2),Math.max(Math.ceil(total/2)+1,total-1)];
 const $=id=>document.getElementById(id);
+const ui=(ko,en)=>window.ELSLanguage?.get()==="en"?en:ko;
 const version=D.contentRevision||(D.slug==="dynamic-memory"?2:1);
 const key="els-journey-"+D.slug+"-v"+version;
 let completed=[],current=0;
@@ -28,7 +29,7 @@ function renderNav(){
    group.setAttribute("aria-label",i===0?"Core lessons":"Optional advanced lessons");
   }
   const b=element("button",(i===current?"active ":"")+(completed.includes(i)?"done":""),$("lesson-nav"));
-  b.type="button";b.dataset.lesson=i;
+  b.type="button";b.dataset.lesson=i;b.setAttribute("aria-controls","lesson");if(i===current)b.setAttribute("aria-current","step");
   element("span","n",b,String(i+1).padStart(2,"0"));
   element("span","",b,l.title);
   if(hasOptional)element("span","dm-level",b,i<coreCount?"필수":"선택");
@@ -42,30 +43,35 @@ function renderNav(){
  $("progress-bar").style.width=(hasOptional?completed.filter(i=>i<coreCount).length/coreCount:completed.length/total)*100+"%";
  const meter=$("progress-bar").parentElement;if(meter){meter.setAttribute("aria-valuenow",String(hasOptional?completed.filter(i=>i<coreCount).length:completed.length));meter.setAttribute("aria-valuemax",String(hasOptional?coreCount:total));}
 }
-function createCode(host,source){
- const pre=element("pre","code",host);
- pre.setAttribute("aria-label","C11 reference code");
+function createCode(host,source,kind="reference"){
+ const wrap=element("div","c-code-example",host);
+ const caption=kind==="starter"?ui("실습용 Starter Code · TODO를 직접 완성하세요","Starter code · Complete the TODO sections"):ui("전체 C11 예제 프로그램 · 출력 결과를 먼저 예측하세요","Complete C11 example · Predict its output before revealing the answer");
+ element("p","c-code-caption",wrap,caption);
+ const pre=element("pre","code",wrap);
+ pre.setAttribute("aria-label",kind==="starter"?"C11 starter code (incomplete)":"Complete C11 example");
  pre.textContent=source;
+ return pre;
 }
 function renderQuiz(stage,l){
  const section=element("section","quiz question",stage);
- element("h3","",section,"Check Yourself · 스스로 확인");
- const q=element("p","",section,l.quiz.q);
- const fs=element("fieldset","",section);element("legend","",fs,"Predict before revealing the answer");
+ element("h3","",section,ui("Check Yourself · 스스로 확인","Check Yourself"));
+ element("p","quiz-context",section,l.quiz.context||ui("앞의 개념 설명과 전체 C11 예제에 주어진 조건·값을 바탕으로 답하세요.","Use the conditions and values in the concept explanation and complete C11 example above."));
+ const q=element("p","quiz-question",section,l.quiz.q);
+ const fs=element("fieldset","",section);element("legend","",fs,ui("보기를 선택하고 근거를 생각해 보세요.","Select an answer and consider why it is correct."));
  const name="answer-"+current;
  l.quiz.options.forEach((opt,i)=>{
   const label=element("label","",fs);
   const input=element("input","",label);input.type="radio";input.name=name;input.value=String(i);
   element("span","",label,opt);
  });
- const check=element("button","action primary",section,"Check prediction · 확인");
+ const check=element("button","action primary",section,ui("선택한 답 확인","Check your answer"));
  const result=element("p","feedback",section);result.hidden=true;result.setAttribute("role","status");
  check.addEventListener("click",()=>{
   const answer=fs.querySelector("input:checked");
   result.hidden=false;
-  if(!answer){result.textContent="먼저 답을 선택하세요. / Select an answer first.";return}
+  if(!answer){result.textContent=ui("먼저 답을 선택하세요.","Select an answer first.");return}
   const ok=Number(answer.value)===l.quiz.correct;
-  result.textContent=(ok?"Correct. ":"Review your prediction. ")+l.quiz.explain;
+  result.textContent=(ok?ui("정답입니다. ","Correct. "):ui("답을 다시 검토하세요. ","Review your answer. "))+l.quiz.explain;
   if(ok&&!concepts.includes(current)){concepts.push(current);concepts.sort((a,b)=>a-b);persistConcepts();renderNav();updateAssessmentSummary();}
  });
 }
@@ -258,22 +264,22 @@ function show(i){
  element("h2","",stage,l.title);element("p","lead",stage,l.goal);
  if(l.minutes)element("p","legend",stage,"권장 개념 학습 시간: 약 "+l.minutes+"분 · 코딩 실습은 별도");
  const concept=element("section","concept",stage);
- element("h3","",concept,"Understand · 핵심 개념");element("p","",concept,l.concept);
+ element("h3","",concept,ui("핵심 개념 · Understand","Core Concept · Understand"));element("p","",concept,l.concept);
  const learn=element("div","learn",stage);
- const c=element("section","",learn);element("h3","",c,"Read the C code · 코드 분석");createCode(c,l.code);
- const e=element("section","",learn);element("h3","",e,"Predict the output · 실행 예측");element("p","",e,l.predict);
- const reveal=element("button","action",e,"Reveal reference output · 참조 결과");
+ const c=element("section","",learn);element("h3","",c,ui("전체 프로그램 · 코드 읽기","Complete C Program · Read the Code"));createCode(c,l.code);
+ const e=element("section","",learn);element("h3","",e,ui("실행 결과 예측하기","Predict the Output"));element("p","",e,l.predict);
+ const reveal=element("button","action",e,ui("참조 출력 확인","Reveal Reference Output"));
  const out=element("div","explain",e);out.hidden=true;
  const outPre=element("pre","",out);outPre.style.whiteSpace="pre-wrap";outPre.textContent=l.output;
  reveal.addEventListener("click",()=>{out.hidden=!out.hidden;reveal.setAttribute("aria-expanded",String(!out.hidden))});reveal.setAttribute("aria-expanded","false");
  renderTrace(stage,l);renderMemoryLayout(stage,l);renderModel(stage,l);renderQuiz(stage,l);
  const transfer=element("section","transfer",stage);
- element("h3","",transfer,"Transfer · 응용 및 설명");
+ element("h3","",transfer,ui("응용 · 내 말로 설명하기","Apply and Explain"));
  element("p","",transfer,l.transfer);
  const textarea=element("textarea","",transfer);textarea.placeholder="Explain why, sketch memory, or write pseudocode here...";textarea.setAttribute("aria-label","Personal explanation; stored only in this browser");
  const draftkey=key+"-note-"+current;try{textarea.value=localStorage.getItem(draftkey)||""}catch(e){}
  textarea.addEventListener("input",()=>{try{localStorage.setItem(draftkey,textarea.value)}catch(e){}});
- const hint=element("details","",transfer);element("summary","",hint,"Instructor guidance · 해설 가이드");element("p","",hint,l.guide);
+ const hint=element("details","",transfer);element("summary","",hint,ui("해설 가이드 펼치기","Show Instructor Guidance"));element("p","",hint,l.guide);
  const actions=element("div","navactions",stage);
  const prev=element("button","action",actions,"← Previous");prev.disabled=current===0;prev.addEventListener("click",()=>show(current-1));
  const mark=element("button","action primary",actions,completed.includes(current)?"Activity reviewed ✓":"Mark activity reviewed ✓");
@@ -301,7 +307,7 @@ function init(){
   const article=element("article","",$("practice"));element("strong","",article,"P"+(i+1)+" · "+(hasOptional?(i<Number(D.practiceCoreCount??3)?"[필수] ":"[선택] "):"")+p.title);
   element("p","",article,p.task);
   const details=element("details","",article);element("summary","",details,"Starter code and test case");
-  createCode(details,p.starter);
+  createCode(details,p.starter,"starter");
   const test=element("pre","code",details);test.textContent="Test input / expected output:\n"+p.expected;
   const btn=element("button","action",details,"Copy starter code");
   btn.addEventListener("click",()=>navigator.clipboard?.writeText(p.starter));
