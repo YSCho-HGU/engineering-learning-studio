@@ -202,21 +202,7 @@ int main(void) {
   <div class="core-transfer-actions"><button type="button" class="core-transfer-check" data-core-check="4">적용 결과 확인</button><button type="button" class="core-transfer-reset" data-core-reset="4">다시 풀기</button><output class="core-transfer-result" id="core-result-4" aria-live="polite">두 문항을 선택한 뒤 결과를 확인하세요.</output></div>
 </section>
 <div class="check" data-check="3"><div class="check-eyebrow">CHECK YOURSELF · 7.4</div><p class="question-context">입력 파일에는 정수 ID와 실수 점수가 있습니다. fscanf(fp, "%d %lf", &amp;id, &amp;score)의 성공 여부를 반환값으로 검사하려고 합니다.</p><h3><code>fscanf(fp, "%d %lf", &amp;id, &amp;score)</code>가 두 값을 모두 읽었는지 검사하려면?</h3><label><input type="radio" name="q3" value="a"> 반환값이 1인지 검사한다.</label><label><input type="radio" name="q3" value="b"> 반환값이 2인지 검사한다.</label><label><input type="radio" name="q3" value="c"> <code>feof(fp)</code>만 검사한다.</label><button class="check-btn" data-grade="3">답 확인 및 설명</button><div class="answer" id="answer-3" aria-live="polite"></div></div>
-<section class="core-example-lab" aria-labelledby="ex-line-title"><div class="core-example-heading"><span>핵심 코딩 예제 A · 읽기 → 출력</span><h3 id="ex-line-title">파일에서 한 줄 읽고 화면에 출력하기</h3><p>상황: message.txt에 여러 줄의 메시지가 있습니다. 먼저 fopen()으로 파일을 연 뒤, fgets()를 단 한 번 호출하여 <strong>첫 줄만</strong> 읽습니다. 성공하면 fputs()로 출력하고 마지막에 fclose()로 닫습니다. 코드를 확인한 뒤 입력 내용을 바꿔 실행 결과를 예측하세요.</p></div><div class="core-example-layout"><div><strong>실행 가능한 C11 예제</strong><pre id="ex-line-source">#include &lt;stdio.h&gt;
-int main(void) {
-    FILE *fp = fopen("message.txt", "r");
-    char line[80];
-    if (fp == NULL) {
-        puts("Cannot open file");
-        return 1;
-    }
-    if (fgets(line, sizeof line, fp) != NULL) {
-        fputs(line, stdout);
-    }
-    fclose(fp);
-    return 0;
-}</pre><p>왜 이렇게 작성할까요? <code>fopen</code>은 파일을 열고, <code>fgets</code>는 최대 79글자와 종료 문자를 고려하여 읽습니다. <code>fputs</code>는 읽은 문자열을 화면에 씁니다. <code>fclose</code>는 스트림을 닫습니다.</p></div><div><label for="ex-line-input"><strong>message.txt 내용 (교육용 파일 입력)</strong></label><textarea id="ex-line-input" rows="4" spellcheck="false">Sensor online
-Second line</textarea><button type="button" id="ex-line-run" class="primary">한 줄 읽기 모의 실행</button><div class="core-example-result" aria-live="polite" id="ex-line-result">실행 전: 출력 결과를 먼저 예상하세요.</div><p class="core-example-note">브라우저의 모의 실행입니다. 실제 C 파일을 생성하지 않으며, 파일 열기는 성공한다고 가정하며, 버퍼가 충분하지 않으면 첫 줄의 일부만 읽습니다. 실제 컴파일은 Practice Lab에서 확인하세요.</p></div></div></section>
+<p class="fileio-basic-link"><a class="practice-link" href="./core-labs/#read">핵심 코딩 실습: 파일에서 한 줄 읽기 →</a></p>
 </section>
 <section class="stage" data-stage="4" hidden>
 <section class="lesson" id="m4" aria-labelledby="m4-title"><div class="eyebrow">STEP 05 · EOF와 오류 · 교재 §7.4.4</div><h2 id="m4-title">EOF와 읽기 오류</h2><p class="caption"><code>while (fscanf(fp, "%d", &amp;x) == 1)</code>은 무엇을 검사하는 조건인가요?</p>
@@ -345,40 +331,7 @@ int main(void) {
   <div class="core-transfer-actions"><button type="button" class="core-transfer-check" data-core-check="6">적용 결과 확인</button><button type="button" class="core-transfer-reset" data-core-reset="6">다시 풀기</button><output class="core-transfer-result" id="core-result-6" aria-live="polite">두 문항을 선택한 뒤 결과를 확인하세요.</output></div>
 </section>
 <div class="check" data-check="5"><div class="check-eyebrow">CHECK YOURSELF · 7.5</div><p class="question-context">struct Student s의 name 멤버는 char name[40] 배열입니다. fscanf(fp, "%39s", s.name)으로 문자열을 읽습니다.</p><h3><code>fscanf()</code>에서 <code>s.name</code>에 <code>&amp;</code>가 없는 주된 이유는?</h3><label><input type="radio" name="q5" value="a"> 문자열 이름에는 읽기가 불가능하기 때문이다.</label><label><input type="radio" name="q5" value="b"> 배열 이름이 이 함수 호출에서 첫 원소의 주소로 변환되기 때문이다.</label><label><input type="radio" name="q5" value="c"> <code>fscanf()</code>가 자동으로 변수를 생성하기 때문이다.</label><button class="check-btn" data-grade="5">답 확인 및 설명</button><div class="answer" id="answer-5" aria-live="polite"></div></div>
-<section class="core-example-lab" aria-labelledby="ex-student-title"><div class="core-example-heading"><span>핵심 코딩 예제 B · 파일 → 구조체 → 계산</span><h3 id="ex-student-title">학생 레코드를 구조체에 저장하고 학점 계산하기</h3><p>상황: students.txt에는 학생 ID, 이름, 점수(0~100)가 한 줄에 하나씩 저장되어 있습니다. <code>fscanf()</code>로 세 필드를 읽어 <code>struct Student</code> 배열에 저장하고 각 점수를 학점으로 환산합니다. 배열 크기는 10명으로 제한합니다.</p></div><div class="core-example-layout"><div><strong>핵심 C11 코드</strong><pre id="ex-student-source">#include &lt;stdio.h&gt;
-#define MAX 10
-struct Student {
-    int id;
-    char name[40];
-    double score;
-};
-char grade(double score) {
-    if (score &gt;= 90) return 'A';
-    if (score &gt;= 80) return 'B';
-    if (score &gt;= 70) return 'C';
-    if (score &gt;= 60) return 'D';
-    return 'F';
-}
-int main(void) {
-    struct Student s[MAX];
-    FILE *fp = fopen("students.txt", "r");
-    int n = 0, i, result;
-    if (fp == NULL) return 1;
-    while (n &lt; MAX) {
-        result = fscanf(fp, "%d %39s %lf",
-                        &amp;s[n].id, s[n].name, &amp;s[n].score);
-        if (result != 3) break;
-        if (s[n].score &lt; 0 || s[n].score &gt; 100) break;
-        n++;
-    }
-    fclose(fp);
-    for (i = 0; i &lt; n; i++)
-        printf("%d %s %.1f %c\n", s[i].id,
-               s[i].name, s[i].score, grade(s[i].score));
-    return 0;
-}</pre><p><strong>읽기 순서:</strong> <code>%d</code> → ID, <code>%39s</code> → 이름, <code>%lf</code> → 점수. 세 항목이 모두 정상 변환되어야 반환값이 3입니다. <code>grade()</code>는 예제용 절대평가 규칙을 사용합니다.</p></div><div><label for="ex-student-input"><strong>students.txt 내용 (교육용 파일 입력)</strong></label><textarea id="ex-student-input" rows="5" spellcheck="false">101 Mina 92.5
-102 Joon 84.0
-103 Ara 71.5</textarea><button type="button" id="ex-student-run" class="primary">레코드 읽기·성적 환산 모의 실행</button><div class="core-example-result" aria-live="polite" id="ex-student-result">실행 전: 각 학생의 학점을 예상하세요.</div><p class="core-example-note">브라우저 모의 실행: 이름은 공백이 없는 문자열, 레코드는 한 줄에 세 필드이며 최대 10명이라고 가정합니다. 잘못된 행은 처리하지 않습니다. 실제 fscanf()는 줄 단위가 아니라 공백을 기준으로 읽으므로 엄격한 행별 검증은 fgets()+파싱을 사용하세요.</p></div></div></section>
+<p class="fileio-basic-link"><a class="practice-link" href="./core-labs/#student">핵심 코딩 실습: 구조체·학점 계산 →</a></p>
 </section>
 <section class="stage" data-stage="6" hidden>
 <div class="topic">7.5.3 · ENGINEERING APPLICATION</div><h2>센서 로그 분석</h2><section class="study-scope" aria-label="07단계의 필수 및 선택 학습">
@@ -633,4 +586,4 @@ int main(void) {
 </section>
 <div class="step-footer"><button id="prev-stage">← 이전 단계</button><span id="footer-position">1 / 8</span><button class="primary" id="next-stage">다음 단계 →</button></div>
 <div class="page-note">모든 C 코드 표기의 <code>!=</code>와 <code>==</code>는 실제 C 연산자입니다. 글꼴 ligature로 합쳐 보이지 않도록 설정했습니다. 설명용 실습은 실제 C 컴파일러의 동작을 단순화할 수 있으므로 각 예제의 가정을 함께 확인하세요. Self-study companion for <strong>171_C_File_IO_Rev8</strong>. 웹 실험은 교육용 모의 실행입니다. 실제 C 컴파일러 실행이나 파일 시스템 접근이 아닙니다. 학습 성취는 이 브라우저의 로컬 저장소에만 기록됩니다.</div>
-</main></div><script src="./sensor-model.js?v=2" defer></script><script src="./robust-sensor-model.js?v=1" defer></script><script src="./app.js?v=trace-robust1" defer></script><script src="./core-transfer.js?v=2" defer></script><script src="./core-examples.js?v=1" defer></script><script src="./sensor-code-trace.js?v=1" defer></script><script src="./sensor-variable-diff.js?v=1" defer></script><script src="./sensor-trace-ui.js?v=5" defer></script><script src="./sensor-assessment.js?v=1" defer></script><script src="./pilot/engine.js?v=unified2" defer></script><script src="./unified-labs.js?v=unified2" defer></script><script src="../../assets/els-theme-v2.js?v=2" defer></script><script src="../../assets/els-language.js?v=1"></script><script src="../language.js?v=1"></script></body></html>
+</main></div><script src="./sensor-model.js?v=2" defer></script><script src="./robust-sensor-model.js?v=1" defer></script><script src="./app.js?v=trace-robust1" defer></script><script src="./core-transfer.js?v=2" defer></script><script src="./sensor-code-trace.js?v=1" defer></script><script src="./sensor-variable-diff.js?v=1" defer></script><script src="./sensor-trace-ui.js?v=5" defer></script><script src="./sensor-assessment.js?v=1" defer></script><script src="./pilot/engine.js?v=unified2" defer></script><script src="./unified-labs.js?v=unified2" defer></script><script src="../../assets/els-theme-v2.js?v=2" defer></script><script src="../../assets/els-language.js?v=1"></script><script src="../language.js?v=1"></script></body></html>
