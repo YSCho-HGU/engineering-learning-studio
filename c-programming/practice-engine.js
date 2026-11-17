@@ -7,7 +7,9 @@ const practiceVersion=Number.isInteger(d.practiceRevision)?d.practiceRevision:1;
 const K="els-code-"+d.slug+"-v"+practiceVersion,E="els-code-evidence-"+d.slug+"-v"+practiceVersion;
 const optionalPractice=Number.isInteger(d.practiceCoreCount)&&d.practiceCoreCount>=0&&d.practiceCoreCount<d.practice.length;
 const corePracticeCount=Number.isInteger(d.practiceCoreCount)?d.practiceCoreCount:d.practice.length;
-const practiceLabel=i=>optionalPractice?(i<corePracticeCount?"[필수] ":"[선택 심화] "):"";
+const ui=(ko,en)=>window.ELSLanguage?.get()==="en"?en:ko;
+const practiceLabel=i=>optionalPractice?(i<corePracticeCount?ui("[필수] ","[Core] "):ui("[선택 심화] ","[Optional] ")):"";
+const taskHeading=i=>"P"+(i+1)+" · "+practiceLabel(i)+d.practice[i].title;
 let selection=0;
 const get=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch(e){return fallback}};
 let drafts=get(K,{}),evidence=get(E,{});
@@ -153,14 +155,14 @@ txt("summary","",more,"GCC 실행 방법 및 검증 절차");
 txt("p","",more,"① .c 파일을 다운로드하세요. ② gcc -std=c11 -Wall -Wextra -Wpedantic -Werror task.c -o task"+(d.slug==="standard-library"?" -lm":"")+" ③ 실행 후 참조 출력과 대조하세요. 데이터 파일이 필요한 과제는 같은 폴더에 준비하세요.");
 const navButtons=[];
 function show(i){
- selection=i;const task=d.practice[i];title.textContent="P"+(i+1)+" · "+(practiceLabel(i))+task.title;description.textContent=task.task;expected.textContent=task.expected;
+ selection=i;const task=d.practice[i];title.textContent=taskHeading(i);description.textContent=task.task;expected.textContent=task.expected;
  editor.value=Object.prototype.hasOwnProperty.call(drafts,i)?drafts[i]:task.starter;verified.checked=!!evidence[i];
  status.textContent="정적 점검은 구문 누락을 알려주는 힌트이며 컴파일·실행 검증이 아닙니다.";showGuidance(i);
  navButtons.forEach((b,j)=>{b.classList.toggle("active",i===j);if(i===j)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
 }
 function persistDraft(){drafts[selection]=editor.value;store()}
 d.practice.forEach((task,i)=>{
- const b=txt("button","cp-nav-item",sidebar,"P"+(i+1)+(optionalPractice?(i<corePracticeCount?" · 필수 · ":" · 선택 · "):" · ")+task.title);b.type="button";b.addEventListener("click",()=>{persistDraft();show(i)});navButtons.push(b);
+ const b=txt("button","cp-nav-item",sidebar,taskHeading(i));b.type="button";b.addEventListener("click",()=>{persistDraft();show(i)});navButtons.push(b);
 });
 editor.addEventListener("input",()=>{drafts[selection]=editor.value;store();if(evidence[selection]){delete evidence[selection];verified.checked=false;store()}});
 check.addEventListener("click",()=>{persistDraft();const result=assess(editor.value,selection);status.textContent=(result.ok?"정적 구문 단서가 확인되었습니다. GCC 실행 검증은 별도로 필요합니다.":"검토가 필요한 구문이 있습니다. (실제 컴파일 판정 아님)")+"\n"+result.findings.map(x=>(x.pass?"✓ ":"△ ")+x.desc).join("\n")});
