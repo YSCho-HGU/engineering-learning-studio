@@ -4,6 +4,9 @@ on:
     paths:
       - 'c-programming/**/data.js'
       - 'c-programming/course-catalog.json'
+      - 'c-programming/course-catalog.js'
+      - 'textbook-viewer/**'
+      - 'tests/textbook-viewer.mjs'
       - 'c-programming/journey.js'
       - 'tests/c-authoring-policy.mjs'
       - 'tests/c-course-gcc.mjs'
@@ -33,5 +36,7 @@ jobs:
         run: node tests/c-fileio-mini-lab.mjs
       - name: Validate File I/O UI titles, language, source and progress compatibility
         run: node tests/c-fileio-ui.mjs
+      - name: Verify Textbook Viewer and course link regressions
+        run: node tests/textbook-viewer.mjs
       - name: GCC C11 verify published lesson reference programs
         run: node tests/c-course-gcc.mjs
