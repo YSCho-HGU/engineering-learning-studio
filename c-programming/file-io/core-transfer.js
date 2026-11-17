@@ -30,6 +30,29 @@
     "b": "이 입력에서 ABC는 실수로 변환되지 않아 fscanf()가 0을 반환합니다. 이는 정상적인 파일 끝(EOF)에 도달한 경우와 다릅니다."
   }
 };
+ const explanationsEn={
+  "3": {
+    "a": "If fopen(\"readings.txt\", \"r\") fails, it returns NULL. The condition fp == NULL detects this failure and exits before the file is used.",
+    "b": "Read mode \"r\" does not create a missing file. If fopen() returns NULL, do not use that pointer for file operations."
+  },
+  "4": {
+    "a": "The two examples open the file separately from the beginning. With %19s, fscanf() reads only Hello, while fgets() can read Hello World and the newline when the buffer is large enough.",
+    "b": "fscanf() returns the number of values successfully converted and assigned. Here, both the integer and floating-point conversions succeed, so it returns 2."
+  },
+  "5": {
+    "a": "The condition fscanf(fp, \"%d\", &x) == 1 executes the loop body only when one integer is read successfully. Checking only !feof(fp) may reuse stale data when a conversion fails.",
+    "b": "The EOF indicator is usually not set immediately after reading the final integer 30. It is set when a later read attempts to read past the end of the file."
+  },
+  "6": {
+    "a": "saveStudent(s) returns 1 on success and 0 on failure, so !saveStudent(s) is true when saving fails. fclose() requires FILE *, not a Student structure.",
+    "b": "saveStudent() handles opening, writing, closing, and checking errors, while main() calls the function and checks the result. This separation improves clarity and maintainability."
+  },
+  "8": {
+    "a": "The first two values, 4.0 and 6.0, are read successfully, leaving count at 2 and sum at 10.0. ABC cannot be converted to double, so the loop body does not execute a third time.",
+    "b": "ABC cannot be converted to a floating-point number, so fscanf() returns 0. This is a matching failure, not a normal end-of-file."
+  }
+};
+ const isEnglish=()=>window.ELSLanguage?.get()==="en";
  const state=new Map();
  const storageKey="els-fileio-core-transfer-v1";
  function evaluate(step){
@@ -40,12 +63,13 @@
   for(const suffix of ["a","b"]){
    selected[suffix]=card.querySelector('input[name="core-'+step+'-'+suffix+'"]:checked')?.value||null;
   }
-  if(!selected.a || !selected.b){box.textContent="두 문제 모두 선택한 뒤 확인하세요. 정답은 제출 후 표시됩니다.";box.dataset.state="attention";return}
+  if(!selected.a || !selected.b){box.textContent=isEnglish()?"Select an answer to both questions before checking. The answers will be shown after submission.":"두 문제 모두 선택한 뒤 확인하세요. 정답은 제출 후 표시됩니다.";box.dataset.state="attention";return}
   const correct=(selected.a===answerKey[step].a?1:0)+(selected.b===answerKey[step].b?1:0);
-  const lines=[correct+"/2 · "+(correct===2?"핵심 개념을 확인했습니다.":"틀린 문항의 이유를 살펴보고 다시 풀어보세요."),
-    "① "+(selected.a===answerKey[step].a?"정답":"재검토")+" — "+explanations[step].a,
-    "② "+(selected.b===answerKey[step].b?"정답":"재검토")+" — "+explanations[step].b,
-    "이 결과는 개념·코드 읽기 형성평가이며, 실제 C 프로그램의 컴파일·실행 숙달 인증이 아닙니다."];
+  const english=isEnglish(), feedback=english?explanationsEn[step]:explanations[step];
+  const lines=[correct+"/2 · "+(english?(correct===2?"Core concept confirmed.":"Review the explanations and try again."):(correct===2?"핵심 개념을 확인했습니다.":"틀린 문항의 이유를 살펴보고 다시 풀어보세요.")),
+    "① "+(selected.a===answerKey[step].a?(english?"Correct":"정답"):(english?"Review":"재검토"))+" — "+feedback.a,
+    "② "+(selected.b===answerKey[step].b?(english?"Correct":"정답"):(english?"Review":"재검토"))+" — "+feedback.b,
+    english?"This is a formative concept and code-reading assessment, not certification of successful C compilation or execution.":"이 결과는 개념·코드 읽기 형성평가이며, 실제 C 프로그램의 컴파일·실행 숙달 인증이 아닙니다."];
   box.replaceChildren();
   for(const line of lines){const p=document.createElement("p");p.textContent=line;box.append(p)}
   box.dataset.state=correct===2?"success":"review";
@@ -59,7 +83,7 @@
    const card=document.querySelector('[data-core-step="'+step+'"]');
    for(const radio of card.querySelectorAll('input[type="radio"]'))radio.checked=false;
    const box=document.getElementById("core-result-"+step);
-   box.textContent="두 문항을 선택한 뒤 결과를 확인하세요.";
+   box.textContent=isEnglish()?"Select answers to both questions, then check your results.":"두 문항을 선택한 뒤 결과를 확인하세요.";
    box.dataset.state="";
    state.delete(step);
    try{localStorage.setItem(storageKey,JSON.stringify(Object.fromEntries(state)))}catch(e){}
