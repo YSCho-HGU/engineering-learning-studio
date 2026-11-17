@@ -35,6 +35,11 @@
       <label for="local-pdf" class="upload"><span data-i18n="chooseFile">내 PDF 파일 열기</span><input id="local-pdf" type="file" accept="application/pdf,.pdf"></label>
     </div>
   </section>
+  <div class="drive-open-form">
+    <label for="paste-drive" data-i18n="pasteLabel">Google Drive 교재 링크</label>
+    <input id="paste-drive" type="url" inputmode="url" placeholder="https://drive.google.com/file/d/.../view" autocomplete="off" spellcheck="false">
+    <button id="open-drive-link" type="button" data-i18n="pasteAction">링크로 열기</button>
+  </div>
   <section class="toolbar" aria-label="PDF controls">
     <label class="control"><span data-i18n="colorMode">PDF 표시 색상</span>
       <select id="color-mode">
