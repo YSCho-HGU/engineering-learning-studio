@@ -1,0 +1,36 @@
+/* Guard File I/O content, navigation, language hooks, and core labs against regressions. */
+import {readFileSync} from "node:fs";
+const read=path=>readFileSync(path,"utf8");
+const html=read("c-programming/file-io/index.html");
+const app=read("c-programming/file-io/app.js");
+const transfer=read("c-programming/file-io/core-transfer.js");
+const examples=read("c-programming/file-io/core-examples.js");
+const language=read("c-programming/language.js");
+const failures=[];
+const assert=(condition,message)=>{if(!condition)failures.push(message)};
+for(const [name,code] of [["app",app],["transfer",transfer],["examples",examples],["language",language]]){
+  try {new Function(code)} catch(error){failures.push(name+" JavaScript syntax: "+error.message)}
+}
+assert(!html.includes("상황 설명 상황"),"Duplicate Korean context label");
+assert(!html.includes("Code fragment · C 핵심 흐름"),"Old fragment label still present");
+const nav=[...html.matchAll(/<button data-nav="(\d+)"[^>]*>[\s\S]*?<span class="nav-title">([^<]+)<\/span>/g)];
+const stage=[...html.matchAll(/<section class="stage" data-stage="(\d+)"[^>]*>[\s\S]*?<h2[^>]*>([^<]+)<\/h2>/g)];
+assert(nav.length===8&&stage.length===8,"Existing eight navigation/stage slots must remain");
+for(let i=0;i<8;i++){
+  assert(nav[i]?.[1]===String(i)&&stage[i]?.[1]===String(i),"Stage "+(i+1)+" index mismatch");
+  assert(nav[i]?.[2]===stage[i]?.[2],"Sidebar and main heading differ at stage "+(i+1));
+}
+for(const step of [3,4,5,6,8]){
+  const from=html.indexOf('data-core-step="'+step+'"');
+  const to=html.indexOf('class="core-transfer-questions"',from);
+  const section=html.slice(from,to);
+  assert(section.includes("Complete C program"),"Step "+step+" missing full code label");
+  assert(section.includes("#include &lt;stdio.h&gt;")&&section.includes("int main(void)"),"Step "+step+" missing complete program structure");
+  assert(section.indexOf("core-transfer-heading")<section.indexOf("core-transfer-layout"),"Step "+step+" explanatory text must precede code and quiz");
+}
+assert((html.match(/data-core-q="\d+[ab]"/g)||[]).length===10,"Ten existing core assessments must remain");
+assert(html.includes('core-examples.js?v=')&&html.includes('id="ex-line-run"')&&html.includes('id="ex-student-run"'),"Core walkthrough controls/scripts missing");
+assert(app.includes("els-fileio-progress-v2")&&transfer.includes("els-fileio-core-transfer-v1"),"Student progress storage keys changed");
+assert(language.includes("File I/O language coverage")&&transfer.includes("explanationsEn"),"English feedback coverage missing");
+if(failures.length){console.error("FAIL: "+failures.join("\nFAIL: "));process.exitCode=1}
+else console.log("PASS: File I/O title parity, scenario layout, full programs, language, script syntax, and preservation keys.");
