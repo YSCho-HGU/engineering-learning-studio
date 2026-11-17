@@ -55,7 +55,7 @@ function createCode(host,source,kind="reference"){
 function renderQuiz(stage,l){
  const section=element("section","quiz question",stage);
  element("h3","",section,ui("Check Yourself · 스스로 확인","Check Yourself"));
- element("p","quiz-context",section,l.quiz.context||ui("앞의 개념 설명과 전체 C11 예제에 주어진 조건·값을 바탕으로 답하세요.","Use the conditions and values in the concept explanation and complete C11 example above."));
+ element("p","quiz-context",section,l.quiz.context||l.goal);
  const q=element("p","quiz-question",section,l.quiz.q);
  const fs=element("fieldset","",section);element("legend","",fs,ui("보기를 선택하고 근거를 생각해 보세요.","Select an answer and consider why it is correct."));
  const name="answer-"+current;
