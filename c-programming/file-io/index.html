@@ -53,7 +53,7 @@
 <main id="lesson" tabindex="-1">
 <div class="lesson-top"><span id="step-label">STEP 01 / 08</span><span class="tag" id="step-status">학습 중</span></div>
 <section class="stage" data-stage="0">
-<div class="topic">7.1 · WHY IT MATTERS</div><h2>왜 파일이 필요한가?</h2><p class="lead">메모리에 저장된 변수는 일반적으로 프로그램이 끝나면 사라집니다. 반면 파일에 기록한 정보는 다음 실행에서 다시 읽을 수 있습니다. 이것이 File I/O가 필요한 이유입니다.</p>
+<div class="topic"><span class="stage-heading-number">STEP 01 · WHY FILES?</span><small class="stage-reference">§7.1</small></div><h2>왜 파일이 필요한가?</h2><p class="lead">메모리에 저장된 변수는 일반적으로 프로그램이 끝나면 사라집니다. 반면 파일에 기록한 정보는 다음 실행에서 다시 읽을 수 있습니다. 이것이 File I/O가 필요한 이유입니다.</p>
 <section class="study-scope" aria-label="01단계의 필수 및 선택 학습">
   <div class="study-scope-core">
     <span class="study-scope-badge">필수 학습</span>
@@ -95,7 +95,7 @@ int main(void) {
 <div class="check" data-check="0"><div class="check-eyebrow">CHECK YOURSELF · 7.1</div><p class="question-context">score 변수를 메모리에 저장하고, 같은 값을 scores.txt에도 기록했습니다. 프로그램을 종료한 다음 다시 실행합니다.</p><h3>프로그램을 종료하고 다시 실행했을 때 일반적으로 남는 것은?</h3><label><input type="radio" name="q0" value="a"> 메모리 변수 <code>score</code>의 값만 남는다.</label><label><input type="radio" name="q0" value="b"> 저장된 파일 내용은 다음 실행에서도 읽을 수 있다.</label><label><input type="radio" name="q0" value="c"> 둘 다 반드시 자동 복원된다.</label><button class="check-btn" data-grade="0">답 확인 및 설명</button><div class="answer" id="answer-0" aria-live="polite"></div></div>
 </section>
 <section class="stage" data-stage="1" hidden>
-<div class="topic">7.2 · STREAM MODEL</div><h2>Stream과 FILE *</h2><p class="lead">이미 사용해 온 <code>scanf()</code>와 <code>printf()</code>도 Stream을 통해 데이터를 주고받습니다. 무엇을 읽고 어디에 쓸지만 달라질 뿐입니다.</p>
+<div class="topic"><span class="stage-heading-number">STEP 02 · STREAM MODEL</span><small class="stage-reference">§7.2</small></div><h2>Stream과 FILE *</h2><p class="lead">이미 사용해 온 <code>scanf()</code>와 <code>printf()</code>도 Stream을 통해 데이터를 주고받습니다. 무엇을 읽고 어디에 쓸지만 달라질 뿐입니다.</p>
 <section class="study-scope" aria-label="02단계의 필수 및 선택 학습">
   <div class="study-scope-core">
     <span class="study-scope-badge">필수 학습</span>
@@ -111,7 +111,7 @@ int main(void) {
 <div class="check" data-check="1"><div class="check-eyebrow">CHECK YOURSELF · 7.2</div><p class="question-context">FILE *fp;로 포인터 변수를 선언하고, fopen()이 성공하여 열린 파일 스트림을 이 포인터로 사용하려고 합니다.</p><h3><code>FILE *fp</code>가 의미하는 것은?</h3><label><input type="radio" name="q1" value="a"> 파일 이름을 저장하는 문자 배열</label><label><input type="radio" name="q1" value="b"> 열린 Stream을 다루기 위한 포인터</label><label><input type="radio" name="q1" value="c"> 파일의 데이터 크기를 저장하는 정수</label><button class="check-btn" data-grade="1">답 확인 및 설명</button><div class="answer" id="answer-1" aria-live="polite"></div></div>
 </section>
 <section class="stage" data-stage="2" hidden>
-<section class="lesson" id="m3" aria-labelledby="m3-title"><div class="eyebrow">STEP 03 · 파일 모드 · 교재 §7.3</div><h2 id="m3-title">파일 열기 모드 실험</h2><p class="caption">데이터가 남는가, 삭제되는가, 추가되는가? 파일이 없을 때 r 모드는 어떻게 동작하는가?</p>
+<section class="lesson" id="m3" aria-labelledby="m3-title"><div class="eyebrow"><span class="stage-heading-number">STEP 03 · FILE MODES</span><small class="stage-reference">§7.3</small></div><h2 id="m3-title">파일 열기 모드 실험</h2><p class="caption">데이터가 남는가, 삭제되는가, 추가되는가? 파일이 없을 때 r 모드는 어떻게 동작하는가?</p>
 <section class="study-scope" aria-label="03단계의 필수 및 선택 학습">
   <div class="study-scope-core">
     <span class="study-scope-badge">필수 학습</span>
@@ -153,7 +153,7 @@ int main(void) {
 </section>
 </section>
 <section class="stage" data-stage="3" hidden>
-<div class="topic">7.4 · TEXT INPUT / OUTPUT</div><h2>텍스트 읽기·쓰기</h2><p class="lead">숫자·문자열·한 줄·한 글자는 다르게 읽습니다. 중요한 것은 함수 이름 암기가 아니라 <strong>데이터 형식과 반환값</strong>을 구분하는 것입니다.</p>
+<div class="topic"><span class="stage-heading-number">STEP 04 · TEXT I/O</span><small class="stage-reference">§7.4</small></div><h2>텍스트 읽기·쓰기</h2><p class="lead">숫자·문자열·한 줄·한 글자는 다르게 읽습니다. 중요한 것은 함수 이름 암기가 아니라 <strong>데이터 형식과 반환값</strong>을 구분하는 것입니다.</p>
 <section class="study-scope" aria-label="04단계의 필수 및 선택 학습">
   <div class="study-scope-core">
     <span class="study-scope-badge">필수 학습</span>
@@ -164,7 +164,7 @@ int main(void) {
   </details>
 </section>
 <div class="concept"><strong>Function map</strong><div class="function-grid"><div><code>fprintf()</code><small>형식 있는 텍스트 쓰기</small></div><div><code>fputs()</code><small>문자열 쓰기</small></div><div><code>fputc()</code><small>문자 한 개 쓰기</small></div><div><code>fscanf()</code><small>형식 있는 값 읽기, 성공 변환 개수 반환</small></div><div><code>fgets()</code><small>문자열 버퍼에 한 줄 읽기, 성공 시 버퍼 반환</small></div><div><code>fgetc()</code><small>문자 읽기, EOF 구분 위해 int 사용</small></div></div></div>
-<div class="activity"><div class="activity-head"><span>PRACTICE 04</span><h3>요구사항을 보고 알맞은 함수를 선택하세요</h3></div><div class="field"><label for="io-task">Program requirement</label><select id="io-task"><option value="line">공백을 포함하는 한 줄 전체를 읽는다</option><option value="values">정수 하나와 실수 하나를 읽는다</option><option value="write">파일에 정수 ID와 실수 점수를 서식에 맞게 기록한다</option><option value="char">파일에서 문자 하나를 읽는다</option></select></div><div class="field"><label for="io-fn">Function to use</label><select id="io-fn"><option value="">— 선택하세요 —</option><option value="fgets">fgets</option><option value="fscanf">fscanf</option><option value="fprintf">fprintf</option><option value="fgetc">fgetc</option><option value="fputs">fputs</option></select></div><button class="primary" id="io-check">선택 검증</button><p class="activity-feedback" id="io-feedback" aria-live="polite"></p><div class="code-head" style="margin-top:12px">CODE FRAGMENT · fp is open (mode depends on operation)</div><p class="code-fragment-note">학생이 함수를 선택하는 <strong>부분 코드</strong>입니다. 전체 C 프로그램에서는 <code>fopen()</code>, 반환값 검사, <code>fclose()</code>를 추가해야 합니다.</p><pre id="io-pattern" class="mini-code">char line[120];
+<div class="activity"><div class="activity-head"><span>PRACTICE 04</span><h3>요구사항을 보고 알맞은 함수를 선택하세요</h3></div><div class="field"><label for="io-task">Program requirement</label><select id="io-task"><option value="line">공백을 포함하는 한 줄 전체를 읽는다</option><option value="values">정수 하나와 실수 하나를 읽는다</option><option value="write">파일에 정수 ID와 실수 점수를 서식에 맞게 기록한다</option><option value="char">파일에서 문자 하나를 읽는다</option></select></div><div class="field"><label for="io-fn">Function to use</label><select id="io-fn"><option value="">— 선택하세요 —</option><option value="fgets">fgets</option><option value="fscanf">fscanf</option><option value="fprintf">fprintf</option><option value="fgetc">fgetc</option><option value="fputs">fputs</option></select></div><button class="primary" id="io-check">선택 검증</button><p class="activity-feedback" id="io-feedback" aria-live="polite"></p><div class="code-head" style="margin-top:12px">CODE FRAGMENT · fp is open (mode depends on operation)</div><p class="code-fragment-note">이 예제는 데이터 형식에 맞는 입력·출력 함수를 고르는 연습입니다. 제시된 코드는 전체 프로그램이 아니며, 실제 실행에는 파일 열기, 반환값 확인, 파일 닫기가 필요합니다.</p><pre id="io-pattern" class="mini-code">char line[120];
 while (fgets(line, sizeof line, fp) != NULL) {
     fputs(line, stdout);
 }</pre></div>
@@ -205,7 +205,7 @@ int main(void) {
 <p class="fileio-basic-link"><a class="practice-link" href="./core-labs/#read">핵심 코딩 실습: 파일에서 한 줄 읽기 →</a></p>
 </section>
 <section class="stage" data-stage="4" hidden>
-<section class="lesson" id="m4" aria-labelledby="m4-title"><div class="eyebrow">STEP 05 · EOF와 오류 · 교재 §7.4.4</div><h2 id="m4-title">EOF와 읽기 오류</h2><p class="caption"><code>while (fscanf(fp, "%d", &amp;x) == 1)</code>은 무엇을 검사하는 조건인가요?</p>
+<section class="lesson" id="m4" aria-labelledby="m4-title"><div class="eyebrow"><span class="stage-heading-number">STEP 05 · EOF & ERRORS</span><small class="stage-reference">§7.4.4</small></div><h2 id="m4-title">EOF와 읽기 오류</h2><p class="caption"><code>while (fscanf(fp, "%d", &amp;x) == 1)</code>은 무엇을 검사하는 조건인가요?</p>
 <section class="study-scope" aria-label="05단계의 필수 및 선택 학습">
   <div class="study-scope-core">
     <span class="study-scope-badge">필수 학습</span>
@@ -243,7 +243,7 @@ int main(void) {
 </section>
 </section>
 <section class="stage" data-stage="5" hidden>
-<div class="topic">7.5 · STRUCTURE RECORDS</div><h2>구조체 레코드 저장·복원</h2><p class="lead">Structure를 File I/O와 연결하려면 기록할 텍스트 형식을 결정해야 합니다. 저장할 때와 읽을 때 <strong>같은 멤버 순서</strong>를 사용하세요.</p>
+<div class="topic"><span class="stage-heading-number">STEP 06 · STRUCTURE RECORDS</span><small class="stage-reference">§7.5</small></div><h2>구조체 레코드 저장·복원</h2><p class="lead">Structure를 File I/O와 연결하려면 기록할 텍스트 형식을 결정해야 합니다. 저장할 때와 읽을 때 <strong>같은 멤버 순서</strong>를 사용하세요.</p>
 <section class="study-scope" aria-label="06단계의 필수 및 선택 학습">
   <div class="study-scope-core">
     <span class="study-scope-badge">필수 학습</span>
@@ -334,7 +334,7 @@ int main(void) {
 <p class="fileio-basic-link"><a class="practice-link" href="./core-labs/#student">핵심 코딩 실습: 구조체·학점 계산 →</a></p>
 </section>
 <section class="stage" data-stage="6" hidden>
-<div class="topic">7.5.3 · ENGINEERING APPLICATION</div><h2>센서 로그 분석</h2><section class="study-scope" aria-label="07단계의 필수 및 선택 학습">
+<div class="topic"><span class="stage-heading-number">STEP 07 · OPTIONAL SENSOR LAB</span><small class="stage-reference">§7.5.3</small></div><h2>센서 로그 분석</h2><section class="study-scope" aria-label="07단계의 필수 및 선택 학습">
   <div class="study-scope-core">
     <span class="study-scope-badge">필수 학습</span>
     <div><strong>Sensor Log를 읽고 count, sum, 평균과 경보를 계산</strong><p><b>완료 기준</b> · sensor_log.txt의 값 하나를 바꾸고 먼저 예측한 후, 첫 측정값의 4개 C 문장을 추적해 설명하세요.</p></div>
@@ -517,7 +517,7 @@ int main(void) {
 <div class="check" data-check="6"><div class="check-eyebrow">CHECK YOURSELF · 7.5.3</div><p class="question-context">센서 로그 한 행에는 시간과 측정값이라는 두 개의 double 값이 기록되어 있습니다. 두 변환이 모두 성공했다고 가정합니다.</p><h3><code>fscanf(fp, "%lf %lf", &amp;t, &amp;value)</code>가 두 값을 모두 읽은 경우의 반환값은?</h3><label><input type="radio" name="q6" value="a"> 0</label><label><input type="radio" name="q6" value="b"> 1</label><label><input type="radio" name="q6" value="c"> 2</label><button class="check-btn" data-grade="6">답 확인 및 설명</button><div class="answer" id="answer-6" aria-live="polite"></div></div>
 </section>
 <section class="stage" data-stage="7" hidden>
-<div class="topic">7.7 · TRANSFER &amp; MASTERY</div><h2>File I/O 종합 적용</h2><p class="lead">마지막 단계에서는 함수를 암기했는지보다, 상황에 맞는 모드와 조건을 선택하고 코드의 오류를 수정할 수 있는지 확인합니다.</p>
+<div class="topic"><span class="stage-heading-number">STEP 08 · FINAL REVIEW</span><small class="stage-reference">§7.7</small></div><h2>File I/O 종합 적용</h2><p class="lead">마지막 단계에서는 함수를 암기했는지보다, 상황에 맞는 모드와 조건을 선택하고 코드의 오류를 수정할 수 있는지 확인합니다.</p>
 <section class="study-scope" aria-label="08단계의 필수 및 선택 학습">
   <div class="study-scope-core">
     <span class="study-scope-badge">필수 학습</span>
