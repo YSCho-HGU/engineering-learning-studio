@@ -1,0 +1,57 @@
+/* Compact, non-sticky File I/O page-route navigation shared by all three pages. */
+.fileio-learning-path {
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  max-width:1340px;
+  margin:10px auto 14px;
+  padding:11px 15px;
+  border:1px solid var(--els-border,var(--border,var(--line,#636963)));
+  border-radius:12px;
+  background:var(--els-surface,var(--panel,var(--surface,#25282a)));
+  color:var(--els-ink,var(--ink,var(--text,inherit)));
+}
+.fileio-learning-path, .fileio-learning-path * {box-sizing:border-box;}
+.fileio-learning-path__main {display:flex;align-items:center;flex-wrap:wrap;gap:10px;min-width:0}
+.fileio-learning-path__caption {font-size:.77rem;letter-spacing:.01em;white-space:nowrap;font-weight:700;color:var(--els-muted,var(--muted,#a9b1ad))}
+.fileio-learning-path__steps {display:flex;align-items:center;gap:4px;flex-wrap:wrap;list-style:none;margin:0;padding:0}
+.fileio-learning-path__step {display:flex;align-items:center;gap:4px;min-width:0}
+.fileio-learning-path__step:not(:first-child)::before {content:"›";margin:0 5px;color:var(--els-muted,var(--muted,#9a9e9d))}
+.fileio-learning-path__step a {
+  display:flex;align-items:center;gap:6px;
+  color:inherit;text-decoration:none;padding:6px 9px;border-radius:7px;
+  border:1px solid transparent;font-size:.84rem;font-weight:600;line-height:1.35;
+}
+.fileio-learning-path__number {font-size:.69rem;opacity:.7}
+.fileio-learning-path__step a:hover,.fileio-learning-path__step a:focus-visible {
+  border-color:var(--els-link,var(--accent,#cabd9f));
+}
+.fileio-learning-path__step.is-current a {
+  background:var(--els-info-bg,var(--panel2,var(--surface-alt,#3a4141)));
+  border-color:var(--els-link,var(--accent,#cabd9f));
+  color:var(--els-ink,var(--ink,var(--text,inherit)));
+  font-weight:800;
+}
+.fileio-learning-path__actions {display:flex;flex-wrap:wrap;gap:7px}
+.fileio-learning-path__move {
+  display:inline-flex;align-items:center;
+  color:inherit;text-decoration:none;font-size:.77rem;
+  padding:7px 10px;border:1px solid var(--els-border,var(--border,var(--line,#636963)));
+  border-radius:8px;line-height:1.35;
+}
+.fileio-learning-path__move:hover,.fileio-learning-path__move:focus-visible {
+  border-color:var(--els-link,var(--accent,#cabd9f));
+  text-decoration:underline;
+}
+@media(max-width:750px) {
+ .fileio-learning-path {margin:8px 10px 12px;padding:9px;gap:8px}
+ .fileio-learning-path__main {width:100%;gap:6px}
+ .fileio-learning-path__caption {display:block;width:100%}
+ .fileio-learning-path__steps {gap:2px}
+ .fileio-learning-path__step a {padding:6px 5px;font-size:.75rem}
+ .fileio-learning-path__step:not(:first-child)::before {margin:0 2px}
+ .fileio-learning-path__move {font-size:.73rem}
+}
