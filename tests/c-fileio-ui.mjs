@@ -18,10 +18,17 @@ assert(!html.includes("Code fragment · C 핵심 흐름"),"Old fragment label st
 const nav=[...html.matchAll(/<button data-nav="(\d+)"[^>]*>[\s\S]*?<span class="nav-title">([^<]+)<\/span>/g)];
 const stage=[...html.matchAll(/<section class="stage" data-stage="(\d+)"[^>]*>[\s\S]*?<h2[^>]*>([^<]+)<\/h2>/g)];
 assert(nav.length===8&&stage.length===8,"Existing eight navigation/stage slots must remain");
+const expectedNavOrder=[0,1,2,3,4,5,7,6];
 for(let i=0;i<8;i++){
-  assert(nav[i]?.[1]===String(i)&&stage[i]?.[1]===String(i),"Stage "+(i+1)+" index mismatch");
-  assert(nav[i]?.[2]===stage[i]?.[2],"Sidebar and main heading differ at stage "+(i+1));
+  const step=expectedNavOrder[i];
+  assert(nav[i]?.[1]===String(step)&&stage[step]?.[1]===String(step),"Navigation or stable stage ID mismatch at slot "+(i+1));
+  assert(nav[i]?.[2]===stage[step]?.[2],"Sidebar and main heading differ at slot "+(i+1));
 }
+assert(app.includes("coreStageOrder=[0,1,2,3,4,5,7]"),"Main progression must skip optional sensor stage");
+assert(html.includes('class="optional-stage-nav"')&&html.includes('OPTIONAL · SENSOR LAB'),"Sensor stage must be marked optional");
+assert(html.includes('aria-valuemax="7"')&&app.includes("completedCoreCount"),"Core progress must count seven stages");
+assert(!html.includes('>7.5 · STRUCTURE RECORDS<'),"Textbook section number incorrectly presented as stage number");
+assert(!html.includes("학생이 함수를 선택하는 <strong>부분 코드</strong>"),"Fragmented Korean/English explanation was reintroduced");
 for(const step of [3,4,5,6,8]){
   const from=html.indexOf('data-core-step="'+step+'"');
   const to=html.indexOf('class="core-transfer-questions"',from);
