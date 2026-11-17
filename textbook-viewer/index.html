@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Textbook Viewer · Engineering Learning Studio</title>
+<meta name="description" content="Engineering Learning Studio textbook PDF reader with light and dark theme support">
+<script>
+(function(){let t="neutral-dark";try{const saved=localStorage.getItem("els-theme-v2");if(["neutral-dark","warm-dark","navy-dark","warm-neutral"].includes(saved))t=saved;else if(localStorage.getItem("ss-visual-lab-theme")==="light")t="warm-neutral"}catch(e){}document.documentElement.dataset.elsTheme=t;document.documentElement.style.colorScheme=t==="warm-neutral"?"light":"dark"})();
+</script>
+<link rel="stylesheet" href="./viewer.css?v=1">
+<script src="../assets/els-theme-v2.js?v=2" defer></script>
+<script src="../assets/els-language.js?v=1" defer></script>
+<script type="module" src="./viewer.mjs?v=1"></script>
+</head>
+<body>
+<header class="topbar">
+  <a class="home-link" id="back-link" href="../" data-i18n="back">← Engineering Learning Studio</a>
+  <span class="brand">Engineering Learning Studio / Textbook</span>
+  <label class="language-pick"><span data-i18n="language">Language</span>
+    <select id="language" aria-label="Language">
+      <option value="mixed">ENG + 한국어</option><option value="ko">한국어</option><option value="en">English</option>
+    </select>
+  </label>
+</header>
+<main>
+  <section class="intro">
+    <div>
+      <div class="eyebrow" data-i18n="eyebrow">공통 PDF 교재 뷰어</div>
+      <h1 id="document-title" data-i18n="title">Textbook Viewer</h1>
+      <p id="subheading" data-i18n="intro">사이트 테마에 맞춰 PDF를 편하게 읽고, 원본 색상도 언제든 확인할 수 있습니다.</p>
+    </div>
+    <div class="source-links">
+      <a id="open-original" href="#" target="_blank" rel="noopener noreferrer" hidden data-i18n="openOriginal">원본 PDF 열기</a>
+      <label for="local-pdf" class="upload"><span data-i18n="chooseFile">내 PDF 파일 열기</span><input id="local-pdf" type="file" accept="application/pdf,.pdf"></label>
+    </div>
+  </section>
+  <section class="toolbar" aria-label="PDF controls">
+    <label class="control"><span data-i18n="colorMode">PDF 표시 색상</span>
+      <select id="color-mode">
+        <option value="auto" data-i18n="auto">사이트 테마 자동</option>
+        <option value="original" data-i18n="original">원본 색상</option>
+        <option value="dark" data-i18n="dark">다크 표시</option>
+      </select>
+    </label>
+    <div id="page-tools" class="page-tools" hidden>
+      <button id="previous" type="button" data-i18n="previous">이전 페이지</button>
+      <label class="page-count"><span data-i18n="page">페이지</span> <input id="page-input" type="number" value="1" min="1" step="1" aria-label="Page number"> <span id="page-total">/ 1</span></label>
+      <button id="next" type="button" data-i18n="next">다음 페이지</button>
+      <label class="control zoom"><span data-i18n="zoom">확대</span>
+        <select id="zoom">
+          <option value="fit" data-i18n="fit">너비 맞춤</option>
+          <option value="0.8">80%</option><option value="1">100%</option>
+          <option value="1.25">125%</option><option value="1.5">150%</option>
+          <option value="2">200%</option>
+        </select>
+      </label>
+    </div>
+  </section>
+  <div id="status" class="status" role="status" aria-live="polite" data-i18n="loading">교재를 여는 중입니다.</div>
+  <section class="reader">
+    <div id="drive-wrap" class="drive-wrap" hidden>
+      <div class="note" id="drive-note"></div>
+      <iframe id="drive-preview" title="Google Drive PDF preview" referrerpolicy="strict-origin-when-cross-origin" loading="eager" allowfullscreen></iframe>
+    </div>
+    <div id="pdfjs-wrap" class="pdfjs-wrap" hidden>
+      <div class="canvas-scroller" id="canvas-scroller">
+        <canvas id="pdf-canvas" aria-label="Rendered PDF page"></canvas>
+      </div>
+    </div>
+    <div id="empty" class="empty" hidden>
+      <h2 data-i18n="emptyTitle">PDF 파일을 선택하세요</h2>
+      <p data-i18n="emptyDescription">사이트에서 접근 가능한 PDF를 열거나, 위쪽의 '내 PDF 파일 열기'로 컴퓨터에 있는 교재를 선택할 수 있습니다. 로컬 파일은 서버에 업로드되지 않습니다.</p>
+    </div>
+  </section>
+  <footer>
+    <p id="info" data-i18n="info">PDF 원본은 수정되지 않습니다. Google Drive 미리보기의 다크 표시는 화면 색상 효과로, 컬러 그래프가 달라 보일 수 있습니다.</p>
+  </footer>
+</main>
+</body>
+</html>
