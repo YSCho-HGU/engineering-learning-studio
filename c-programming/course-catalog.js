@@ -15,6 +15,10 @@ const safeBook=url=>{
  }catch(e){}
  return null;
 };
+const textbookViewer=(url,title)=>{
+ const match=String(url||"").match(/^https:\/\/drive\.google\.com\/file\/d\/([A-Za-z0-9_-]{15,120})\/view$/);
+ return match?"../textbook-viewer/?course=c&drive="+encodeURIComponent(match[1])+"&title="+encodeURIComponent(title):url;
+};
 const groupsEn={
  foundations:["Foundations","Input/output, expressions, decisions, and loops"],
  data:["Arrays and Functions","Arrays, strings, standard libraries, and user-defined functions"],
@@ -54,7 +58,7 @@ function render(catalog){
  const card=c=>{
   const id=escape(c.id),title=escape(c.title),name=escape(c.chapter),desc=escape(english()?(descriptionsEn[c.id]||c.title):c.description);
   const book=safeBook(c.book);
-  return '<article class="path-card"><span class="number">'+name+' / Chapter '+name+'</span><h3>'+title+'</h3><p>'+desc+'</p><a class="open stretch-link" href="'+c.url+'" aria-label="Chapter '+name+' '+title+' '+label('학습 열기','Open lesson')+'">'+label('학습 시작','Start learning')+' <span aria-hidden="true">→</span></a><div class="resource-links">'+(book?'<a href="'+book+'" target="_blank" rel="noopener noreferrer">교재 '+id+' ↗</a>':'')+'</div></article>';
+  return '<article class="path-card"><span class="number">'+name+' / Chapter '+name+'</span><h3>'+title+'</h3><p>'+desc+'</p><a class="open stretch-link" href="'+c.url+'" aria-label="Chapter '+name+' '+title+' '+label('학습 열기','Open lesson')+'">'+label('학습 시작','Start learning')+' <span aria-hidden="true">→</span></a><div class="resource-links">'+(book?'<a href="'+escape(textbookViewer(book,c.title))+'">'+label('교재 ','Textbook ')+id+' ↗</a>':'')+'</div></article>';
  };
  $("available-count").textContent=ready.length+label("개 단원 공개"," chapters available");
  $("available-chapters").innerHTML=ready.map(card).join("");
