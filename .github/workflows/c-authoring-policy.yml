@@ -9,6 +9,9 @@ on:
       - 'tests/textbook-viewer.mjs'
       - 'c-programming/journey.js'
       - 'tests/c-authoring-policy.mjs'
+      - 'tests/c-course-ui-consistency.mjs'
+      - 'c-programming/journey.css'
+      - 'c-programming/**/en.js'
       - 'tests/c-course-gcc.mjs'
       - 'tests/c-advanced-review.mjs'
       - 'c-programming/file-io/**'
@@ -30,6 +33,8 @@ jobs:
           node-version: '22'
       - name: Check flexible C chapter data and lesson quality
         run: node tests/c-authoring-policy.mjs
+      - name: Validate published C chapter UI, language and full-code consistency
+        run: node tests/c-course-ui-consistency.mjs
       - name: Verify 151-181 Core/Optional curriculum consistency
         run: node tests/c-advanced-review.mjs
       - name: Test required File I/O fgets and fputs mini lab
