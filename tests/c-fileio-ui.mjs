@@ -34,6 +34,13 @@ assert((html.match(/data-core-q="\d+[ab]"/g)||[]).length===10,"Ten existing core
 assert(html.includes('./core-labs/#write')&&html.includes('./core-labs/#read')&&html.includes('./core-labs/#student'),"Core walkthrough navigation links missing");
 assert(coreHtml.includes('id="run-write"')&&coreHtml.includes('id="run-read"')&&coreHtml.includes('id="run-student"'),"Three beginner lab controls missing");
 assert(coreJs.includes("els-fileio-core-labs-v1"),"Independent beginner lab progress missing");
+for(const [navId,titleId] of [["navWrite","title-write"],["navRead","title-read"],["navStudent","title-student"]]){
+ const navPattern=new RegExp('data-i18n="'+navId+'">([^<]+)<');
+ const titlePattern=new RegExp('id="'+titleId+'" data-i18n="[^"]+">([^<]+)<');
+ const left=coreHtml.match(navPattern)?.[1],right=coreHtml.match(titlePattern)?.[1];
+ assert(Boolean(left)&&left===right,"Core lab sidebar and title differ: "+navId);
+}
+assert(!coreHtml.includes('data-go-task'),"Beginner labs must not mix the advanced coding engine.");
 assert(coreHtml.includes("../practice/#p3")&&practiceJs.includes("p3:2,p4:3,p5:4,p6:5"),"Advanced deep link missing");
 assert(app.includes("els-fileio-progress-v2")&&transfer.includes("els-fileio-core-transfer-v1"),"Student progress storage keys changed");
 assert(language.includes("File I/O language coverage")&&transfer.includes("explanationsEn"),"English feedback coverage missing");
