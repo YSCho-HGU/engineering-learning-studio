@@ -4,11 +4,13 @@ const read=path=>readFileSync(path,"utf8");
 const html=read("c-programming/file-io/index.html");
 const app=read("c-programming/file-io/app.js");
 const transfer=read("c-programming/file-io/core-transfer.js");
-const examples=read("c-programming/file-io/core-examples.js");
+const coreHtml=read("c-programming/file-io/core-labs/index.html");
+const coreJs=read("c-programming/file-io/core-labs/labs.js");
+const practiceJs=read("c-programming/file-io/practice/app.js");
 const language=read("c-programming/language.js");
 const failures=[];
 const assert=(condition,message)=>{if(!condition)failures.push(message)};
-for(const [name,code] of [["app",app],["transfer",transfer],["examples",examples],["language",language]]){
+for(const [name,code] of [["app",app],["transfer",transfer],["core labs",coreJs],["practice",practiceJs],["language",language]]){
   try {new Function(code)} catch(error){failures.push(name+" JavaScript syntax: "+error.message)}
 }
 assert(!html.includes("상황 설명 상황"),"Duplicate Korean context label");
@@ -29,7 +31,10 @@ for(const step of [3,4,5,6,8]){
   assert(section.indexOf("core-transfer-heading")<section.indexOf("core-transfer-layout"),"Step "+step+" explanatory text must precede code and quiz");
 }
 assert((html.match(/data-core-q="\d+[ab]"/g)||[]).length===10,"Ten existing core assessments must remain");
-assert(html.includes('core-examples.js?v=')&&html.includes('id="ex-line-run"')&&html.includes('id="ex-student-run"'),"Core walkthrough controls/scripts missing");
+assert(html.includes('./core-labs/#write')&&html.includes('./core-labs/#read')&&html.includes('./core-labs/#student'),"Core walkthrough navigation links missing");
+assert(coreHtml.includes('id="run-write"')&&coreHtml.includes('id="run-read"')&&coreHtml.includes('id="run-student"'),"Three beginner lab controls missing");
+assert(coreJs.includes("els-fileio-core-labs-v1"),"Independent beginner lab progress missing");
+assert(coreHtml.includes("../practice/#p3")&&practiceJs.includes("p3:2,p4:3,p5:4,p6:5"),"Advanced deep link missing");
 assert(app.includes("els-fileio-progress-v2")&&transfer.includes("els-fileio-core-transfer-v1"),"Student progress storage keys changed");
 assert(language.includes("File I/O language coverage")&&transfer.includes("explanationsEn"),"English feedback coverage missing");
 if(failures.length){console.error("FAIL: "+failures.join("\nFAIL: "));process.exitCode=1}
