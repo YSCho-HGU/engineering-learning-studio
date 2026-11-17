@@ -92,6 +92,12 @@ $("paste-drive")?.addEventListener("keydown",e=>{if(e.key==="Enter")$("open-driv
 function themeUpdated(){markMode();if(pdf){clearTimeout(renderTimer);renderTimer=setTimeout(renderPage,80)}}
 window.addEventListener("els:themechange",themeUpdated);new MutationObserver(themeUpdated).observe(document.documentElement,{attributes:true,attributeFilter:["data-els-theme","data-theme"]});
 $("color-mode").value="auto";
+const preferredTheme=params.get("theme");
+if(["neutral-dark","warm-dark","navy-dark","warm-neutral"].includes(preferredTheme)){
+ document.documentElement.dataset.elsTheme=preferredTheme;
+ document.documentElement.dataset.theme=preferredTheme==="warm-neutral"?"light":"dark";
+ document.documentElement.style.colorScheme=preferredTheme==="warm-neutral"?"light":"dark";
+}
 const titleParam=params.get("title")||"";
 if(titleParam)setTitle(titleParam);
 const driveParam=params.get("drive");
