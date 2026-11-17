@@ -27,8 +27,34 @@ function persistEvidence(){try{localStorage.setItem(evidenceKey,JSON.stringify(e
 document.getElementById("gcc-confirm").addEventListener("change",e=>{if(e.target.checked)evidence[active]={checked:true,at:new Date().toISOString()};else delete evidence[active];persistEvidence()});
 document.getElementById("editor").addEventListener("input",()=>{if(evidence[active]){delete evidence[active];persistEvidence();document.getElementById("gcc-confirm").checked=false}});
 
+const commonGuides=window.C_PRACTICE_GUIDES?.["file-io"]||{};
+function renderCoreGuide(task){
+ const root=$("fileio-guided"), guide=commonGuides[task.id]?.[window.ELSLanguage?.get()==="en"?"en":"ko"];
+ if(!root)return;
+ root.hidden=!guide;
+ if(!guide)return;
+ const en=window.ELSLanguage?.get()==="en";
+ $("fileio-guide-heading").textContent=en?"Scenario · What are you building?":"문제 상황 · 무엇을 만들까요?";
+ $("fileio-guide-scene").textContent=guide.scene;
+ $("fileio-guide-steps-title").textContent=en?"Writing the Code · Step by Step":"코드 작성 순서 · 단계별 가이드";
+ $("fileio-guide-steps").replaceChildren();
+ guide.steps.forEach((step,index)=>{
+  const li=document.createElement("li"),button=document.createElement("button"),help=document.createElement("p");
+  button.type="button";button.className="fileio-guide-reveal";
+  button.textContent=(en?"Step ":"단계 ")+(index+1)+(en?" · Show hint":" · 힌트 보기");
+  help.className="fileio-guide-hint";help.textContent=step;help.hidden=true;
+  button.setAttribute("aria-expanded","false");
+  button.addEventListener("click",()=>{
+    help.hidden=!help.hidden;button.setAttribute("aria-expanded",String(!help.hidden));
+    button.textContent=(en?"Step ":"단계 ")+(index+1)+(help.hidden?(en?" · Show hint":" · 힌트 보기"):(en?" · Hide hint":" · 힌트 닫기"));
+  });
+  li.append(button,help);$("fileio-guide-steps").append(li);
+ });
+ $("fileio-guide-check-title").textContent=en?"Verify Your Result":"실행 결과 확인";
+ $("fileio-guide-check").textContent=guide.check;
+}
 function load(i){active=i;document.getElementById("gcc-confirm").checked=!!evidence[i];const t=tasks[i];$("task-id").textContent=(t.id==="M1"?"CORE MINI LAB · ":"PRACTICE ")+t.id+" · "+(t.id==="M1"||i<2?"필수":"선택 심화");
-$("mini-overview").hidden=t.id!=="M1";$("sample-input").hidden=!t.sampleContent;document.querySelectorAll("[data-go-task]").forEach(b=>{const selected=Number(b.dataset.goTask)===i;b.classList.toggle("active",selected);b.setAttribute("aria-current",selected?"step":"false")});$("task-title").textContent=t.title;$("task-desc").textContent=t.desc;$("task-objective").textContent=t.objective;$("test-input").textContent=t.input;$("test-output").textContent=t.output;$("hint").textContent=t.hint;let draft=null;try{draft=localStorage.getItem(key(i))}catch(e){}$("editor").value=draft===null?t.starter:draft;$("feedback").textContent="직접 코드를 작성하세요. 핵심 구문 점검은 GCC 컴파일을 대체하지 않습니다.";renderNav();window.dispatchEvent(new CustomEvent("c-fileio-task-change",{detail:{id:t.id}}))}
+$("mini-overview").hidden=t.id!=="M1";$("sample-input").hidden=!t.sampleContent;document.querySelectorAll("[data-go-task]").forEach(b=>{const selected=Number(b.dataset.goTask)===i;b.classList.toggle("active",selected);b.setAttribute("aria-current",selected?"step":"false")});$("task-title").textContent=t.title;$("task-desc").textContent=t.desc;renderCoreGuide(t);$("task-objective").textContent=t.objective;$("test-input").textContent=t.input;$("test-output").textContent=t.output;$("hint").textContent=t.hint;let draft=null;try{draft=localStorage.getItem(key(i))}catch(e){}$("editor").value=draft===null?t.starter:draft;$("feedback").textContent="직접 코드를 작성하세요. 핵심 구문 점검은 GCC 컴파일을 대체하지 않습니다.";renderNav();window.dispatchEvent(new CustomEvent("c-fileio-task-change",{detail:{id:t.id}}))}
 function renderNav(){$("task-nav").innerHTML=taskOrder.map(i=>{const t=tasks[i],essential=i<2||t.id==="M1";return '<button type="button" data-task="'+i+'" data-core="'+essential+'" class="'+(i===active?"active":"")+'"><strong>'+(essential?"필수 · ":"선택 · ")+t.id+"</strong> · "+t.title+'<small>'+t.objective+"</small></button>"}).join("");$("task-nav").querySelectorAll("button").forEach(b=>b.onclick=()=>load(Number(b.dataset.task)))}
 function cleanCode(source){return source.replace(/\/\*[\s\S]*?\*\//g,"").replace(/\/\/[^\n]*/g,"").replace(/"(?:\\.|[^"\\])*"/g,m=>m).replace(/'(?:\\.|[^'\\])*'/g,m=>m)}
 $("editor").addEventListener("input",()=>{try{localStorage.setItem(key(active),$("editor").value)}catch(e){}});
