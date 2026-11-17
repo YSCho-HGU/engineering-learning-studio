@@ -8,7 +8,9 @@ on:
       - 'tests/c-authoring-policy.mjs'
       - 'tests/c-course-gcc.mjs'
       - 'tests/c-advanced-review.mjs'
-      - 'c-programming/file-io/index.html'
+      - 'c-programming/file-io/**'
+      - 'c-programming/language.js'
+      - 'tests/c-fileio-ui.mjs'
       - 'c-programming/file-io/practice/**'
       - 'tests/c-fileio-mini-lab.mjs'
       - 'c-programming/practice-engine.js'
@@ -29,5 +31,7 @@ jobs:
         run: node tests/c-advanced-review.mjs
       - name: Test required File I/O fgets and fputs mini lab
         run: node tests/c-fileio-mini-lab.mjs
+      - name: Validate File I/O UI titles, language, source and progress compatibility
+        run: node tests/c-fileio-ui.mjs
       - name: GCC C11 verify published lesson reference programs
         run: node tests/c-course-gcc.mjs
