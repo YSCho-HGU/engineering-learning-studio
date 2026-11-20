@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "course": "c-programming",
-  "generatedAt": "2026-11-20T10:26:42.100Z",
-  "sourceSha": "62d9a43ebbe7be75c8c6ea205febdfb7c0f70acb",
-  "runId": "44719116473",
-  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/44719116473",
+  "generatedAt": "2026-11-20T10:27:02.844Z",
+  "sourceSha": "04118116a8bbe6cafdb54a6e5d8e394f39a6267d",
+  "runId": "44719263776",
+  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/44719263776",
   "automaticStatus": "BLOCKED_AUTOMATED",
   "automatedStatus": "BLOCKED_AUTOMATED",
   "manualStatus": "PENDING",
@@ -16,19 +16,19 @@
     {
       "id": "G0",
       "label": "Source/catalog integrity",
-      "status": "PASS",
+      "status": "NOT_RUN",
       "required": true
     },
     {
       "id": "G1",
       "label": "Independent reference correctness",
-      "status": "PASS",
+      "status": "NOT_RUN",
       "required": true
     },
     {
       "id": "G2",
       "label": "Browser interaction",
-      "status": "FAIL",
+      "status": "NOT_RUN",
       "required": true
     },
     {
@@ -66,13 +66,13 @@
     {
       "id": "131",
       "title": "Arrays",
-      "labCount": 4,
+      "labCount": 0,
       "visual": {
-        "status": "PASS",
+        "status": "NOT_RUN",
         "expected": 4,
-        "observed": 4,
+        "observed": 0,
         "issues": 0,
-        "missing": 0
+        "missing": 4
       },
       "issueExamples": [],
       "manual": {
@@ -87,13 +87,13 @@
     {
       "id": "132",
       "title": "Strings",
-      "labCount": 4,
+      "labCount": 0,
       "visual": {
-        "status": "PASS",
+        "status": "NOT_RUN",
         "expected": 4,
-        "observed": 4,
+        "observed": 0,
         "issues": 0,
-        "missing": 0
+        "missing": 4
       },
       "issueExamples": [],
       "manual": {
@@ -108,24 +108,15 @@
     {
       "id": "133",
       "title": "Standard Library Functions",
-      "labCount": 4,
+      "labCount": 0,
       "visual": {
-        "status": "FAIL",
+        "status": "NOT_RUN",
         "expected": 4,
-        "observed": 4,
-        "issues": 2,
-        "missing": 0
+        "observed": 0,
+        "issues": 0,
+        "missing": 4
       },
-      "issueExamples": [
-        {
-          "id": "133",
-          "message": "390px neutral-dark: {\"http\":200,\"overflow\":true,\"theme\":\"neutral-dark\",\"content\":3990,\"buttons\":21,\"intact\":true,\"errors\":[]}"
-        },
-        {
-          "id": "133",
-          "message": "390px warm-neutral: {\"http\":200,\"overflow\":true,\"theme\":\"warm-neutral\",\"content\":3990,\"buttons\":21,\"intact\":true,\"errors\":[]}"
-        }
-      ],
+      "issueExamples": [],
       "manual": {
         "axesAndLegends": "PENDING",
         "mathematics": "PENDING",
@@ -138,13 +129,13 @@
     {
       "id": "141",
       "title": "User-Defined Functions",
-      "labCount": 4,
+      "labCount": 0,
       "visual": {
-        "status": "PASS",
+        "status": "NOT_RUN",
         "expected": 4,
-        "observed": 4,
+        "observed": 0,
         "issues": 0,
-        "missing": 0
+        "missing": 4
       },
       "issueExamples": [],
       "manual": {
@@ -159,13 +150,13 @@
     {
       "id": "151",
       "title": "Pointers",
-      "labCount": 4,
+      "labCount": 0,
       "visual": {
-        "status": "PASS",
+        "status": "NOT_RUN",
         "expected": 4,
-        "observed": 4,
+        "observed": 0,
         "issues": 0,
-        "missing": 0
+        "missing": 4
       },
       "issueExamples": [],
       "manual": {
@@ -180,13 +171,13 @@
     {
       "id": "161",
       "title": "Structures",
-      "labCount": 4,
+      "labCount": 0,
       "visual": {
-        "status": "PASS",
+        "status": "NOT_RUN",
         "expected": 4,
-        "observed": 4,
+        "observed": 0,
         "issues": 0,
-        "missing": 0
+        "missing": 4
       },
       "issueExamples": [],
       "manual": {
@@ -201,24 +192,15 @@
     {
       "id": "171",
       "title": "File I/O",
-      "labCount": 4,
+      "labCount": 0,
       "visual": {
-        "status": "FAIL",
+        "status": "NOT_RUN",
         "expected": 4,
-        "observed": 4,
-        "issues": 2,
-        "missing": 0
+        "observed": 0,
+        "issues": 0,
+        "missing": 4
       },
-      "issueExamples": [
-        {
-          "id": "171",
-          "message": "390px neutral-dark: {\"http\":200,\"overflow\":true,\"theme\":\"neutral-dark\",\"content\":1943,\"buttons\":63,\"intact\":true,\"errors\":[]}"
-        },
-        {
-          "id": "171",
-          "message": "390px warm-neutral: {\"http\":200,\"overflow\":true,\"theme\":\"warm-neutral\",\"content\":1943,\"buttons\":63,\"intact\":true,\"errors\":[]}"
-        }
-      ],
+      "issueExamples": [],
       "manual": {
         "axesAndLegends": "PENDING",
         "mathematics": "PENDING",
@@ -231,13 +213,13 @@
     {
       "id": "181",
       "title": "Dynamic Memory",
-      "labCount": 4,
+      "labCount": 0,
       "visual": {
-        "status": "PASS",
+        "status": "NOT_RUN",
         "expected": 4,
-        "observed": 4,
+        "observed": 0,
         "issues": 0,
-        "missing": 0
+        "missing": 4
       },
       "issueExamples": [],
       "manual": {
@@ -252,8 +234,8 @@
   ],
   "visual": {
     "expected": 32,
-    "observed": 32,
-    "issues": 4
+    "observed": 0,
+    "issues": null
   },
   "notes": [
     "PASS applies only to the named, executed checks for eight published C chapters.",
