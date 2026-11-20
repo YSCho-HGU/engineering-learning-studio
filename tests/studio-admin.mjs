@@ -37,7 +37,19 @@ await page.route("https://raw.githubusercontent.com/YSCho-HGU/signals-systems-vi
  route.fulfill({status:200,contentType:"application/json",headers:{"access-control-allow-origin":"*"},
  body:JSON.stringify(qualitySnapshot)});
 });
+const cQA={...qualitySnapshot,course:"c-programming",visual:{expected:32,observed:32,issues:0},chapters:
+ Array.from({length:8},(_,i)=>({id:String([131,132,133,141,151,161,171,181][i]),title:"C unit",
+ visual:{status:"PASS",expected:4,observed:4},manual:{mathematics:"PENDING"}}))};
+const logicQA={schemaVersion:1,mode:"prototype",automatedStatus:"PILOT_PASS",
+ formalCourseStatus:"NOT_RUN",manualStatus:"PENDING",testedPrototype:"5 gates × 4 inputs",
+ generatedAt:"2026-11-20T10:00:00.000Z",visual:{expected:4,observed:4,issues:0},
+ gates:Array.from({length:8},(_,i)=>({id:"G"+i,label:"Gate "+i,status:i===5?"NOT_RUN":"PASS"})),chapters:[]};
+await page.route("**/qa-dashboard/c-latest.json*",route=>route.fulfill({status:200,contentType:"application/json",body:JSON.stringify(cQA)}));
+await page.route("**/qa-dashboard/logic-latest.json*",route=>route.fulfill({status:200,contentType:"application/json",body:JSON.stringify(logicQA)}));
 await page.goto("http://127.0.0.1:8765/admin/",{waitUntil:"networkidle"});
+await page.waitForFunction(()=>document.querySelectorAll("#studio-quality-cards .qa-course-card").length===3);
+if(await page.locator("#studio-quality-cards .qa-course-card").count()!==3)errors.push("Three course QA cards missing");
+if(!(await page.locator("#studio-quality-cards").innerText()).includes("정식 Logic Design 교과목"))errors.push("Future Logic Design must be marked NOT_RUN");
 if(await page.locator("#editor").isVisible())errors.push("Editor should be hidden before authentication");
 if(await page.locator("#ss-quality").isVisible())errors.push("QA dashboard should be hidden for C Programming");
 await page.locator("#token").fill("mock-token");
