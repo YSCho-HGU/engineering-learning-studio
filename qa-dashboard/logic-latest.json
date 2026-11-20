@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "course": "logic-design",
+  "generatedAt": "2026-11-20T10:24:20.355Z",
+  "sourceSha": "25eaa89ec8577cbc4b6ff0d618638d17ccea13ee",
+  "runId": "44718921792",
+  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/44718921792",
+  "mode": "prototype",
+  "automatedStatus": "PILOT_BLOCKED",
+  "releaseStatus": "PILOT_BLOCKED",
+  "formalCourseStatus": "NOT_RUN",
+  "manualStatus": "PENDING",
+  "plannedUnits": null,
+  "publishedUnits": 0,
+  "testedPrototype": "5 combinational gate types × 4 input combinations; 2 widths × 2 themes",
+  "visual": {
+    "expected": 4,
+    "observed": 0,
+    "issues": null
+  },
+  "truthTableCases": 20,
+  "chapters": [],
+  "gates": [
+    {
+      "id": "G0",
+      "label": "Source/catalog integrity",
+      "status": "PASS",
+      "required": true
+    },
+    {
+      "id": "G1",
+      "label": "Independent reference correctness",
+      "status": "PASS",
+      "required": true
+    },
+    {
+      "id": "G2",
+      "label": "Browser interaction",
+      "status": "NOT_RUN",
+      "required": true
+    },
+    {
+      "id": "G3",
+      "label": "Theme, language and accessibility",
+      "status": "NOT_RUN",
+      "required": true
+    },
+    {
+      "id": "G4",
+      "label": "Interactive pedagogy",
+      "status": "NOT_RUN",
+      "required": true
+    },
+    {
+      "id": "G5",
+      "label": "Progress and saved work",
+      "status": "NOT_RUN",
+      "required": false
+    },
+    {
+      "id": "G6",
+      "label": "Visual regression",
+      "status": "NOT_RUN",
+      "required": true
+    },
+    {
+      "id": "G7",
+      "label": "Evidence and approval status",
+      "status": "NOT_RUN",
+      "required": true
+    }
+  ],
+  "notes": [
+    "This is the existing homepage mini-lab, not a completed Logic Design course.",
+    "Storage, clocked/sequential circuits, state transitions and full lessons are NOT_RUN.",
+    "M1–M3 manual review is pending."
+  ]
+}
