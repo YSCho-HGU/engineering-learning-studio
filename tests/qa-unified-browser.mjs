@@ -37,7 +37,7 @@ try{
        content:document.body.innerText.length,buttons:document.querySelectorAll('button').length,
        intact:localStorage.getItem("phase0-unknown-key")==="unchanged",
        overflowSources:document.documentElement.scrollWidth>innerWidth+8
-         ? [...document.querySelectorAll("body *")].map(e=>({el:e.tagName.toLowerCase()+(e.className&&typeof e.className==="string"?"."+e.className.trim().split(/\\s+/).slice(0,2).join("."):""),rect:e.getBoundingClientRect(),scroll:e.scrollWidth})).filter(x=>x.rect.right>innerWidth+7&&x.rect.width>0).sort((a,b)=>b.rect.right-a.rect.right).slice(0,6).map(x=>({el:x.el,right:Math.round(x.rect.right),width:Math.round(x.rect.width),scroll:x.scroll})):[] }));
+         ? [...document.querySelectorAll("body *")].map(e=>({el:e.tagName.toLowerCase()+(e.className&&typeof e.className==="string"?"."+e.className.trim().split(/\\s+/).slice(0,2).join("."):""),rect:e.getBoundingClientRect(),scroll:e.scrollWidth})).filter(x=>x.rect.right>innerWidth+7&&x.rect.width>0).sort((a,b)=>b.rect.right-a.rect.right).slice(0,6).map(x=>({el:x.el,right:Math.round(x.rect.right),width:Math.round(x.rect.width),scroll:x.scroll,html:document.elementFromPoint(Math.min(innerWidth-5,Math.max(1,x.rect.left+4)),Math.max(1,Math.min(innerHeight-2,x.rect.top+4)))?.outerHTML.slice(0,120)})):[] }));
     ok=response?.status()===200&&!value.overflow&&value.theme===theme&&value.content>100&&value.buttons>1&&value.intact&&!errors.length;
     if(!ok)issue(id,width+"px "+theme+": "+JSON.stringify({http:response?.status(),...value,errors}));
     await page.screenshot({path:outdir+"/c-"+id+"-"+theme+"-"+width+".png",fullPage:false});
