@@ -6,12 +6,12 @@ const COURSES={
  ss:{repo:"YSCho-HGU/signals-systems-visual-lab",path:"course-catalog.json",pagePrefix:null,name:"Signals & Systems",home:"https://yscho-hgu.github.io/signals-systems-visual-lab/"}
 };
 const $=id=>document.getElementById(id);
-const firebaseSettings=window.STUDIO_ADMIN_FIREBASE_CONFIG||{};
-const secureMode=firebaseSettings.enabled===true;
+const ownerSettings=window.STUDIO_ADMIN_GITHUB||{};
+const secureMode=ownerSettings.enabled===true;
 let selected="c",token="",catalog=null,sha="",busy=false,secureIdentity=null;
-function apiURL(){return firebaseSettings.apiUrl+"?course="+encodeURIComponent(selected)}
-async function firebaseHeaders(){return {"Accept":"application/json","Authorization":"Bearer "+await window.StudioAdminFirebase.token()}}
-function isSignedIn(){return !!secureIdentity&&!!window.StudioAdminFirebase}
+function apiURL(){return new URL("/api/catalog?course="+encodeURIComponent(selected),ownerSettings.workerUrl).href}
+async function ownerHeaders(){return {"Accept":"application/json","Authorization":"Bearer "+await window.StudioAdminOwner.token()}}
+function isSignedIn(){return !!secureIdentity&&!!window.StudioAdminOwner}
 function msg(text){$("status").textContent=text}
 function authHeader(){return {"Accept":"application/vnd.github+json","Authorization":"Bearer "+token,"X-GitHub-Api-Version":"2022-11-28"}}
 function apiPath(file){return "https://api.github.com/repos/"+COURSES[selected].repo+"/contents/"+file}
@@ -22,7 +22,7 @@ function courseChange(id){
  $("course-c").setAttribute("aria-selected",String(id==="c"));
  $("course-ss").setAttribute("aria-selected",String(id==="ss"));
  $("repo-label").textContent="Repository: "+COURSES[id].repo+" · "+COURSES[id].path;
- if(secureMode)msg(COURSES[id].name+(isSignedIn()?" · Google 계정으로 최신 강의 설정을 읽습니다.":" · Google 계정 로그인이 필요합니다."));
+ if(secureMode)msg(COURSES[id].name+(isSignedIn()?" · GitHub Owner 계정으로 최신 강의 설정을 읽습니다.":" · GitHub Owner 로그인이 필요합니다."));
  else msg(COURSES[id].name+" 관리 모드입니다. 해당 저장소 권한으로 인증하세요.");
  if(secureMode&&isSignedIn())load();
 }
@@ -101,14 +101,14 @@ async function ensurePage(ch){
  }
 }
 async function load(){
- if(secureMode&&!isSignedIn()){msg("Google 관리자 계정으로 로그인하세요.");return;}
+ if(secureMode&&!isSignedIn()){msg("GitHub Owner 계정으로 로그인하세요.");return;}
  if(!secureMode&&!token){msg("토큰을 입력하세요.");return}
  try{
   busy=true;$("connect").disabled=true;$("save").disabled=true;
   msg("선택한 과목의 GitHub 공개 설정을 읽는 중...");
   const requested=selected;
   const res=secureMode?
-    await fetch(apiURL(),{headers:await firebaseHeaders(),cache:"no-store"}):
+    await fetch(apiURL(),{headers:await ownerHeaders(),cache:"no-store"}):
     await fetch(apiPath(COURSES[selected].path),{headers:authHeader(),cache:"no-store"});
   if(!res.ok){const issue=await res.json().catch(()=>({}));throw Error(issue.error||"인증/조회 실패 HTTP "+res.status);}
   const data=await res.json(),loaded=secureMode?data.catalog:JSON.parse(decode(data.content));
@@ -132,7 +132,7 @@ async function save(){
   const currentSelection=selected;
   const res=secureMode?
    await fetch(apiURL(),{
-    method:"PUT",headers:{...await firebaseHeaders(),"Content-Type":"application/json"},
+    method:"PUT",headers:{...await ownerHeaders(),"Content-Type":"application/json"},
     body:JSON.stringify({sha,catalog:next})
    }):
    await fetch(apiPath(COURSES[selected].path),{
@@ -156,12 +156,12 @@ $("reload").addEventListener("click",()=>{if(confirm("저장 전 변경 사항�
 if(secureMode){
  $("legacy-auth-controls").hidden=true;
  $("legacy-auth-copy").hidden=true;
- $("firebase-auth-controls").hidden=false;
+ $("github-auth-controls").hidden=false;
  window.addEventListener("studio-admin-auth-state",event=>{
   secureIdentity=event.detail?.authenticated?event.detail.user:null;
   token="";catalog=null;sha="";$("editor").hidden=true;
   $("save").disabled=!secureIdentity;
-  if(secureIdentity)load();else msg("Google 관리자 계정으로 로그인하면 단원 정보를 편집할 수 있습니다.");
+  if(secureIdentity)load();else msg("GitHub Owner로 로그인하면 단원 정보를 편집할 수 있습니다.");
  });
 }
 courseChange("c");
