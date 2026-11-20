@@ -36,20 +36,20 @@
 .qa-course-card .qa-unit{display:flex;align-items:center;justify-content:space-between;gap:7px;font-size:11px;padding:4px 0}
 #studio-quality .qa-chapters{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media(max-width:950px){#studio-quality .qa-chapters{grid-template-columns:1fr}}
-#legacy-auth-controls[hidden],#legacy-auth-copy[hidden],#firebase-auth-controls[hidden],#firebase-login[hidden],#firebase-logout[hidden]{display:none!important}
+#legacy-auth-controls[hidden],#legacy-auth-copy[hidden],#github-auth-controls[hidden],#github-login[hidden],#github-logout[hidden]{display:none!important}
 </style></head><body>
 <header><div class="wrap"><strong>◈ Engineering Learning Studio · Admin</strong><a href="../">Studio Home →</a></div></header>
 <main class="wrap"><div class="muted">COURSE MANAGEMENT</div><h1>통합 강의 관리자</h1><p class="muted">과목별 공개/비공개 · 단원 제목 · 설명 · 교재 링크를 한 화면에서 관리합니다.</p>
 <nav class="courses" aria-label="과목 선택"><button id="course-c" aria-selected="true" type="button">C Programming · 18 units</button><button id="course-ss" aria-selected="false" type="button">Signals &amp; Systems · 8 chapters</button></nav>
 <section class="panel" aria-labelledby="auth-title"><h2 id="auth-title">관리자 인증</h2>
 <p class="muted" id="repo-label"></p>
-<p class="muted" id="legacy-auth-copy">기존 GitHub 연결: 선택한 저장소의 Contents 읽기·쓰기 권한을 가진 fine-grained token을 입력하세요. 이 기능은 Firebase 관리자 설정을 활성화하기 전까지만 사용합니다.</p>
+<p class="muted" id="legacy-auth-copy">기존 GitHub 연결: 선택한 저장소의 Contents 읽기·쓰기 권한을 가진 fine-grained token을 입력하세요. 이 기능은 GitHub Owner 서버 설정을 활성화하기 전까지만 사용합니다.</p>
 <div id="legacy-auth-controls" class="controls"><input id="token" type="password" autocomplete="off" spellcheck="false" placeholder="GitHub fine-grained token" aria-label="GitHub token"><button id="connect" type="button">인증 및 불러오기</button><button id="clear" type="button">토큰 지우기</button></div>
-<div id="firebase-auth-controls" hidden>
- <p class="muted">관리자 계정: <strong>yscho@handong.edu</strong> · Google 로그인 후 서버에서 권한을 검증합니다. GitHub 비밀키는 브라우저에 전달하지 않습니다.</p>
- <div class="controls"><button id="firebase-login" type="button" class="primary">Google 계정으로 로그인</button><button id="firebase-logout" type="button" hidden>로그아웃</button><span class="muted" id="firebase-user" aria-live="polite">로그인 필요</span></div>
+<div id="github-auth-controls" hidden>
+ <p class="muted">Single Owner · GitHub에 등록된 검증 이메일 <strong>yscho@handong.edu</strong> 및 지정한 GitHub 사용자 ID를 서버에서 확인합니다. GitHub 개인 토큰은 브라우저로 전달되지 않습니다.</p>
+ <div class="controls"><button id="github-login" type="button" class="primary">Login with GitHub</button><button id="github-logout" type="button" hidden>로그아웃</button><span class="muted" id="github-user" aria-live="polite">로그인 필요</span></div>
 </div>
-<p class="warning">비공개는 강의 메뉴에서 숨기는 기능입니다. 게시된 학습 페이지의 직접 URL을 막는 접근 권한 설정은 아닙니다. 기존 토큰 방식은 Firebase 인증 활성화 전까지 유지됩니다. 공유 PC에서는 로그아웃하고 토큰을 사용하지 마세요.</p><p class="status" id="status" role="status" aria-live="polite">과목을 선택하고 GitHub 인증을 진행하세요.</p></section>
+<p class="warning">비공개는 강의 메뉴에서 숨기는 기능입니다. 게시된 학습 페이지의 직접 URL을 막는 접근 권한 설정은 아닙니다. 기존 토큰 방식은 GitHub Owner 인증 활성화 전까지 유지됩니다. 공유 PC에서는 로그아웃하고 토큰을 사용하지 마세요.</p><p class="status" id="status" role="status" aria-live="polite">과목을 선택하고 GitHub 인증을 진행하세요.</p></section>
 <section id="studio-quality" class="panel" aria-labelledby="studio-quality-heading">
 <div class="qa-title-row"><div><h2 id="studio-quality-heading">통합 품질 관리 · S&amp;S / C Programming / Logic Design</h2>
 <p class="muted">교과목별 G0–G7 품질 지표와 교육적 검토 현황을 조회합니다.</p></div>
@@ -72,4 +72,4 @@
 <section id="editor" class="panel" hidden><h2 id="editor-title">Chapter 정보 편집</h2><p class="muted">단원 공개 전 학습 페이지가 저장소에 실제로 존재하는지 확인합니다. 변경은 'GitHub에 저장' 후 반영됩니다.</p><div id="chapter-list"></div>
 <div class="savebar"><button class="primary" id="save" type="button">GitHub에 변경 사항 저장</button><button id="reload" type="button">최신 설정 다시 읽기</button><span class="count" id="count"></span></div>
 <p class="muted">저장 후 GitHub Pages의 배포가 완료되면 학생용 화면에 반영됩니다. 이미 열린 화면은 새로고침이 필요합니다.</p></section>
-</main><script src="./firebase-config.js?v=1"></script><script src="./admin.js?v=2" defer></script><script type="module" src="./firebase-auth.js?v=1"></script><script src="./ss-qa-dashboard.js?v=1" defer></script><script src="./studio-quality.js?v=1" defer></script></body></html>
+</main><script src="./github-config.js?v=1"></script><script src="./admin.js?v=3" defer></script><script src="./github-owner.js?v=1" defer></script><script src="./ss-qa-dashboard.js?v=1" defer></script><script src="./studio-quality.js?v=1" defer></script></body></html>
