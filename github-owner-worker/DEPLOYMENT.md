@@ -8,8 +8,8 @@ The Firebase runtime has been replaced in the live admin page by a **GitHub App 
 - Worker: `github-owner-worker/src/index.js`; Cloudflare deploy config `github-owner-worker/wrangler.toml`.
 - One owner: fixed GitHub numeric `OWNER_GITHUB_ID` **and** a verified GitHub account email `yscho@handong.edu` (not merely a matching public profile email).
 - Current admin edits: **only** C Programming `c-programming/course-catalog.json` and S&S `course-catalog.json`. No arbitrary repository/path access.
-- GitHub OAuth access tokens and App signing keys remain on the Worker. The browser gets a signed, short-lived, non-GitHub session bearer (30 min, memory only).
-- A browser session ends on logout, refresh or timeout. **Stateless tokens cannot be revoked individually**: stolen session tokens remain valid until expiry. For later role-based or persistent sessions add revocation storage (Cloudflare KV/D1).
+- GitHub OAuth access tokens and App signing keys remain on the Worker. The browser gets a signed, short-lived, non-GitHub session bearer (30 min, current-tab sessionStorage only).
+- A browser session ends on logout, tab close or timeout; it survives same-tab refresh. **Stateless tokens cannot be revoked individually**: stolen session tokens remain valid until expiry. For later role-based or persistent sessions add revocation storage (Cloudflare KV/D1).
 
 ## Step 1 — GitHub App (no Firebase or Google Cloud)
 
@@ -110,6 +110,6 @@ The repository's `Integrated Studio Admin QA` workflow runs Worker OAuth protoco
 - Current file API manages *catalog metadata only*. More admin functions can be added later through discrete, validated endpoints; do not introduce an unrestricted arbitrary-file GitHub proxy.
 - `published:false` hides public menu entries; it does **not** make a GitHub Pages URL private.
 - GitHub email can be private; only verified emails returned through OAuth `/user/emails` are accepted.
-- Sessions are not written to localStorage or cookies. Refreshing the page requires login again. Logout cannot revoke a previously copied token before its 30-minute expiry; reducing expiry or adding a session revocation store can mitigate this.
+- Sessions are stored only in per-tab sessionStorage, never localStorage or cookies. Refresh keeps the login until the 30-minute expiry. Logout cannot revoke a previously copied token before its 30-minute expiry; reducing expiry or adding a session revocation store can mitigate this.
 - GitHub App installation token is generated server-side from its private key; the raw OAuth token and installation token never leave the Worker.
 - Protect the GitHub account with passkeys or 2FA, and audit GitHub App permissions regularly.
