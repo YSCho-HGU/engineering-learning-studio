@@ -21,6 +21,11 @@ jobs:
       - run: npm install --no-save playwright@1.56.1
       - run: npx playwright install --with-deps chromium
       - run: python3 -m http.server 8765 --bind 127.0.0.1 &
+      - name: Install Firebase backend dependencies and load function module
+        run: |
+          npm install --prefix firebase-admin-backend/functions --no-audit --no-fund
+          node -e "import('./firebase-admin-backend/functions/index.mjs').then(()=>console.log('Firebase function module imports correctly'))"
+
       - name: Unit test Firebase owner-only catalog validation
         run: node --test firebase-admin-backend/functions/tests/*.test.mjs
       - name: Validate admin and backend JavaScript syntax
