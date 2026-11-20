@@ -49,8 +49,9 @@ function verifyConfig(env){
   if(typeof env[name]!=="string"||!env[name].trim())throw error(503,"GitHub 관리자 연동이 설정되지 않았습니다.");
  }
  if(!/^\d+$/.test(env.OWNER_GITHUB_ID)||env.SESSION_SECRET.length<32)throw error(503,"관리자 인증 설정이 유효하지 않습니다.");
+ if(!env.GITHUB_APP_PRIVATE_KEY.includes("BEGIN PRIVATE KEY"))throw error(503,"GitHub App 키는 PKCS#8 PRIVATE KEY 형식이어야 합니다.");
  const callback=new URL(env.OAUTH_CALLBACK_URL);
- if(callback.protocol!=="https:"||callback.pathname!=="/auth/github/callback")throw error(503,"OAuth Callback 설정을 확인하세요.");
+ if(callback.protocol!=="https:"||callback.pathname!=="/auth/github/callback"||callback.search||callback.hash)throw error(503,"OAuth Callback 설정을 확인하세요.");
 }
 function setStateCookie(req,state){
  const host=new URL(req.url).hostname;
@@ -64,7 +65,9 @@ async function startOAuth(req,env){
  verifyConfig(env);
  // Only initiate login from the published admin origin (browser popup).
  const from=req.headers.get("Referer")||"";
- if(!from.startsWith(PUBLIC_ORIGIN+"/engineering-learning-studio/admin/"))throw error(403,"관리자 페이지에서 로그인을 시작하세요.");
+ let referral;try{referral=new URL(from)}catch{throw error(403,"관리자 페이지에서 로그인을 시작하세요.");}
+ // Browser default referrer policy strips the path on cross-origin navigation.
+ if(referral.origin!==PUBLIC_ORIGIN)throw error(403,"관리자 페이지에서 로그인을 시작하세요.");
  const state=randomToken();
  const challenge=await signPayload({state,exp:now()+600},env.SESSION_SECRET);
  const u=new URL("https://github.com/login/oauth/authorize");
