@@ -67,3 +67,15 @@
 .learning-route .route-card .practice-link:hover{
  background:#135683!important;
 }
+
+
+/* Narrow screens: keep language/theme selectors and site links inside the
+   viewport instead of letting a single-row header extend to the right. */
+@media(max-width:650px){
+ .topbar{flex-wrap:wrap;justify-content:flex-start;min-width:0}
+ .topbar>.brand{min-width:0;max-width:100%;overflow-wrap:anywhere}
+ .topbar .toplinks{flex:1 1 100%;width:100%;min-width:0;max-width:100%;gap:8px}
+ .topbar .toplinks>*{max-width:100%;min-width:0}
+ .topbar .toplinks label{display:flex;flex-wrap:wrap;min-width:0}
+ .topbar .toplinks select{max-width:100%;min-width:0}
+}
