@@ -55,11 +55,16 @@ try{
    writes[0].body.catalog.chapters.find(c=>c.id==="151")?.title!=="Pointer Fundamentals")
   errors.push("Owner request payload incorrect");
  if("token" in writes[0].body||"path" in writes[0].body||"repo" in writes[0].body)errors.push("Unexpected repository or token parameters in API request");
+ // A developer should stay signed in when refreshing the same admin tab.
+ await page.reload({waitUntil:"domcontentloaded"});
+ await page.locator("#editor").waitFor({state:"visible",timeout:12000});
+ if(await page.locator(".chapter").count()!==18)errors.push("Owner session was not restored after refresh");
  await page.locator("#course-ss").click();
  await page.locator("#editor").waitFor({state:"visible"});
  if(await page.locator(".chapter").count()!==8)errors.push("Signals catalog missing");
  await page.locator("#github-logout").click();
  await page.locator("#editor").waitFor({state:"hidden"});
+ if(await page.evaluate(()=>sessionStorage.getItem("els-gh-owner-session-v1")!==null))errors.push("Logout did not clear tab session");
  if(directGithub)errors.push("GitHub API requested directly from browser");
  await page.screenshot({path:"qa-studio-admin-github.png",fullPage:true});
 }finally{await browser.close();}
