@@ -6,6 +6,8 @@ on:
       - 'c-programming/admin/**'
       - 'c-programming/course-catalog.*'
       - 'tests/studio-admin.mjs'
+      - 'tests/studio-admin-firebase.mjs'
+      - 'firebase-admin-backend/**'
       - '.github/workflows/studio-admin.yml'
   workflow_dispatch:
 jobs:
@@ -19,10 +21,23 @@ jobs:
       - run: npm install --no-save playwright@1.56.1
       - run: npx playwright install --with-deps chromium
       - run: python3 -m http.server 8765 --bind 127.0.0.1 &
-      - run: node tests/studio-admin.mjs
+      - name: Unit test Firebase owner-only catalog validation
+        run: node --test firebase-admin-backend/functions/tests/*.test.mjs
+      - name: Validate admin and backend JavaScript syntax
+        run: |
+          node --check admin/admin.js
+          node --check admin/firebase-auth.js
+          node --check firebase-admin-backend/functions/index.mjs
+          node --check firebase-admin-backend/functions/catalog-core.mjs
+      - name: Validate legacy administrator editor
+        run: node tests/studio-admin.mjs
+      - name: Validate Firebase sign-in and server API mode
+        run: node tests/studio-admin-firebase.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: integrated-admin-qa
-          path: qa-studio-admin.png
+          path: |
+            qa-studio-admin.png
+            qa-studio-admin-firebase.png
           retention-days: 7
