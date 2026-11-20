@@ -24,7 +24,7 @@ export class HttpError extends Error{
 }
 export function ownerIdentity(profile,emails,configuredId){
  const id=String(configuredId||"").trim();
- if(!/^\\d+$/.test(id)||!Number.isSafeInteger(Number(id)))return false;
+ if(!/^\d+$/.test(id)||!Number.isSafeInteger(Number(id)))return false;
  if(!profile||String(profile.id)!==id||!Array.isArray(emails))return false;
  return emails.some(entry=>entry && typeof entry.email==="string" &&
    entry.email.toLowerCase()===ADMIN_EMAIL && entry.verified===true);
