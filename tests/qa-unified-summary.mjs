@@ -34,7 +34,7 @@ const pilot=browser?.logic?.viewports||[];
 const logicBase=pilot.length===4&&pilot.every(x=>x.status==="PASS");
 const g0=status("G0"),g1=status("G1"),g2=status("G2"),g3=status("G3"),g7=status("G7");
 const logicGates=policy.commonGates.map(x=>{
- const map={G0:g0,G1:g1,G2:g2,G3:g3,G4:logicBase?"PASS":"NOT_RUN",G5:"NOT_RUN",G6:logicBase?"PASS":"NOT_RUN",G7:g7};
+ const map={G0:g0,G1:logicBase?"PASS":browser?"FAIL":"NOT_RUN",G2:logicBase?"PASS":browser?"FAIL":"NOT_RUN",G3:logicBase?"PASS":browser?"FAIL":"NOT_RUN",G4:logicBase?"PASS":browser?"FAIL":"NOT_RUN",G5:"NOT_RUN",G6:logicBase?"PASS":browser?"FAIL":"NOT_RUN",G7:g7};
  return {id:x.id,label:x.name,status:map[x.id],required:x.id!=="G5"};
 });
 const prototypePassed=logicBase&&logicGates.filter(g=>g.required).every(g=>g.status==="PASS");
