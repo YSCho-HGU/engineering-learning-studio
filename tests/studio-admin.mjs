@@ -75,6 +75,7 @@ await page.locator("#save").click();
 await page.waitForFunction(()=>document.querySelector("#status").textContent.includes("저장 완료"));
 if(writes.length!==2||writes[1].catalog.chapters[0].title!=="Signals Overview")errors.push("SS metadata save mismatch");
 await page.locator("#course-c").click();
+await page.locator("#ss-quality").waitFor({state:"hidden"});
 if(await page.locator("#ss-quality").isVisible())errors.push("QA dashboard should hide on C Programming");
 await page.locator("#course-ss").click();
 await page.locator("#ss-quality").waitFor({state:"visible"});
