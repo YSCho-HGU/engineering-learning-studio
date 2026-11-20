@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "course": "logic-design",
-  "generatedAt": "2026-11-20T10:26:42.100Z",
-  "sourceSha": "62d9a43ebbe7be75c8c6ea205febdfb7c0f70acb",
-  "runId": "44719116473",
-  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/44719116473",
+  "generatedAt": "2026-11-20T10:27:02.844Z",
+  "sourceSha": "04118116a8bbe6cafdb54a6e5d8e394f39a6267d",
+  "runId": "44719263776",
+  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/44719263776",
   "mode": "prototype",
   "automatedStatus": "PILOT_BLOCKED",
   "releaseStatus": "PILOT_BLOCKED",
@@ -15,8 +15,8 @@
   "testedPrototype": "5 combinational gate types × 4 input combinations; 2 widths × 2 themes",
   "visual": {
     "expected": 4,
-    "observed": 4,
-    "issues": 0
+    "observed": 0,
+    "issues": null
   },
   "truthTableCases": 20,
   "chapters": [],
@@ -24,19 +24,19 @@
     {
       "id": "G0",
       "label": "Source/catalog integrity",
-      "status": "PASS",
+      "status": "NOT_RUN",
       "required": true
     },
     {
       "id": "G1",
       "label": "Independent reference correctness",
-      "status": "PASS",
+      "status": "NOT_RUN",
       "required": true
     },
     {
       "id": "G2",
       "label": "Browser interaction",
-      "status": "FAIL",
+      "status": "NOT_RUN",
       "required": true
     },
     {
@@ -48,7 +48,7 @@
     {
       "id": "G4",
       "label": "Interactive pedagogy",
-      "status": "PASS",
+      "status": "NOT_RUN",
       "required": true
     },
     {
@@ -60,7 +60,7 @@
     {
       "id": "G6",
       "label": "Visual regression",
-      "status": "PASS",
+      "status": "NOT_RUN",
       "required": true
     },
     {
