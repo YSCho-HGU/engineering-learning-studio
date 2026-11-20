@@ -26,6 +26,16 @@
 .qa-bottom{margin-top:13px;font-size:12px;color:var(--muted)}.qa-bottom>a{display:inline-block;margin-right:15px}
 #ss-quality[hidden],.qa-chapters[hidden],.qa-metrics[hidden],.qa-meta[hidden],.qa-bottom[hidden]{display:none!important}
 @media(max-width:750px){.qa-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.qa-chapters{grid-template-columns:1fr}}
+.qa-course-card{border:1px solid var(--line);border-radius:10px;padding:15px;background:var(--page);min-width:0}
+.qa-course-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.qa-course-head strong{font-size:15px}.qa-course-sub{font-size:12px;color:var(--muted);margin:6px 0}
+.qa-course-card details{margin-top:8px;border-top:1px solid var(--line);padding-top:6px}
+.qa-course-card summary{cursor:pointer;font-size:12px;font-weight:700}
+.qa-course-card .qa-gate{font-size:11px}
+.qa-course-card .qa-unit-list{display:grid;gap:3px;margin-top:9px}
+.qa-course-card .qa-unit{display:flex;align-items:center;justify-content:space-between;gap:7px;font-size:11px;padding:4px 0}
+#studio-quality .qa-chapters{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:950px){#studio-quality .qa-chapters{grid-template-columns:1fr}}
 </style></head><body>
 <header><div class="wrap"><strong>◈ Engineering Learning Studio · Admin</strong><a href="../">Studio Home →</a></div></header>
 <main class="wrap"><div class="muted">COURSE MANAGEMENT</div><h1>통합 강의 관리자</h1><p class="muted">과목별 공개/비공개 · 단원 제목 · 설명 · 교재 링크를 한 화면에서 관리합니다.</p>
@@ -34,6 +44,14 @@
 <p class="muted" id="repo-label"></p><p class="muted">선택한 저장소의 Contents 읽기·쓰기 권한이 있는 fine-grained GitHub 토큰을 입력하세요. 토큰은 이 탭의 메모리에만 보관하며 과목을 변경하거나 토큰 지우기를 누르면 폐기합니다.</p>
 <div class="controls"><input id="token" type="password" autocomplete="off" spellcheck="false" placeholder="GitHub fine-grained token" aria-label="GitHub token"><button id="connect" type="button">인증 및 불러오기</button><button id="clear" type="button">토큰 지우기</button></div>
 <p class="warning">비공개는 강의 메뉴에서 숨기는 기능입니다. 게시된 학습 페이지의 직접 URL을 막는 접근 권한 설정은 아닙니다. 토큰을 공유 PC에서 사용하지 마세요.</p><p class="status" id="status" role="status" aria-live="polite">과목을 선택하고 GitHub 인증을 진행하세요.</p></section>
+<section id="studio-quality" class="panel" aria-labelledby="studio-quality-heading">
+<div class="qa-title-row"><div><h2 id="studio-quality-heading">통합 품질 관리 · S&amp;S / C Programming / Logic Design</h2>
+<p class="muted">교과목별 G0–G7 품질 지표와 교육적 검토 현황을 조회합니다.</p></div>
+<button type="button" id="studio-quality-refresh">품질 현황 새로고침</button></div>
+<p class="status" id="studio-quality-status" role="status" aria-live="polite">세 과목의 검사 결과를 불러오는 중입니다.</p>
+<div id="studio-quality-cards" class="qa-chapters" aria-live="polite"></div>
+<p class="warning">Logic Design은 현재 논리 게이트 미니 실습만 시험하며 정식 교과목 검사는 미실행(NOT_RUN)입니다. 자동 검사 PASS는 교육적 승인과 구분됩니다.</p>
+</section>
 <section id="ss-quality" class="panel" hidden aria-labelledby="ss-quality-heading">
 <div class="qa-title-row"><div><h2 id="ss-quality-heading">Signals &amp; Systems · 품질 관리 대시보드</h2>
 <p class="muted">공개된 자동 검사 결과를 읽기 전용으로 조회합니다. GitHub 편집 토큰이 필요하지 않습니다.</p></div>
@@ -48,4 +66,4 @@
 <section id="editor" class="panel" hidden><h2 id="editor-title">Chapter 정보 편집</h2><p class="muted">단원 공개 전 학습 페이지가 저장소에 실제로 존재하는지 확인합니다. 변경은 'GitHub에 저장' 후 반영됩니다.</p><div id="chapter-list"></div>
 <div class="savebar"><button class="primary" id="save" type="button">GitHub에 변경 사항 저장</button><button id="reload" type="button">최신 설정 다시 읽기</button><span class="count" id="count"></span></div>
 <p class="muted">저장 후 GitHub Pages의 배포가 완료되면 학생용 화면에 반영됩니다. 이미 열린 화면은 새로고침이 필요합니다.</p></section>
-</main><script src="./admin.js?v=1" defer></script><script src="./ss-qa-dashboard.js?v=1" defer></script></body></html>
+</main><script src="./admin.js?v=1" defer></script><script src="./ss-qa-dashboard.js?v=1" defer></script><script src="./studio-quality.js?v=1" defer></script></body></html>
