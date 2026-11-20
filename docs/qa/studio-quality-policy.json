@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "name": "Engineering Learning Studio Unified Quality Standard",
+  "version": "1.0.0",
+  "storagePolicy": "read-only test profiles; no migration, reset or upload of student drafts",
+  "statuses": [
+    "PASS",
+    "FAIL",
+    "NOT_RUN",
+    "PENDING",
+    "NOT_APPLICABLE"
+  ],
+  "manualReview": [
+    "graph_or_code_correctness",
+    "reference_oracle",
+    "instructional_clarity"
+  ],
+  "commonGates": [
+    {
+      "id": "G0",
+      "name": "Source/catalog integrity",
+      "description": "Published unit identities, routes, schema, referenced resources"
+    },
+    {
+      "id": "G1",
+      "name": "Independent reference correctness",
+      "description": "Math invariants, GCC C11 execution, or Boolean truth table"
+    },
+    {
+      "id": "G2",
+      "name": "Browser interaction",
+      "description": "Student navigation, controls, output and error handling"
+    },
+    {
+      "id": "G3",
+      "name": "Theme, language and accessibility",
+      "description": "Neutral Dark/light, ENG/KR/Mixed, accessible labels"
+    },
+    {
+      "id": "G4",
+      "name": "Interactive pedagogy",
+      "description": "Predict/observe/interpret, coding tasks, audio or logic feedback"
+    },
+    {
+      "id": "G5",
+      "name": "Progress and saved work",
+      "description": "Read-only isolated checks for localStorage backward compatibility"
+    },
+    {
+      "id": "G6",
+      "name": "Visual regression",
+      "description": "Screenshot matrix, overflow and display usability"
+    },
+    {
+      "id": "G7",
+      "name": "Evidence and approval status",
+      "description": "Machine-readable reports, failures distinguished from not-run, manual pending"
+    }
+  ],
+  "courses": {
+    "signals-systems": {
+      "repo": "YSCho-HGU/signals-systems-visual-lab",
+      "published": 8,
+      "labs": 62,
+      "mode": "active",
+      "snapshot": "https://raw.githubusercontent.com/YSCho-HGU/signals-systems-visual-lab/main/qa-dashboard/latest.json",
+      "checklist": "https://github.com/YSCho-HGU/signals-systems-visual-lab/blob/main/docs/qa/SS_MANUAL_REVIEW_TEMPLATE.md"
+    },
+    "c-programming": {
+      "repo": "YSCho-HGU/engineering-learning-studio",
+      "planned": 18,
+      "published": 8,
+      "mode": "active",
+      "snapshot": "./qa-dashboard/c-latest.json",
+      "codingStandard": "docs/C_PROGRAMMING_AUTHORING_STANDARD.md"
+    },
+    "logic-design": {
+      "repo": "YSCho-HGU/engineering-learning-studio",
+      "mode": "prototype",
+      "published": 0,
+      "prototype": [
+        "AND",
+        "OR",
+        "XOR",
+        "NAND",
+        "NOR"
+      ],
+      "snapshot": "./qa-dashboard/logic-latest.json",
+      "futureCourseGates": "NOT_RUN"
+    }
+  },
+  "cScreenshotMatrix": {
+    "widths": [
+      390,
+      1280
+    ],
+    "themes": [
+      "neutral-dark",
+      "warm-neutral"
+    ],
+    "scope": "8 published C units",
+    "expected": 32
+  },
+  "logicPrototypeMatrix": {
+    "widths": [
+      390,
+      1280
+    ],
+    "themes": [
+      "neutral-dark",
+      "warm-neutral"
+    ],
+    "expected": 4
+  },
+  "numericOracle": "Each course requires independent expected outputs; passing a generic browser check is not a mathematical correctness certification"
+}
