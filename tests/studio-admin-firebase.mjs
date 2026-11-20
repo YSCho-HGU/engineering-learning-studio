@@ -13,7 +13,7 @@ await page.route("**/admin/firebase-config.js*",route=>route.fulfill({
 }));
 await page.route("**/admin/firebase-auth.js*",route=>route.fulfill({
  status:200,contentType:"text/javascript",
- body:`(()=>{const notify=x=>window.dispatchEvent(new CustomEvent("studio-admin-auth-state",{detail:{authenticated:x,user:x?{email:"yscho@handong.edu",uid:"test-uid"}:null}}));
+ body:`(()=>{const notify=x=>{document.querySelector("#firebase-login").hidden=x;document.querySelector("#firebase-logout").hidden=!x;window.dispatchEvent(new CustomEvent("studio-admin-auth-state",{detail:{authenticated:x,user:x?{email:"yscho@handong.edu",uid:"test-uid"}:null}}))};
  window.StudioAdminFirebase={token:async()=>"valid-test-token",signIn:async()=>notify(true),signOut:async()=>notify(false)};
  document.querySelector("#firebase-login").addEventListener("click",()=>window.StudioAdminFirebase.signIn());
  document.querySelector("#firebase-logout").addEventListener("click",()=>window.StudioAdminFirebase.signOut());
