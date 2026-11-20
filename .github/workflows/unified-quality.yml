@@ -1,0 +1,122 @@
+name: Unified Studio Quality G0-G7
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'c-programming/**'
+      - 'index.html'
+      - 'assets/**'
+      - 'tests/qa-unified-*.mjs'
+      - 'docs/qa/**'
+      - '.github/workflows/unified-quality.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: studio-unified-quality
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: G0 - Catalog and C learning content contracts
+        run: |
+          mkdir -p qa-unified
+          if node tests/c-site-integrity.mjs && node tests/c-authoring-policy.mjs && node tests/c-course-ui-consistency.mjs; then
+            echo PASS > qa-unified/G0.status
+          else echo FAIL > qa-unified/G0.status; fi
+
+      - name: G1 - GCC C11 reference-output oracle
+        run: |
+          if node tests/c-course-gcc.mjs; then echo PASS > qa-unified/G1.status; else echo FAIL > qa-unified/G1.status; fi
+
+      - name: Install Chromium
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+
+      - name: G2 - C all published chapters and Logic gate truth tables
+        run: |
+          if node tests/qa-unified-browser.mjs; then echo PASS > qa-unified/G2.status; else echo FAIL > qa-unified/G2.status; fi
+
+      - name: G3 - Shared language theme and UI contract
+        run: |
+          if node tests/els-theme-qa.mjs && node tests/c-course-ui-consistency.mjs; then echo PASS > qa-unified/G3.status; else echo FAIL > qa-unified/G3.status; fi
+
+      - name: G4 - Coding tasks prediction guides and trace
+        run: |
+          if node tests/c-fileio-ui.mjs && node tests/c-practice-guides.mjs && node tests/c-advanced-review.mjs; then echo PASS > qa-unified/G4.status; else echo FAIL > qa-unified/G4.status; fi
+
+      - name: G5 - Preserve existing progress drafts and local preferences
+        run: |
+          if node tests/phase0-c-baseline.mjs && node tests/phase0-storage-scan.mjs; then echo PASS > qa-unified/G5.status; else echo FAIL > qa-unified/G5.status; fi
+
+      - name: G6 - Verify required C and Logic browser evidence matrix
+        run: |
+          if node --input-type=module -e '
+            import fs from "node:fs";
+            const d=JSON.parse(fs.readFileSync("qa-unified/browser-results.json"));
+            const ok=d.status==="PASS"&&d.c.published===8&&d.c.screenshotMatrix===32&&
+              d.c.chapters.length===8&&d.c.chapters.every(x=>x.checks===4&&x.status==="PASS")&&
+              d.logic.viewports.length===4&&d.logic.viewports.every(x=>x.status==="PASS");
+            if(!ok)process.exit(1);'; then echo PASS > qa-unified/G6.status
+          else echo FAIL > qa-unified/G6.status; fi
+
+      - name: G7 - Validate complete evidence and policy
+        run: |
+          if node --input-type=module -e '
+            import fs from "node:fs";
+            const p=JSON.parse(fs.readFileSync("docs/qa/studio-quality-policy.json"));
+            const ids=p.commonGates.map(x=>x.id);
+            if(ids.join(",")!=="G0,G1,G2,G3,G4,G5,G6,G7")process.exit(1);
+            const missing=ids.slice(0,7).filter(x=>!fs.existsSync("qa-unified/"+x+".status"));
+            if(missing.length)process.exit(1);'; then echo PASS > qa-unified/G7.status
+          else echo FAIL > qa-unified/G7.status; fi
+
+      - name: Create shared quality snapshots
+        if: always()
+        run: node tests/qa-unified-summary.mjs
+
+      - name: Publish read-only results for administrator dashboard
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs=require('fs');
+            const paths=['qa-dashboard/c-latest.json','qa-dashboard/logic-latest.json','qa-dashboard/studio-latest.json'];
+            const {owner,repo}=context.repo;
+            for(const path of paths){
+              if(!fs.existsSync(path))throw Error('Missing snapshot '+path);
+              let sha;
+              try{
+                const current=await github.rest.repos.getContent({owner,repo,path,ref:'main'});
+                if(Array.isArray(current.data))throw Error('Directory instead of snapshot '+path);
+                sha=current.data.sha;
+              }catch(error){if(error.status!==404)throw error}
+              await github.rest.repos.createOrUpdateFileContents({
+                owner,repo,path,branch:'main',sha,
+                content:Buffer.from(fs.readFileSync(path,'utf8')).toString('base64'),
+                message:'chore(qa): publish '+path+' from run '+context.runId+' [skip ci]'
+              });
+            }
+
+      - name: Preserve QA logs and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: studio-unified-qa
+          path: |
+            qa-unified/
+            qa-dashboard/
+            qa-phase0/
+          if-no-files-found: warn
+          retention-days: 14
