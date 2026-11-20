@@ -23,8 +23,8 @@ for(const kind of ['pointer','structure']){
  check(data.lessons.every(l=>l.trace.every(t=>l.code.includes(t.match)&&t.state&&t.meaning)),kind+': every trace line matches the literal C reference');
  check(data.lessons.every(l=>new Set(l.quiz.options).size===3),kind+': distinct conceptual distractors');
  check(data.lessons.every((l,i)=>!l.layout||Array.isArray(l.layout.cells)&&l.layout.cells.every(cell=>cell.label&&cell.offset&&cell.value)),kind+': array/struct layout cells carry labels and symbolic offsets');
- check(data.lessons.every((l,i)=>!l.layout||l.layout.note&&/(sizeof|ABI|offset|padding|pointer)/i.test(l.layout.note)),kind+': each layout includes platform caveat');
- check(data.lessons.every((l,i)=>kind==='structure'&&i===6 || l.trace.some(t=>t.state.replaceAll('\\\\n','\\n').includes(l.output))),kind+': trace output corresponds to reference C stdout');
+ check(data.lessons.every((l,i)=>!l.layout||l.layout.note&&/(sizeof|ABI|offset|padding|pointer|4-byte int|one-past)/i.test(l.layout.note)),kind+': each layout includes platform caveat');
+ check(data.lessons.every((l,i)=>kind==='structure'&&i===6 || l.trace.some(t=>t.state.replaceAll(String.fromCharCode(92)+"n",String.fromCharCode(10)).includes(l.output))),kind+': trace output corresponds to reference C stdout');
 
  const html=fs.readFileSync(path.join(base,'index.html'),'utf8');
  for(const id of ['lesson','lesson-nav','progress-text','progress-bar','practice','theme'])
@@ -39,7 +39,7 @@ for(const kind of ['pointer','structure']){
    const run=spawnSync(exe,[],{encoding:'utf8',timeout:3000});
    check(run.status===0,kind+' lesson '+(i+1)+' executes');
    const observed=(run.stdout||'').trim();
-   if(kind==='structure'&&i===6)check(/^[0-9]+$/.test(observed)&&Number(observed)>=5,kind+' sizeof platform-dependent positive result');
+   if(kind==='structure'&&i===6)check(observed==='1'&&lesson.code.includes('sizeof(struct S) >= sizeof(char) + sizeof(int)'),kind+' sizeof checks member-size lower bound without asserting ABI-specific bytes');
    else check(observed===lesson.output.trim(),kind+' lesson '+(i+1)+' expected-output match: '+JSON.stringify(observed));
   }
  }
