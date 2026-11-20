@@ -9,6 +9,7 @@ const button=document.getElementById("github-login"),logout=document.getElementB
 const who=document.getElementById("github-user");
 const status=document.getElementById("status");
 let session=null,deadline=0,loginWindow=null,popupChecking=false;
+const sessionKey="els-gh-owner-session-v1";
 let base;
 try{
  base=new URL(config.workerUrl);
@@ -19,6 +20,7 @@ const broadcast=on=>window.dispatchEvent(new CustomEvent("studio-admin-auth-stat
 }));
 function setSession(value,until,login){
  session=value||null;deadline=until||0;
+ try{if(session)sessionStorage.setItem(sessionKey,JSON.stringify({token:session,until:deadline,login}));else sessionStorage.removeItem(sessionKey)}catch{}
  if(who)who.textContent=session?login+" · Owner": "관리자 로그인 필요";
  if(button)button.hidden=!!session;
  if(logout)logout.hidden=!session;
@@ -31,8 +33,8 @@ window.StudioAdminOwner={
   return session;
  },
  signOut(){
-  // Stateless Worker sessions expire after 30 minutes, and are not stored persistently.
-  // Logging out discards this tab's bearer; cannot revoke already stolen tokens.
+  // Stateless Worker sessions expire after 30 minutes and survive only this tab.
+  // Logging out discards its bearer, but cannot revoke already stolen tokens.
   setSession(null,0,"");
  }
 };
@@ -44,6 +46,11 @@ button?.addEventListener("click",()=>{
  if(status)status.textContent="GitHub 계정 인증을 진행하세요.";
 });
 logout?.addEventListener("click",()=>window.StudioAdminOwner.signOut());
+try{
+ const cached=JSON.parse(sessionStorage.getItem(sessionKey)||"null");
+ if(cached&&typeof cached.token==="string"&&typeof cached.login==="string"&&cached.until>Date.now()+4000)setSession(cached.token,cached.until,cached.login);
+ else sessionStorage.removeItem(sessionKey);
+}catch{try{sessionStorage.removeItem(sessionKey)}catch{}}
 window.addEventListener("message",event=>{
  if(event.origin!==base.origin||!loginWindow||event.source!==loginWindow)return;
  if(event.data?.type!=="els-github-login")return;
