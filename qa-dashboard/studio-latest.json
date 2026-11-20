@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-20T10:24:20.355Z",
+  "sourceSha": "25eaa89ec8577cbc4b6ff0d618638d17ccea13ee",
+  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/44718921792",
+  "sharedPolicy": "docs/qa/studio-quality-policy.json",
+  "courses": [
+    {
+      "id": "signals-systems",
+      "kind": "external",
+      "source": "https://raw.githubusercontent.com/YSCho-HGU/signals-systems-visual-lab/main/qa-dashboard/latest.json"
+    },
+    {
+      "id": "c-programming",
+      "kind": "local",
+      "status": "BLOCKED_AUTOMATED",
+      "source": "qa-dashboard/c-latest.json"
+    },
+    {
+      "id": "logic-design",
+      "kind": "local",
+      "status": "PILOT_BLOCKED",
+      "source": "qa-dashboard/logic-latest.json"
+    }
+  ]
+}
