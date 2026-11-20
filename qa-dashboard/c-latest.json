@@ -1,0 +1,245 @@
+{
+  "schemaVersion": 1,
+  "course": "c-programming",
+  "generatedAt": "2026-11-20T10:24:20.355Z",
+  "sourceSha": "25eaa89ec8577cbc4b6ff0d618638d17ccea13ee",
+  "runId": "44718921792",
+  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/44718921792",
+  "automaticStatus": "BLOCKED_AUTOMATED",
+  "automatedStatus": "BLOCKED_AUTOMATED",
+  "manualStatus": "PENDING",
+  "releaseStatus": "BLOCKED_AUTOMATED",
+  "chaptersCount": 8,
+  "labsCount": 8,
+  "plannedUnits": 18,
+  "gates": [
+    {
+      "id": "G0",
+      "label": "Source/catalog integrity",
+      "status": "PASS",
+      "required": true
+    },
+    {
+      "id": "G1",
+      "label": "Independent reference correctness",
+      "status": "PASS",
+      "required": true
+    },
+    {
+      "id": "G2",
+      "label": "Browser interaction",
+      "status": "NOT_RUN",
+      "required": true
+    },
+    {
+      "id": "G3",
+      "label": "Theme, language and accessibility",
+      "status": "NOT_RUN",
+      "required": true
+    },
+    {
+      "id": "G4",
+      "label": "Interactive pedagogy",
+      "status": "NOT_RUN",
+      "required": true
+    },
+    {
+      "id": "G5",
+      "label": "Progress and saved work",
+      "status": "NOT_RUN",
+      "required": true
+    },
+    {
+      "id": "G6",
+      "label": "Visual regression",
+      "status": "NOT_RUN",
+      "required": true
+    },
+    {
+      "id": "G7",
+      "label": "Evidence and approval status",
+      "status": "NOT_RUN",
+      "required": true
+    }
+  ],
+  "chapters": [
+    {
+      "id": "131",
+      "title": "Arrays",
+      "labCount": 0,
+      "visual": {
+        "status": "NOT_RUN",
+        "expected": 4,
+        "observed": 0,
+        "issues": 0,
+        "missing": 4
+      },
+      "issueExamples": [],
+      "manual": {
+        "axesAndLegends": "PENDING",
+        "mathematics": "PENDING",
+        "pedagogy": "PENDING"
+      },
+      "coverage": {
+        "numericalReference": "GCC C11 stdout for supported common-engine cases"
+      }
+    },
+    {
+      "id": "132",
+      "title": "Strings",
+      "labCount": 0,
+      "visual": {
+        "status": "NOT_RUN",
+        "expected": 4,
+        "observed": 0,
+        "issues": 0,
+        "missing": 4
+      },
+      "issueExamples": [],
+      "manual": {
+        "axesAndLegends": "PENDING",
+        "mathematics": "PENDING",
+        "pedagogy": "PENDING"
+      },
+      "coverage": {
+        "numericalReference": "GCC C11 stdout for supported common-engine cases"
+      }
+    },
+    {
+      "id": "133",
+      "title": "Standard Library Functions",
+      "labCount": 0,
+      "visual": {
+        "status": "NOT_RUN",
+        "expected": 4,
+        "observed": 0,
+        "issues": 0,
+        "missing": 4
+      },
+      "issueExamples": [],
+      "manual": {
+        "axesAndLegends": "PENDING",
+        "mathematics": "PENDING",
+        "pedagogy": "PENDING"
+      },
+      "coverage": {
+        "numericalReference": "GCC C11 stdout for supported common-engine cases"
+      }
+    },
+    {
+      "id": "141",
+      "title": "User-Defined Functions",
+      "labCount": 0,
+      "visual": {
+        "status": "NOT_RUN",
+        "expected": 4,
+        "observed": 0,
+        "issues": 0,
+        "missing": 4
+      },
+      "issueExamples": [],
+      "manual": {
+        "axesAndLegends": "PENDING",
+        "mathematics": "PENDING",
+        "pedagogy": "PENDING"
+      },
+      "coverage": {
+        "numericalReference": "GCC C11 stdout for supported common-engine cases"
+      }
+    },
+    {
+      "id": "151",
+      "title": "Pointers",
+      "labCount": 0,
+      "visual": {
+        "status": "NOT_RUN",
+        "expected": 4,
+        "observed": 0,
+        "issues": 0,
+        "missing": 4
+      },
+      "issueExamples": [],
+      "manual": {
+        "axesAndLegends": "PENDING",
+        "mathematics": "PENDING",
+        "pedagogy": "PENDING"
+      },
+      "coverage": {
+        "numericalReference": "GCC C11 stdout for supported common-engine cases"
+      }
+    },
+    {
+      "id": "161",
+      "title": "Structures",
+      "labCount": 0,
+      "visual": {
+        "status": "NOT_RUN",
+        "expected": 4,
+        "observed": 0,
+        "issues": 0,
+        "missing": 4
+      },
+      "issueExamples": [],
+      "manual": {
+        "axesAndLegends": "PENDING",
+        "mathematics": "PENDING",
+        "pedagogy": "PENDING"
+      },
+      "coverage": {
+        "numericalReference": "GCC C11 stdout for supported common-engine cases"
+      }
+    },
+    {
+      "id": "171",
+      "title": "File I/O",
+      "labCount": 0,
+      "visual": {
+        "status": "NOT_RUN",
+        "expected": 4,
+        "observed": 0,
+        "issues": 0,
+        "missing": 4
+      },
+      "issueExamples": [],
+      "manual": {
+        "axesAndLegends": "PENDING",
+        "mathematics": "PENDING",
+        "pedagogy": "PENDING"
+      },
+      "coverage": {
+        "numericalReference": "File I/O specialist checks; GCC oracle separately scoped"
+      }
+    },
+    {
+      "id": "181",
+      "title": "Dynamic Memory",
+      "labCount": 0,
+      "visual": {
+        "status": "NOT_RUN",
+        "expected": 4,
+        "observed": 0,
+        "issues": 0,
+        "missing": 4
+      },
+      "issueExamples": [],
+      "manual": {
+        "axesAndLegends": "PENDING",
+        "mathematics": "PENDING",
+        "pedagogy": "PENDING"
+      },
+      "coverage": {
+        "numericalReference": "GCC C11 stdout for supported common-engine cases"
+      }
+    }
+  ],
+  "visual": {
+    "expected": 32,
+    "observed": 0,
+    "issues": null
+  },
+  "notes": [
+    "PASS applies only to the named, executed checks for eight published C chapters.",
+    "Compiler reference output does not verify every possible input or student solution.",
+    "Instructor evaluation M1–M3 remains pending."
+  ]
+}
