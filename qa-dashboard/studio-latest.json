@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-20T10:28:23.112Z",
-  "sourceSha": "d0d77f0800d5bd7c42db4d3f8aa95e12f7d44984",
-  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/44719367636",
+  "generatedAt": "2026-11-20T10:30:02.226Z",
+  "sourceSha": "d8782791d832673369f98a0c735eba715e1637d7",
+  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/44719633696",
   "sharedPolicy": "docs/qa/studio-quality-policy.json",
   "courses": [
     {
