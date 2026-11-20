@@ -14,7 +14,7 @@ await page.route("**/admin/github-config.js*",route=>route.fulfill({
  status:200,contentType:"text/javascript",
  body:'window.STUDIO_ADMIN_GITHUB={enabled:true,workerUrl:"'+origin+'"}'
 }));
-await page.route(origin+"/auth/github/start*",route=>route.fulfill({
+await page.context().route(origin+"/auth/github/start*",route=>route.fulfill({
  status:200,contentType:"text/html",
  body:`<!doctype html><script>setTimeout(()=>window.opener.postMessage({
   type:"els-github-login",ok:true,session:"fake.owner.session",
