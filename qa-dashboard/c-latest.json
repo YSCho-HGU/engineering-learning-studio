@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "course": "c-programming",
-  "generatedAt": "2026-11-20T10:30:02.226Z",
-  "sourceSha": "d8782791d832673369f98a0c735eba715e1637d7",
-  "runId": "44719633696",
-  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/44719633696",
-  "automaticStatus": "BLOCKED_AUTOMATED",
-  "automatedStatus": "BLOCKED_AUTOMATED",
+  "generatedAt": "2026-11-20T10:33:24.790Z",
+  "sourceSha": "9789848bfa9a2380ad126358fe2cd886c77512a8",
+  "runId": "44720031687",
+  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/44720031687",
+  "automaticStatus": "AUTOMATED_PASS",
+  "automatedStatus": "AUTOMATED_PASS",
   "manualStatus": "PENDING",
-  "releaseStatus": "BLOCKED_AUTOMATED",
+  "releaseStatus": "AUTOMATED_PASS_MANUAL_PENDING",
   "chaptersCount": 8,
   "labsCount": 8,
   "plannedUnits": 18,
@@ -28,7 +28,7 @@
     {
       "id": "G2",
       "label": "Browser interaction",
-      "status": "FAIL",
+      "status": "PASS",
       "required": true
     },
     {
@@ -40,7 +40,7 @@
     {
       "id": "G4",
       "label": "Interactive pedagogy",
-      "status": "FAIL",
+      "status": "PASS",
       "required": true
     },
     {
@@ -52,7 +52,7 @@
     {
       "id": "G6",
       "label": "Visual regression",
-      "status": "FAIL",
+      "status": "PASS",
       "required": true
     },
     {
@@ -110,22 +110,13 @@
       "title": "Standard Library Functions",
       "labCount": 4,
       "visual": {
-        "status": "FAIL",
+        "status": "PASS",
         "expected": 4,
         "observed": 4,
-        "issues": 2,
+        "issues": 0,
         "missing": 0
       },
-      "issueExamples": [
-        {
-          "id": "133",
-          "message": "390px neutral-dark: {\"http\":200,\"overflow\":true,\"theme\":\"neutral-dark\",\"content\":3990,\"buttons\":21,\"intact\":true,\"overflowSources\":[{\"el\":\"div\",\"right\":446,\"width\":411,\"scroll\":411},{\"el\":\"h1\",\"right\":446,\"width\":411,\"scroll\":411},{\"el\":\"p\",\"right\":446,\"width\":411,\"scroll\":411},{\"el\":\"aside.hero-aside\",\"right\":446,\"width\":411,\"scroll\":409},{\"el\":\"b\",\"right\":427,\"width\":373,\"scroll\":373},{\"el\":\"p\",\"right\":427,\"width\":373,\"scroll\":373}],\"errors\":[]}"
-        },
-        {
-          "id": "133",
-          "message": "390px warm-neutral: {\"http\":200,\"overflow\":true,\"theme\":\"warm-neutral\",\"content\":3990,\"buttons\":21,\"intact\":true,\"overflowSources\":[{\"el\":\"div\",\"right\":446,\"width\":411,\"scroll\":411},{\"el\":\"h1\",\"right\":446,\"width\":411,\"scroll\":411},{\"el\":\"p\",\"right\":446,\"width\":411,\"scroll\":411},{\"el\":\"aside.hero-aside\",\"right\":446,\"width\":411,\"scroll\":409},{\"el\":\"b\",\"right\":427,\"width\":373,\"scroll\":373},{\"el\":\"p\",\"right\":427,\"width\":373,\"scroll\":373}],\"errors\":[]}"
-        }
-      ],
+      "issueExamples": [],
       "manual": {
         "axesAndLegends": "PENDING",
         "mathematics": "PENDING",
@@ -203,22 +194,13 @@
       "title": "File I/O",
       "labCount": 4,
       "visual": {
-        "status": "FAIL",
+        "status": "PASS",
         "expected": 4,
         "observed": 4,
-        "issues": 2,
+        "issues": 0,
         "missing": 0
       },
-      "issueExamples": [
-        {
-          "id": "171",
-          "message": "390px neutral-dark: {\"http\":200,\"overflow\":true,\"theme\":\"neutral-dark\",\"content\":1943,\"buttons\":63,\"intact\":true,\"overflowSources\":[{\"el\":\"label\",\"right\":577,\"width\":181,\"scroll\":181},{\"el\":\"select\",\"right\":577,\"width\":116,\"scroll\":114},{\"el\":\"span\",\"right\":455,\"width\":59,\"scroll\":59}],\"errors\":[]}"
-        },
-        {
-          "id": "171",
-          "message": "390px warm-neutral: {\"http\":200,\"overflow\":true,\"theme\":\"warm-neutral\",\"content\":1943,\"buttons\":63,\"intact\":true,\"overflowSources\":[{\"el\":\"label\",\"right\":577,\"width\":181,\"scroll\":181},{\"el\":\"select\",\"right\":577,\"width\":116,\"scroll\":114},{\"el\":\"span\",\"right\":455,\"width\":59,\"scroll\":59}],\"errors\":[]}"
-        }
-      ],
+      "issueExamples": [],
       "manual": {
         "axesAndLegends": "PENDING",
         "mathematics": "PENDING",
@@ -253,7 +235,7 @@
   "visual": {
     "expected": 32,
     "observed": 32,
-    "issues": 4
+    "issues": 0
   },
   "notes": [
     "PASS applies only to the named, executed checks for eight published C chapters.",
