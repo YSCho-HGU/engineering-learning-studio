@@ -8,6 +8,7 @@ on:
       - 'index.html'
       - 'assets/**'
       - 'tests/qa-unified-*.mjs'
+      - 'tests/c-curriculum-quality-review.mjs'
       - 'docs/qa/**'
       - '.github/workflows/unified-quality.yml'
 
@@ -55,6 +56,9 @@ jobs:
       - name: G4 - Coding tasks prediction guides and trace
         run: |
           if node tests/c-fileio-ui.mjs && node tests/c-practice-guides.mjs && node tests/c-advanced-review.mjs; then echo PASS > qa-unified/G4.status; else echo FAIL > qa-unified/G4.status; fi
+
+      - name: Education audit - eight published C units (pedagogy flags do not imply test failure)
+        run: node tests/c-curriculum-quality-review.mjs
 
       - name: G5 - Preserve existing progress drafts and local preferences
         run: |
@@ -118,5 +122,6 @@ jobs:
             qa-unified/
             qa-dashboard/
             qa-phase0/
+            qa-review/
           if-no-files-found: warn
           retention-days: 14
