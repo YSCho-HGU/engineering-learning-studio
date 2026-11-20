@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-20T10:27:02.844Z",
-  "sourceSha": "04118116a8bbe6cafdb54a6e5d8e394f39a6267d",
-  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/44719263776",
+  "generatedAt": "2026-11-20T10:28:23.112Z",
+  "sourceSha": "d0d77f0800d5bd7c42db4d3f8aa95e12f7d44984",
+  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/44719367636",
   "sharedPolicy": "docs/qa/studio-quality-policy.json",
   "courses": [
     {
@@ -19,7 +19,7 @@
     {
       "id": "logic-design",
       "kind": "local",
-      "status": "PILOT_BLOCKED",
+      "status": "PILOT_PASS_FUTURE_COURSE_PENDING",
       "source": "qa-dashboard/logic-latest.json"
     }
   ]
