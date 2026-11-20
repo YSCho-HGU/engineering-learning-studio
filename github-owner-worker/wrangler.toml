@@ -1,0 +1,10 @@
+name = "els-owner-admin"
+main = "src/index.js"
+compatibility_date = "2026-11-01"
+
+# Set non-secret values with 'wrangler secret put', or configure
+# regular environment values in the Cloudflare dashboard.
+# GITHUB_CLIENT_ID, GITHUB_APP_ID, GITHUB_INSTALLATION_ID, OWNER_GITHUB_ID,
+# OAUTH_CALLBACK_URL are identifiers (not secret keys).
+# GITHUB_CLIENT_SECRET, GITHUB_APP_PRIVATE_KEY, SESSION_SECRET are secrets.
+# Do not set routes until the standalone workers.dev endpoint passes verification.
