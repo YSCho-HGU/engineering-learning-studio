@@ -114,3 +114,12 @@ body{overflow-x:hidden}
 .side nav button[aria-current="step"]{border-color:var(--blue);box-shadow:inset 3px 0 var(--blue)}
 .stage .transfer textarea{min-height:110px}
 @media(max-width:980px){.stage .learn{grid-template-columns:minmax(0,1fr)}}
+
+
+/* Narrow screens: prevent long lesson titles and hero asides from imposing
+   an intrinsic grid minimum wider than the viewport. */
+@media(max-width:900px){
+ .hero{grid-template-columns:minmax(0,1fr)}
+ .hero>*{min-width:0;max-width:100%;overflow-wrap:anywhere}
+ .hero-aside{min-width:0;max-width:100%}
+}
