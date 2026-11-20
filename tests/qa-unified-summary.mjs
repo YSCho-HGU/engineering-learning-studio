@@ -27,14 +27,14 @@ const c={
  manualStatus:"PENDING",releaseStatus:cPass?"AUTOMATED_PASS_MANUAL_PENDING":"BLOCKED_AUTOMATED",
  chaptersCount:8,labsCount:8,plannedUnits:catalog.chapters.length,
  gates,chapters:cUnits,
- visual:{expected:32,observed:browser?.c?.chapters?.reduce((n,x)=>n+x.checks,0)||0,
+ visual:{expected:4*cUnits.length,observed:browser?.c?.chapters?.reduce((n,x)=>n+x.checks,0)||0,
    issues:browser?.failures?.filter(x=>x.id!=="logic-pilot").length??null},
  notes:["PASS applies only to the named, executed checks for eight published C chapters.","Compiler reference output does not verify every possible input or student solution.","Instructor evaluation M1–M3 remains pending."]};
 const pilot=browser?.logic?.viewports||[];
 const logicBase=pilot.length===4&&pilot.every(x=>x.status==="PASS");
 const g0=status("G0"),g1=status("G1"),g2=status("G2"),g3=status("G3"),g7=status("G7");
 const logicGates=policy.commonGates.map(x=>{
- const map={G0:g0,G1:logicBase?"PASS":browser?"FAIL":"NOT_RUN",G2:logicBase?"PASS":browser?"FAIL":"NOT_RUN",G3:logicBase?"PASS":browser?"FAIL":"NOT_RUN",G4:logicBase?"PASS":browser?"FAIL":"NOT_RUN",G5:"NOT_RUN",G6:logicBase?"PASS":browser?"FAIL":"NOT_RUN",G7:g7};
+ const map={G0:logicBase?"PASS":browser?"FAIL":"NOT_RUN",G1:logicBase?"PASS":browser?"FAIL":"NOT_RUN",G2:logicBase?"PASS":browser?"FAIL":"NOT_RUN",G3:logicBase?"PASS":browser?"FAIL":"NOT_RUN",G4:logicBase?"PASS":browser?"FAIL":"NOT_RUN",G5:"NOT_RUN",G6:logicBase?"PASS":browser?"FAIL":"NOT_RUN",G7:g7};
  return {id:x.id,label:x.name,status:map[x.id],required:x.id!=="G5"};
 });
 const prototypePassed=logicBase&&logicGates.filter(g=>g.required).every(g=>g.status==="PASS");
