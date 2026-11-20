@@ -83,11 +83,11 @@ jobs:
           else echo FAIL > qa-unified/G7.status; fi
 
       - name: Create shared quality snapshots
-        if: always()
+        if: ${{ always() && !cancelled() }}
         run: node tests/qa-unified-summary.mjs
 
       - name: Publish read-only results for administrator dashboard
-        if: always()
+        if: ${{ always() && !cancelled() }}
         uses: actions/github-script@v7
         with:
           script: |
