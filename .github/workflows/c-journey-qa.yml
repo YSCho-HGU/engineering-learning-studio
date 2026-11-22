@@ -13,6 +13,7 @@ on:
       - 'tests/c-journey-qa.mjs'
       - 'tests/c-integrated-qa.mjs'
       - 'tests/c-learning-map-contract.mjs'
+      - 'tests/c-content-pedagogy-contract.mjs'
       - 'tests/c-grouped-navigation-e2e.mjs'
       - 'c-programming/arrays/**'
       - 'c-programming/strings/**'
@@ -41,7 +42,9 @@ jobs:
           npm install --no-save playwright@1.56.0
           npx playwright install --with-deps chromium
       - name: Validate C learning taxonomy and sidebar structure
-        run: node tests/c-learning-map-contract.mjs
+        run: |
+          node tests/c-learning-map-contract.mjs
+          node tests/c-content-pedagogy-contract.mjs
       - name: Run C11 GCC oracle and browser interaction tests
         run: |
           C_JOURNEY_BROWSER=1 node tests/c-journey-qa.mjs
