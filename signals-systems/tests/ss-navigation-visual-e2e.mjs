@@ -173,7 +173,7 @@ try{
      return {width:el.getBoundingClientRect().width,grid:getComputedStyle(el.parentElement).gridTemplateColumns};
     },{side});
     record(after.width<=60,'ch'+ch+'-'+width+'-collapsed-width',JSON.stringify(after));
-    record(after.grid.startsWith('58px'),'ch'+ch+'-'+width+'-collapsed-grid',after.grid);
+    record(after.grid.startsWith('52px'),'ch'+ch+'-'+width+'-collapsed-grid',after.grid);
     const menu=page.locator('.ss-common-menu');
     await menu.locator('summary').click();
     const links=menu.locator('.ss-common-links a');
