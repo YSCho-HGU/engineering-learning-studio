@@ -38,3 +38,93 @@
 .c-course-practice .hero-aside{align-self:stretch}
 @media(max-width:900px){.c-course-journey .layout{grid-template-columns:1fr}.c-course-journey .side{position:static}.c-course-journey .side nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:680px){.c-course-journey .hero,.c-course-practice .hero{grid-template-columns:1fr;padding:13px}.c-course-journey .wrap,.c-course-practice .wrap{padding:0 12px}.c-course-journey .course-core-links strong{width:100%}.c-course-journey .course-core-links a{flex:1 1 42%;justify-content:center;text-align:center;font-size:11px;padding:7px 5px}.c-course-journey .side nav{grid-template-columns:repeat(2,minmax(0,1fr))}.c-course-journey .side nav button{min-width:0;overflow-wrap:anywhere}.c-course-journey .stage{padding:12px}.c-course-practice .cp-menu{grid-template-columns:repeat(2,minmax(0,1fr));padding:8px}.c-course-practice .cp-content{padding:12px}.c-course-practice .cp-editor{min-height:300px}}
+
+/* Chapter-5-inspired reading rhythm for Pointer/Structure only.
+   Keep lesson/model nodes and persisted keys unchanged. */
+.c-ch5-reading{
+ --c-reading-gap:14px;
+ --c-reading-radius:12px;
+ --c-reading-body:16px;
+}
+.c-ch5-reading .wrap{max-width:1440px}
+.c-ch5-reading .topbar{padding-block:9px;min-height:52px}
+.c-ch5-reading .toplinks{gap:10px}
+.c-ch5-reading .toplinks a{line-height:1.4}
+.c-ch5-reading .hero{
+ padding:15px 19px;
+ grid-template-columns:minmax(0,1fr) minmax(180px,.35fr);
+}
+.c-ch5-reading .hero-aside{padding:10px 13px}
+.c-ch5-reading .hero h1{font-size:clamp(23px,2.6vw,32px)}
+.c-ch5-reading .hero p{font-size:15px;line-height:1.65;margin:7px 0}
+.c-ch5-reading .c-learning-shortcuts{
+ display:flex;flex-wrap:wrap;gap:9px;margin:13px 0;
+}
+.c-ch5-reading .c-learning-shortcuts a{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:42px;padding:9px 13px;text-decoration:none;
+ border:1px solid var(--els-border,var(--cx-border));
+ border-radius:9px;background:var(--els-surface,var(--cx-bg));
+ color:var(--els-ink,var(--cx-ink));font-size:13px;font-weight:750;
+}
+.c-ch5-reading .c-learning-shortcuts a:hover,
+.c-ch5-reading .c-learning-shortcuts a:focus-visible{
+ border-color:var(--cx-accent);
+ background:var(--els-surface-alt,var(--cx-alt));
+}
+.c-ch5-reading .course-phase-details{margin:0 0 14px}
+.c-ch5-reading .course-phase-details>summary{min-height:42px;display:list-item;align-content:center;font-size:13px}
+.c-ch5-reading .layout{grid-template-columns:246px minmax(0,1fr);gap:14px;margin-top:13px}
+.c-ch5-reading .side{top:64px;max-height:calc(100dvh - 78px);overflow:auto}
+.c-ch5-reading .side nav button{font-size:13px;min-height:43px;line-height:1.5}
+.c-ch5-reading .side .helper{font-size:13px;line-height:1.55}
+.c-ch5-reading .side .progress,.c-ch5-reading .journey-assessment{font-size:13px;line-height:1.55}
+.c-ch5-reading main{min-width:0}
+.c-ch5-reading .stage{padding:clamp(13px,1.6vw,21px);border-radius:var(--c-reading-radius)}
+.c-ch5-reading .stage :is(.lead,.concept p,.activity p,.quiz p,.transfer p,.explain p){
+ font-size:var(--c-reading-body);line-height:1.75;
+}
+.c-ch5-reading .stage h2{font-size:clamp(23px,2.35vw,31px);line-height:1.34}
+.c-ch5-reading .stage h3{font-size:clamp(17px,1.4vw,20px);line-height:1.45}
+.c-ch5-reading .stage :is(.concept,.activity,.quiz,.transfer){margin:var(--c-reading-gap) 0;padding:14px;border-radius:var(--c-reading-radius)}
+.c-ch5-reading .stage .learn{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--c-reading-gap)}
+.c-ch5-reading .stage .learn>*,.c-ch5-reading .stage .trace-layout>*{min-width:0}
+.c-ch5-reading .stage .trace-layout{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:var(--c-reading-gap)}
+.c-ch5-reading .stage .trace-code{max-height:430px}
+.c-ch5-reading .stage .trace-memory{min-height:80px}
+.c-ch5-reading .stage .mem-diagram-note,
+.c-ch5-reading .stage .legend,
+.c-ch5-reading .stage .c-code-caption{font-size:13px;line-height:1.6}
+.c-ch5-reading .stage .code,
+.c-ch5-reading .stage .trace-lines{font-size:14px;line-height:1.7}
+.c-ch5-reading .stage .question label{padding:12px;line-height:1.6;font-size:15px}
+.c-ch5-reading .stage .question label:focus-within{outline:2px solid var(--els-focus,#ead18b);outline-offset:2px}
+.c-ch5-reading .stage :is(button.action,textarea,input[type=range]){accent-color:var(--cx-accent)}
+.c-ch5-reading .stage :is(.trace-controls,.navactions) button{min-height:44px}
+.c-ch5-reading .stage .model{padding:14px}
+.c-ch5-reading .stage .model label{font-size:15px;line-height:1.55}
+.c-ch5-reading .stage .model output{font-size:14px;line-height:1.7}
+.c-ch5-reading .stage .mem-cell-name,.c-ch5-reading .stage .mem-cell-value{font-size:13px}
+.c-ch5-reading #coding-practice>p{font-size:16px;line-height:1.75}
+.c-ch5-reading #coding-practice .practice-list article{padding:14px}
+.c-ch5-reading .journey-next{margin-bottom:20px}
+@media(max-width:1000px){
+ .c-ch5-reading .stage .trace-layout{grid-template-columns:1fr}
+ .c-ch5-reading .stage .learn{grid-template-columns:1fr}
+}
+@media(max-width:900px){
+ .c-ch5-reading .layout{grid-template-columns:1fr}
+ .c-ch5-reading .side{position:static;max-height:none;overflow:visible}
+ .c-ch5-reading .side nav{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:600px){
+ .c-ch5-reading .hero{grid-template-columns:1fr}
+ .c-ch5-reading .side nav{grid-template-columns:1fr}
+ .c-ch5-reading .c-learning-shortcuts a{flex:1 1 42%}
+ .c-ch5-reading .stage{padding:12px}
+ .c-ch5-reading .stage .code,.c-ch5-reading .stage .trace-lines{font-size:12.5px}
+ .c-ch5-reading .topbar{padding:10px 12px}
+}
+@media(prefers-reduced-motion:reduce){
+ .c-ch5-reading *{scroll-behavior:auto!important}
+}
