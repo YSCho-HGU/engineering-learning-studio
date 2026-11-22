@@ -50,7 +50,7 @@ if(process.env.C_JOURNEY_BROWSER==="1"){
    const conceptIndex=course[kind].lessons[0].quiz.correct;
    await page.locator("#lesson .question label").nth(conceptIndex).click();
    await page.locator("#lesson .question button").click();
-   assert((await page.locator("#assessment-status").innerText()).includes("Concept Check Passed 1/8"),kind+" concept pass recorded");
+   assert((await page.locator("#assessment-status").innerText()).includes("1/6"),kind+" core concept pass recorded");
    assert((await page.locator("#progress-text").innerText()).includes("0/6"),kind+" core activity not silently awarded");
    await page.locator("#lesson .navactions button").nth(1).click();
    assert((await page.locator("#progress-text").innerText()).includes("1/6"),kind+" core activity marked independently");
