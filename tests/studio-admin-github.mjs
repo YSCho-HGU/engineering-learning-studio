@@ -30,22 +30,25 @@ await page.route(origin+"/api/catalog*",async route=>{
  if(!["c","ss"].includes(course))return route.fulfill({status:400});
  if(request.method()==="GET")return route.fulfill({
   status:200,contentType:"application/json",
+  headers:{"Access-Control-Allow-Origin":"http://127.0.0.1:8765","Vary":"Origin"},
   body:JSON.stringify({catalog:course==="c"?c:ss,sha:"a".repeat(40),course})
  });
  if(request.method()==="PUT"){
   const body=request.postDataJSON();
   writes.push({course,body});
-  return route.fulfill({status:200,contentType:"application/json",body:JSON.stringify({sha:"b".repeat(40),changed:["151"]})});
+  return route.fulfill({status:200,contentType:"application/json",headers:{"Access-Control-Allow-Origin":"http://127.0.0.1:8765"},body:JSON.stringify({sha:"b".repeat(40),changed:["151"]})});
  }
  return route.fulfill({status:405});
 });
 try{
  await page.goto("http://127.0.0.1:8765/admin/",{waitUntil:"domcontentloaded"});
- await page.waitForFunction(()=>document.querySelector("#legacy-auth-controls")?.hidden===true);
- if(await page.locator("#legacy-auth-controls").isVisible())errors.push("Legacy GitHub token editor visible in Owner mode");
+ await page.locator("#github-login").waitFor({state:"visible"});
+ if(await page.locator("#admin-private").isVisible())errors.push("Owner console visible before verified session");
+ if(await page.locator("#legacy-auth-controls").count())errors.push("Legacy GitHub PAT editor still in page");
  if(await page.locator("#editor").isVisible())errors.push("Unauthenticated editor visible");
  await page.locator("#github-login").click();
  await page.locator("#editor").waitFor({state:"visible",timeout:12000});
+ await page.locator("#admin-private").waitFor({state:"visible",timeout:12000});
  if(await page.locator(".chapter").count()!==18)errors.push("C catalog missing");
  await page.locator("#title-151").fill("Pointer Fundamentals");
  await page.locator("#save").click();
@@ -64,6 +67,7 @@ try{
  if(await page.locator(".chapter").count()!==8)errors.push("Signals catalog missing");
  await page.locator("#github-logout").click();
  await page.locator("#editor").waitFor({state:"hidden"});
+ await page.locator("#admin-private").waitFor({state:"hidden"});
  if(await page.evaluate(()=>sessionStorage.getItem("els-gh-owner-session-v1")!==null))errors.push("Logout did not clear tab session");
  if(directGithub)errors.push("GitHub API requested directly from browser");
  await page.screenshot({path:"qa-studio-admin-github.png",fullPage:true});
