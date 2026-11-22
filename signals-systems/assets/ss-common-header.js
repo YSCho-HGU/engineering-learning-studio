@@ -147,7 +147,7 @@ function init(){
  function sync(){
   const ch=Number((path.match(/chapter([1-8])\.html$/)||[])[1])||Number((location.hash.match(/^#chapter=(\d+)/)||[])[1])||0;
   const onOverview=/index\.html$|\/$/.test(path);
-  const view=/applications\.html$/.test(path)?'applications':onOverview?(location.hash==='#map'?'map':'overview'):null;
+  const view=/applications(?:-lab)?\.html$/.test(path)?'applications':onOverview?(location.hash==='#map'?'map':'overview'):null;
   for(const link of links.querySelectorAll('a')){
    const n=Number(link.dataset.ssChapter||0);
    const active=link.dataset.ssView?link.dataset.ssView===view:!!ch&&n===ch;
