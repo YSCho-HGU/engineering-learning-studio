@@ -478,7 +478,7 @@ function init(){
  }
  language?.subscribe?.(()=>{displayNames();renderControls();drawSoon()});
  window.addEventListener("els:themechange",drawSoon);window.addEventListener("resize",drawSoon);
- if(window.ResizeObserver)new ResizeObserver(drawSoon).observe($("ss-al-charts"));
+ if(window.ResizeObserver)new window.ResizeObserver(drawSoon).observe($("ss-al-charts"));
  document.addEventListener("visibilitychange",()=>{
   if(document.hidden){if(lab!=="sampling")stopAudio(true);else{state.playing=false;if(playId!==null)cancelAnimationFrame(playId);playId=null;renderControls()}}
  });
