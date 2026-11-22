@@ -57,7 +57,7 @@ const practiceEngine=read("c-programming/practice-engine.js");
 check(engine.includes('element("span","",b,l.title)')&&engine.includes('element("h2","",stage,l.title)'),"Sidebar and lesson heading must derive from same title");
 check(engine.includes('element("p","quiz-context",section,l.quiz.context||l.goal)'),"Context must precede the quiz question");
 check(engine.includes('element("p","quiz-question",section,l.quiz.q)'),"Quiz question must be distinct from context");
-check(engine.includes('createCode(c,l.code)')&&engine.includes('createCode(details,p.starter,"starter")'),"Complete code and starter code must have different labels");
+check(engine.includes('createCode(c,l.code)')&&!engine.includes('createCode(details,p.starter,"starter")')&&practiceEngine.includes('editor.value=Object.prototype.hasOwnProperty.call(drafts,i)?drafts[i]:task.starter'),"Complete examples remain in lessons; coding starters appear only in the dedicated editor");
 check(practiceEngine.includes('const taskHeading=i=>')&&practiceEngine.includes('title.textContent=taskHeading(i)')&&practiceEngine.includes('sidebar,taskHeading(i)'),"Practice sidebar and task heading must use same title");
 check(practiceEngine.includes('const K="els-code-"')&&practiceEngine.includes('E="els-code-evidence-"'),"Existing coding drafts and evidence keys must be retained");
 check(engine.includes('const key="els-journey-"')&&engine.includes('const assessmentKey='),"Existing progress storage must be retained");
