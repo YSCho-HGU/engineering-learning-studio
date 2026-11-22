@@ -195,8 +195,9 @@ html.ss5-native[data-els-theme] :is(.tabs button,.ctrl label,.ctrl output,
  .ctrl .rangeEnds,.presets button,.btn,.ss5-site-header label){
  color:var(--ss5-fg)!important
 }
-html.ss5-native[data-els-theme] :is(.tabs button.on,.tabs button:hover,
- .teach,.ss5-progress button,.preset,.btn:not(.primary)){
+/* Sidebar experiment button styles are owned by ss-sidebar-layout.css,
+   not by the Chapter 5 control/button palette. */
+html.ss5-native[data-els-theme] :is(.teach,.ss5-progress button,.preset,.btn:not(.primary)){
  background:var(--ss5-soft)!important;
  color:var(--ss5-fg)!important;
  border-color:var(--ss5-line)!important
