@@ -52,6 +52,18 @@ try{
    assert.equal(sample.gap,"6px","Ch "+chapter+": section card gap");
    assert.ok(sample.rowWidth>=sample.navWidth-3,"Ch "+chapter+": full-width row");
    assert.ok(sample.overflow<=3,"Ch "+chapter+": horizontal document overflow "+sample.overflow);
+   const current=sidebar.locator('nav > button:is(.active,.on,[aria-current="true"],[aria-current="page"])');
+   assert.equal(await current.count(),1,"Ch "+chapter+": exactly one selected experiment");
+   const beforeActive=await current.first().evaluate(el=>({
+    border:getComputedStyle(el).borderTopColor,shadow:getComputedStyle(el).boxShadow
+   }));
+   const normalBorder=await items.nth(1).evaluate(el=>getComputedStyle(el).borderTopColor);
+   assert.notEqual(beforeActive.border,normalBorder,"Ch "+chapter+": selected card border should stand out");
+   await items.nth(1).click();
+   await page.waitForTimeout(90);
+   assert.equal(await current.count(),1,"Ch "+chapter+": navigation selection must stay singular");
+   assert.equal(await current.first().evaluate(el=>[...el.parentElement.children].indexOf(el)),1,
+    "Ch "+chapter+": clicking section 02 must activate it");
    if(chapter===4)reference[width]=sample;
    if(reference[width]){
     assert.ok(Math.abs(sample.width-reference[width].width)<=2,
