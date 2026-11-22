@@ -12,21 +12,19 @@
    if(!header)return;
    const language=header.querySelector("#lang,#c-language,.ss-common-language-select,#ss-language-select");
    if(language){
-     const label=language.closest("label")||header.querySelector('label[for="'+language.id+'"]');
+     const wrapped=language.closest("label");
+     const label=wrapped||header.querySelector('label[for="'+language.id+'"]');
      if(label){
        label.classList.add("els-header-language");
        let icon=label.querySelector(".els-header-language-icon,.ss-language-icon");
        if(!icon){
          icon=doc.createElement("span");icon.className="els-header-language-icon";
-         label.insertBefore(icon,language);
+         if(wrapped)label.insertBefore(icon,language);else label.replaceChildren(icon);
        }
        icon.textContent="🌐";icon.setAttribute("aria-hidden","true");
        for(const child of Array.from(label.children)){
-         if(child!==icon&&child!==language && child.matches("span"))child.hidden=true;
+         if(child!==icon&&child!==language&&child.matches("span"))child.hidden=true;
        }
-       // Studio Home has a separate for-label before the select.
-       const standalone=header.querySelector('label[for="'+language.id+'"]');
-       if(standalone&&standalone!==label&&standalone.textContent.trim())standalone.textContent="🌐";
        language.setAttribute("aria-label","Select language / 언어 선택");
      }
    }
