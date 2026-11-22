@@ -79,7 +79,6 @@ function init(){
  toggle.addEventListener("click",()=>collapsed(root.dataset.cSidebar!=="collapsed"));collapsed(getSaved());
  // The original course and practice exercises remain mounted under the same IDs.
  if(fileioLabs){const intro=document.querySelector("body > .hero");if(intro){intro.classList.add("c-ss-intro");workspace.insertBefore(intro,wrap)}}
- if(fileioTask){const empty=wrap.querySelector(".practice-full-list");if(empty)empty.remove()}
  if(fileio){
   const intro=document.querySelector("body > .course-header");
   if(intro){intro.classList.add("c-ss-intro");workspace.insertBefore(intro,wrap)}
@@ -114,7 +113,6 @@ function init(){
    originalLabs?.remove();
    const advancedGroup=makeGroup(toc,"advanced","선택 심화","Advanced / Optional",location.hash==="#optional");
    if(advancedButton)advancedGroup.append(advancedButton);
-   const oldAdvanced=aside.querySelector(".fileio-advanced-nav");oldAdvanced?.remove();
    const challenges=makeGroup(toc,"challenges","직접 구현","Coding Challenges",false);
    [["P1 · File writing","./practice/#p1"],["P2 · File reading","./practice/#p2"],["M1 · Line copying","./practice/#m1"],
     ["P3–P6 · Optional challenges","./practice/#p3"]].forEach(([name,url])=>challenges.append(link(name,url)));
@@ -144,7 +142,6 @@ function init(){
    const challenges=makeGroup(toc,"challenges","직접 구현","Coding Challenges",false);
    challenges.append(link(en()?"Open coding challenges":"직접 구현 과제","../practice/"));
   }
-  aside.querySelectorAll(".side-separator,.side-detail,.advanced-link,.side-label").forEach(n=>n.remove());
  }
  if(fileioTask){
   // The task engine owns the seven buttons and re-renders them on task changes;
