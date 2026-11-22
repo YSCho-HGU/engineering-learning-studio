@@ -94,3 +94,24 @@ html[data-c-sidebar=collapsed] .c-sidebar-caption{display:none}
  .c-ss-content .stage{padding:12px}
 }
 @media(prefers-reduced-motion:reduce){.c-ss-shell{transition:none}}
+
+/* File I/O native section adapter: same header, sidebar and reading rectangle. */
+.c-ss-shell>.c-ss-sidebar.sidebar{position:sticky;top:var(--c-header-height);height:calc(100dvh - var(--c-header-height));max-height:calc(100dvh - var(--c-header-height));padding:12px 11px;overflow:auto;border-radius:0;border-right:1px solid var(--els-border);background:var(--els-surface);width:100%;min-width:0}
+.c-ss-shell>.c-ss-sidebar nav.lesson-nav{display:flex;flex-direction:column;gap:6px;overflow:visible;width:100%}
+.c-ss-shell>.c-ss-sidebar nav.lesson-nav button{width:100%;min-height:49px;padding:9px;text-align:left;border-radius:9px;border:1px solid transparent;display:flex;align-items:center;gap:10px;white-space:normal}
+.c-ss-shell>.c-ss-sidebar nav.lesson-nav button.current{border-color:var(--els-link);background:var(--els-surface-alt);box-shadow:inset 3px 0 var(--els-link)}
+.c-ss-shell>.c-ss-sidebar nav.lesson-nav .num{display:inline-grid;place-items:center;flex:0 0 30px;width:30px;height:30px;border-radius:7px;border:1px solid var(--els-border)}
+.c-ss-shell>.c-ss-workspace>.c-fileio-workspace.shell{display:block!important;width:100%;max-width:none;min-height:0;margin:0;padding:0;grid-template-columns:none!important;background:transparent}
+.c-ss-shell>.c-ss-workspace>.c-fileio-workspace.shell>main{display:block!important;box-sizing:border-box;width:100%;min-width:0;max-width:none;margin:0;padding:12px clamp(12px,1.8vw,27px) 42px}
+.c-ss-shell .course-header.c-ss-intro{margin:15px clamp(12px,1.8vw,27px) 5px;padding:14px 18px;min-height:0}
+.c-ss-shell .course-header.c-ss-intro h1{font-size:clamp(23px,2.8vw,32px);margin:4px 0}
+.c-ss-shell .course-header.c-ss-intro p{font-size:15px;line-height:1.65;margin:5px 0}
+.c-ss-shell .course-header.c-ss-intro .course-meta{margin:7px 0 0}
+.c-ss-shell .c-fileio-roadmap{margin:8px clamp(12px,1.8vw,27px) 0}
+.c-ss-shell .c-fileio-roadmap>.learning-route{margin:0;padding:10px}
+.c-ss-shell .c-fileio-workspace .stage p{font-size:16px;line-height:1.7}
+@media(max-width:780px){
+ .c-ss-shell>.c-ss-sidebar.sidebar{position:relative;top:auto;height:auto;max-height:none;border-right:0}
+ .c-ss-shell>.c-ss-sidebar nav.lesson-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:520px){.c-ss-shell>.c-ss-sidebar nav.lesson-nav{grid-template-columns:1fr}}
