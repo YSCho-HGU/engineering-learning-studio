@@ -75,3 +75,11 @@ button:disabled{opacity:.55;cursor:default}
 
 .ss-al-graph-actions{display:flex;align-items:center;flex-wrap:wrap;justify-content:flex-end;gap:6px}
 .ss-al-graph-actions button[aria-pressed="true"]{border-color:var(--els-link);font-weight:800}
+
+/* Keep equation and graph controls from competing for mobile width. */
+@media(max-width:670px){
+ .ss-al-results-bar{flex-wrap:wrap}
+ .ss-al-equation{flex:1 1 100%;min-width:0}
+ .ss-al-graph-actions{width:100%;justify-content:flex-end}
+ .ss-al-graph-actions button{flex:1 1 auto}
+}
