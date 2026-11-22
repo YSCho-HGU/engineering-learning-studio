@@ -23,6 +23,10 @@ for(const slug of chapters){
  assert.doesNotMatch(page,/class="(?:course-core-links|c-learning-shortcuts)"/,slug+" must have no duplicated top learning shortcuts");
  assert.match(page,/c-ss-shell\.js/,slug+" shared header and sidebar");
  assert.match(page,/journey\.js/,slug+" generated grouped lesson navigation");
+ assert.match(page,/class="hero-meta" id="hero-count"/,slug+" compact course summary");
+ assert.doesNotMatch(page,/id="coding-practice"/,slug+" duplicate coding preview must not return");
+ assert.doesNotMatch(page,/id="site-title"|id="current-title"|class="hero-aside"/,slug+" duplicate heading or redundant hero card");
+ assert.match(page,/class="journey-practice-link"/,slug+" direct challenge link retained");
 }
 const fileio=read("c-programming/file-io/index.html");
 const labs=read("c-programming/file-io/core-labs/index.html");
