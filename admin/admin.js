@@ -3,7 +3,7 @@
 "use strict";
 const COURSES={
  c:{repo:"YSCho-HGU/engineering-learning-studio",path:"c-programming/course-catalog.json",pagePrefix:"c-programming/",name:"C Programming",home:"../c-programming/"},
- ss:{repo:"YSCho-HGU/signals-systems-visual-lab",path:"course-catalog.json",pagePrefix:null,name:"Signals & Systems",home:"https://yscho-hgu.github.io/signals-systems-visual-lab/"}
+ ss:{repo:"YSCho-HGU/engineering-learning-studio",path:"signals-systems/course-catalog.json",pagePrefix:"signals-systems/",name:"Signals & Systems",home:"../signals-systems/"}
 };
 const $=id=>document.getElementById(id);
 const ownerSettings=window.STUDIO_ADMIN_GITHUB||{};
