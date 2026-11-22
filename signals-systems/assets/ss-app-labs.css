@@ -202,3 +202,38 @@ button:disabled{opacity:.55;cursor:default}
 @media(max-width:520px){
  .ss-al-tabs a{flex:0 0 auto;white-space:nowrap;font-size:12px}
 }
+
+/* Sampling-focused teaching: legends outside the plotting rectangle and a
+   prominent but neutral explanation of when and why folding occurs. */
+.ss-al-legend{
+ display:flex;align-items:center;gap:6px 15px;flex-wrap:wrap;
+ padding:3px 0 7px;min-height:26px;color:var(--els-muted);
+ font-size:12px;line-height:1.35
+}
+.ss-al-legend[hidden]{display:none!important}
+.ss-al-legend-item{display:inline-flex;align-items:center;gap:6px;min-width:0}
+.ss-al-legend-swatch{width:17px;height:3px;flex:0 0 17px;border-radius:3px}
+.ss-al-legend-swatch.dot{width:8px;height:8px;flex-basis:8px;border-radius:50%}
+.ss-al-legend-swatch.dash{height:3px;background:transparent!important;border-bottom:2px dashed var(--els-link)}
+.ss-al-alias-summary{
+ padding:10px 14px;border:1px solid var(--els-border);
+ background:var(--els-surface-alt);border-radius:9px;
+ color:var(--els-ink);font-size:12px;font-weight:650;line-height:1.7;
+ white-space:normal;word-break:keep-all
+}
+.ss-al-alias-summary[hidden]{display:none!important}
+.ss-al-alias-summary[data-aliased="true"]{border-left:3px solid var(--els-link)}
+.ss-al-presets{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 13px}
+.ss-al-preset{
+ padding:5px 8px;min-height:32px;flex:1 1 93px;
+ color:var(--els-ink);background:var(--els-surface-alt);
+ border:1px solid var(--els-border);border-radius:7px;
+ font:700 11px/1.4 Arial,"Malgun Gothic",sans-serif
+}
+.ss-al-preset[aria-pressed="true"]{border:2px solid var(--els-link)}
+.ss-al-charts[data-kind=sampling] .ss-al-plot h2{margin-bottom:0}
+.ss-al-charts[data-kind=sampling] .ss-al-plot canvas{margin-top:0}
+@media(max-width:760px){
+ .ss-al-legend{gap:5px 10px;font-size:11px}
+ .ss-al-alias-summary{padding:8px 10px;font-size:12px}
+}
