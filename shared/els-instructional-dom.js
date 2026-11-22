@@ -43,12 +43,13 @@ function update(){
   const parent=node.parentElement;
   if(!parent||parent.closest('script,style,pre,code,textarea,svg,canvas,math,.katex,[contenteditable]'))continue;
   const present=node.nodeValue;
-  let original=originals.get(node);
-  if(original===undefined){original=present;originals.set(node,original)}
-  else if(present!==original&&present!==format(original,language.get())){
-    original=present;originals.set(node,original);
+  let record=originals.get(node);
+  if(!record){record={source:present,rendered:present};originals.set(node,record)}
+  else if(present!==record.source&&present!==record.rendered){
+    record.source=present;
   }
-  const translated=format(original,language.get());
+  const translated=format(record.source,language.get());
+  record.rendered=translated;
   if(present!==translated)node.nodeValue=translated;
  }
  if(observer)observer.observe(document.body,{subtree:true,childList:true,characterData:true});
