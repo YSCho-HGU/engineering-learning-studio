@@ -31,9 +31,9 @@ try{
   for(const width of [390,1280])for(const palette of ["neutral-dark","warm-neutral"]){
    const ctx=await browser.newContext({viewport:{width,height:850}});
    await ctx.addInitScript(theme=>{
-    localStorage.setItem("els-theme-v2",theme);
-    localStorage.setItem("els-language","mixed");
-    localStorage.setItem("qa-preserve-unknown","kept");
+    if(localStorage.getItem("els-theme-v2")===null)localStorage.setItem("els-theme-v2",theme);
+    if(localStorage.getItem("els-language")===null)localStorage.setItem("els-language","mixed");
+    if(localStorage.getItem("qa-preserve-unknown")===null)localStorage.setItem("qa-preserve-unknown","kept");
    },palette);
    const page=await ctx.newPage();
    page.setDefaultTimeout(5000);
