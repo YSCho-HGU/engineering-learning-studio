@@ -4,6 +4,8 @@
 "use strict";
 const D=window.C_JOURNEY;
 if(!D||!Array.isArray(D.lessons)||D.lessons.length<1)throw Error("Journey must contain at least one lesson");
+const labSpecs=(window.CGuidedLabSpecs&&window.CGuidedLabSpecs[D.slug])||[];
+D.guidedLabs=labSpecs.map((spec,i)=>({label:"L"+(i+1)+" · "+(window.ELSLanguage?.get()==="en"?spec.en:spec.ko),href:"#lab-"+(i+1)}));
 const total=D.lessons.length;
 const hasOptional=Number.isInteger(D.coreCount)&&D.coreCount>0&&D.coreCount<total;
 const coreCount=hasOptional?D.coreCount:total;
@@ -12,7 +14,11 @@ const $=id=>document.getElementById(id);
 const ui=(ko,en)=>window.ELSLanguage?.get()==="en"?en:ko;
 const version=D.contentRevision||(D.slug==="dynamic-memory"?2:1);
 const key="els-journey-"+D.slug+"-v"+version;
-let completed=[],current=0;
+let completed=[],current=0,activeLab=-1;
+const labKey="els-guided-labs-"+D.slug+"-v1";
+let labProgress=[];
+try{const p=JSON.parse(localStorage.getItem(labKey)||"[]");if(Array.isArray(p))labProgress=p.filter(n=>Number.isInteger(n)&&n>=0&&n<labSpecs.length)}catch(e){}
+const saveLabProgress=()=>{try{localStorage.setItem(labKey,JSON.stringify([...new Set(labProgress)]))}catch(e){}};
 const assessmentKey="els-concept-"+D.slug+"-v"+version;
 let concepts=[];
 try{const v=JSON.parse(localStorage.getItem(assessmentKey)||"[]");if(Array.isArray(v))concepts=[...new Set(v.filter(n=>Number.isInteger(n)&&n>=0&&n<total))]}catch(e){}
@@ -70,6 +76,8 @@ function renderNav(){
   labData.forEach((lab,i)=>{
    const link=element("a","c-learning-link",labs,lab.label||"Lab "+(i+1));
    link.href=lab.href;
+   if(labProgress.includes(i))link.textContent+=" ✓";
+   link.addEventListener("click",e=>{e.preventDefault();location.hash="lab-"+(i+1);showLab(i)});
   });
  }
  if(Array.isArray(D.practice)&&D.practice.length){
@@ -122,7 +130,11 @@ function renderQuiz(stage,l){
 }
 function updateAssessmentSummary(){
  const target=$("assessment-status");if(!target)return;
- target.textContent=hasOptional?"Concept "+concepts.filter(i=>i<coreCount).length+"/"+coreCount+ui(" · 선택 심화 활동 "," · Optional activity ")+completed.filter(i=>i>=coreCount).length+"/"+(total-coreCount):"Concept "+concepts.length+"/"+total;
+ const conceptTotal=hasOptional?coreCount:total;
+ const conceptDone=concepts.filter(i=>i<conceptTotal).length;
+ const labs=labSpecs.length?" · "+ui("Lab Practiced ","Labs practiced ")+labProgress.length+"/"+labSpecs.length:"";
+ const optional=hasOptional?" · "+ui("선택 심화 활동 ","Optional activity ")+completed.filter(i=>i>=coreCount).length+"/"+(total-coreCount):"";
+ target.textContent="Concept Reviewed "+conceptDone+"/"+conceptTotal+labs+optional+" · "+ui("코딩 과제는 별도 검증","Coding challenges require separate verification");
 }
 function modelOutput(model,v){
  switch(model.kind){
@@ -301,7 +313,43 @@ function renderModel(stage,l){
  slider.addEventListener("input",refresh);refresh();
  if(D.slug==="dynamic-memory"&&typeof window.renderDynamicHeap==="function")window.renderDynamicHeap(stage,l);
 }
+function showLab(index){
+ const spec=labSpecs[index];
+ if(!spec)return;
+ activeLab=index;
+ const source=D.lessons[spec.step-1];
+ if(!source)return;
+ renderNav();
+ const stage=$("lesson");stage.replaceChildren();
+ element("div","tag",stage,"GUIDED LAB · L"+(index+1)+" / "+labSpecs.length);
+ element("h2","",stage,ui(spec.ko,spec.en));
+ element("p","lead",stage,ui("개념 학습과 독립 코딩 사이의 안내 실습입니다. 실제 C 컴파일은 학생 개발 환경에서 수행합니다.","Bridge concept learning and independent coding. Compile and run the C program in your own environment."));
+ const task=element("section","concept",stage);
+ element("h3","",task,ui("1 · 기존 코드 확인","1 · Read the starting code"));
+ element("p","",task,source.goal);
+ element("pre","code",task).textContent=source.code;
+ const work=element("section","activity",stage);
+ element("h3","",work,ui("2 · 일부 수정하고 결과 예측","2 · Modify and predict"));
+ element("p","",work,ui(spec.taskKo,spec.taskEn));
+ const prediction=element("textarea","",work);
+ prediction.setAttribute("aria-label","Modified code and prediction");
+ prediction.placeholder=ui("수정할 코드와 예상 결과를 적으세요.","Write the change and predicted result before running.");
+ const noteKey=labKey+"-note-"+index;
+ try{prediction.value=localStorage.getItem(noteKey)||""}catch(e){}
+ prediction.addEventListener("input",()=>{try{localStorage.setItem(noteKey,prediction.value)}catch(e){}});
+ const verify=element("section","transfer",stage);
+ element("h3","",verify,ui("3 · 결과 비교와 설명","3 · Compare and explain"));
+ element("p","",verify,ui(spec.checkKo,spec.checkEn));
+ element("p","legend",verify,ui("이 페이지는 C 코드를 컴파일하거나 실행 결과를 검증하지 않습니다.","This page does not compile C or verify test results."));
+ const actions=element("div","navactions",stage);
+ const mark=element("button","action primary",actions,labProgress.includes(index)?ui("연습 기록됨 ✓","Practice recorded ✓"):ui("실습 수행 기록","Record practice"));
+ mark.addEventListener("click",()=>{if(!prediction.value.trim()){prediction.focus();return}if(!labProgress.includes(index)){labProgress.push(index);saveLabProgress()}mark.textContent=ui("연습 기록됨 ✓","Practice recorded ✓");renderNav();updateAssessmentSummary()});
+ const back=element("button","action",actions,ui("관련 개념으로 이동","Open related concept"));
+ back.addEventListener("click",()=>{location.hash="step-"+spec.step;show(spec.step-1)});
+ updateAssessmentSummary();
+}
 function show(i){
+ activeLab=-1;
  current=Math.max(0,Math.min(total-1,i));renderNav();
  const l=D.lessons[current];
  const stage=$("lesson");stage.replaceChildren();
@@ -350,8 +398,11 @@ function init(){
  $("phase-one").textContent=D.phases[0];$("phase-two").textContent=D.phases[1];$("phase-three").textContent=D.phases[2];
  const back=$("back-link");if(back)back.href="../";
  const hashStep=()=>{const m=/^#step-(\d+)$/.exec(location.hash);return m?Math.max(0,Math.min(total-1,Number(m[1])-1)):0};
- renderNav();show(hashStep());updateAssessmentSummary();
- window.addEventListener("hashchange",()=>{if(/^#step-\d+$/.test(location.hash))show(hashStep())});
+ const hashLab=()=>{const m=/^#lab-(\d+)$/.exec(location.hash);return m?Number(m[1])-1:-1};
+ renderNav();
+ if(hashLab()>=0&&hashLab()<labSpecs.length)showLab(hashLab());else show(hashStep());
+ updateAssessmentSummary();
+ window.addEventListener("hashchange",()=>{if(hashLab()>=0&&hashLab()<labSpecs.length)showLab(hashLab());else if(/^#step-\d+$/.test(location.hash))show(hashStep())});
 }
 init();
 })();
