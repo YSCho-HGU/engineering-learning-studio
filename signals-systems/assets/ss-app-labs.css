@@ -263,3 +263,14 @@ button:disabled{opacity:.55;cursor:default}
 }
 .ss-al-audio-caution{font-size:11px;line-height:1.5;color:var(--els-muted);margin:3px 0 10px}
 .ss-al-audio-values{font-size:12px;line-height:1.55;color:var(--els-ink);padding:8px 0 2px}
+
+/* Sampling audio output diagnostic after removal of artificial pitch scaling. */
+.ss-al-audio[data-kind="sampling"] .ss-al-sound-check{
+ display:block;width:100%;margin:8px 0 3px;
+ min-height:32px;border:1px dashed var(--els-border);
+ background:var(--els-surface);color:var(--els-ink);
+ font-size:12px;font-weight:650;
+}
+.ss-al-audio[data-kind="sampling"] .ss-al-audio-status{
+ min-height:18px;line-height:1.5;overflow-wrap:anywhere;
+}
