@@ -16,6 +16,8 @@ const initial=JSON.parse(JSON.stringify(state));
 const $=id=>document.getElementById(id);
 const plotCanvases=[1,2,3].map(i=>$("ss-al-canvas-"+i));
 let audioContext=null,audioSource=null,framePending=false,lastFrame=0,animationId=null,previousTime=0;
+let helixView=null,stftCache=null,audioFrameId=null,drawAudioAt=0,audioRequest=0;
+const audioState={offset:0,duration:lab==="harmonics"?2:lab==="chirp"?state.T:0,startedAt:0,playing:false,buffer:null,status:null,playButton:null,pauseButton:null,stopButton:null};
 const labels={
  harmonics:{
   title:["Harmonics & Sound","조화파와 소리"],sub:["Explore how a periodic waveform and its harmonic amplitudes create an audible timbre.","주기 신호의 파형과 조화파 크기가 소리의 음색을 만드는 과정을 관찰합니다."],
@@ -59,6 +61,12 @@ function renderHeader(){
  $("ss-al-focus").textContent=tx($("ss-al-root").classList.contains("focus")?"Exit focus":"Focus on graphs",$("ss-al-root").classList.contains("focus")?"전체 화면으로 돌아가기":"그래프 집중 보기",true);
  $("ss-al-focus-toolbar").textContent=$("ss-al-focus").textContent;
  $("ss-al-reset").textContent=tx("Reset lab","실습 초기화",true);
+ $("ss-al-camera-tools").hidden=lab!=="helix";
+ $("ss-al-camera-reset").textContent=tx("Reset view","시점 초기화",true);
+ $("ss-al-camera-hint").textContent=tx("Drag: orbit · Wheel / pinch: zoom","드래그: 회전 · 휠/핀치: 확대",true);
+ $("ss-al-transport").hidden=lab==="helix";
+ $("ss-al-transport-label").textContent=tx("Playback position","재생 위치",true);
+ $("ss-al-seek").setAttribute("aria-label",tx("Audio playback position","오디오 재생 위치",true));
  $("ss-al-return").textContent=tx("Back to Applications","Applications 목차로",true);
  $("ss-al-panel-toggle").textContent=tx($("ss-al-root").classList.contains("controls-hidden")?"Show controls":"Hide controls",$("ss-al-root").classList.contains("controls-hidden")?"변수 설정 보기":"변수 설정 접기",true);
  document.querySelectorAll("[data-lab-link]").forEach(a=>{
@@ -79,6 +87,9 @@ function fieldRange(host,options){
  range.value=String(state[options.key]);range.id="ctl-"+options.key;lbl.htmlFor=range.id;
  range.addEventListener("input",()=>{
   state[options.key]=Number(range.value);display.textContent=options.format(state[options.key]);
+  if(lab==="chirp"&&options.key==="pos")seekAudio(state.T*state.pos/100);
+  else if(lab!=="helix"&&options.key!=="window")invalidateAudio();
+  if(lab==="chirp"&&options.key!=="pos"&&options.key!=="window")stftCache=null;
   scheduleDraw();
  });
  return range;
@@ -90,7 +101,13 @@ function fieldSelect(host,options){
  select.id="ctl-"+options.key;lbl.htmlFor=select.id;
  options.values.forEach(([value,en,ko])=>{const op=elt("option",null,tx(en,ko,true),select);op.value=String(value)});
  select.value=String(state[options.key]);
- select.addEventListener("change",()=>{state[options.key]=options.number?Number(select.value):select.value;if(options.rebuild)renderControls();scheduleDraw()});
+ select.addEventListener("change",()=>{
+  state[options.key]=options.number?Number(select.value):select.value;
+  if(lab!=="helix"&&options.key!=="window")invalidateAudio();
+  if(lab==="chirp")stftCache=null;
+  if(options.rebuild)renderControls();
+  scheduleDraw();
+ });
  return select;
 }
 function harmonicWeights(){
@@ -127,7 +144,7 @@ function renderControls(){
     const top=elt("div","ss-al-field-top",null,line);
     const label=elt("label",null,"A"+k,top),out=elt("output",null,state.custom[k-1].toFixed(2),top);
     const input=elt("input",null,null,line);input.type="range";input.min="0";input.max="1";input.step=".05";input.value=String(state.custom[k-1]);input.id="harmonic-"+k;label.htmlFor=input.id;
-    input.addEventListener("input",()=>{state.custom[k-1]=Number(input.value);out.textContent=state.custom[k-1].toFixed(2);scheduleDraw()});
+    input.addEventListener("input",()=>{state.custom[k-1]=Number(input.value);out.textContent=state.custom[k-1].toFixed(2);invalidateAudio();scheduleDraw()});
    }
   }
  }else if(lab==="chirp"){
@@ -150,12 +167,15 @@ function renderControls(){
  }
  if(lab!=="helix"){
   const buttons=elt("div","ss-al-control-buttons",null,audio);
-  const play=elt("button","ss-al-primary",tx("▶ Play sound","▶ 소리 재생",true),buttons);play.type="button";
-  const stop=elt("button",null,tx("■ Stop","■ 정지",true),buttons);stop.type="button";
-  const status=elt("p","ss-al-audio-status",tx("Sound starts only when Play is selected. Keep headphone volume low.","재생 버튼을 누른 경우에만 소리가 시작됩니다. 이어폰 음량을 낮춰주세요."),audio);
-  status.setAttribute("role","status");
-  play.addEventListener("click",()=>playAudio(status));
-  stop.addEventListener("click",()=>{stopAudio();status.textContent=tx("Sound stopped.","재생이 정지되었습니다.")});
+  const play=elt("button","ss-al-primary",null,buttons);play.type="button";
+  const pause=elt("button",null,null,buttons);pause.type="button";
+  const stop=elt("button",null,null,buttons);stop.type="button";
+  const status=elt("p","ss-al-audio-status",null,audio);status.setAttribute("role","status");
+  audioState.status=status;audioState.playButton=play;audioState.pauseButton=pause;audioState.stopButton=stop;
+  play.addEventListener("click",()=>playAudio());
+  pause.addEventListener("click",()=>pauseAudio());
+  stop.addEventListener("click",()=>stopAudio(true));
+  refreshAudioButtons();
  }
  const guide=$("ss-al-guidance");clear(guide);
  elt("strong",null,tx("Try this sequence","탐구 순서",true),guide);
@@ -335,7 +355,9 @@ function heatColor(v){
  return"rgb("+a.map((n,i)=>Math.round(n+(b[i]-n)*t)).join(",")+")";
 }
 function drawChirp(){
- const S=spectrogram(),C=chartContext(plotCanvases[0]);
+ const signature=[state.f0,state.f1,state.T,state.window].join(":");
+ if(!stftCache||stftCache.signature!==signature)stftCache={signature,data:spectrogram()};
+ const S=stftCache.data,C=chartContext(plotCanvases[0]);
  if(C){
   const c=C.ctx,box=chartBox(C,{xMin:0,xMax:state.T,yMin:0,yMax:S.maxFreq,xLabel:"t (s)",yLabel:"f (Hz)"});
   const cols=S.spectra.length,fBins=S.spectra[0].length,floor=-65;
@@ -375,22 +397,9 @@ function drawChirp(){
 }
 function drawHelix(){
  const T=3,peak=Math.exp(Math.max(0,state.sigma)*T),tSelected=T*state.pos/100,v=helixValue(tSelected);
- let C=chartContext(plotCanvases[0]);if(C){
-  const c=C.ctx,w=C.w,h=C.h,center=h*.51,startX=63,endX=w-58,scale=Math.min(h*.23,130)/peak;
-  const proj=(t,re,im)=>[startX+(endX-startX)*t/T+im*scale*.42,center-re*scale-im*scale*.37];
-  c.strokeStyle=C.pal.border;c.lineWidth=1.5;c.beginPath();let a=proj(0,0,0),b=proj(T,0,0);c.moveTo(...a);c.lineTo(...b);c.stroke();
-  c.beginPath();c.moveTo(...proj(0,-peak,0));c.lineTo(...proj(0,peak,0));c.moveTo(...proj(0,0,-peak));c.lineTo(...proj(0,0,peak));c.stroke();
-  c.fillStyle=C.pal.ink;c.font="12px Arial";c.textAlign="left";
-  c.fillText("t",Math.min(w-20,b[0]+12),b[1]+5);let R=proj(0,peak,0),I=proj(0,0,peak);
-  c.fillText("Re",R[0]-20,R[1]-8);c.fillText("Im",I[0]+6,I[1]-4);
-  c.strokeStyle=C.pal.link;c.lineWidth=2.25;c.beginPath();
-  for(let i=0;i<=1300;i++){const t=T*i/1300,x=helixValue(t),p=proj(t,x.re,x.im);if(i===0)c.moveTo(...p);else c.lineTo(...p)}c.stroke();
-  const pp=proj(tSelected,v.re,v.im),base=proj(tSelected,0,0);
-  c.setLineDash([4,4]);c.strokeStyle=C.pal.muted;c.beginPath();c.moveTo(...base);c.lineTo(...pp);c.stroke();c.setLineDash([]);
-  dot(c,pp[0],pp[1],C.pal.second,6);
-  c.font="11px Arial";c.fillStyle=C.pal.muted;c.fillText("time axis →",Math.max(70,w*.43),center+22);
-  c.fillText(tx("3D projection","3D 투영",true),14,22);
- }
+ let C=chartContext(plotCanvases[0]);
+ if(C&&helixView)helixView.draw({ctx:C.ctx,w:C.w,h:C.h,pal:C.pal,f:state.f,sigma:state.sigma,tSelected});
+ else if(C){C.ctx.font="14px Arial";C.ctx.fillStyle=C.pal.muted;C.ctx.fillText("3D renderer not available",20,35)}
  C=chartContext(plotCanvases[1]);if(C){
   const c=C.ctx,w=C.w,h=C.h,cx=w*.52,cy=h*.51,range=peak*1.18,r=Math.min((w-80)/2,(h-55)/2)/range;
   c.strokeStyle=C.pal.border;c.lineWidth=1;c.beginPath();c.moveTo(37,cy);c.lineTo(w-18,cy);c.moveTo(cx,18);c.lineTo(cx,h-34);c.stroke();
@@ -409,7 +418,7 @@ function drawHelix(){
   c.fillStyle=C.pal.link;c.textAlign="right";c.font="12px Arial";c.fillText("Re",box.rect.r-6,box.rect.t+15);
   c.fillStyle=C.pal.second;c.fillText("Im",box.rect.r-6,box.rect.t+30);
  }
- $("ss-al-note-1").textContent=tx("Time runs along the main axis. Re and Im create the rotating helix.","시간은 긴 축 방향으로 진행하고 실수부와 허수부가 회전하는 나선을 만듭니다.");
+ $("ss-al-note-1").textContent=tx("Orbit the 3D camera by dragging. Scroll or pinch to zoom. World axes are t, Re, Im; the 3D helix radius is normalized for framing.","드래그로 3D 카메라를 회전하고 휠·핀치로 확대합니다. 좌표축은 t, Re, Im이며 표시를 위해 3D 나선의 반지름을 정규화합니다.");
  $("ss-al-note-2").textContent=tx("Phasor at the chosen time; radius equals e^(σt).","선택 시각의 페이저이며 반지름은 e^(σt)입니다.");
  $("ss-al-note-3").textContent=tx("Projections onto the real and imaginary time axes.","실수부 및 허수부의 시간축 투영입니다.");
 }
