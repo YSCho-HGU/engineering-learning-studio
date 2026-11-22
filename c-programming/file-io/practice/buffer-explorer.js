@@ -84,7 +84,7 @@ window.addEventListener("c-fileio-task-change",event=>{
  panel.hidden=!onM1;
  stop();if(onM1){step=0;update()}
 });
-const currentTask=document.querySelector('#task-id')?.textContent||"";
-panel.hidden=!currentTask.includes("M1");
+const currentTask=Number(document.querySelector("#task-nav button.active[data-task]")?.dataset.task);
+panel.hidden=currentTask!==6;
 update();
 })();
