@@ -3,9 +3,10 @@
    Chirp spectrogram uses a radix-2 FFT with Hann windows over a finite record. */
 (()=>{
 "use strict";
-const MODES=["harmonics","chirp","helix"];
+const MODES=["harmonics","chirp","helix","beats","amfm","sampling"];
 const params=new URLSearchParams(location.search);
 const lab=MODES.includes(params.get("lab"))?params.get("lab"):"harmonics";
+if(["beats","amfm","sampling"].includes(lab))return; // Handled by ss-app-extra-labs.js.
 const language=window.ELSLanguage;
 const state={
  harmonics:{f0:220,n:6,preset:"square",custom:[1,.42,.23,.15,.1,.07,.04,.03]},
@@ -71,7 +72,7 @@ function renderHeader(){
  $("ss-al-panel-toggle").textContent=tx($("ss-al-root").classList.contains("controls-hidden")?"Show controls":"Hide controls",$("ss-al-root").classList.contains("controls-hidden")?"변수 설정 보기":"변수 설정 접기",true);
  document.querySelectorAll("[data-lab-link]").forEach(a=>{
   const key=a.dataset.labLink;
-  const titles={harmonics:["01 · Harmonics & Sound","01 · 조화파와 소리"],chirp:["02 · Chirp Explorer","02 · 처프 탐구"],helix:["03 · Complex Exponential Helix","03 · 복소지수함수 나선"]};
+  const titles={harmonics:["01 · Harmonics & Sound","01 · 조화파와 소리"],chirp:["02 · Chirp Explorer","02 · 처프 탐구"],helix:["03 · Complex Exponential Helix","03 · 복소지수함수 나선"],beats:["04 · Beats & Interference","04 · 맥놀이와 간섭"],amfm:["05 · AM / FM Modulation","05 · AM / FM 변조"],sampling:["06 · Sampling & Aliasing","06 · 표본화와 에일리어싱"]};
   a.textContent=tx(...titles[key],true);
   if(key===lab)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");
  });
