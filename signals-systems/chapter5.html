@@ -642,7 +642,7 @@ function chapter5ApplyReadingNotes(id,s,root){
   if(p[1])p[1].textContent='';
  });
  const checkpoint=root.querySelector('.guide-check');
- if(checkpoint)checkpoint.textContent='CHECK YOUR UNDERSTANDING / 개념 확인 — '+notes[2];
+ if(checkpoint){const m=window.ELSLanguage?.get?.()||'mixed';const label=m==='en'?'CHECK YOUR UNDERSTANDING':m==='ko'?'개념 확인':'CHECK YOUR UNDERSTANDING / 개념 확인';checkpoint.textContent=label+' — '+notes[2];}
 }
 
 // Chapter 5: Oppenheim-style bilateral Laplace derivations with ROC in every transform pair.
