@@ -88,6 +88,14 @@ for(const name of ["harmonics","chirp","helix"]){
     if(Number(await page.locator("#ss-al-seek").inputValue())<700)throw Error("Playback did not resume from seek position");
     await page.locator("#ss-al-stop").click();
     if(Number(await page.locator("#ss-al-seek").inputValue())!==0)throw Error("Stop failed to reset transport");
+    if(name==="chirp"){
+      const spec=await page.locator("#ss-al-canvas-1").boundingBox();
+      if(!spec)throw Error("Chirp spectrogram unavailable");
+      await page.mouse.click(spec.x+spec.width*.70,spec.y+spec.height*.48);
+      const clicked=Number(await page.locator("#ss-al-seek").inputValue());
+      if(clicked<500||clicked>800)throw Error("Spectrogram click failed to seek audio timeline");
+      await page.locator("#ss-al-stop").click();
+    }
   }
   await page.locator("#ss-al-focus-toolbar").click();
   if(!await page.locator("#ss-al-root").evaluate(el=>el.classList.contains("focus")))throw Error("Focus failed");
