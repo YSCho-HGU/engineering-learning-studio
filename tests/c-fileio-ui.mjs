@@ -8,12 +8,10 @@ const coreHtml=read("c-programming/file-io/core-labs/index.html");
 const coreJs=read("c-programming/file-io/core-labs/labs.js");
 const practiceJs=read("c-programming/file-io/practice/app.js");
 const practiceHtml=read("c-programming/file-io/practice/index.html");
-const navJs=read("c-programming/file-io/learning-nav.js");
-const navCss=read("c-programming/file-io/learning-nav.css");
 const language=read("c-programming/language.js");
 const failures=[];
 const assert=(condition,message)=>{if(!condition)failures.push(message)};
-for(const [name,code] of [["app",app],["transfer",transfer],["core labs",coreJs],["practice",practiceJs],["shared navigation",navJs],["language",language]]){
+for(const [name,code] of [["app",app],["transfer",transfer],["core labs",coreJs],["practice",practiceJs],["language",language]]){
   try {new Function(code)} catch(error){failures.push(name+" JavaScript syntax: "+error.message)}
 }
 assert(!html.includes("상황 설명 상황"),"Duplicate Korean context label");
@@ -57,7 +55,7 @@ assert(coreHtml.includes("../practice/#p3")&&practiceJs.includes("p3:2,p4:3,p5:4
 const shell=read("c-programming/c-ss-shell.js");
 for(const [name,page] of [["concepts",html],["labs",coreHtml],["practice",practiceHtml]]){
  assert(page.includes('data-fileio-section="'+name+'"'),name+": learning section is not marked");
- assert(!page.includes('src="./learning-nav.js')&&!page.includes('src="../learning-nav.js'),name+": redundant top navigation script reintroduced");
+ assert(!page.includes("learning-nav.js")&&!page.includes("learning-nav.css"),name+": obsolete top navigation resource reintroduced");
  assert(page.includes("c-ss-shell.js"),name+": shared chapter shell missing");
 }
 for(const group of ['"core"','"labs"','"advanced"','"challenges"'])assert(shell.includes(group),"Unified left sidebar group missing: "+group);
