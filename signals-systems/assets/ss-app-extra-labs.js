@@ -108,7 +108,7 @@ function outsideLegend(index,items){
  for(const [label,color,type="line"] of items){
   const item=dom("span","ss-al-legend-item",null,el);
   const swatch=dom("span","ss-al-legend-swatch "+type,null,item);
-  swatch.style.backgroundColor=color;
+  swatch.style.backgroundColor=color;swatch.style.borderBottomColor=color;
   dom("span",null,label,item);
  }
 }
@@ -274,7 +274,7 @@ function drawBeats(){
   const waveform=[],top=[],bottom=[];
   for(let i=0;i<=3600;i++){const t=2*i/3600,e=envelope(t);waveform.push([t,beatsAt(t)]);top.push([t,e]);bottom.push([t,-e])}
   line(C,B,waveform,C.pal.line,1.3);line(C,B,top,C.pal.alt,2);line(C,B,bottom,C.pal.alt,1.5,[5,5]);
-  legend(C,[["x(t)",C.pal.line],[txt("± envelope","± 포락선",true),C.pal.alt]]);
+  outsideLegend(1,[["x(t)",C.pal.line],[txt("± envelope","± 포락선",true),C.pal.alt]]);
   marker(C,B,(audioPosition()%2),beatsAt(audioPosition()%2),C.pal.alt);
  }
  C=canvasContext(canvases[1]);
@@ -283,7 +283,7 @@ function drawBeats(){
   const a=[],b=[],c=[];
   for(let i=0;i<=900;i++){const t=t0+dt*i/900;a.push([t,Math.sin(2*Math.PI*state.f1*t)]);b.push([t,state.ratio*Math.sin(2*Math.PI*(state.f1+state.delta)*t)]);c.push([t,beatsAt(t)])}
   line(C,B,a,C.pal.muted,1);line(C,B,b,C.pal.alt,1);line(C,B,c,C.pal.line,2);
-  legend(C,[[txt("tone 1","신호 1",true),C.pal.muted],[txt("tone 2","신호 2",true),C.pal.alt],[txt("sum","합",true),C.pal.line]]);
+  outsideLegend(2,[[txt("tone 1","신호 1",true),C.pal.muted],[txt("tone 2","신호 2",true),C.pal.alt],[txt("sum","합",true),C.pal.line]]);
  }
  C=canvasContext(canvases[2]);
  if(C){
@@ -293,6 +293,7 @@ function drawBeats(){
   for(const [f,a,color] of [[state.f1,1,C.pal.line],[state.f1+state.delta,state.ratio,C.pal.alt]]){
    c.strokeStyle=color;c.lineWidth=4;c.beginPath();c.moveTo(B.x(f),B.y(0));c.lineTo(B.x(f),B.y(a));c.stroke();circle(c,B.x(f),B.y(a),color,4);
   }
+  outsideLegend(3,[[txt("Frequency components","주파수 성분",true),C.pal.line]]);
   if(state.delta===0)hint(C,"Two spectral components coincide");
  }
  $("ss-al-note-1").textContent=txt("Waveform and amplitude envelope; audio-clock cursor tracks playback.","파형과 진폭 포락선입니다. 재생 마커는 오디오 시간과 동기화됩니다.");
@@ -334,7 +335,7 @@ function drawAMFM(){
   }
   line(C,B,wave,C.pal.line,1.2);
   if(am){line(C,B,eP,C.pal.alt,2);line(C,B,eN,C.pal.alt,1.7,[5,4])}
-  legend(C,am?[["AM",C.pal.line],[txt("envelope","포락선",true),C.pal.alt]]:[[txt("FM · constant amplitude","FM · 일정 진폭",true),C.pal.line]]);
+  outsideLegend(1,am?[["AM",C.pal.line],[txt("envelope","포락선",true),C.pal.alt]]:[[txt("FM · constant amplitude","FM · 일정 진폭",true),C.pal.line]]);
   const t=audioPosition()%tmax;marker(C,B,t,modAt(t),C.pal.alt);
  }
  C=canvasContext(canvases[1]);if(C){
@@ -342,11 +343,13 @@ function drawAMFM(){
   const range=am?{ymin:0,ymax:2.15,ylabel:"Envelope amplitude"}:{ymin:state.fc-state.beta*state.fm-12,ymax:state.fc+state.beta*state.fm+12,ylabel:"fᵢ(t) (Hz)"};
   const B=axes(C,{xmin:0,xmax:time,...range,xlabel:"t (s)"});
   for(let i=0;i<=500;i++){const t=time*i/500;pts.push([t,am?1+state.depth*Math.cos(2*Math.PI*state.fm*t):state.fc+state.beta*state.fm*Math.cos(2*Math.PI*state.fm*t)])}
-  line(C,B,pts,C.pal.alt,2.2);hint(C,am?"envelope = 1 + m cos(2πfₘt)":"fᵢ = f꜀ + βfₘ cos(2πfₘt)");
+  line(C,B,pts,C.pal.alt,2.2);
+  outsideLegend(2,[[am?txt("AM envelope","AM 포락선",true):txt("FM instantaneous frequency","FM 순간주파수",true),C.pal.alt]]);
  }
  C=canvasContext(canvases[2]);if(C){
   const S=spectrum(),B=axes(C,{xmin:S.lo,xmax:S.hi,ymin:-70,ymax:2,xlabel:"f (Hz)",ylabel:"Rel. FFT (dB)"});
-  line(C,B,S.data,C.pal.line,2);hint(C,"4096-point Hann FFT, 1 s record");
+  line(C,B,S.data,C.pal.line,2);
+  outsideLegend(3,[[txt("4096-point Hann FFT · 1s","4096점 Hann FFT · 1초",true),C.pal.line]]);
  }
  $("ss-al-note-1").textContent=txt("AM changes envelope magnitude; FM keeps amplitude constant while changing phase slope.","AM은 포락선의 크기를, FM은 일정한 진폭에서 위상 변화율을 조절합니다.");
  $("ss-al-note-2").textContent=txt(am?"Message-controlled AM envelope.":"Instantaneous frequency f꜀+βfₘ cos(2πfₘt).",am?"정보 신호에 따라 변하는 AM 포락선입니다.":"순간주파수 f꜀+βfₘ cos(2πfₘt)입니다.");
