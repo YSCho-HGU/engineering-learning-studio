@@ -72,3 +72,6 @@ button:disabled{opacity:.55;cursor:default}
 @media(max-width:760px){.ss-al-workspace{grid-template-columns:1fr}.ss-al-controls{max-height:none;overflow:visible;position:static}.ss-al-intro{padding:12px}.ss-al-heading-line{flex-wrap:wrap}.ss-al-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.ss-al-charts[data-kind=chirp],.ss-al-charts[data-kind=helix]{grid-template-columns:1fr}.ss-al-charts[data-kind=chirp] .ss-al-plot:first-child,.ss-al-charts[data-kind=helix] .ss-al-plot:first-child{grid-column:auto}.ss-al-charts[data-kind=chirp] .ss-al-plot:first-child canvas,.ss-al-charts[data-kind=helix] .ss-al-plot:first-child canvas{height:clamp(290px,42vh,450px)}.ss-al-root.focus .ss-al-plot canvas{height:clamp(300px,50vh,550px)}}
 @media(max-width:520px){.ss-al-root{padding:0 8px 15px}.ss-al-intro{margin-top:8px}.ss-al-tabs a{flex:1 1 100%;font-size:12px}.ss-al-plot{padding:9px}.ss-al-metric{padding:9px}.ss-al-equation{font-size:13px}.ss-al-metric-value{font-size:16px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+.ss-al-graph-actions{display:flex;align-items:center;flex-wrap:wrap;justify-content:flex-end;gap:6px}
+.ss-al-graph-actions button[aria-pressed="true"]{border-color:var(--els-link);font-weight:800}
