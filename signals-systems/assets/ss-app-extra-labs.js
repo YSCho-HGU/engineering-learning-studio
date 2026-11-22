@@ -10,7 +10,7 @@ if(!LABS.includes(lab))return;
 const $=id=>document.getElementById(id),canvases=[1,2,3].map(n=>$("ss-al-canvas-"+n));
 const state=lab==="beats"?{f1:220,delta:4,ratio:1}:
  lab==="amfm"?{mode:"am",fc:440,fm:8,depth:.65,beta:2.5}:
- {kind:"chirp",fs:70,f0:8,f1:110,tone:38,T:2,pos:50,showFFT:"on",playing:false};
+ {kind:"chirp",fs:70,f0:8,f1:110,tone:38,T:2,pos:50,showFFT:"on",aliasGuide:"on",windowMs:240,playing:false};
 const initial=JSON.parse(JSON.stringify(state));
 const duration=lab==="sampling"?state.T:2;
 const language=window.ELSLanguage;
@@ -166,13 +166,13 @@ function renderControls(){
   else range(h,{key:"beta",en:"FM modulation index β",ko:"FM 변조지수 β",min:0,max:8,step:.25,digits:2});
  }else{
   select(h,{key:"kind",en:"Signal model",ko:"신호 모델",values:[["sine","Sine · Fixed frequency","정현파 · 고정 주파수"],["chirp","Linear Chirp · Sweep","선형 처프 · 주파수 스윕"]]});
-  range(h,{key:"fs",en:"Sampling frequency fₛ",ko:"샘플링 주파수 fₛ",min:20,max:200,step:1,unit:" Hz"});
+  range(h,{key:"fs",en:"Sampling frequency fₛ",ko:"샘플링 주파수 fₛ",min:20,max:300,step:1,unit:" Hz"});
   const row=dom("div","ss-extra-number-row",null,h);
   const l=dom("label",null,txt("Enter exact fₛ (Hz)","fₛ 수치 직접 입력 (Hz)",true),row);
-  const input=dom("input",null,null,row);input.type="number";input.id="ss-extra-fs-number";l.htmlFor=input.id;input.min="20";input.max="200";input.step="1";input.value=String(state.fs);
+  const input=dom("input",null,null,row);input.type="number";input.id="ss-extra-fs-number";l.htmlFor=input.id;input.min="20";input.max="300";input.step="1";input.value=String(state.fs);
   const slider=$("ss-extra-fs");
-  slider.addEventListener("input",()=>{input.value=String(state.fs)});
-  const apply=()=>{let n=Number(input.value);if(!Number.isFinite(n))return;state.fs=clamp(Math.round(n),20,200);input.value=state.fs;slider.value=state.fs;slider.parentElement.querySelector("output").textContent=state.fs+" Hz";change()};
+  slider.addEventListener("input",()=>{input.value=String(state.fs);for(const b of h.querySelectorAll(".ss-al-preset"))b.setAttribute("aria-pressed",String(Number(b.dataset.fs)===state.fs))});
+  const apply=()=>{let n=Number(input.value);if(!Number.isFinite(n))return;state.fs=clamp(Math.round(n),20,300);input.value=state.fs;slider.value=state.fs;slider.parentElement.querySelector("output").textContent=state.fs+" Hz";renderControls();change()};
   input.addEventListener("change",apply);input.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();apply()}});
   if(state.kind==="sine")range(h,{key:"tone",en:"Input frequency f₀",ko:"입력 주파수 f₀",min:5,max:120,step:1,unit:" Hz"});
   else{
@@ -180,7 +180,16 @@ function renderControls(){
    range(h,{key:"f1",en:"Chirp end f₁",ko:"처프 끝 주파수 f₁",min:10,max:160,step:1,unit:" Hz"});
    range(h,{key:"T",en:"Chirp duration T",ko:"처프 길이 T",min:1,max:3,step:.25,digits:2,unit:" s"});
   }
-  select(h,{key:"showFFT",en:"Measured STFT peaks",ko:"표본의 STFT 피크",values:[["on","Show measured peaks","실측 피크 표시"],["off","Hide measured peaks","실측 피크 숨기기"]]});
+  const presetRow=dom("div","ss-al-presets",null,h);
+  for(const [f,labelEn,labelKo] of [[260,"No alias · 260 Hz","전구간 무에일리어싱 · 260Hz"],[70,"Fold twice · 70 Hz","두 번 접힘 · 70Hz"],[50,"Strong alias · 50 Hz","강한 접힘 · 50Hz"]]){
+   const preset=dom("button","ss-al-preset",txt(labelEn,labelKo,true),presetRow);
+   preset.type="button";preset.dataset.fs=String(f);
+   preset.setAttribute("aria-pressed",String(state.fs===f));
+   preset.addEventListener("click",()=>{state.fs=f;renderControls();change()});
+  }
+  select(h,{key:"windowMs",en:"Visible time span",ko:"표시 시간 범위",values:[["120","120 ms","120 ms"],["240","240 ms","240 ms"],["480","480 ms","480 ms"]]});
+  select(h,{key:"aliasGuide",en:"Sample-consistent alias guide",ko:"표본 일치 에일리어스 안내선",values:[["on","Show alias guide","에일리어스 안내선 표시"],["off","Hide alias guide","안내선 숨기기"]]});
+  select(h,{key:"showFFT",en:"Measured STFT peaks",ko:"표본의 STFT 피크",values:[["on","Show STFT peaks","STFT 피크 표시"],["off","Hide STFT peaks","STFT 피크 숨기기"]]});
   range(h,{key:"pos",en:"Observation time",ko:"관찰 시각",min:0,max:100,step:1,unit:"%",changed:()=>{scheduleDraw()}});
   const actions=dom("div","ss-al-control-buttons",null,h),play=dom("button",null,null,actions);
   play.type="button";play.id="ss-extra-animate";play.textContent=txt(state.playing?"Pause sweep":"Play sweep",state.playing?"움직임 일시 정지":"시간 변화 재생",true);
