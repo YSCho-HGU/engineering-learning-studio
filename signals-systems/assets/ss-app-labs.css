@@ -1,0 +1,74 @@
+/* Signals & Systems Part A: large interactive graphs with compact controls. */
+:root{font-family:Arial,"Malgun Gothic",sans-serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--els-page);color:var(--els-ink);font:16px/1.6 Arial,"Malgun Gothic",sans-serif}
+a{color:var(--els-link);text-decoration:none}
+button,select,input{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:default}
+:where(a,button,input,select):focus-visible{outline:3px solid var(--els-focus);outline-offset:3px}
+.ss-al-skip{position:absolute;left:8px;top:-100px;background:var(--els-surface);padding:8px;z-index:120}
+.ss-al-skip:focus{top:56px}
+.ss-al-header{position:sticky!important;top:0!important;z-index:100!important}
+.ss-al-header .ss-common-actions{margin-left:auto!important}
+.ss-al-root{width:100%;padding:0 clamp(12px,1.55vw,26px) 24px;max-width:none;margin:auto}
+.ss-al-intro{margin:14px 0 12px;padding:14px 20px 12px;background:var(--els-surface);border:1px solid var(--els-border);border-radius:13px}
+.ss-al-heading-line{display:flex;align-items:start;justify-content:space-between;gap:14px}
+.ss-al-eyebrow a{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--els-link)}
+.ss-al-intro h1{font-size:clamp(22px,2vw,30px);line-height:1.22;letter-spacing:-.03em;margin:5px 0}
+.ss-al-intro p{font-size:13px;color:var(--els-muted);margin:0;max-width:950px;line-height:1.5}
+.ss-al-heading-actions{display:flex;flex-wrap:wrap;align-items:center;gap:7px}
+.ss-al-heading-actions>*{background:var(--els-surface-alt);border:1px solid var(--els-border);border-radius:8px;padding:7px 11px;min-height:34px;font-size:12px;color:var(--els-ink);white-space:nowrap}
+.ss-al-heading-actions>*:hover{border-color:var(--els-link)}
+.ss-al-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:11px}
+.ss-al-tabs a{font-size:13px;color:var(--els-ink);background:var(--els-surface-alt);border:1px solid var(--els-border);border-radius:8px;min-height:34px;display:inline-flex;align-items:center;padding:5px 12px;line-height:1.3}
+.ss-al-tabs a[aria-current=page]{border-color:var(--els-link);color:var(--els-ink);font-weight:800;box-shadow:inset 3px 0 var(--els-link)}
+.ss-al-workspace{display:grid;grid-template-columns:minmax(235px,265px) minmax(0,1fr);align-items:start;gap:14px}
+.ss-al-controls{padding:17px 15px;background:var(--els-surface);border:1px solid var(--els-border);border-radius:13px;max-height:calc(100dvh - 75px);overflow-y:auto;position:sticky;top:63px;min-width:0}
+.ss-al-controls-head h2{font-size:15px;margin:0 0 5px}
+.ss-al-controls-head p{font-size:12px;color:var(--els-muted);line-height:1.5;margin:0 0 13px}
+.ss-al-field{margin-bottom:13px}
+.ss-al-field-top{display:flex;align-items:baseline;justify-content:space-between;gap:7px;font-size:13px;font-weight:700}
+.ss-al-field-top output{font-variant-numeric:tabular-nums;color:var(--els-link);font-size:13px;white-space:nowrap}
+.ss-al-field input[type=range]{width:100%;height:21px;accent-color:var(--els-link);cursor:pointer;margin:3px 0 0}
+.ss-al-field select{width:100%;border:1px solid var(--els-border);border-radius:7px;background:var(--els-surface-alt);color:var(--els-ink);padding:7px 8px;font-size:13px;margin-top:5px}
+.ss-al-harmonic-sliders{border-top:1px solid var(--els-border);padding-top:12px;margin-top:12px}
+.ss-al-harmonic-sliders h3{font-size:13px;margin:0 0 8px}
+.ss-al-control-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.ss-al-audio{padding:12px 0;border-top:1px solid var(--els-border);margin-top:10px}
+.ss-al-audio button,.ss-al-control-buttons button{font-size:13px;min-height:36px;border:1px solid var(--els-border);border-radius:8px;color:var(--els-ink);background:var(--els-surface-alt);padding:6px 12px}
+.ss-al-audio button.ss-al-primary{background:var(--els-primary);color:var(--els-primary-text);border-color:var(--els-primary)}
+.ss-al-audio-status{color:var(--els-muted);font-size:12px;margin:8px 0 0;min-height:18px}
+.ss-al-guidance{margin-top:10px;padding:12px;background:var(--els-surface-alt);border-radius:9px;font-size:12px;line-height:1.65}
+.ss-al-guidance strong{font-size:13px}
+.ss-al-guidance ol{margin:6px 0 0;padding-left:19px}
+.ss-al-guidance li{margin:4px 0}
+.ss-al-results{min-width:0;display:grid;gap:11px}
+.ss-al-results-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--els-surface);border:1px solid var(--els-border);border-radius:10px;padding:8px 13px;min-height:43px}
+.ss-al-equation{font-family:"Cambria Math",Cambria,serif;font-size:15px;overflow-wrap:anywhere;line-height:1.45}
+.ss-al-results-bar button{white-space:nowrap;flex:0 0 auto;border:1px solid var(--els-border);border-radius:8px;background:var(--els-surface-alt);color:var(--els-ink);font:700 12px Arial,sans-serif;min-height:30px;padding:4px 9px}
+.ss-al-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.ss-al-metric{border:1px solid var(--els-border);border-radius:10px;background:var(--els-surface);padding:10px 13px;min-width:0}
+.ss-al-metric-label{font-size:11px;color:var(--els-muted);display:block;line-height:1.35}
+.ss-al-metric-value{display:block;font-size:18px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ss-al-charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.ss-al-plot{border:1px solid var(--els-border);background:var(--els-surface);border-radius:13px;min-width:0;padding:12px;overflow:hidden;display:flex;flex-direction:column}
+.ss-al-plot h2{font-size:14px;line-height:1.35;font-weight:800;margin:0 0 7px}
+.ss-al-plot canvas{display:block;width:100%;height:clamp(260px,37vh,420px);background:var(--els-surface);touch-action:pan-y}
+.ss-al-plot-note{margin:6px 0 0;color:var(--els-muted);font-size:12px;line-height:1.5}
+.ss-al-charts[data-kind=chirp],.ss-al-charts[data-kind=helix]{grid-template-columns:minmax(0,1.17fr) minmax(0,.83fr);grid-template-rows:auto auto}
+.ss-al-charts[data-kind=chirp] .ss-al-plot:first-child,.ss-al-charts[data-kind=helix] .ss-al-plot:first-child{grid-row:span 2}
+.ss-al-charts[data-kind=chirp] .ss-al-plot:first-child canvas,.ss-al-charts[data-kind=helix] .ss-al-plot:first-child canvas{height:clamp(420px,64vh,675px);flex:1}
+.ss-al-charts[data-kind=chirp] .ss-al-plot:not(:first-child) canvas,.ss-al-charts[data-kind=helix] .ss-al-plot:not(:first-child) canvas{height:clamp(175px,26vh,300px)}
+.ss-al-insight{font-size:13px;line-height:1.65;background:var(--els-surface-alt);border-left:3px solid var(--els-link);border-radius:8px;padding:11px 14px;color:var(--els-ink)}
+.ss-al-root.focus .ss-al-intro,.ss-al-root.focus .ss-al-controls{display:none}
+.ss-al-root.focus .ss-al-workspace{grid-template-columns:minmax(0,1fr)}
+.ss-al-root.focus .ss-al-plot canvas{height:clamp(360px,67vh,750px)}
+.ss-al-root.focus .ss-al-charts[data-kind=chirp] .ss-al-plot:first-child canvas,.ss-al-root.focus .ss-al-charts[data-kind=helix] .ss-al-plot:first-child canvas{height:clamp(480px,76vh,780px)}
+.ss-al-root.controls-hidden .ss-al-controls{display:none}
+.ss-al-root.controls-hidden .ss-al-workspace{grid-template-columns:minmax(0,1fr)}
+@media(max-width:1080px){.ss-al-workspace{grid-template-columns:230px minmax(0,1fr)}.ss-al-charts{grid-template-columns:1fr}.ss-al-charts[data-kind=chirp],.ss-al-charts[data-kind=helix]{grid-template-columns:1fr 1fr}.ss-al-charts[data-kind=chirp] .ss-al-plot:first-child,.ss-al-charts[data-kind=helix] .ss-al-plot:first-child{grid-column:span 2;grid-row:auto}.ss-al-charts[data-kind=chirp] .ss-al-plot:first-child canvas,.ss-al-charts[data-kind=helix] .ss-al-plot:first-child canvas{height:360px}}
+@media(max-width:760px){.ss-al-workspace{grid-template-columns:1fr}.ss-al-controls{max-height:none;overflow:visible;position:static}.ss-al-intro{padding:12px}.ss-al-heading-line{flex-wrap:wrap}.ss-al-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.ss-al-charts[data-kind=chirp],.ss-al-charts[data-kind=helix]{grid-template-columns:1fr}.ss-al-charts[data-kind=chirp] .ss-al-plot:first-child,.ss-al-charts[data-kind=helix] .ss-al-plot:first-child{grid-column:auto}.ss-al-charts[data-kind=chirp] .ss-al-plot:first-child canvas,.ss-al-charts[data-kind=helix] .ss-al-plot:first-child canvas{height:clamp(290px,42vh,450px)}.ss-al-root.focus .ss-al-plot canvas{height:clamp(300px,50vh,550px)}}
+@media(max-width:520px){.ss-al-root{padding:0 8px 15px}.ss-al-intro{margin-top:8px}.ss-al-tabs a{flex:1 1 100%;font-size:12px}.ss-al-plot{padding:9px}.ss-al-metric{padding:9px}.ss-al-equation{font-size:13px}.ss-al-metric-value{font-size:16px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
