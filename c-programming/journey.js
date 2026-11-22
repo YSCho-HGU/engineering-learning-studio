@@ -333,6 +333,20 @@ function showLab(index){
  const work=element("section","activity",stage);
  element("h3","",work,ui("2 · 일부 수정하고 결과 예측","2 · Modify and predict"));
  element("p","",work,labText(spec.taskKo,spec.taskEn));
+ const editLabel=element("label","",work,ui("수정할 C 코드","Editable C source"));
+ const codeEditor=element("textarea","c-guided-code-editor",work);
+ const sourceKey=labKey+"-code-"+index;
+ try{codeEditor.value=localStorage.getItem(sourceKey)||source.code}catch(e){codeEditor.value=source.code}
+ codeEditor.setAttribute("aria-label","Editable guided lab C source");
+ codeEditor.setAttribute("spellcheck","false");
+ codeEditor.addEventListener("input",()=>{try{localStorage.setItem(sourceKey,codeEditor.value)}catch(e){}});
+ const copyCode=element("button","action",work,ui("수정 코드 복사","Copy modified code"));
+ copyCode.type="button";
+ copyCode.addEventListener("click",()=>{
+  if(navigator.clipboard?.writeText)navigator.clipboard.writeText(codeEditor.value).then(()=>{copyCode.textContent=ui("복사 완료","Copied")}).catch(()=>{codeEditor.focus();codeEditor.select()});
+  else {codeEditor.focus();codeEditor.select()}
+ });
+ element("label","",work,ui("예상 결과와 수정 이유","Prediction and reasoning"));
  const prediction=element("textarea","",work);
  prediction.setAttribute("aria-label","Modified code and prediction");
  prediction.placeholder=ui("수정할 코드와 예상 결과를 적으세요.","Write the change and predicted result before running.");
@@ -345,7 +359,7 @@ function showLab(index){
  element("p","legend",verify,ui("이 페이지는 C 코드를 컴파일하거나 실행 결과를 검증하지 않습니다.","This page does not compile C or verify test results."));
  const actions=element("div","navactions",stage);
  const mark=element("button","action primary",actions,labProgress.includes(index)?ui("연습 기록됨 ✓","Practice recorded ✓"):ui("실습 수행 기록","Record practice"));
- mark.addEventListener("click",()=>{if(!prediction.value.trim()){prediction.focus();return}if(!labProgress.includes(index)){labProgress.push(index);saveLabProgress()}mark.textContent=ui("연습 기록됨 ✓","Practice recorded ✓");renderNav();updateAssessmentSummary()});
+ mark.addEventListener("click",()=>{if(!prediction.value.trim()){prediction.focus();return}if(!codeEditor.value.trim()||codeEditor.value===source.code){codeEditor.focus();return}if(!labProgress.includes(index)){labProgress.push(index);saveLabProgress()}mark.textContent=ui("연습 기록됨 ✓","Practice recorded ✓");renderNav();updateAssessmentSummary()});
  const back=element("button","action",actions,ui("관련 개념으로 이동","Open related concept"));
  back.addEventListener("click",()=>{location.hash="step-"+spec.step;show(spec.step-1)});
  updateAssessmentSummary();
