@@ -40,18 +40,30 @@ jobs:
           npm install --no-save --no-package-lock playwright@1.56.1
           npx playwright install --with-deps chromium
       - name: Eight C course browser regression
+        id: c_browser
+        continue-on-error: true
         run: node tests/qa-unified-browser.mjs
       - name: Start Studio root server
         run: |
           python3 -m http.server 8788 --bind 127.0.0.1 >/tmp/studio-preview.log 2>&1 &
           sleep 2
       - name: Signals chapter navigation and theme regression
+        id: ss_nav
+        continue-on-error: true
         working-directory: signals-systems
         env:
           SS_BASE_URL: http://127.0.0.1:8788/signals-systems/
         run: node tests/ss-navigation-visual-e2e.mjs
       - name: Signals English chapter regression
+        id: ss_english
+        continue-on-error: true
         working-directory: signals-systems
         env:
           SS_BASE_URL: http://127.0.0.1:8788/signals-systems/
         run: node tests/ss-english-content-e2e.mjs
+      - name: Fail on regression findings
+        if: always()
+        run: |
+          test '${{ steps.c_browser.outcome }}' = 'success'
+          test '${{ steps.ss_nav.outcome }}' = 'success'
+          test '${{ steps.ss_english.outcome }}' = 'success'
