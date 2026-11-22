@@ -24,6 +24,17 @@ for(const lab of ["beats","amfm","sampling"]){
   if(!hasEquation?.includes("\\displaystyle"))throw Error("Equation source missing");
   const heights=await page.locator(".ss-al-plot:not([hidden]) canvas").evaluateAll(cs=>cs.map(c=>Math.round(c.getBoundingClientRect().height)));
   if(heights.some((h,i)=>h<(i===0?285:145)))throw Error("Plots too small "+JSON.stringify(heights));
+  const geometry=await page.evaluate(()=>{
+   const canvas=document.querySelector(".ss-al-primary-plot canvas").getBoundingClientRect();
+   const controls=document.getElementById("ss-al-controls").getBoundingClientRect();
+   const legends=[1,2,3].map(i=>({
+    legend:document.getElementById("ss-al-legend-"+i).getBoundingClientRect().bottom,
+    plot:document.getElementById("ss-al-canvas-"+i).getBoundingClientRect().top
+   }));
+   return{canvasTop:canvas.top,controlsTop:controls.top,legends,viewport:innerHeight};
+  });
+  if(geometry.canvasTop>geometry.viewport*.80||geometry.controlsTop>geometry.viewport*.55)throw Error("Graph/controls not simultaneously accessible: "+JSON.stringify(geometry));
+  if(geometry.legends.some(x=>x.legend>x.plot+2))throw Error("Legend overlaps graph plot");
   const initialCanvas=await page.locator("#ss-al-canvas-1").evaluate(c=>c.toDataURL());
   if(lab==="beats"){
    await page.locator("#ss-extra-delta").evaluate(e=>{e.value="8";e.dispatchEvent(new Event("input",{bubbles:true}))});
@@ -122,13 +133,19 @@ for(const lab of ["beats","amfm","sampling"]){
    if(progress<=50)throw Error("Sampling time animation did not advance");
    await page.locator("#ss-extra-animate").click();
   }
-  await page.locator("#ss-al-language").selectOption("ko");
-  await page.waitForTimeout(100);
-  if(!/[가-힣]/.test(await page.locator("#ss-al-title").innerText()))throw Error("Korean mode not applied");
-  await page.locator("#ss-al-language").selectOption("en");
-  await page.locator("#ss-al-theme").selectOption("white-clean");
-  await page.waitForTimeout(80);
-  if(await page.locator("html").getAttribute("data-els-theme")!=="white-clean")throw Error("Theme change missing");
+  for(const language of ["ko","mixed","en"]){
+   await page.locator("#ss-al-language").selectOption(language);
+   await page.waitForTimeout(65);
+   const title=await page.locator("#ss-al-title").innerText();
+   if(language!=="en"&&!/[가-힣]/.test(title))throw Error("Korean text missing for "+language);
+   if(language==="en"&&/[가-힣]/.test(title))throw Error("English-only mode contains Korean");
+  }
+  for(const theme of ["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark"]){
+   await page.locator("#ss-al-theme").selectOption(theme);
+   await page.waitForTimeout(65);
+   if(await page.locator("html").getAttribute("data-els-theme")!==theme)throw Error("Theme not applied: "+theme);
+  }
+  await page.locator("#ss-al-theme").selectOption("white-clean");await page.waitForTimeout(80);
   await page.locator("#ss-al-focus-toolbar").click();
   if(!await page.locator("#ss-al-root").evaluate(el=>el.classList.contains("focus")))throw Error("Focus entry failed");
   await page.locator("#ss-al-focus-toolbar").click();
@@ -137,6 +154,9 @@ for(const lab of ["beats","amfm","sampling"]){
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
   if(overflow>6)throw Error("Mobile horizontal overflow "+overflow+"px");
   const mobileH=await page.locator(".ss-al-plot:not([hidden]) canvas").evaluateAll(cs=>cs.map(c=>Math.round(c.getBoundingClientRect().height)));
+  const formula=page.locator("#ss-al-equation");
+  const mathOverflow=await formula.evaluate(el=>el.scrollWidth-el.clientWidth);
+  if(mathOverflow>4&&!(await formula.evaluate(el=>getComputedStyle(el).overflowX==="auto")))throw Error("Mobile formula is clipped");
   if(mobileH.some(h=>h<260))throw Error("Mobile plot too short "+JSON.stringify(mobileH));
   await page.screenshot({path:"tests/screenshots/part-a-"+lab+"-mobile.png",fullPage:true});
   if(thrown.length)throw Error("Page errors: "+thrown.join("; "));
