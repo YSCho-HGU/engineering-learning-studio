@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "course": "logic-design",
-  "generatedAt": "2026-11-22T12:58:28.881Z",
-  "sourceSha": "ea44383d44f5f0592b914886c45ee8d8a3895d34",
-  "runId": "45024941541",
-  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/45024941541",
+  "generatedAt": "2026-11-22T13:06:10.271Z",
+  "sourceSha": "e9cb7e32e9d4d9e2ec729f14d46f474f86cdabb2",
+  "runId": "45025452412",
+  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/45025452412",
   "mode": "prototype",
-  "automatedStatus": "PILOT_PASS",
-  "releaseStatus": "PILOT_PASS_FUTURE_COURSE_PENDING",
+  "automatedStatus": "PILOT_BLOCKED",
+  "releaseStatus": "PILOT_BLOCKED",
   "formalCourseStatus": "NOT_RUN",
   "manualStatus": "PENDING",
   "plannedUnits": null,
@@ -16,7 +16,7 @@
   "visual": {
     "expected": 4,
     "observed": 4,
-    "issues": 0
+    "issues": 4
   },
   "truthTableCases": 20,
   "chapters": [],
@@ -24,31 +24,31 @@
     {
       "id": "G0",
       "label": "Source/catalog integrity",
-      "status": "PASS",
+      "status": "FAIL",
       "required": true
     },
     {
       "id": "G1",
       "label": "Independent reference correctness",
-      "status": "PASS",
+      "status": "FAIL",
       "required": true
     },
     {
       "id": "G2",
       "label": "Browser interaction",
-      "status": "PASS",
+      "status": "FAIL",
       "required": true
     },
     {
       "id": "G3",
       "label": "Theme, language and accessibility",
-      "status": "PASS",
+      "status": "FAIL",
       "required": true
     },
     {
       "id": "G4",
       "label": "Interactive pedagogy",
-      "status": "PASS",
+      "status": "FAIL",
       "required": true
     },
     {
@@ -60,7 +60,7 @@
     {
       "id": "G6",
       "label": "Visual regression",
-      "status": "PASS",
+      "status": "FAIL",
       "required": true
     },
     {
