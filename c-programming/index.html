@@ -261,7 +261,7 @@ html{scroll-padding-top:90px}#roadmap{scroll-margin-top:90px}
 .language-control{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px;font-weight:750;white-space:nowrap}
 .language-control select{color:var(--ink);background:var(--surface);border:1px solid var(--border);border-radius:8px;min-height:38px;padding:5px 8px}
 @media(max-width:590px){.language-control{margin-left:0}.language-control select{min-height:40px}}
-</style><link rel="stylesheet" href="../assets/els-theme-v2.css?v=6"><link rel="stylesheet" href="../assets/els-typography-standard.css?v=1"></head>
+</style><link rel="stylesheet" href="../assets/els-theme-v2.css?v=6"><link rel="stylesheet" href="../assets/els-typography-standard.css?v=1"><link rel="stylesheet" href="../assets/els-header-controls.css?v=1"></head>
 <body>
 <header class="site-header"><div class="wrap header-inner">
  <a class="brand" href="../" aria-label="Engineering Learning Studio home"><span class="brand-mark">◈</span><span>Engineering Learning Studio <span class="brand-course"> / C Programming</span></span></a>
@@ -316,7 +316,7 @@ html{scroll-padding-top:90px}#roadmap{scroll-margin-top:90px}
 if(!language)throw Error("Shared language module was not loaded");
 let lang=language.get();
  function apply(next){lang=next;select.value=next;document.documentElement.lang=next==="en"?"en":"ko";
- document.getElementById("c-language-label").textContent=next==="ko"?"언어":"Language";
+ /* Icon remains the shared header control in every language. */
  for(const node of document.querySelectorAll("[data-c-ko]"))node.textContent=next==="en"?node.dataset.cEn:node.dataset.cKo;
  window.dispatchEvent(new CustomEvent("els-language-change",{detail:{lang:next}}));
  }
@@ -325,4 +325,4 @@ let lang=language.get();
  language.subscribe(next=>{if(next!==lang)apply(next)});
  apply(lang);
 })();
-</script><script>document.addEventListener("DOMContentLoaded",()=>{const container=document.querySelector(".toplinks,.header-nav,.topbar,.site-header,header nav,header");if(!container||document.getElementById("c-progress-link"))return;const a=document.createElement("a");a.id="c-progress-link";a.href="../progress/";a.textContent="Learning Progress · 학습 진도";a.style.cssText="font-size:12px;white-space:nowrap;color:var(--els-link,var(--accent,#b9d7c8))";container.append(a)});</script><script src="./course-catalog.js?v=3" defer></script><script src="../assets/els-theme-v2.js?v=6" defer></script></body></html>
+</script><script>document.addEventListener("DOMContentLoaded",()=>{const container=document.querySelector(".toplinks,.header-nav,.topbar,.site-header,header nav,header");if(!container||document.getElementById("c-progress-link"))return;const a=document.createElement("a");a.id="c-progress-link";a.href="../progress/";a.textContent="Learning Progress · 학습 진도";a.style.cssText="font-size:12px;white-space:nowrap;color:var(--els-link,var(--accent,#b9d7c8))";container.append(a)});</script><script src="./course-catalog.js?v=3" defer></script><script src="../assets/els-theme-v2.js?v=6" defer></script><script src="../assets/els-header-controls.js?v=1" defer></script></body></html>
