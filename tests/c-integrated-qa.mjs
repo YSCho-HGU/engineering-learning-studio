@@ -11,6 +11,18 @@ for(const kind of ["pointer","structure"]){
  const context={window:{}};
  vm.runInNewContext(fs.readFileSync(base+kind+"/data.js","utf8"),context);
  const d=context.window.C_JOURNEY;course[kind]=d;
+ const englishContext={window:{}};
+ vm.runInNewContext(fs.readFileSync(base+kind+"/en.js","utf8"),englishContext);
+ const overlay=englishContext.window.C_JOURNEY_EN;
+ const protectedFields=/^(?:code|source|starter|starterCode|expectedOutput|output|correct|answer|id|slug|kind|minutes|contentRevision|value|defaultValue|phaseBreaks)$/;
+ const missingEnglish=[];
+ function auditEnglish(obj,translated,location){
+  if(Array.isArray(obj)){obj.forEach((value,i)=>auditEnglish(value,Array.isArray(translated)?translated[i]:undefined,location+"["+i+"]"));return;}
+  if(obj&&typeof obj==="object"){for(const [field,value] of Object.entries(obj))if(!protectedFields.test(field))auditEnglish(value,translated?.[field],location?location+"."+field:field);return;}
+  if(typeof obj==="string"&&/[가-힣]/.test(obj)&&(typeof translated!=="string"||/[가-힣]/.test(translated)))missingEnglish.push(location);
+ }
+ auditEnglish(d,overlay,"");
+ assert(missingEnglish.length===0,kind+" English content coverage: "+missingEnglish.join(", "));
  assert(d.lessons.length===8,kind+" lessons = 8");
  assert(d.practice.length===6,kind+" exercises = 6");
  assert(d.lessons.every(x=>Array.isArray(x.quiz.options)&&x.quiz.options.length>=2&&Number.isInteger(x.quiz.correct)&&x.quiz.correct>=0&&x.quiz.correct<x.quiz.options.length&&String(x.quiz.options[x.quiz.correct]).trim().length>0&&x.quiz.explain),kind+" conceptual quiz answer key");
