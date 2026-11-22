@@ -80,6 +80,7 @@ if(process.env.C_JOURNEY_BROWSER==='1'){
     check(await page.locator('#lesson .mem-cell').count()>=1,kind+'/'+width+'/'+theme+': labeled memory cells rendered');
     check(await page.locator('#lesson .mem-diagram-note').count()===1,kind+'/'+width+'/'+theme+': conceptual address disclaimer');
     const layoutIndex=kind==='pointer'?4:6;
+    if(layoutIndex>=6)await page.locator('#lesson-nav details[data-group="advanced"] summary').click();
     await page.locator('#lesson-nav button').nth(layoutIndex).click();
     check(await page.locator('#lesson .layout-cell').count()>=3,kind+'/'+width+'/'+theme+': memory layout has labeled array/member cells');
     check(await page.locator('#lesson .layout-disclaimer').count()===1,kind+'/'+width+'/'+theme+': ABI caveat shown');
@@ -95,6 +96,7 @@ if(process.env.C_JOURNEY_BROWSER==='1'){
     check((await page.locator('#lesson .trace-status').innerText())===before,kind+'/'+width+'/'+theme+': trace previous restores initial step');
     await page.locator('#lesson-nav button').nth(2).click();
     check(await page.locator('#lesson .mem-diagram-title').count()===1,kind+'/'+width+'/'+theme+': memory diagram survives lesson navigation');
+    await page.locator('#lesson-nav details[data-group="advanced"]').evaluate(el=>el.open=true);
     await page.locator('#lesson-nav button').nth(7).click();
     check((await page.locator('#lesson h2').innerText())===lessons.find(x=>x.kind===kind).data.lessons[7].title,kind+'/'+width+'/'+theme+': last lesson navigation');
     check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+6),kind+'/'+width+'/'+theme+': no horizontal overflow');
