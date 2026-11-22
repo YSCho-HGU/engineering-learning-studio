@@ -1,0 +1,25 @@
+name: Studio deployed site and legacy URL smoke test
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tests/studio-deployed-smoke.mjs'
+      - '.github/workflows/studio-deployed-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  published-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chromium
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Verify published Studio and old Signals URLs
+        run: node tests/studio-deployed-smoke.mjs
