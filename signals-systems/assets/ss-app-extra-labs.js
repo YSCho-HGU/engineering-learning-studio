@@ -277,7 +277,12 @@ function renderControls(){
   }
   const status=dom("p","ss-al-audio-status",null,a);status.setAttribute("role","status");
   audio.buttons={play,pause,stop,aliasPlay};audio.status=status;
-  if(lab==="sampling")dom("div","ss-al-audio-values",null,a).id="ss-al-audio-values";
+  if(lab==="sampling"){
+   dom("div","ss-al-audio-values",null,a).id="ss-al-audio-values";
+   const soundCheck=dom("button","ss-al-sound-check",txt("Test output · 1 kHz","소리 확인 · 1kHz",true),a);
+   soundCheck.id="ss-al-sound-check";soundCheck.type="button";
+   soundCheck.addEventListener("click",testAudioOutput);
+  }
   if(lab!=="sampling")play.addEventListener("click",startAudio);
   pause.addEventListener("click",()=>stopAudio(false));
   stop.addEventListener("click",()=>stopAudio(true));
@@ -621,12 +626,14 @@ function refreshAudio(){
  }
  pause.textContent=txt("Ⅱ Pause","Ⅱ 일시 정지",true);pause.disabled=!audio.playing;
  stop.textContent=txt("■ Stop","■ 정지",true);stop.disabled=!audio.playing&&audio.offset===0;
- audio.status.textContent=audio.playing?
-  txt((lab==="sampling"?(audio.signal==="ct"?"Original CT":"Aliased guide")+" · ":"")+"Audio clock",
-      (lab==="sampling"?(audio.signal==="ct"?"원래 CT":"에일리어스 안내 파형")+" · ":"")+"오디오 시간 동기화"):
-  audio.offset>0&&audio.offset<audio.duration?
-   txt("Paused · resume at current position","일시 정지 · 현재 위치에서 계속"):
-   txt("Press Play to start sound, at low volume.","재생 버튼을 누르고 낮은 음량으로 청취하세요.");
+ audio.status.textContent=audio.error||(
+  audio.playing?
+   txt((lab==="sampling"?(audio.signal==="ct"?"Original CT":"Aliased guide")+" · ":"")+"Playing · Web Audio"+(audioCtx?.sampleRate?" · "+audioCtx.sampleRate+" Hz output":""),
+       (lab==="sampling"?(audio.signal==="ct"?"원래 CT":"에일리어스 안내 파형")+" · ":"")+"재생 중 · Web Audio"+(audioCtx?.sampleRate?" · 출력 "+audioCtx.sampleRate+"Hz":"")):
+   audio.offset>0&&audio.offset<audio.duration?
+    txt("Paused · resume at current position","일시 정지 · 현재 위치에서 계속"):
+    txt("Press Play to start sound at a low volume.","낮은 음량에서 재생 버튼을 누르세요.")
+ );
  updateTransport();
 }
 function closeSource(){
@@ -663,6 +670,30 @@ function change(){
  if(lab==="amfm"||lab==="sampling")renderFormula();
  drawSoon();
 }
+async function testAudioOutput(){
+ const Ctx=window.AudioContext||window.webkitAudioContext;
+ if(!Ctx){audio.error=txt("Web Audio API unavailable.","Web Audio API를 사용할 수 없습니다.");refreshAudio();return}
+ try{
+  stopAudio(true);audio.error="";
+  if(!audioCtx)audioCtx=new Ctx();
+  await audioCtx.resume();
+  if(audioCtx.state&&audioCtx.state!=="running")throw Error("AudioContext "+audioCtx.state);
+  const oscillator=audioCtx.createOscillator(),gain=audioCtx.createGain(),now=audioCtx.currentTime;
+  oscillator.type="sine";oscillator.frequency.setValueAtTime(1000,now);
+  gain.gain.setValueAtTime(.0001,now);
+  gain.gain.exponentialRampToValueAtTime(.12,now+.025);
+  gain.gain.exponentialRampToValueAtTime(.0001,now+.38);
+  oscillator.connect(gain);gain.connect(audioCtx.destination);
+  oscillator.start(now);oscillator.stop(now+.40);
+  oscillator.onended=()=>{oscillator.disconnect();gain.disconnect()};
+  audio.error=txt("1 kHz test tone triggered. If silent, check browser tab and output-device volume.",
+                  "1kHz 확인음을 출력했습니다. 들리지 않으면 브라우저 탭과 출력 장치 음량을 확인하세요.");
+  refreshAudio();
+ }catch(e){
+  audio.error=txt("Audio check failed: ","오디오 확인 실패: ")+String(e?.message||e);
+  refreshAudio();
+ }
+}
 function fftAudioBuffer(){
  const sr=audioCtx.sampleRate,n=Math.floor(sr*audio.duration);
  const buffer=audioCtx.createBuffer(1,n,sr),data=buffer.getChannelData(0),fade=.015;
@@ -671,7 +702,7 @@ function fftAudioBuffer(){
   const sample=lab==="sampling"?
    (audio.signal==="ct"?Math.sin(phaseAt(t)):Math.sin(phaseFoldAngle(t))):
    audioAt(t);
-  data[i]=clamp(.22*gain*sample,-1,1);
+  data[i]=clamp(.28*gain*sample,-1,1);
  }
  audio.buffer=buffer;
 }
@@ -687,6 +718,7 @@ function beginSource(offset){
  transportId=requestAnimationFrame(audioFrame);refreshAudio();
 }
 async function startAudio(choice=null){
+ audio.error="";
  if(lab==="sampling"){
   if(choice!=="ct"&&choice!=="alias")return;
   if(state.playing){
@@ -704,17 +736,21 @@ async function startAudio(choice=null){
   audio.duration=state.T;
  }else if(audio.playing)return;
  const Ctx=window.AudioContext||window.webkitAudioContext;
- if(!Ctx){if(audio.status)audio.status.textContent=txt("Web Audio unavailable.","Web Audio 미지원");return}
+ if(!Ctx){audio.error=txt("Web Audio API unavailable.","Web Audio API 미지원");refreshAudio();return}
  const req=++requestId;
  try{
   if(!audioCtx)audioCtx=new Ctx();
   await audioCtx.resume();
   if(requestId!==req)return;
+  if(audioCtx.state&&audioCtx.state!=="running")throw Error("AudioContext "+audioCtx.state);
   if(!audio.buffer)fftAudioBuffer();
   if(audio.offset>=audio.duration-.001)audio.offset=0;
   beginSource(audio.offset);
  }catch(e){
-  if(req===requestId&&audio.status)audio.status.textContent=txt("Playback unavailable.","재생할 수 없습니다.");
+  if(req===requestId){
+   audio.error=txt("Playback failed: ","재생 실패: ")+String(e?.message||e);
+   refreshAudio();
+  }
  }
 }
 function audioFrame(){
