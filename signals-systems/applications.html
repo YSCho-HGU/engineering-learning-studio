@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#202622">
+<meta name="description" content="Signals & Systems Applications: signals, systems, FFT and integrated engineering applications.">
+<title>Applications · Signals & Systems | Engineering Learning Studio</title>
+<script>(function(){var valid=["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark"];var v="neutral-dark";try{var saved=localStorage.getItem("els-theme-v2");if(valid.includes(saved))v=saved;else if(saved==="white")v="white-clean"}catch(e){}document.documentElement.dataset.elsTheme=v;document.documentElement.dataset.theme=["white-clean","warm-neutral"].includes(v)?"light":"dark";document.documentElement.style.colorScheme=["white-clean","warm-neutral"].includes(v)?"only light":"dark"})();</script>
+<link rel="stylesheet" href="../assets/els-theme-v2.css?v=6">
+<link rel="stylesheet" href="../assets/els-typography-standard.css?v=1">
+<link rel="stylesheet" href="./assets/ss-common-header.css?v=20261122-four-controls">
+<link rel="stylesheet" href="../assets/els-header-controls.css?v=1">
+<link rel="stylesheet" href="./assets/ss-applications-hub.css?v=1">
+</head>
+<body>
+<a class="ss-app-skip" href="#ss-app-main">Skip to applications</a>
+<header class="ss-common-header ss-app-header" aria-label="Engineering Learning Studio navigation">
+  <a class="ss-common-home" href="../">← Studio</a>
+  <details class="ss-common-menu">
+    <summary class="ss-common-title">Signals &amp; Systems · Applications <span aria-hidden="true">⌄</span></summary>
+    <nav class="ss-common-links" aria-label="Choose chapter"></nav>
+  </details>
+  <nav class="ss-app-arrows ss-four-navigation" aria-label="Chapter and application part navigation">
+    <a href="./chapter8.html" aria-label="Previous chapter: Z-Transform" title="Previous chapter">⇤</a>
+    <button type="button" id="ss-app-prev" aria-label="Previous application part" title="Previous part">←</button>
+    <button type="button" id="ss-app-next" aria-label="Next application part" title="Next part">→</button>
+    <a aria-disabled="true" tabindex="-1" title="Applications is the last chapter" aria-label="Last chapter" >⇥</a>
+  </nav>
+  <div class="ss-common-actions">
+    <label class="ss-common-language" for="ss-app-language"><span class="ss-language-icon" aria-hidden="true">🌐</span>
+      <select class="ss-common-language-select" id="ss-app-language" aria-label="Language">
+        <option value="mixed">한/영</option><option value="en">English</option><option value="ko">한국어</option>
+      </select>
+    </label>
+    <label class="ss-common-theme" for="ss-app-theme">
+      <select id="ss-app-theme" data-els-theme-picker aria-label="Theme">
+        <option value="white-clean">White Clean</option>
+        <option value="warm-neutral">Warm Neutral</option>
+        <option value="warm-dark">Warm Dark</option>
+        <option value="navy-dark">Navy Dark</option>
+        <option value="neutral-dark">Neutral Dark</option>
+      </select>
+    </label>
+  </div>
+</header>
+<div class="ss-app-container">
+  <section class="ss-app-intro" aria-labelledby="ss-app-title">
+    <div class="ss-app-eyebrow">SIGNALS &amp; SYSTEMS · APPLICATIONS</div>
+    <h1 id="ss-app-title">Applications</h1>
+    <p data-en="Connect the signals and systems you have studied to sound, circuits, images, video, and practical engineering. Explore the four application areas and their planned learning topics." data-ko="학습한 신호와 시스템을 소리, 회로, 이미지, 동영상 및 실제 공학 문제에 연결합니다. 네 개의 응용 영역과 앞으로 개발할 학습 주제를 살펴보세요."></p>
+    <nav class="ss-app-shortcuts" aria-label="Application parts">
+      <a href="#part-a" data-en="Part A · Signals" data-ko="Part A · 신호"></a>
+      <a href="#part-b" data-en="Part B · Systems" data-ko="Part B · 시스템"></a>
+      <a href="#part-c" data-en="Part C · FFT" data-ko="Part C · FFT"></a>
+      <a href="#part-d" data-en="Part D · Integrated" data-ko="Part D · 종합 응용"></a>
+    </nav>
+  </section>
+  <div class="ss-app-layout">
+    <aside class="ss-app-toc" aria-label="Applications table of contents">
+      <h2 data-en="Applications · Contents" data-ko="Applications · 목차"></h2>
+      <a href="#part-a" data-part-link="a"><strong>Part A · Signal Applications</strong><span data-en="Signals we can hear, see, and measure" data-ko="듣고 보고 측정하는 신호"></span></a>
+      <a href="#part-b" data-part-link="b"><strong>Part B · System Applications</strong><span data-en="How systems transform signals" data-ko="시스템이 신호를 바꾸는 방식"></span></a>
+      <a href="#part-c" data-part-link="c"><strong>Part C · FFT &amp; Spectral Applications</strong><span data-en="Audio, sensors, images, and video" data-ko="오디오·센서·이미지·동영상"></span></a>
+      <a href="#part-d" data-part-link="d"><strong>Part D · Integrated Engineering Applications</strong><span data-en="Connecting signal and system models" data-ko="신호와 시스템의 종합적 연결"></span></a>
+      <div class="ss-app-back">
+        <a href="./index.html#overview" data-en="Course Overview" data-ko="교과목 개요"></a>
+        <a href="./index.html#map" data-en="Learning Map" data-ko="학습 개념도"></a>
+      </div>
+    </aside>
+    <main id="ss-app-main" class="ss-app-main" tabindex="-1">
+      <section class="ss-app-part" id="part-a" data-app-part="a" aria-labelledby="part-a-heading">
+        <div class="ss-app-part-head"><div><span class="ss-app-part-kicker">PART A · SIGNALS</span><h2 id="part-a-heading" data-en="Signal Applications" data-ko="신호 응용"></h2></div><span class="ss-app-count" id="part-a-count"></span></div>
+        <p class="ss-app-part-desc" data-en="Understand real-world phenomena as time-domain and frequency-domain signals." data-ko="생활 속 현상을 시간영역 및 주파수영역 신호로 해석합니다."></p>
+        <div class="ss-app-topic-grid" id="topics-a"></div>
+      </section>
+      <section class="ss-app-part" id="part-b" data-app-part="b" aria-labelledby="part-b-heading">
+        <div class="ss-app-part-head"><div><span class="ss-app-part-kicker">PART B · SYSTEMS</span><h2 id="part-b-heading" data-en="System Applications" data-ko="시스템 응용"></h2></div><span class="ss-app-count" id="part-b-count"></span></div>
+        <p class="ss-app-part-desc" data-en="Observe how physical and digital systems transform, filter, delay, or amplify input signals." data-ko="물리적·디지털 시스템이 입력 신호를 변형·필터링·지연·증폭하는 과정을 관찰합니다."></p>
+        <div class="ss-app-topic-grid" id="topics-b"></div>
+      </section>
+      <section class="ss-app-part" id="part-c" data-app-part="c" aria-labelledby="part-c-heading">
+        <div class="ss-app-part-head"><div><span class="ss-app-part-kicker">PART C · FFT</span><h2 id="part-c-heading" data-en="FFT &amp; Spectral Applications" data-ko="FFT 및 스펙트럼 응용"></h2></div><span class="ss-app-count" id="part-c-count"></span></div>
+        <p class="ss-app-part-desc" data-en="Use DFT/FFT as an engineering tool, progressing from frequency bins and spectral leakage to audio, 2D images, and temporal video analysis." data-ko="DFT/FFT를 실제 분석 도구로 사용합니다. 주파수 격자와 스펙트럼 누설부터 오디오, 2D 이미지, 동영상 시간 분석으로 확장합니다."></p>
+        <div class="ss-app-topic-grid" id="topics-c"></div>
+      </section>
+      <section class="ss-app-part" id="part-d" data-app-part="d" aria-labelledby="part-d-heading">
+        <div class="ss-app-part-head"><div><span class="ss-app-part-kicker">PART D · INTEGRATION</span><h2 id="part-d-heading" data-en="Integrated Engineering Applications" data-ko="종합 공학 응용"></h2></div><span class="ss-app-count" id="part-d-count"></span></div>
+        <p class="ss-app-part-desc" data-en="Study real engineering scenarios from signal model to system response and interpretation." data-ko="신호 모델에서 시스템 응답과 결과 해석까지 실제 공학 사례를 종합적으로 살펴봅니다."></p>
+        <div class="ss-app-topic-grid" id="topics-d"></div>
+      </section>
+      <p class="ss-app-outro" data-en="These are curriculum topics and planned interactive modules. Experimental controls and playback will be added as each module is implemented; the current page is a navigable outline." data-ko="현재 화면은 학습 주제와 앞으로 구현할 인터랙티브 모듈을 보여주는 목차입니다. 실제 조작 실습과 재생 기능은 각 모듈 제작 단계에서 추가합니다."></p>
+    </main>
+  </div>
+</div>
+<script src="../assets/els-language.js?v=1" defer></script>
+<script src="../assets/els-theme-v2.js?v=6" defer></script>
+<script src="./assets/ss-common-header.js?v=applications1" defer></script>
+<script src="./assets/ss-applications-hub.js?v=1" defer></script>
+<script src="../assets/els-header-controls.js?v=1" defer></script>
+</body></html>
