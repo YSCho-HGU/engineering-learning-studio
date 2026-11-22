@@ -32,7 +32,7 @@ for(const kind of ["pointer","structure"]){
   assert(fs.existsSync(base+file),file+" route exists");
  }
  const home=fs.readFileSync(base+kind+"/index.html","utf8");
- assert(home.includes('class="c-learning-shortcuts"')&&home.includes('class="course-phase-details"')&&home.includes('c-ch5-reading'),kind+" Chapter 5 reading structure");
+ assert(!home.includes('class="c-learning-shortcuts"')&&home.includes('class="course-phase-details"')&&home.includes('c-ch5-reading'),kind+" Chapter 5 reading structure");
  assert(home.includes('id="assessment-status"'),kind+" independent concept status");
  assert(home.includes('shared/els-content-model.js')&&home.includes('els-language.js')&&home.includes('../language.js'),kind+" shared immutable language pipeline");
  assert(home.includes('data-els-theme-picker')&&home.includes('id="theme"'),kind+" shared theme picker replaces legacy toggle");
@@ -44,7 +44,7 @@ const hub=fs.readFileSync(base+"learning-journey/index.html","utf8");
 assert(["pointer","structure","fileio"].every(c=>hub.includes('data-course="'+c+'"')), "3 courses visible on integrated hub");
 assert(hub.includes("els-code-evidence-")&&hub.includes("els-concept-"),"Activity/Concept/Coding aggregation");
 const fileio=fs.readFileSync(base+"file-io/index.html","utf8");
-assert(fileio.includes('id="concept-count"'),"File I/O concept evidence element");
+assert(!fileio.includes('id="concept-count"'),"File I/O redundant visible concept counter removed");
 assert(fileio.includes("../learning-journey/"),"File I/O integrated hub link");
 for(const js of ["journey.js","practice-engine.js","file-io/app.js","file-io/core-transfer.js","file-io/practice/app.js"]){
  const run=spawnSync(process.execPath,["--check",base+js],{encoding:"utf8"});
@@ -63,7 +63,7 @@ if(process.env.C_JOURNEY_BROWSER==="1"){
    const errors=[];page.on("pageerror",e=>errors.push(String(e)));page.on("response",r=>{if(r.status()>=400)errors.push("HTTP "+r.status()+" "+r.url())});
    await page.goto("http://127.0.0.1:8876/"+base+kind+"/",{waitUntil:"domcontentloaded"});
    assert(await page.locator("#lesson-nav button").count()===8,kind+" 8 working steps");
-   assert(await page.locator('.c-learning-shortcuts a').count()===3,kind+" three working learning shortcuts");
+   assert(await page.locator('#lesson-nav details.c-learning-group').count()===3,kind+" grouped learning navigation");
    assert(!(await page.locator('.course-phase-details').evaluate(el=>el.open)),kind+" roadmap begins collapsed");
    await page.locator('.course-phase-details summary').click();
    assert(await page.locator('.course-phase-details').evaluate(el=>el.open),kind+" roadmap expands on demand");
@@ -80,9 +80,9 @@ if(process.env.C_JOURNEY_BROWSER==="1"){
    await page.locator("#lesson .question label").nth(conceptIndex).click();
    await page.locator("#lesson .question button").click();
    assert((await page.locator("#assessment-status").innerText()).includes("1/6"),kind+" core concept pass recorded");
-   assert((await page.locator("#progress-text").innerText()).includes("0/6"),kind+" core activity not silently awarded");
+   assert((await page.locator("#progress-text").innerText()).includes("0 / 6"),kind+" core activity not silently awarded");
    await page.locator("#lesson .navactions button").nth(1).click();
-   assert((await page.locator("#progress-text").innerText()).includes("1/6"),kind+" core activity marked independently");
+   assert((await page.locator("#progress-text").innerText()).includes("1 / 6"),kind+" core activity marked independently");
    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+8),kind+" no mobile page overflow");
    assert(errors.length===0,kind+" no runtime errors "+errors.join(";"));
    await page.close();
@@ -107,7 +107,7 @@ if(process.env.C_JOURNEY_BROWSER==="1"){
   await fileio.goto("http://127.0.0.1:8876/"+base+"file-io/",{waitUntil:"domcontentloaded"});
   await fileio.locator('input[name="q0"][value="b"]').check();
   await fileio.locator('[data-grade="0"]').click();
-  assert((await fileio.locator("#concept-count").innerText()).includes("1/7"),"File I/O concept correct answer is separately recorded");
+  assert(await fileio.evaluate(()=>JSON.parse(localStorage.getItem("els-concept-fileio-v1")||"[]").includes(0)),"File I/O concept result is stored independently of visible activity count");
   assert(fileioErrors.length===0,"File I/O new concept evidence no runtime errors "+fileioErrors.join(";"));
   await fileio.close();
   const filePractice=await browser.newPage({viewport:{width:390,height:850}});
