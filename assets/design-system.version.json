@@ -1,6 +1,6 @@
 {
   "name": "Engineering Learning Studio Design System",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "released": "2026-11-15",
   "canonical_repository": "YSCho-HGU/engineering-learning-studio",
   "canonical_path": "assets/design-system.css",
@@ -21,11 +21,13 @@
     "--els-code-ink"
   ],
   "themes": [
-    "system",
-    "light",
-    "dark"
+    "white-clean",
+    "warm-neutral",
+    "warm-dark",
+    "navy-dark",
+    "neutral-dark"
   ],
   "accessibility_target": "WCAG 2.2 AA",
-  "mirror_policy": "Copy exact canonical CSS on every release; adapters remain course-owned; verify both copies before deployment",
+  "mirror_policy": "Single canonical assets/ directory in Studio monorepo. No course-local copies. Course adapters stay course-owned.",
   "compatibility": "1.x non-breaking semantic token contract"
 }
