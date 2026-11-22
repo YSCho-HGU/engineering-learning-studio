@@ -56,7 +56,7 @@ body.c-ss-course>.ss-common-header{
 .c-ss-content .hero{margin:0 0 12px;padding:14px 18px}
 .c-ss-content .hero{display:block}
 .c-ss-content .hero>div{max-width:100%;min-width:0}
-.c-ss-content .hero .hero-meta{display:block;margin:9px 0 0;font-size:13px;font-weight:750;letter-spacing:.01em;color:var(--els-muted,#dce6ee)}
+.c-ss-content .hero .hero-meta{display:block;margin:9px 0 0;font-size:13px;font-weight:750;letter-spacing:.01em;color:#e7f0f7}
 .c-ss-content .journey-assessment{margin:8px 0 14px;padding:8px 12px;border-left:3px solid var(--els-link,var(--blue));background:var(--els-surface-alt,var(--soft));border-radius:6px;font-size:14px}
 .c-ss-content .journey-next{margin-top:18px;padding-top:16px}
 .c-ss-content .course-phase-details{margin:5px 0 10px}
