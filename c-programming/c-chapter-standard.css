@@ -103,3 +103,13 @@
  .c-ss-shell .c-ss-content .hero.c-ss-intro{margin:12px 12px 5px}
  .c-ss-shell .c-ss-content>.layout>main{padding:12px}
 }
+
+.c-course-journey .stage .c-guided-code-editor{
+ display:block;width:100%;min-height:290px;max-height:600px;
+ font:14px/1.6 "Cascadia Code",Consolas,monospace;
+ tab-size:4;white-space:pre;overflow:auto;
+ color:var(--els-ink);background:var(--els-surface);
+ border:1px solid var(--els-border);border-radius:10px;
+ padding:14px;margin:9px 0 11px;resize:vertical;
+}
+.c-course-journey .stage .activity>label{display:block;margin-top:12px;font-size:.88rem;font-weight:750}
