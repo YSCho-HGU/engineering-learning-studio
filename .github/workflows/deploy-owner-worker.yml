@@ -1,0 +1,112 @@
+name: Deploy Owner Admin Worker (manual)
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: els-owner-admin-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Owner Worker deploy and unauthenticated security smoke
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Run Worker protocol and catalog tests
+        working-directory: github-owner-worker
+        run: |
+          npm run check
+          npm test
+
+      - name: Verify required secrets were provided
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          GITHUB_CLIENT_ID: ${{ secrets.GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.GITHUB_CLIENT_SECRET }}
+          GITHUB_APP_ID: ${{ secrets.GITHUB_APP_ID }}
+          GITHUB_INSTALLATION_ID: ${{ secrets.GITHUB_INSTALLATION_ID }}
+          GITHUB_APP_PRIVATE_KEY: ${{ secrets.GITHUB_APP_PRIVATE_KEY }}
+          OWNER_GITHUB_ID: ${{ secrets.OWNER_GITHUB_ID }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          OAUTH_CALLBACK_URL: ${{ secrets.OAUTH_CALLBACK_URL }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_API_TOKEN GITHUB_CLIENT_ID GITHUB_CLIENT_SECRET GITHUB_APP_ID GITHUB_INSTALLATION_ID GITHUB_APP_PRIVATE_KEY OWNER_GITHUB_ID SESSION_SECRET OAUTH_CALLBACK_URL; do
+            if [ -z "${!name:-}" ]; then echo "::error::Missing GitHub Actions secret named $name"; exit 1; fi
+          done
+          if [[ ! "$OWNER_GITHUB_ID" =~ ^[0-9]+$ ]]; then echo "::error::OWNER_GITHUB_ID must be numeric"; exit 1; fi
+          if [ "${#SESSION_SECRET}" -lt 32 ]; then echo "::error::SESSION_SECRET must contain at least 32 characters"; exit 1; fi
+          if [[ "$GITHUB_APP_PRIVATE_KEY" != *"BEGIN PRIVATE KEY"* ]]; then
+            echo "::error::GITHUB_APP_PRIVATE_KEY must be PKCS#8 PEM"; exit 1
+          fi
+          if [[ ! "$OAUTH_CALLBACK_URL" =~ ^https://[^/]+/auth/github/callback$ ]]; then
+            echo "::error::OAUTH_CALLBACK_URL must be a valid HTTPS callback path"; exit 1
+          fi
+
+      - name: Deploy Worker and provision its secrets
+        id: deploy
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: github-owner-worker
+          wranglerVersion: '4'
+          command: deploy
+          secrets: |
+            GITHUB_CLIENT_ID
+            GITHUB_CLIENT_SECRET
+            GITHUB_APP_ID
+            GITHUB_INSTALLATION_ID
+            GITHUB_APP_PRIVATE_KEY
+            OWNER_GITHUB_ID
+            SESSION_SECRET
+            OAUTH_CALLBACK_URL
+        env:
+          GITHUB_CLIENT_ID: ${{ secrets.GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.GITHUB_CLIENT_SECRET }}
+          GITHUB_APP_ID: ${{ secrets.GITHUB_APP_ID }}
+          GITHUB_INSTALLATION_ID: ${{ secrets.GITHUB_INSTALLATION_ID }}
+          GITHUB_APP_PRIVATE_KEY: ${{ secrets.GITHUB_APP_PRIVATE_KEY }}
+          OWNER_GITHUB_ID: ${{ secrets.OWNER_GITHUB_ID }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          OAUTH_CALLBACK_URL: ${{ secrets.OAUTH_CALLBACK_URL }}
+
+      - name: Verify anonymous access is blocked
+        shell: bash
+        env:
+          DEPLOY_URL: ${{ steps.deploy.outputs.deployment-url }}
+          OAUTH_CALLBACK_URL: ${{ secrets.OAUTH_CALLBACK_URL }}
+        run: |
+          set -euo pipefail
+          test -n "$DEPLOY_URL" || { echo "::error::Cloudflare deployment URL missing"; exit 1; }
+          base="${DEPLOY_URL%/}"
+          callbackBase="${OAUTH_CALLBACK_URL%/auth/github/callback}"
+          if [ "$base" != "$callbackBase" ]; then
+            echo "::error::OAuth callback hostname does not match deployed Worker"; exit 1
+          fi
+          for attempt in 1 2 3 4 5; do
+            no_auth="$(curl --silent --show-error --max-time 15 -o /dev/null -w '%{http_code}' -H 'Origin: https://yscho-hgu.github.io' "$base/api/catalog?course=c" || true)"
+            foreign="$(curl --silent --show-error --max-time 15 -o /dev/null -w '%{http_code}' -H 'Origin: https://unauthorized.example' "$base/api/catalog?course=c" || true)"
+            if [ "$no_auth" = 401 ] && [ "$foreign" = 403 ]; then
+              echo "PASS: anonymous=401, unauthorized Origin=403"
+              echo "Worker: $base"
+              echo "Worker URL: $base" >> "$GITHUB_STEP_SUMMARY"
+              echo "Anonymous catalog: HTTP 401" >> "$GITHUB_STEP_SUMMARY"
+              echo "Foreign origin: HTTP 403" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "::error::Security smoke failed (anonymous=$no_auth, foreign=$foreign)"
+          exit 1
