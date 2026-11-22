@@ -4,7 +4,7 @@
 "use strict";
 const chapters=[
  ["arrays","13","Arrays"],["strings","13","Strings"],["standard-library","13","Standard Library Functions"],
- ["functions","14","Functions"],["pointer","15","Pointers"],["structure","16","Structures"],
+ ["functions","14","User-Defined Functions"],["pointer","15","Pointers"],["structure","16","Structures"],
  ["file-io","17","File I/O"],["dynamic-memory","18","Dynamic Memory"]
 ];
 const path=location.pathname;
