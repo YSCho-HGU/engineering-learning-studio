@@ -261,7 +261,7 @@ html{scroll-padding-top:90px}#roadmap{scroll-margin-top:90px}
 .language-control{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px;font-weight:750;white-space:nowrap}
 .language-control select{color:var(--ink);background:var(--surface);border:1px solid var(--border);border-radius:8px;min-height:38px;padding:5px 8px}
 @media(max-width:590px){.language-control{margin-left:0}.language-control select{min-height:40px}}
-</style><link rel="stylesheet" href="../assets/els-theme-v2.css?v=6"><link rel="stylesheet" href="../assets/els-typography-standard.css?v=1"><link rel="stylesheet" href="../assets/els-header-controls.css?v=1"></head>
+.course-prerequisite{margin:12px 0 15px;padding:10px 14px;max-width:100%;border-left:3px solid var(--accent);border-radius:6px;background:var(--soft);font-size:13px;line-height:1.65;color:var(--ink)}</style><link rel="stylesheet" href="../assets/els-theme-v2.css?v=6"><link rel="stylesheet" href="../assets/els-typography-standard.css?v=1"><link rel="stylesheet" href="../assets/els-header-controls.css?v=1"></head>
 <body>
 <header class="site-header"><div class="wrap header-inner">
  <a class="brand" href="../" aria-label="Engineering Learning Studio home"><span class="brand-mark">◈</span><span>Engineering Learning Studio <span class="brand-course"> / C Programming</span></span></a>
@@ -276,6 +276,7 @@ html{scroll-padding-top:90px}#roadmap{scroll-margin-top:90px}
 </section>
 <section class="section" id="learning" aria-labelledby="learning-title">
  <div class="section-top"><div><div class="overline">AVAILABLE CHAPTERS</div><h2 id="learning-title" data-i18n-ko="학습 가능한 단원" data-i18n-en="Available chapters">학습 가능한 단원</h2><p data-i18n-ko="완성된 단원만 표시합니다. 번호는 개발 순서가 아닌 교재 Chapter 순서입니다." data-i18n-en="Only published chapters are shown. Numbers follow textbook chapter order, not development order.">완성된 단원만 표시합니다. 번호는 개발 순서가 아닌 교재 Chapter 순서입니다.</p></div><span class="available-count" id="available-count"></span></div>
+ <p class="course-prerequisite" id="prerequisite-checkpoint" data-i18n-ko="Chapter 13 이전에 확인할 기초: 변수·자료형·printf와 scanf, 조건문(if/switch), 반복문(for/while), 간단한 함수 호출. 이 항목은 새로운 공개 Chapter가 아니라 앞선 수업의 핵심 선수지식 점검입니다." data-i18n-en="Before Chapter 13, review: variables and types, printf and scanf, if/switch decisions, for/while loops, and basic function calls. This is a prerequisite checkpoint from earlier lessons, not a new published chapter.">Chapter 13 이전에 확인할 기초: 변수·자료형·printf와 scanf, 조건문(if/switch), 반복문(for/while), 간단한 함수 호출. 이 항목은 새로운 공개 Chapter가 아니라 앞선 수업의 핵심 선수지식 점검입니다.</p>
  <div class="path" id="available-chapters"></div>
 </section>
 <section class="method-bar" id="method" aria-labelledby="method-title"><h2 id="method-title" data-i18n-ko="학습 방법 · 5-step Learning Cycle" data-i18n-en="Learning Method · Five-Step Cycle">학습 방법 · 5-step Learning Cycle</h2><div class="method-steps">
