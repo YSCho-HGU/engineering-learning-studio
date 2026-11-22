@@ -44,6 +44,19 @@ try{
    try{
     const res=await page.goto(root+"c-programming/"+slug+"/",{waitUntil:"load",timeout:45000});
     assert(res?.status()===200,"HTTP "+res?.status());
+    // Readability: do not duplicate the lesson heading or coding starter catalog.
+    if(!isFile){
+     assert(await page.locator(".hero-meta#hero-count").count()===1,"compact course metadata missing");
+     assert(await page.locator("#site-title,#current-title,#coding-practice,.hero-aside,#practice").count()===0,"duplicate lesson overview is still present");
+     assert(await page.locator(".journey-next .journey-practice-link").count()===1,"missing route to dedicated coding challenges");
+     const roadmap=page.locator(".course-phase-details");
+     assert(await roadmap.count()===1,"one optional three-phase roadmap required");
+     assert(!(await roadmap.evaluate(e=>e.open)),"three-phase roadmap should start collapsed");
+     assert(await page.locator("#lesson h2").count()===1,"lesson heading is duplicated");
+    }else{
+     assert(await page.locator(".course-meta,.fileio-basic-link,.learning-route").count()===0,"obsolete File I/O navigation or summary remains");
+     assert(await page.locator(".page-note").count()===1,"File I/O concise model disclaimer missing");
+    }
     const nav=page.locator("#lesson-nav");
     await nav.locator("details.c-learning-group").first().waitFor();
     const groups=await nav.locator(":scope > details.c-learning-group").evaluateAll(els=>els.map(x=>x.dataset.group));
