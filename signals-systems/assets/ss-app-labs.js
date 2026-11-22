@@ -176,12 +176,33 @@ function plotTitles(){
   note.textContent="";
  }
  $("ss-al-charts").dataset.kind=lab;
- const eq={
-  harmonics:"x(t) = ∑<sub>k=1</sub><sup>N</sup> A<sub>k</sub> sin(2πkf<sub>0</sub>t)",
-  chirp:"f(t) = f<sub>0</sub> + (f<sub>1</sub> − f<sub>0</sub>)t/T",
-  helix:"x(t) = e<sup>(σ + j2πf)t</sup> = e<sup>σt</sup>[cos(2πft) + j sin(2πft)]"
+ const equations={
+  harmonics:{
+   tex:String.raw`\displaystyle x(t)=\sum_{k=1}^{N} A_k\sin(2\pi k f_0 t)`,
+   mathml:`<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="x of t equals sum from k equals one to N of A sub k sine of two pi k f zero t"><mrow><mi>x</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><munderover><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover><msub><mi>A</mi><mi>k</mi></msub><mi mathvariant="normal">sin</mi><mo>(</mo><mn>2</mn><mi>π</mi><mi>k</mi><msub><mi>f</mi><mn>0</mn></msub><mi>t</mi><mo>)</mo></mrow></math>`
+  },
+  chirp:{
+   tex:String.raw`\displaystyle f(t)=f_0+\frac{f_1-f_0}{T}\,t`,
+   mathml:`<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f of t equals f zero plus f one minus f zero divided by T times t"><mrow><mi>f</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><msub><mi>f</mi><mn>0</mn></msub><mo>+</mo><mfrac><mrow><msub><mi>f</mi><mn>1</mn></msub><mo>−</mo><msub><mi>f</mi><mn>0</mn></msub></mrow><mi>T</mi></mfrac><mi>t</mi></mrow></math>`
+  },
+  helix:{
+   tex:String.raw`\displaystyle x(t)=e^{(\sigma+j2\pi f)t}=e^{\sigma t}\bigl[\cos(2\pi f t)+j\sin(2\pi f t)\bigr]`,
+   mathml:`<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="x of t equals e to the sigma plus j two pi f times t; equals e to the sigma t times cosine plus j sine"><mrow><mi>x</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><msup><mi>e</mi><mrow><mo>(</mo><mi>σ</mi><mo>+</mo><mi>j</mi><mn>2</mn><mi>π</mi><mi>f</mi><mo>)</mo><mi>t</mi></mrow></msup><mo>=</mo><msup><mi>e</mi><mrow><mi>σ</mi><mi>t</mi></mrow></msup><mo>[</mo><mi mathvariant="normal">cos</mi><mo>(</mo><mn>2</mn><mi>π</mi><mi>f</mi><mi>t</mi><mo>)</mo><mo>+</mo><mi>j</mi><mi mathvariant="normal">sin</mi><mo>(</mo><mn>2</mn><mi>π</mi><mi>f</mi><mi>t</mi><mo>)</mo><mo>]</mo></mrow></math>`
+  }
  };
- $("ss-al-equation").innerHTML=eq[lab];
+ const formula=$("ss-al-equation"),expression=equations[lab];
+ formula.dataset.tex=expression.tex;
+ formula.innerHTML=expression.mathml;
+ formula.dataset.mathRendered="mathml";
+ if(window.katex?.render){
+  try{
+   window.katex.render(expression.tex,formula,{throwOnError:true,displayMode:false,output:"htmlAndMathml",strict:"ignore"});
+   formula.dataset.mathRendered="katex";
+  }catch(error){
+   formula.innerHTML=expression.mathml;
+   formula.dataset.mathRendered="mathml";
+  }
+ }
  $("ss-al-insight").textContent=tx(...labels[lab].insight);
 }
 function metric(label,value){
