@@ -319,7 +319,7 @@ int main(void) {
   <div class="core-transfer-actions"><button type="button" class="core-transfer-check" data-core-check="6">적용 결과 확인</button><button type="button" class="core-transfer-reset" data-core-reset="6">다시 풀기</button><output class="core-transfer-result" id="core-result-6" aria-live="polite">두 문항을 선택한 뒤 결과를 확인하세요.</output></div>
 </section>
 <div class="check" data-check="5"><div class="check-eyebrow">CHECK YOURSELF · STEP 06</div><p class="question-context">struct Student s의 name 멤버는 char name[40] 배열입니다. fscanf(fp, "%39s", s.name)으로 문자열을 읽습니다.</p><h3><code>fscanf()</code>에서 <code>s.name</code>에 <code>&amp;</code>가 없는 주된 이유는?</h3><label><input type="radio" name="q5" value="a"> 문자열 이름에는 읽기가 불가능하기 때문이다.</label><label><input type="radio" name="q5" value="b"> 배열 이름이 이 함수 호출에서 첫 원소의 주소로 변환되기 때문이다.</label><label><input type="radio" name="q5" value="c"> <code>fscanf()</code>가 자동으로 변수를 생성하기 때문이다.</label><button class="check-btn" data-grade="5">답 확인 및 설명</button><div class="answer" id="answer-5" aria-live="polite"></div></div>
-<p class="fileio-basic-link"><a class="practice-link" href="./core-labs/#student">핵심 코딩 실습: 구조체·학점 계산 →</a></p>
+
 </section>
 <section class="stage" data-stage="6" hidden>
 <div class="topic"><span class="stage-heading-number">OPTIONAL · SENSOR LAB</span><small class="stage-reference">§7.5.3</small></div><h2>센서 로그 분석</h2><section class="study-scope" aria-label="선택 심화 센서 학습">
@@ -568,7 +568,7 @@ int main(void) {
 <details class="study-advanced-content"><summary>선택 심화 · P1~P6 확장 학습과 오류 진단 체크리스트</summary><div class="concept"><strong>교재 연결 · 부족한 부분을 보완하는 학습 체크리스트</strong><p>필수 7단계는 개념과 실행 흐름을 확인하는 기초 과정이며, 센서 로그는 별도 선택 심화입니다. 실제 C 프로그래밍 능력은 아래 교재 과제를 직접 작성하고 컴파일하여 확인해야 합니다.</p><ol><li><strong>P1 Write Numbers:</strong> 정수 5개를 파일에 저장하고 다시 열어 검증</li><li><strong>P2 Read and Average:</strong> 실수 읽기, 개수와 평균, 빈 파일 처리</li><li><strong>P3 Copy Lines:</strong> <code>fgets()</code>와 <code>fputs()</code>로 텍스트 복사</li><li><strong>P4 Save Students:</strong> 구조체 배열을 텍스트 레코드로 저장</li><li><strong>P5 Load Students:</strong> 레코드 형식과 배열 크기를 확인하며 최고 점수 찾기</li><li><strong>P6 Sensor Alert:</strong> 시간·측정값을 읽고 <code>alerts.txt</code>에 경보 기록</li></ol><p><strong>함수 분리:</strong> P4·P5를 <code>saveRecords()</code>와 <code>loadRecords()</code>로 나눠보세요. <strong>선택 학습:</strong> CSV는 쉼표로 구분한 텍스트 형식이고, <code>fread()</code>/<code>fwrite()</code>의 이진 파일은 자료형 표현과 구조체 패딩·이식성에 주의해야 합니다.</p><p><strong>오류 진단 질문:</strong> 파일이 없으면? <code>fscanf()</code>가 0을 반환하면? <code>fgets()</code>의 버퍼보다 한 줄이 길면? <code>fclose()</code>가 실패하면?</p></div>
 </details>
 <div class="core-next-coding"><strong>개념 이해 후 필수 3개 코딩 과제</strong><p><strong>P1 Write Numbers</strong>(파일 쓰기) → <strong>P2 Read and Average</strong>(파일 읽기·반환값·평균) → <strong>M1 One-Line Copy</strong>(fgets·fputs)를 순서대로 연습하세요. P3~P6은 선택 심화이며, 실제 C 소스는 GCC에서 직접 컴파일·실행해야 합니다.</p></div>
-<p class="fileio-basic-link"><a class="practice-link" href="./core-labs/">필수 코딩 실습 3개: 쓰기 → 읽기 → 구조체·성적 환산 →</a></p>
+
 
 <div id="completion-message" class="completion" hidden><strong>Chapter 17 Learning Activities Recorded!</strong><p>일곱 개의 필수 개념 단계가 기록되었습니다. 센서 로그는 별도 선택 심화입니다. 이는 실제 코딩 능력이나 설명의 정확성을 인증하지 않습니다. 교재의 P1~P6을 직접 작성하고 GCC로 검증해 보세요.</p></div>
 </section>
