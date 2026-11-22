@@ -128,3 +128,11 @@
 @media(prefers-reduced-motion:reduce){
  .c-ch5-reading *{scroll-behavior:auto!important}
 }
+
+/* Learning-purpose guidance for grouped C chapter navigation. */
+.c-course-journey .c-learning-group-guide {
+  font-size: .79rem;
+  line-height: 1.55;
+  margin: 5px 8px 10px;
+  color: var(--els-muted, var(--cx-muted));
+}
