@@ -18,7 +18,7 @@ test("fixed GitHub numeric user ID and verified school email both required",()=>
  assert.equal(ownerIdentity(identity,emails,""),false);
 });
 test("only predefined repositories and paths can be requested",()=>{
- assert.equal(courseConfig("ss").path,"course-catalog.json");
+ assert.equal(courseConfig("ss").path,"signals-systems/course-catalog.json");
  assert.equal(courseConfig("c").path,"c-programming/course-catalog.json");
  for(const key of ["../",null,"toString","__proto__",{},["c"]])assert.throws(()=>courseConfig(key),HttpError);
 });
@@ -37,7 +37,7 @@ test("preserve immutable catalog metadata and chapter order",()=>{
  }
 });
 test("verify published lesson page paths remain confined to course",()=>{
- assert.equal(publishedPagePath("ss",{id:"6"}),"index.html");
+ assert.equal(publishedPagePath("ss",{id:"6"}),"signals-systems/chapter6.html");
  assert.equal(publishedPagePath("c",{url:"./arrays/"}),"c-programming/arrays/index.html");
  for(const unsafe of ["../files/","./../admin/","http://evil.example","/secret/"]){
   assert.throws(()=>publishedPagePath("c",{url:unsafe}),HttpError);
