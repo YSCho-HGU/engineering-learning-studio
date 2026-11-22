@@ -32,7 +32,7 @@ jobs:
       - name: G0 - Catalog and C learning content contracts
         run: |
           mkdir -p qa-unified
-          if node tests/c-site-integrity.mjs && node tests/c-authoring-policy.mjs && node tests/c-course-ui-consistency.mjs; then
+          if node tests/c-site-integrity.mjs && node tests/c-authoring-policy.mjs && node tests/c-course-ui-consistency.mjs && node tests/c-content-pedagogy-contract.mjs; then
             echo PASS > qa-unified/G0.status
           else echo FAIL > qa-unified/G0.status; fi
 
