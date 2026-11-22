@@ -12,6 +12,7 @@ try{
   await ctx.addInitScript(()=>{localStorage.setItem('els-language','en');localStorage.setItem('els-theme-v2','neutral-dark')});
   const page=await ctx.newPage();
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  let expectedTheme='neutral-dark';
   for(const view of ['#overview','#map']){
    await page.goto(base+'index.html'+view,{waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>!!window.ELSTheme?.get());
@@ -22,13 +23,14 @@ try{
    assert.equal(await selector.inputValue(),'en');
    const options=await page.locator('#theme-select option').allTextContents();
    assert.deepEqual(options,expected,width+' '+view+' theme order');
-   assert.equal(await page.locator('#theme-select').inputValue(),'neutral-dark');
+   assert.equal(await page.locator('#theme-select').inputValue(),expectedTheme);
    assert.ok(!options.some(x=>x.includes('기본')),'No default label');
    await selector.selectOption('mixed');
    assert.equal(await page.evaluate(()=>localStorage.getItem('els-language')),'mixed');
    await selector.selectOption('en');
    await page.locator('#theme-select').selectOption('warm-neutral');
    assert.equal(await page.evaluate(()=>localStorage.getItem('els-theme-v2')),'warm-neutral');
+   expectedTheme='warm-neutral';
   }
   await page.goto(base+'chapter5.html',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>!!window.ELSTheme?.get());
