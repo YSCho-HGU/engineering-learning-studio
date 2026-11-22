@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'assets/els-header-controls.*'
+      - 'assets/studio-course-cards.css'
       - 'index.html'
       - 'c-programming/index.html'
       - 'signals-systems/chapter*.html'
