@@ -367,15 +367,27 @@ function drawChirp(){
  if(C){
   const c=C.ctx,box=chartBox(C,{xMin:0,xMax:state.T,yMin:0,yMax:S.maxFreq,xLabel:"t (s)",yLabel:"f (Hz)"});
   const cols=S.spectra.length,fBins=S.spectra[0].length,floor=-65;
-  const dx=box.rect.w/cols,dy=box.rect.h/(fBins-1);
-  for(let k=0;k<cols;k++){
-   const mags=S.spectra[k];
-   for(let b=0;b<fBins;b++){
-    const db=20*Math.log10(Math.max(1e-12,mags[b]/Math.max(1e-12,S.maxMag)));
-    const v=Math.max(0,(db-floor)/(-floor));
-    c.fillStyle=heatColor(v);
-    c.fillRect(box.rect.l+k*dx,box.py(b*S.fs/S.N)-dy/2,dx+1,dy+1);
+  // Cache the static FFT heatmap as a small bitmap; the cursor is animated
+  // independently, so the full time-frequency raster is not repainted every frame.
+  if(!stftCache.raster){
+   const bmp=document.createElement("canvas");bmp.width=cols;bmp.height=fBins;
+   const bctx=bmp.getContext("2d");
+   if(bctx){
+    for(let k=0;k<cols;k++){
+     const mags=S.spectra[k];
+     for(let b=0;b<fBins;b++){
+      const db=20*Math.log10(Math.max(1e-12,mags[b]/Math.max(1e-12,S.maxMag)));
+      bctx.fillStyle=heatColor(Math.max(0,(db-floor)/(-floor)));
+      bctx.fillRect(k,fBins-1-b,1,1);
+     }
+    }
+    stftCache.raster=bmp;
    }
+  }
+  if(stftCache.raster&&c.drawImage){
+   c.drawImage(stftCache.raster,box.rect.l,box.rect.t,box.rect.w,box.rect.h);
+   // Axes are redrawn above the heatmap for contrast and legibility.
+   chartBox(C,{xMin:0,xMax:state.T,yMin:0,yMax:S.maxFreq,xLabel:"t (s)",yLabel:"f (Hz)"});
   }
   c.strokeStyle="#fdf4e3";c.lineWidth=1.5;c.setLineDash([5,4]);c.beginPath();
   for(let i=0;i<=200;i++){const t=state.T*i/200;const x=box.px(t),y=box.py(chirpFrequency(t));if(i===0)c.moveTo(x,y);else c.lineTo(x,y)}
