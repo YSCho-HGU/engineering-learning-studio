@@ -23,7 +23,9 @@ for(const width of [390,1280]){
   if(await page.locator('#lesson-nav button').count()!==counts[id])issues.push(id+' navigation count');
   if(await page.locator('#practice article').count()!==6)issues.push(id+' coding overview count');
   for(let i=0;i<counts[id];i++){
-   await page.locator('#lesson-nav button').nth(i).click();
+   const target=page.locator('#lesson-nav button').nth(i);
+    await target.evaluate(b=>{const group=b.closest("details.c-learning-group");if(group)group.open=true});
+    await target.click();
    const name=await page.locator('#lesson h2').first().textContent();
    if(!name?.trim())issues.push(id+' step '+i+' empty');
    const model=await page.locator('#lesson output').first().textContent();
