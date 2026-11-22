@@ -49,11 +49,12 @@
  stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
 .ss-diagram-svg .output{stroke:var(--els-ink);stroke-width:2}
 .ss-diagram-system{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0}
-.ss-diagram-system .flow-arrow{font-size:16px;color:var(--els-link);line-height:1}
+.ss-diagram-system .system-path{display:flex;align-items:center;justify-content:center;gap:4px}
+.ss-diagram-system .flow-arrow{font-size:15px;color:var(--els-link);line-height:1}
 .ss-diagram-system .system-block{
  display:grid;place-items:center;min-width:50px;height:43px;padding:5px;
  border:1px solid var(--els-link);border-radius:9px;
- color:var(--els-ink);background:var(--els-surface);font:800 11px/1.2 inherit
+ color:var(--els-ink);background:var(--els-surface);font-size:11px;font-weight:800;line-height:1.2
 }
 .ss-diagram-system .system-block{font-family:inherit}
 .ss-diagram-system .system-caption{font-size:10px;color:var(--els-muted);line-height:1.2}
@@ -62,8 +63,6 @@
  border:1px solid var(--els-border);background:var(--els-code-bg);color:var(--els-code-ink)}
 .c-code-source code{display:block;font:12px/1.65 Consolas,Menlo,Monaco,"Courier New",monospace;
  white-space:pre;overflow:hidden;text-overflow:ellipsis}
-.c-code-source .c-numeric{color:var(--els-primary)}
-.c-code-source .c-numeric{font-weight:750}
 .c-code-result{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;
  border:1px solid var(--els-border);border-radius:8px;background:var(--els-surface)}
 .c-code-result .result-label{color:var(--els-muted);font-size:11px}
@@ -82,7 +81,7 @@
 .course-card--planned:hover{transform:none}
 @media(max-width:1100px){
  .ss-diagram{gap:7px}
- .ss-diagram-system .system-block{min-width:43px}
+ .ss-diagram-system .system-block{min-width:39px}
  .course-methods{gap:5px}
 }
 @media(max-width:760px){
@@ -93,7 +92,8 @@
  .course-card--available{padding:19px}
  .course-preview{padding:12px}
  .ss-diagram{gap:5px}
- .ss-diagram-system .system-block{min-width:38px}
+ .ss-diagram-system .system-block{min-width:36px}
+ .ss-diagram-system .system-path{gap:2px}
  .c-code-diagram{grid-template-columns:minmax(0,1fr) 85px;gap:7px}
  .c-code-source{padding:9px}
  .c-code-source code{font-size:11px}
