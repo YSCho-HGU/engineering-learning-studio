@@ -1,97 +1,39 @@
+/* Public GitHub Pages security regression.
+ * A static /admin/ path cannot hide source files, but it must reveal no
+ * administrator interface, QA dashboard or direct-PAT editor before the
+ * verified GitHub Owner Worker session succeeds.
+ */
 import {chromium} from "playwright";
-import {readFileSync} from "node:fs";
 const browser=await chromium.launch({headless:true});
-const errors=[];
-const c=JSON.parse(readFileSync("c-programming/course-catalog.json","utf8"));
-const ss={schemaVersion:1,course:"signals-systems",chapters:Array.from({length:8},(_,i)=>({id:String(i+1),title:"Chapter "+(i+1),sub:"Signals lesson",description:"Original chapter",published:true,book:""}))};
 const page=await browser.newPage({viewport:{width:1180,height:900}});
-page.on("pageerror",e=>errors.push("JS: "+e.message));
-page.on("dialog",d=>d.accept());
-const writes=[];
-await page.route("https://api.github.com/repos/**",route=>{
- const req=route.request(),url=req.url();
- if(req.method()==="PUT"){
-  const payload=JSON.parse(req.postData()||"{}");
-  writes.push({url,payload,catalog:JSON.parse(Buffer.from(payload.content,"base64").toString("utf8"))});
-  return route.fulfill({status:200,contentType:"application/json",body:JSON.stringify({content:{sha:"new-sha"}})});
- }
- const fixture=url.includes("signals-systems-visual-lab")?ss:c;
- const encoded=Buffer.from(JSON.stringify(fixture),"utf8").toString("base64");
- return route.fulfill({status:200,contentType:"application/json",body:JSON.stringify({sha:"old-sha",content:encoded})});
+const errors=[],unauthCalls=[];
+page.on("pageerror",error=>errors.push("JS "+error.message));
+page.on("request",request=>{
+ if(/api\.github\.com|raw\.githubusercontent\.com|\/api\/catalog/.test(request.url()))unauthCalls.push(request.url());
 });
-const qualitySnapshot={
- schemaVersion:1,source:"test",generatedAt:"2026-11-20T10:00:00.000Z",
- sourceSha:"abcdef0123456789",runUrl:"https://github.com/YSCho-HGU/signals-systems-visual-lab/actions/runs/123",
- automatedStatus:"AUTOMATED_PASS",manualStatus:"PENDING",
- gates:Array.from({length:8},(_,i)=>({id:"G"+i,label:"Gate "+i,status:"PASS",required:true})),
- visual:{expected:248,observed:248,issues:0},
- chapters:Array.from({length:8},(_,i)=>({id:i+1,title:"Chapter "+(i+1),labCount:[9,9,7,8,8,6,7,8][i],
-  visual:{status:"PASS",expected:[9,9,7,8,8,6,7,8][i]*4,observed:[9,9,7,8,8,6,7,8][i]*4,issues:0,missing:0},
-  coverage:{numericalReference:i===5?"6.1 only":"PENDING_INDEPENDENT_ORACLE"},
-  manual:{axesAndLegends:"PENDING",mathematics:"PENDING",pedagogy:"PENDING"},
-  issueExamples:[],missingExamples:[]}))
-};
-let qaRequests=0;
-await page.route("https://raw.githubusercontent.com/YSCho-HGU/signals-systems-visual-lab/main/qa-dashboard/latest.json*",route=>{
- qaRequests++;
- route.fulfill({status:200,contentType:"application/json",headers:{"access-control-allow-origin":"*"},
- body:JSON.stringify(qualitySnapshot)});
-});
-const cQA={...qualitySnapshot,course:"c-programming",visual:{expected:32,observed:32,issues:0},chapters:
- Array.from({length:8},(_,i)=>({id:String([131,132,133,141,151,161,171,181][i]),title:"C unit",
- visual:{status:"PASS",expected:4,observed:4},manual:{mathematics:"PENDING"}}))};
-const logicQA={schemaVersion:1,mode:"prototype",automatedStatus:"PILOT_PASS",
- formalCourseStatus:"NOT_RUN",manualStatus:"PENDING",testedPrototype:"5 gates × 4 inputs",
- generatedAt:"2026-11-20T10:00:00.000Z",visual:{expected:4,observed:4,issues:0},
- gates:Array.from({length:8},(_,i)=>({id:"G"+i,label:"Gate "+i,status:i===5?"NOT_RUN":"PASS"})),chapters:[]};
-await page.route("**/qa-dashboard/c-latest.json*",route=>route.fulfill({status:200,contentType:"application/json",body:JSON.stringify(cQA)}));
-await page.route("**/qa-dashboard/logic-latest.json*",route=>route.fulfill({status:200,contentType:"application/json",body:JSON.stringify(logicQA)}));
-await page.goto("http://127.0.0.1:8765/admin/",{waitUntil:"networkidle"});
-await page.waitForFunction(()=>document.querySelectorAll("#studio-quality-cards .qa-course-card").length===3);
-if(await page.locator("#studio-quality-cards .qa-course-card").count()!==3)errors.push("Three course QA cards missing");
-if(!(await page.locator("#studio-quality-cards").innerText()).includes("정식 Logic Design 교과목"))errors.push("Future Logic Design must be marked NOT_RUN");
-if(await page.locator("#editor").isVisible())errors.push("Editor should be hidden before authentication");
-if(await page.locator("#ss-quality").isVisible())errors.push("QA dashboard should be hidden for C Programming");
-await page.locator("#token").fill("mock-token");
-await page.locator("#connect").click();
-await page.locator("#editor").waitFor({state:"visible"});
-if(await page.locator(".chapter").count()!==18)errors.push("C catalog should show 18 units");
-await page.locator("#title-151").fill("Pointer Fundamentals");
-await page.locator("#description-151").fill("Pointer memory and addresses");
-await page.locator("#book-151").fill("https://drive.google.com/file/d/1o7bzzH32a2gMwjFZ-SdYCtaUcdjxMK4H/view");
-await page.locator("#save").click();
-await page.waitForFunction(()=>document.querySelector("#status").textContent.includes("저장 완료"));
-if(writes.length!==1||writes[0].catalog.chapters.find(c=>c.id==="151").title!=="Pointer Fundamentals")errors.push("C metadata save mismatch");
-await page.locator("#course-ss").click();
-await page.locator("#ss-quality").waitFor({state:"visible"});
-await page.waitForFunction(()=>document.querySelector("#ss-qa-summary")?.hidden===false);
-if(await page.locator("#ss-qa-chapters .qa-chapter").count()!==8)errors.push("QA dashboard must show eight chapters");
-if(await page.locator("#ss-qa-footer .qa-gate").count()!==8)errors.push("QA dashboard must show eight G0-G7 gates");
-if(!(await page.locator("#ss-qa-summary").innerText()).includes("248"))errors.push("QA screenshot total absent");
-if(!(await page.locator("#ss-qa-status").innerText()).includes("교육적 검토"))errors.push("QA dashboard should not imply manual approval");
-await page.locator("#ss-qa-chapters details").first().locator("summary").click();
-if(!(await page.locator("#ss-qa-chapters details").first().innerText()).includes("독립 수학 검증"))errors.push("Chapter detail missing mathematical review");
-await page.locator("#ss-qa-refresh").click();
-await page.waitForFunction(()=>document.querySelector("#ss-qa-meta")?.hidden===false);
-if(qaRequests<2)errors.push("QA Refresh did not request the latest report");
-
-if(await page.locator("#editor").isVisible())errors.push("SS switch must clear editor and credentials");
-await page.locator("#token").fill("mock-ss-token");
-await page.locator("#connect").click();
-await page.locator("#editor").waitFor({state:"visible"});
-if(await page.locator(".chapter").count()!==8)errors.push("SS catalog should show 8 chapters");
-await page.locator("#title-1").fill("Signals Overview");
-await page.locator("#description-1").fill("Updated introduction");
-await page.locator("#sub-1").fill("CT/DT Signals");
-await page.locator("#save").click();
-await page.waitForFunction(()=>document.querySelector("#status").textContent.includes("저장 완료"));
-if(writes.length!==2||writes[1].catalog.chapters[0].title!=="Signals Overview")errors.push("SS metadata save mismatch");
-await page.locator("#course-c").click();
-await page.locator("#ss-quality").waitFor({state:"hidden"});
-if(await page.locator("#ss-quality").isVisible())errors.push("QA dashboard should hide on C Programming");
-await page.locator("#course-ss").click();
-await page.locator("#ss-quality").waitFor({state:"visible"});
-await page.screenshot({path:"qa-studio-admin.png",fullPage:true});
-await browser.close();
-if(errors.length){console.error(errors.join("\n"));process.exit(1)}
-console.log("PASS: unified admin protected editor, C metadata, S&S metadata, repository switching, GitHub PUT payloads.");
+try{
+ const res=await page.goto("http://127.0.0.1:8765/",{waitUntil:"domcontentloaded"});
+ if(res?.status()!==200)errors.push("Home not served");
+ const header=page.locator("header.site-header");
+ if(!await header.count())errors.push("Studio home shared header missing");
+ if(await header.locator('a[href*="admin"]').count())errors.push("Admin link leaked on home header");
+ if(await header.locator('a[href*="progress"]').count())errors.push("C-only progress link leaked on home header");
+ if(!await header.locator("#lang").count()||!await header.locator("#theme").count())errors.push("Shared display controls missing");
+ const admin=await page.goto("http://127.0.0.1:8765/admin/",{waitUntil:"domcontentloaded"});
+ if(admin?.status()!==200)errors.push("/admin/ route missing");
+ await page.waitForFunction(()=>!!document.getElementById("admin-config-note"));
+ if(await page.locator("#admin-private").isVisible())errors.push("Unauthenticated manager UI exposed");
+ if(!await page.locator("#admin-private").evaluate(el=>el.inert))errors.push("Admin section not inert");
+ if(!await page.locator("#admin-config-note").isVisible())errors.push("Missing pending-configuration explanation");
+ if(await page.locator("#github-login").isVisible())errors.push("Login enabled before secure Worker config");
+ if(await page.locator("#token").count())errors.push("Legacy PAT input still present");
+ if(await page.locator("#studio-quality-cards .qa-course-card").count())errors.push("QA records fetched before authorization");
+ if(unauthCalls.length)errors.push("Unauthenticated API/QA calls: "+unauthCalls.join(", "));
+ await page.screenshot({path:"qa-studio-admin.png",fullPage:true});
+ const old=await page.goto("http://127.0.0.1:8765/c-programming/admin/",{waitUntil:"domcontentloaded"});
+ await page.waitForURL(/\/admin\/$/,{timeout:5000});
+ if(!page.url().endsWith("/admin/"))errors.push("Legacy C administrator page did not redirect");
+ if(await page.locator("#token").count())errors.push("Legacy PAT screen accessible through C admin");
+}finally{await browser.close()}
+console.log(JSON.stringify({status:errors.length?"FAIL":"PASS",checks:"home header, no admin links, admin gate, no PAT, no unauthorized fetch, C redirect",errors},null,2));
+if(errors.length)process.exitCode=1;
