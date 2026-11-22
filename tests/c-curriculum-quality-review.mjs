@@ -29,7 +29,7 @@ for(const c of units){
   check(optional.length===1&&optional[0]===6,"fileio-optional-sensor","Only sensor stage 6 is optional; terminal synthesis 7 remains core");
   check(practiceIds.length===7&&new Set(practiceIds).size===7,"fileio-practice-ids",practiceIds.join(","));
   check(html.includes("./core-labs/#write")&&html.includes("./core-labs/#read")&&html.includes("./core-labs/#student"),"fileio-3-intro-labs","Three introductory programs linked");
-  check(html.includes("./practice/#m1"),"fileio-M1-link","One-line copy M1 is discoverable");
+  check(html.includes("./practice/#m1")||read("c-programming/c-ss-shell.js").includes("./practice/#m1"),"fileio-M1-link","One-line copy M1 is discoverable through the grouped sidebar");
   result.units.push({id:c.id,slug,lessonStages:8,coreLessons:7,optionalLessons:1,practiceTasks:practiceIds.length,
    introductoryLabs:3,notes:["A separate HTML teaching engine; stage 6 is optional sensor analysis","Core-first navigation: stages 0-5,7"]});
   continue;
