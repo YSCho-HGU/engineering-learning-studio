@@ -10,7 +10,7 @@ if(!LABS.includes(lab))return;
 const $=id=>document.getElementById(id),canvases=[1,2,3].map(n=>$("ss-al-canvas-"+n));
 const state=lab==="beats"?{f1:220,delta:4,ratio:1}:
  lab==="amfm"?{mode:"am",fc:440,fm:8,depth:.65,beta:2.5}:
- {kind:"chirp",fs:4000,f0:300,f1:7300,tone:1500,T:2,pos:50,showFFT:"on",aliasGuide:"on",windowMs:"auto",playing:false};
+ {kind:"chirp",fs:4000,f0:300,f1:7300,tone:1500,T:2,pos:50,showFFT:"on",aliasGuide:"on",windowMs:"auto"};
 const initial=JSON.parse(JSON.stringify(state));
 const duration=lab==="sampling"?state.T:2;
 const language=window.ELSLanguage;
@@ -55,7 +55,7 @@ const dom=(tag,cls,text,parent)=>{
 };
 const clear=node=>node.replaceChildren();
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-let plotDirty=false,lastDraw=0,fftCache=null,playId=null,previousFrame=0,audioCtx=null,source=null,transportId=null,requestId=0;
+let plotDirty=false,lastDraw=0,fftCache=null,audioCtx=null,source=null,transportId=null,requestId=0;
 const audio={playing:false,offset:0,start:0,buffer:null,duration:duration,buttons:null,status:null,signal:"ct",error:""};
 function palette(){
  const c=getComputedStyle(document.documentElement),v=n=>c.getPropertyValue(n).trim();
@@ -247,14 +247,12 @@ function renderControls(){
   range(h,{key:"pos",en:"Observation time",ko:"관찰 시각",min:0,max:100,step:1,unit:"%",changed:()=>{
    if(audio.playing)seek(state.T*state.pos/100);else drawSoon();
   }});
-  const actions=dom("div","ss-al-control-buttons",null,h),play=dom("button",null,null,actions);
-  play.type="button";play.id="ss-extra-animate";play.textContent=txt(state.playing?"Pause sweep":"Play sweep",state.playing?"움직임 일시 정지":"시간 변화 재생",true);
+  const actions=dom("div","ss-al-control-buttons",null,h),play=dom("button","ss-al-primary",null,actions);
+  play.type="button";play.id="ss-extra-animate";
+  play.setAttribute("aria-label",txt("Play or pause the sampled alias sweep with synchronized sound and graphs","에일리어스 스윕 소리와 그래프를 동기화하여 재생 또는 일시정지",true));
   play.addEventListener("click",()=>{
-   if(!state.playing&&audio.playing)stopAudio(true);
-   state.playing=!state.playing;previousFrame=0;
-   play.textContent=txt(state.playing?"Pause sweep":"Play sweep",state.playing?"움직임 일시 정지":"시간 변화 재생",true);
-   if(state.playing)playId=requestAnimationFrame(animate);
-   else if(playId!==null){cancelAnimationFrame(playId);playId=null}
+   if(audio.playing&&audio.signal==="alias"){stopAudio(false);return}
+   startAudio("alias");
   });
  }
  if(lab==="sampling"){
@@ -601,6 +599,16 @@ function refreshAudio(){
  if(!audio.buttons)return;
  const {play,pause,stop,aliasPlay}=audio.buttons,active=audio.playing?audio.signal:"";
  if(lab==="sampling"){
+  const sweep=$("ss-extra-animate");
+  if(sweep){
+   const running=audio.playing&&audio.signal==="alias";
+   sweep.textContent=running?
+     txt("Ⅱ Pause sweep","Ⅱ 스윕 일시정지",true):
+     txt("▶ Play sweep · alias","▶ 스윕 재생 · 에일리어스",true);
+   sweep.setAttribute("aria-pressed",String(running));
+  }
+ }
+ if(lab==="sampling"){
   const d=$("ss-al-audio-values");
   if(d){
    if(state.kind==="sine"){
@@ -661,14 +669,7 @@ function stopAudio(reset=true){
 function change(){
  fftCache=null;
  stopAudio(true);audio.buffer=null;
- if(lab==="sampling"){
-  audio.duration=state.T;
-  if(state.playing){
-   state.playing=false;
-   if(playId!==null)cancelAnimationFrame(playId);
-   playId=null;renderControls();
-  }
- }
+ if(lab==="sampling")audio.duration=state.T;
  if(lab==="amfm"||lab==="sampling")renderFormula();
  drawSoon();
 }
@@ -723,11 +724,6 @@ async function startAudio(choice=null){
  audio.error="";
  if(lab==="sampling"){
   if(choice!=="ct"&&choice!=="alias")return;
-  if(state.playing){
-   state.playing=false;
-   if(playId!==null)cancelAnimationFrame(playId);
-   playId=null;renderControls();
-  }
   if(audio.playing&&audio.signal===choice)return;
   if(audio.signal!==choice){
    const saved=audioPosition();
@@ -791,14 +787,6 @@ function seek(seconds){
  else refreshAudio();
  drawSoon();
 }
-function animate(now){
- if(!state.playing)return;
- if(!previousFrame)previousFrame=now;
- const dt=clamp((now-previousFrame)/1000,0,.1);previousFrame=now;
- state.pos=(state.pos+dt/state.T*100)%100;
- const slider=$("ss-extra-pos");if(slider){slider.value=state.pos;slider.parentElement.querySelector("output").textContent=Math.round(state.pos)+"%"}
- if(now-lastDraw>35)drawSoon();playId=requestAnimationFrame(animate);
-}
 function redraw(){
  plotDirty=false;lastDraw=performance.now();measureValues();
  if(lab==="beats")drawBeats();else if(lab==="amfm")drawAMFM();else drawSampling();
@@ -823,9 +811,9 @@ function init(){
   $("ss-al-panel-toggle").setAttribute("aria-expanded",String(!v));displayNames();requestAnimationFrame(drawSoon);
  });
  $("ss-al-reset").addEventListener("click",()=>{
-  stopAudio(true);if(playId!==null){cancelAnimationFrame(playId);playId=null}
+  stopAudio(true);
   Object.keys(initial).forEach(key=>state[key]=initial[key]);fftCache=null;audio.buffer=null;audio.offset=0;audio.duration=lab==="sampling"?state.T:2;audio.signal="ct";audio.error="";
-  previousFrame=0;displayNames();renderControls();drawSoon();
+  displayNames();renderControls();drawSoon();
  });
  {
   $("ss-al-seek").addEventListener("input",e=>seek(Number(e.target.value)/1000*audio.duration));
@@ -845,11 +833,10 @@ function init(){
  window.addEventListener("els:themechange",drawSoon);window.addEventListener("resize",drawSoon);
  if(window.ResizeObserver)new window.ResizeObserver(drawSoon).observe($("ss-al-charts"));
  document.addEventListener("visibilitychange",()=>{
-  if(document.hidden){stopAudio(true);if(lab==="sampling"){state.playing=false;if(playId!==null)cancelAnimationFrame(playId);playId=null;renderControls()}}
+  if(document.hidden)stopAudio(true);
  });
  window.addEventListener("pagehide",()=>{
   stopAudio(true);
-  if(playId!==null)cancelAnimationFrame(playId);
  });
  drawSoon();
 }
