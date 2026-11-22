@@ -334,7 +334,7 @@ function show(i){
  $("activity-note").textContent=ui("학습 활동 표시이며, 퀴즈 정답이나 실제 C 컴파일 성공을 의미하지 않습니다.","This activity marker does not indicate a correct quiz answer or successful C compilation.");
 }
 function init(){
- $("hero-title").textContent=D.title+" Learning Journey";
+ $("hero-title").textContent=D.title;
  richText($("hero-summary"),D.summary);
  $("hero-count").textContent=(hasOptional?coreCount+" Core + "+(total-coreCount)+" Optional · ":total+" Learning Steps · ")+D.book;
  const heading=document.querySelector(".route-heading span");if(heading)heading.textContent=total+" Learning Steps / "+D.practice.length+" Coding Challenges";
