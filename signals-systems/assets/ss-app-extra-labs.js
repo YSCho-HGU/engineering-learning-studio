@@ -419,14 +419,13 @@ function renderAliasSummary(){
  const aliased=fi>state.fs/2;
  const crossings=nyquistCrossings();
  const times=crossings.length?crossings.map(t=>t.toFixed(2)+" s").join(", "):txt("none","없음",true);
- const heading=aliased?txt("ALIASING at selected time","선택 시각: 에일리어싱",true):txt("Below Nyquist at selected time","선택 시각: 나이퀴스트 이하",true);
- const direction=signed<-.001?txt("reversed phase rotation","위상 회전 방향 반전",true):
-   txt("normal phase rotation","정방향 위상 회전",true);
+ const heading=aliased?txt("ALIASING","에일리어싱",true):txt("No alias at t","선택 시각 무에일리어싱",true);
+ const direction=signed<-.001?txt("reverse phase","위상 반전",true):txt("forward phase","정방향 위상",true);
  el.dataset.aliased=String(aliased);
  el.textContent=heading+"  ·  t="+t.toFixed(2)+" s  ·  "+
-  txt("CT frequency","CT 주파수",true)+" "+fi.toFixed(1)+" Hz  →  "+
-  txt("signed alias","부호 있는 에일리어스",true)+" "+signed.toFixed(1)+" Hz ("+direction+")  ·  "+
-  txt("Nyquist crossings","나이퀴스트 교차",true)+": "+times;
+   "fᵢ="+fi.toFixed(1)+" Hz → fₐ="+signed.toFixed(1)+" Hz ("+direction+")  ·  "+
+   "fₙ="+(state.fs/2).toFixed(1)+" Hz  ·  "+
+   txt("crossings","교차 시각",true)+": "+times;
 }
 function drawSampling(){
  const T=state.T,center=T*state.pos/100,span=Math.min(Number(state.windowMs)/1000,T);
