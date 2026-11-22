@@ -53,6 +53,10 @@ function init(){
  language.append(icon,select);actions.append(language);
  const theme=el("label","ss-common-theme"),themeSelect=el("select","");
  themeSelect.id="theme";themeSelect.setAttribute("data-els-theme-picker","");themeSelect.setAttribute("aria-label","Theme");
+ const choices=window.ELSTheme?.choices||[["white-clean","White Clean"],["warm-neutral","Warm Neutral"],["warm-dark","Warm Dark"],["navy-dark","Navy Dark"],["neutral-dark","Neutral Dark"]];
+ choices.forEach(([value,label])=>{const option=el("option","",label);option.value=value;themeSelect.append(option)});
+ themeSelect.value=window.ELSTheme?.get?.()||"neutral-dark";
+ themeSelect.addEventListener("change",()=>window.ELSTheme?.set?.(themeSelect.value));
  theme.append(themeSelect);actions.append(theme);header.append(actions);
  oldHeader.replaceWith(header);
  // Move original sidebar, do not clone it: progress, event handlers and lesson IDs remain unchanged.
