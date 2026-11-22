@@ -229,9 +229,9 @@ function signalTime(){return lab==="sampling"?state.T:2}
 function drawBeats(){
  let C=canvasContext(canvases[0]);
  if(C){
-  const max=1+state.ratio,B=axes(C,{xmin:0,xmax:2,ymin:-2.25,ymax:2.25,xlabel:"t (s)",ylabel:"x(t)"});
+  const B=axes(C,{xmin:0,xmax:2,ymin:-2.25,ymax:2.25,xlabel:"t (s)",ylabel:"x(t)"});
   const waveform=[],top=[],bottom=[];
-  for(let i=0;i<=2200;i++){const t=2*i/2200,e=envelope(t);waveform.push([t,beatsAt(t)]);top.push([t,e]);bottom.push([t,-e])}
+  for(let i=0;i<=3600;i++){const t=2*i/3600,e=envelope(t);waveform.push([t,beatsAt(t)]);top.push([t,e]);bottom.push([t,-e])}
   line(C,B,waveform,C.pal.line,1.3);line(C,B,top,C.pal.alt,2);line(C,B,bottom,C.pal.alt,1.5,[5,5]);
   legend(C,[["x(t)",C.pal.line],["± envelope",C.pal.alt]]);
   marker(C,B,(audioPosition()%2),beatsAt(audioPosition()%2),C.pal.alt);
@@ -252,14 +252,14 @@ function drawBeats(){
   for(const [f,a,color] of [[state.f1,1,C.pal.line],[state.f1+state.delta,state.ratio,C.pal.alt]]){
    c.strokeStyle=color;c.lineWidth=4;c.beginPath();c.moveTo(B.x(f),B.y(0));c.lineTo(B.x(f),B.y(a));c.stroke();circle(c,B.x(f),B.y(a),color,4);
   }
-  if(state.delta===0)hint(C,"Two frequencies coincide");
+  if(state.delta===0)hint(C,"Two spectral components coincide");
  }
  $("ss-al-note-1").textContent=txt("Waveform and amplitude envelope; audio-clock cursor tracks playback.","파형과 진폭 포락선입니다. 재생 마커는 오디오 시간과 동기화됩니다.");
  $("ss-al-note-2").textContent=txt("Zoomed view exposes the sum of two rapidly oscillating tones.","확대 화면에서 두 고주파 정현파의 합성을 확인합니다.");
  $("ss-al-note-3").textContent=txt("Theoretical positive-frequency components (not a measured FFT).","이론적인 양의 주파수 성분입니다. 측정 FFT가 아닙니다.");
 }
 function marker(C,B,t,y,color){
- if(t<B.r.t||!Number.isFinite(t))return;
+ if(!Number.isFinite(t))return;
  const x=B.x(t),yy=B.y(y);if(x<B.r.l||x>B.r.right)return;
  C.ctx.save();C.ctx.strokeStyle=color;C.ctx.lineWidth=1.5;C.ctx.setLineDash([4,5]);
  C.ctx.beginPath();C.ctx.moveTo(x,B.r.t);C.ctx.lineTo(x,B.r.b);C.ctx.stroke();C.ctx.setLineDash([]);
