@@ -238,7 +238,7 @@ function courseVisual(course,mode){
  const head=element("div","course-preview-head");
  const title=element("span","course-preview-title",translate(course.id==="ss"?"Signal → System → Response":"Code → Output",
   course.id==="ss"?"신호 → 시스템 → 응답":"코드 → 출력",mode).replace(/\n/g," · "));
- const kicker=element("span","course-preview-kicker",translate("Explore visually","시각적으로 탐색",mode).replace(/\n/g," · "));
+ const kicker=element("span","course-preview-kicker",translate("Visual preview","시각적 미리보기",mode).replace(/\n/g," · "));
  head.append(title,kicker);pane.append(head);
  if(course.id==="ss"){
   const diagram=element("div","ss-diagram");
