@@ -71,6 +71,10 @@ ok((fileio.match(/<section class="stage" data-stage="/g)||[]).length===8,"File I
 ok((labs.match(/data-lab-link=/g)||[]).length===3,"File I/O has exactly three standalone guided labs");
 ok((editor.match(/id:"(?:P[1-6]|M1)"/g)||[]).length===7,"File I/O has 7 independent coding challenges");
 ok(editor.includes("tasksEN=")&&editor.includes("langText("),"File I/O bilingual challenge descriptions");
+const coreModel=read("c-programming/file-io/practice/core-io-explorer.js");
+const bufferModel=read("c-programming/file-io/practice/buffer-explorer.js");
+ok(!coreModel.includes('first.includes("PRACTICE')&&coreModel.includes('button.active[data-task]'),"P1/P2 explorer must not depend on translated page heading");
+ok(bufferModel.includes('button.active[data-task]'),"M1 buffer model must use stable task indices");
 ok(shell.includes('makeGroup(toc,"labs"')&&shell.includes('makeGroup(toc,"challenges"'),"File I/O groups separated");
 ok(fileio.includes('class="sensor-learning-flow"')&&fileio.includes('class="sensor-advanced-optional"'),"progressive advanced sensor disclosure");
 const metrics={published:published.length,dataDrivenLessons:stages,coreLessons:core,optionalLessons:optional,dataDrivenChallenges:tasks,fileioChallenges:7,fileioGuidedLabs:3};
