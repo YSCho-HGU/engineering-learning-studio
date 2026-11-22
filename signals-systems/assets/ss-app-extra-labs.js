@@ -201,7 +201,7 @@ function renderFormula(){
 }
 function renderControls(){
  const h=$("ss-al-control-fields"),a=$("ss-al-audio");clear(h);clear(a);
- a.hidden=false;
+ a.hidden=false;a.dataset.kind=lab;
  if(lab==="beats"){
   range(h,{key:"f1",en:"First frequency f₁",ko:"첫 번째 주파수 f₁",min:150,max:550,step:10,unit:" Hz"});
   range(h,{key:"delta",en:"Frequency difference Δf",ko:"주파수 차이 Δf",min:0,max:16,step:.5,digits:1,unit:" Hz"});
@@ -284,6 +284,7 @@ function renderControls(){
   }
   const status=dom("p","ss-al-audio-status",null,a);status.setAttribute("role","status");
   audio.buttons={play,pause,stop,aliasPlay};audio.status=status;
+  if(lab==="sampling")dom("div","ss-al-audio-values",null,a).id="ss-al-audio-values";
   if(lab!=="sampling")play.addEventListener("click",startAudio);
   pause.addEventListener("click",()=>stopAudio(false));
   stop.addEventListener("click",()=>stopAudio(true));
@@ -590,6 +591,25 @@ function updateTransport(){
 function refreshAudio(){
  if(!audio.buttons)return;
  const {play,pause,stop,aliasPlay}=audio.buttons,active=audio.playing?audio.signal:"";
+ if(lab==="sampling"){
+  const d=$("ss-al-audio-values");
+  if(d){
+   const m=audio.pitchScale;
+   if(state.kind==="sine"){
+    const signed=foldedSigned(state.tone,state.fs),alias=Math.abs(signed);
+    d.textContent=txt(
+     "CT "+state.tone+" Hz → listen "+(state.tone*m)+" Hz · Alias "+alias+" Hz → listen "+(alias*m).toFixed(0)+" Hz. They give identical x[n] at fₛ="+state.fs+" Hz.",
+     "CT "+state.tone+"Hz → 청취 "+(state.tone*m)+"Hz · 에일리어스 "+alias+"Hz → 청취 "+(alias*m).toFixed(0)+"Hz. fₛ="+state.fs+"Hz에서는 x[n]이 일치합니다."
+    );
+   }else{
+    const maxAlias=state.fs/2;
+    d.textContent=txt(
+     "CT chirp "+state.f0+"–"+state.f1+" Hz; listen at ×"+m+" pitch. The alias guide is a sample-consistent illustration, NOT unique reconstruction.",
+     "CT 처프 "+state.f0+"–"+state.f1+"Hz를 ×"+m+" 음정으로 듣습니다. 에일리어스 안내 파형은 표본에 일치하는 예시이며 유일한 복원 신호가 아닙니다."
+    );
+   }
+  }
+ }
  if(lab==="sampling"){
   play.textContent=txt("▶ Original CT","▶ 원래 CT 소리",true);
   play.disabled=active==="ct";
