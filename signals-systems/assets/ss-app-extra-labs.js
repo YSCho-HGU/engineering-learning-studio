@@ -152,7 +152,7 @@ function renderFormula(){
  if(window.katex?.render){try{window.katex.render(math.tex,f,{throwOnError:true,displayMode:false,output:"htmlAndMathml",strict:"ignore"});f.dataset.mathRendered="katex"}catch(e){}}
 }
 function renderControls(){
- const h=$("ss-al-control-fields");clear(h),a=$("ss-al-audio");clear(a);
+ const h=$("ss-al-control-fields"),a=$("ss-al-audio");clear(h);clear(a);
  a.hidden=lab==="sampling";
  if(lab==="beats"){
   range(h,{key:"f1",en:"First frequency f₁",ko:"첫 번째 주파수 f₁",min:150,max:550,step:10,unit:" Hz"});
