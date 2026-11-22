@@ -17,9 +17,11 @@ function setSaved(v){try{localStorage.setItem(STORE,v?"1":"0")}catch(_){}}
 function el(tag,className,text){const n=document.createElement(tag);if(className)n.className=className;if(text!=null)n.textContent=text;return n}
 function link(label,href){const a=el("a","",label);a.href=href;return a}
 function init(){
- const wrap=document.querySelector("body > .wrap");
+ const fileio=course[0]==="file-io";
+ const wrap=fileio?document.querySelector("body > .shell"):document.querySelector("body > .wrap");
  const oldHeader=document.querySelector("body > header");
- const layout=wrap?.querySelector(".layout"),aside=layout?.querySelector(".side");
+ const layout=fileio?wrap:wrap?.querySelector(".layout");
+ const aside=fileio?wrap?.querySelector(".sidebar"):layout?.querySelector(".side");
  if(!wrap||!layout||!aside||!oldHeader)return;
  const header=el("header","ss-common-header c-ss-header");
  header.setAttribute("aria-label","Engineering Learning Studio navigation");
@@ -37,7 +39,7 @@ function init(){
   let n=chapterDelta!=null?el("a","ss-chapter-arrow",symbol):el("button","ss-chapter-arrow",symbol);
   n.setAttribute("aria-label",title);n.title=title;
   if(chapterDelta!=null){let index=current+chapterDelta;if(index>=0&&index<chapters.length)n.href="../"+chapters[index][0]+"/";else{n.setAttribute("aria-disabled","true");n.tabIndex=-1}}
-  else {n.type="button";n.dataset.direction=String(sectionDelta);n.addEventListener("click",()=>{const buttons=[...document.querySelectorAll("#lesson-nav button[data-lesson]")];const pos=buttons.findIndex(b=>b.getAttribute("aria-current")==="step");buttons[pos+sectionDelta]?.click();refreshArrows()})}
+  else {n.type="button";n.dataset.direction=String(sectionDelta);n.addEventListener("click",()=>{const buttons=[...document.querySelectorAll(course[0]==="file-io"?"#lesson-nav button[data-nav]":"#lesson-nav button[data-lesson]")];const pos=buttons.findIndex(b=>course[0]==="file-io"?b.classList.contains("current"):b.getAttribute("aria-current")==="step");buttons[pos+sectionDelta]?.click();refreshArrows()})}
   arrows.append(n);return n;
  }
  arrow("⇤","Previous chapter",-1,null);
@@ -59,10 +61,11 @@ function init(){
  const sideLabel=el("span","c-sidebar-caption","Chapter "+course[1]+" · "+course[2]);
  sideRow.append(toggle,sideLabel);aside.prepend(sideRow);aside.classList.add("c-ss-sidebar");
  const workspace=el("div","c-ss-workspace");wrap.classList.add("c-ss-content");
+ if(fileio)wrap.classList.add("c-fileio-workspace");
  wrap.parentNode.insertBefore(shell,wrap);shell.append(aside,workspace);workspace.append(wrap);
  function collapsed(v){root.dataset.cSidebar=v?"collapsed":"expanded";toggle.textContent=v?"≫":"≪";toggle.setAttribute("aria-label",v?"Expand lesson navigation":"Collapse lesson navigation");toggle.setAttribute("aria-expanded",String(!v));setSaved(v)}
  toggle.addEventListener("click",()=>collapsed(root.dataset.cSidebar!=="collapsed"));collapsed(getSaved());
- const roadmap=[...wrap.querySelectorAll(".route")].find(n=>!n.closest("details"));
+ const roadmap=fileio?null:[...wrap.querySelectorAll(".route")].find(n=>!n.closest("details"));
  if(roadmap && !roadmap.closest("details")){
   const group=el("details","course-phase-details c-ss-roadmap");
   group.append(el("summary","","Three-phase learning roadmap · 학습 로드맵"));
@@ -70,13 +73,19 @@ function init(){
   group.append(roadmap);wrap.insertBefore(group,layout);
  }
  // The old per-chapter links still exist in the document body, while navigation is centralized in the header.
+ if(fileio){
+  const intro=document.querySelector("body > .course-header");
+  const route=document.querySelector("body > .learning-route");
+  if(intro){intro.classList.add("c-ss-intro");workspace.insertBefore(intro,wrap)}
+  if(route){const group=el("details","course-phase-details c-fileio-roadmap");group.append(el("summary","","Learning roadmap · 학습 로드맵"));group.append(route);workspace.insertBefore(group,wrap)}
+ }
  const crumb=wrap.querySelector(".crumb");if(crumb)crumb.remove();
  const hero=wrap.querySelector(".hero");if(hero)hero.classList.add("c-ss-intro");
  const languageAPI=window.ELSLanguage;if(languageAPI?.bindSelect)languageAPI.bindSelect(select);
  else select.addEventListener("change",()=>{try{localStorage.setItem("els-language",select.value)}catch(_){}location.reload()});
- function refreshArrows(){const buttons=[...document.querySelectorAll("#lesson-nav button[data-lesson]")];const idx=buttons.findIndex(b=>b.getAttribute("aria-current")==="step");previous.disabled=idx<=0;next.disabled=idx<0||idx>=buttons.length-1}
+ function refreshArrows(){const buttons=[...document.querySelectorAll(fileio?"#lesson-nav button[data-nav]":"#lesson-nav button[data-lesson]")];const idx=buttons.findIndex(b=>fileio?b.classList.contains("current"):b.getAttribute("aria-current")==="step");previous.disabled=idx<=0;next.disabled=idx<0||idx>=buttons.length-1}
  const nav=aside.querySelector("#lesson-nav");
- if(nav){new MutationObserver(refreshArrows).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:["aria-current"]});nav.addEventListener("click",()=>requestAnimationFrame(refreshArrows))}
+ if(nav){new MutationObserver(refreshArrows).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:["aria-current","class"]});nav.addEventListener("click",()=>requestAnimationFrame(refreshArrows))}
  refreshArrows();
  document.addEventListener("pointerdown",e=>{if(menu.open&&!menu.contains(e.target))menu.open=false});
  window.ELSCourseShell={refreshArrows,chapters:chapters.map(x=>x[0])};
