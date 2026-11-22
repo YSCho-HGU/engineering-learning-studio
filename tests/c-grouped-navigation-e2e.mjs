@@ -85,6 +85,14 @@ try{
     const theme=page.locator('[data-els-theme-picker]').last();
     assert(await theme.count()===1,"theme selector missing");
     assert(await theme.locator("option").count()===5,"five theme options missing");
+    for(const paletteChoice of ["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark"]){
+     await theme.selectOption(paletteChoice);
+     const applied=await page.evaluate(()=>document.documentElement.dataset.elsTheme);
+     assert(applied===paletteChoice,"theme switch failed: "+paletteChoice+" applied "+applied);
+     const stored=await page.evaluate(()=>localStorage.getItem("els-theme-v2"));
+     assert(stored===paletteChoice,"theme preference not persisted: "+paletteChoice);
+     assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+8)),"overflow after "+paletteChoice+" theme");
+    }
     const saved=await page.evaluate(()=>localStorage.getItem("qa-preserve-unknown"));
     assert(saved==="kept","unrelated local storage changed");
     const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+8);
