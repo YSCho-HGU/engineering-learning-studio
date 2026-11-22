@@ -69,8 +69,8 @@ document.querySelectorAll("[data-grade]").forEach(btn=>btn.onclick=()=>{const n=
 const good=picked.value===keys[n];box.classList.toggle("incorrect",!good);box.textContent=(good?"정답입니다. ":"다시 생각해 보세요. ")+explanations[n];
 if(good){done.add(n);markConcept(n);persist();navigate(current,false);}});
 $("clear-progress").onclick=()=>{if(!confirm("현재 브라우저의 학습 진도를 초기화할까요?"))return;done.clear();conceptDone.clear();try{localStorage.setItem(conceptKey,"[]")}catch(e){}updateConceptStatus();persist();document.querySelectorAll(".answer").forEach(el=>{el.textContent="";el.classList.remove("incorrect")});document.querySelectorAll('input[type="radio"]').forEach(el=>el.checked=false);navigate(0)};
-$("theme-button").onclick=()=>{if(window.ELSTheme){const next=window.ELSTheme.get()==="warm-neutral"?"neutral-dark":"warm-neutral";window.ELSTheme.set(next);$("theme-button").setAttribute("aria-pressed",String(next!=="warm-neutral"))}};
-window.addEventListener("els:themechange",e=>{$("theme-button").setAttribute("aria-pressed",String(e.detail?.scheme==="dark"))});
+if($("theme-button"))$("theme-button").onclick=()=>{if(window.ELSTheme){const next=window.ELSTheme.get()==="warm-neutral"?"neutral-dark":"warm-neutral";window.ELSTheme.set(next);$("theme-button")?.setAttribute("aria-pressed",String(next!=="warm-neutral"))}};
+window.addEventListener("els:themechange",e=>{$("theme-button")?.setAttribute("aria-pressed",String(e.detail?.scheme==="dark"))});
 $("end-process").onclick=()=>{$("memory-value").textContent="(program ended)";$("memory-msg").textContent="실행 중 변수는 사라졌지만, scores.txt 데이터는 그대로 남습니다."};
 $("start-process").onclick=()=>{$("memory-value").textContent="score = 0.0 (new run)";$("memory-msg").textContent="새 실행의 변수는 새 상태로 시작합니다. 파일 데이터는 다시 읽어올 수 있습니다."};
 $("stream-target").onchange=()=>{const data={
