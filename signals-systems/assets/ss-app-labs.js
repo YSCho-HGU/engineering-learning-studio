@@ -433,6 +433,11 @@ function animate(now){
 function onVisibility(){if(document.hidden){stopAudio();if(lab==="helix"&&state.playing){state.playing=false;cancelAnimationFrame(animationId);animationId=null;previousTime=0;renderControls()}}}
 function init(){
  renderHeader();plotTitles();renderControls();scheduleDraw();
+ const at=MODES.indexOf(lab),prev=$("ss-al-prev-lab"),next=$("ss-al-next-lab");
+ prev.disabled=at===0;next.disabled=at===MODES.length-1;
+ prev.setAttribute("aria-disabled",String(prev.disabled));next.setAttribute("aria-disabled",String(next.disabled));
+ prev.addEventListener("click",()=>{if(at>0)location.href="./applications-lab.html?lab="+MODES[at-1]});
+ next.addEventListener("click",()=>{if(at<MODES.length-1)location.href="./applications-lab.html?lab="+MODES[at+1]});
  const toggleFocus=()=>{
   const root=$("ss-al-root"),v=!root.classList.contains("focus");root.classList.toggle("focus",v);
   $("ss-al-focus").setAttribute("aria-pressed",String(v));
