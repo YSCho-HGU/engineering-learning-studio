@@ -139,3 +139,9 @@ button:disabled{opacity:.55;cursor:default}
 
 /* Keep both harmonic plots side by side on tablets; stack only where axes become too narrow. */
 @media(max-width:680px){.ss-al-charts{grid-template-columns:minmax(0,1fr)}}
+
+/* Make supporting plots tall enough for labels and phase/instantaneous-frequency readout on phones. */
+@media(max-width:760px){
+ .ss-al-charts[data-kind=chirp] .ss-al-plot:not(:first-child) canvas,
+ .ss-al-charts[data-kind=helix] .ss-al-plot:not(:first-child) canvas{height:clamp(265px,36vh,390px)}
+}
