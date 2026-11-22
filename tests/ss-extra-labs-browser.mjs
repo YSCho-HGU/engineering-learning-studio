@@ -39,6 +39,13 @@ for(const lab of ["beats","amfm","sampling"]){
   if(lab==="sampling"){
    const alias=await page.locator("#ss-al-metrics .ss-al-metric-value").last().innerText();
    if(!almost(parseFloat(alias),11))throw Error("Initial chirp folded alias should be 11 Hz at t=1 s, got "+alias);
+   // At f_i=70 Hz (about t=1.216 s), fs=70 Hz gives a locally folded frequency of zero.
+   await page.locator("#ss-extra-pos").evaluate(el=>{el.value="61";el.dispatchEvent(new Event("input",{bubbles:true}))});
+   await page.waitForTimeout(85);
+   const zeroFold=await page.locator("#ss-al-metrics .ss-al-metric-value").last().innerText();
+   if(!almost(parseFloat(zeroFold),.22,.5))throw Error("Chirp should fold close to zero around f_i=fs, got "+zeroFold);
+   await page.locator("#ss-extra-pos").evaluate(el=>{el.value="50";el.dispatchEvent(new Event("input",{bubbles:true}))});
+   await page.waitForTimeout(75);
    await page.locator("#ss-extra-fs-number").fill("50");
    await page.locator("#ss-extra-fs-number").dispatchEvent("change");
    await page.waitForTimeout(90);
