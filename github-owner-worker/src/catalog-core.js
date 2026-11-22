@@ -12,7 +12,7 @@ function isDeepStrictEqual(a,b){return JSON.stringify(canonical(a))===JSON.strin
 
 export const COURSES=Object.freeze({
  c:Object.freeze({repo:"YSCho-HGU/engineering-learning-studio",path:"c-programming/course-catalog.json"}),
- ss:Object.freeze({repo:"YSCho-HGU/signals-systems-visual-lab",path:"course-catalog.json"})
+ ss:Object.freeze({repo:"YSCho-HGU/engineering-learning-studio",path:"signals-systems/course-catalog.json"})
 });
 export const ADMIN_EMAIL="yscho@handong.edu";
 export const ADMIN_ORIGIN="https://yscho-hgu.github.io";
@@ -64,7 +64,7 @@ export function validateCatalog(base,next,course){
 export function publishedPagePath(course,chapter){
  if(course==="ss"){
   if(!/^[1-8]$/.test(String(chapter.id)))throw new HttpError(400,"잘못된 Signals Chapter입니다.");
-  return "index.html";
+  return "signals-systems/chapter"+String(chapter.id)+".html";
  }
  if(!/^\.\/[a-z0-9-]+\/$/.test(chapter.url||""))throw new HttpError(400,"학습 페이지 경로가 올바르지 않습니다.");
  return "c-programming/"+chapter.url.slice(2)+"index.html";
