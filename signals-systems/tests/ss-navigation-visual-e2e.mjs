@@ -40,7 +40,7 @@ try{
    const [side,buttons,badge]=selectors[ch];
    try{
     await page.locator(buttons).first().waitFor({state:'visible',timeout:25000});
-    await page.locator('.ss-side-toggle').waitFor({state:'visible',timeout:12000});
+    await page.locator('.ss-layout-sidebar .ss-side-toggle').first().waitFor({state:'visible',timeout:12000});
     const before=await page.evaluate(({side,buttons,badge})=>{
      const el=document.querySelector(side),button=document.querySelector(buttons),num=document.querySelector(badge);
      const panel=el?.parentElement?.querySelector(':scope > main, :scope > .ss7-workspace, :scope > .ss8-workspace, :scope > .ss-found-four-step');
@@ -167,7 +167,7 @@ try{
     record(before.font>=12&&before.font<=14,'ch'+ch+'-'+width+'-nav-font',String(before.font));
     record(before.overflow<15,'ch'+ch+'-'+width+'-no-horizontal-overflow',String(before.overflow));
     record(contrast(before.foreground,before.background)>=4.5,'ch'+ch+'-'+width+'-selected-contrast',String(contrast(before.foreground,before.background).toFixed(2)));
-    await page.locator('.ss-side-toggle').click();
+    await page.locator('.ss-layout-sidebar .ss-side-toggle').first().click();
     const after=await page.evaluate(({side})=>{
      const el=document.querySelector(side);
      return {width:el.getBoundingClientRect().width,grid:getComputedStyle(el.parentElement).gridTemplateColumns};
@@ -212,7 +212,7 @@ try{
    };
    return {
     theme:document.documentElement.dataset.elsTheme,
-    node:sample('#map-view .tm-node small'),
+    node:sample('#map-view .tm-node small, #map-view .tm-node'),
     edge:sample('#map-view .tm-edge-btn'),
     description:sample('#map-view .tm-sub'),
     control:sample('#map-view .tm-control label'),
