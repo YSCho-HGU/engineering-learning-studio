@@ -521,10 +521,22 @@ function stopAudio(reset=true){
 }
 function invalidateAudio(){
  if(lab==="helix")return;
+ // Editing frequency parameters invalidates the sound, not the student's
+ // separately selected observation time.
+ const selected=lab==="chirp"?state.pos:null;
  stopAudio(true);
  audioState.buffer=null;
  audioState.duration=lab==="harmonics"?2:state.T;
  setAudioPosition(0);
+ if(selected!==null){
+  state.pos=selected;
+  const slider=$("ctl-pos");
+  if(slider){
+   slider.value=String(selected);
+   const out=slider.parentElement.querySelector("output");
+   if(out)out.textContent=Math.round(selected)+"%";
+  }
+ }
 }
 function startAudioSource(offset){
  if(!audioContext||!audioState.buffer)return false;
@@ -639,6 +651,7 @@ function init(){
    audioState.buffer=null;
    audioState.duration=lab==="harmonics"?2:state.T;
    setAudioPosition(0);
+   if(lab==="chirp")state.pos=initial.pos;
   }
   renderControls();renderHeader();scheduleDraw();
  });
