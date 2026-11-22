@@ -8,12 +8,22 @@ for(const name of ["harmonics","chirp","helix"]){
  const page=await browser.newPage({viewport:{width:1366,height:768}});
  const errors=[];page.on("pageerror",e=>errors.push(e.message));
  try{
-  const response=await page.goto(base+"/signals-systems/applications-lab.html?lab="+name,{waitUntil:"networkidle",timeout:25000});
+  const response=await page.goto(base+"/signals-systems/applications-lab.html?lab="+name,{waitUntil:"domcontentloaded",timeout:25000});
   if(!response?.ok())throw Error("HTTP "+response?.status());
   await page.locator("#ss-al-metrics .ss-al-metric").first().waitFor();
   if(await page.locator("#ss-al-metrics .ss-al-metric").count()!==4)throw Error("Missing metrics");
+  const math=page.locator("#ss-al-equation");
+  await math.locator("math,.katex").first().waitFor({timeout:15000});
+  const rendered=await math.getAttribute("data-math-rendered");
+  if(!["katex","mathml"].includes(rendered))throw Error("Equation not rendered");
+  const tex=await math.getAttribute("data-tex");
+  if(!tex||!tex.includes("\\displaystyle"))throw Error("LaTeX source missing");
+  const formulaTagCount=await math.locator("math").count();
+  if(formulaTagCount<1)throw Error("Accessible MathML missing");
   const canvas=await page.locator(".ss-al-plot:not([hidden]) canvas").evaluateAll(nodes=>nodes.map(c=>[c.width,c.height]));
+  const canvasCss=await page.locator(".ss-al-plot:not([hidden]) canvas").evaluateAll(nodes=>nodes.map(c=>[Math.round(c.getBoundingClientRect().width),Math.round(c.getBoundingClientRect().height)]));
   if(canvas.length<(name==="harmonics"?2:3)||canvas.some(([w,h])=>w<250||h<175))throw Error("Plots too small: "+JSON.stringify(canvas));
+  if(canvasCss.some(([w,h])=>w<240||h<260))throw Error("Visible graphs too small: "+JSON.stringify(canvasCss));
   await page.screenshot({path:"tests/screenshots/"+name+"-desktop.png"});
   const old=await page.locator("#ss-al-metrics .ss-al-metric-value").first().innerText();
   await page.locator("#ss-al-control-fields input[type=range]").first().evaluate((slider,value)=>{slider.value=value;slider.dispatchEvent(new Event("input",{bubbles:true}))},name==="harmonics"?"440":name==="chirp"?"360":"2.0");
@@ -40,9 +50,13 @@ for(const name of ["harmonics","chirp","helix"]){
   await page.setViewportSize({width:390,height:844});await page.waitForTimeout(100);
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
   if(overflow>6)throw Error("Mobile horizontal overflow "+overflow+"px");
+  const equationOverflow=await math.evaluate(el=>el.scrollWidth-el.clientWidth);
+  if(equationOverflow>4)throw Error("Mobile equation clipped: "+equationOverflow+"px");
+  const mobilePlots=await page.locator(".ss-al-plot:not([hidden]) canvas").evaluateAll(nodes=>nodes.map(c=>[Math.round(c.getBoundingClientRect().width),Math.round(c.getBoundingClientRect().height)]));
+  if(mobilePlots.some(([w,h])=>w<260||h<260))throw Error("Mobile plot too small: "+JSON.stringify(mobilePlots));
   await page.screenshot({path:"tests/screenshots/"+name+"-mobile.png",fullPage:true});
   if(errors.length)throw Error(errors.join("; "));
-  console.log("PASS "+name+" "+JSON.stringify({canvas,overflow}));
+  console.log("PASS "+name+" "+JSON.stringify({canvas,canvasCss,rendered,formulaTagCount,overflow,equationOverflow,mobilePlots}));
  }catch(e){failures++;console.error("FAIL "+name+": "+String(e.message||e))}
  await page.close();
 }
