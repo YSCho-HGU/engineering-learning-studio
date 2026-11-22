@@ -409,7 +409,7 @@ function drawChirp(){
   poly(B,box,pts,B.pal.link,2.3);
   const t=state.T*state.pos/100;dot(B.ctx,box.px(t),box.py(chirpFrequency(t)),B.pal.second,5);
  }
- $("ss-al-note-1").textContent=tx("FFT magnitude relative to the maximum, shown across a 65 dB display range; dashed curve = ideal f(t).","최대값에 대한 FFT 크기를 약 65 dB 범위로 표시합니다. 점선은 이상적인 f(t)입니다.");
+ $("ss-al-note-1").textContent=tx("Click the spectrogram to seek. FFT magnitude is relative to its maximum (65 dB range); dashed curve = ideal f(t).","스펙트로그램을 클릭해 재생 위치를 이동할 수 있습니다. FFT 크기는 최대값에 대한 상대값(65 dB 범위)이며 점선은 이상적인 f(t)입니다.");
  $("ss-al-note-2").textContent=tx("A 45 ms waveform excerpt near the selected time.","선택 시각 부근의 45 ms 구간 파형입니다.");
  $("ss-al-note-3").textContent=tx("Theoretical instantaneous frequency of the linear chirp.","선형 처프의 이론적 순간주파수입니다.");
 }
@@ -634,6 +634,15 @@ function init(){
    const progress=Number(event.target.value)/1000;
    seekAudio(progress*audioState.duration);
   });
+  if(lab==="chirp"){
+   plotCanvases[0].style.cursor="crosshair";
+   plotCanvases[0].addEventListener("click",event=>{
+    const rect=plotCanvases[0].getBoundingClientRect(),left=57,right=rect.width-14;
+    if(right<=left||event.clientX<rect.left+left||event.clientX>rect.left+right)return;
+    const fraction=(event.clientX-rect.left-left)/(right-left);
+    seekAudio(Math.max(0,Math.min(1,fraction))*state.T);
+   });
+  }
   updateAudioTransport(0);
  }
  renderHeader();plotTitles();renderControls();scheduleDraw();
