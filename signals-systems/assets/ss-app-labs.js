@@ -297,6 +297,12 @@ function drawHarmonics(){
   const limit=5/state.f0,box=chartBox(C,{xMin:0,xMax:limit*1000,yMin:-amp*1.12,yMax:amp*1.12,xLabel:"t (ms)",yLabel:"x(t)"});
   const pts=[];for(let i=0;i<=950;i++){const t=limit*i/950;pts.push([t*1000,harmonicAt(t,weights)])}
   poly(C,box,pts,C.pal.link,2.2);
+  if(audioState.playing||audioState.offset>0){
+   const t=((audioPosition()*state.f0)%1)/state.f0, x=box.px(t*1000),y=box.py(harmonicAt(t,weights));
+   C.ctx.save();C.ctx.strokeStyle=C.pal.second;C.ctx.lineWidth=1.7;C.ctx.setLineDash([4,5]);
+   C.ctx.beginPath();C.ctx.moveTo(x,box.rect.t);C.ctx.lineTo(x,box.rect.b);C.ctx.stroke();C.ctx.setLineDash([]);
+   dot(C.ctx,x,y,C.pal.second,4.5);C.ctx.restore();
+  }
  }
  C=chartContext(plotCanvases[1]);if(C){
   const xmax=state.n*state.f0*1.08,box=chartBox(C,{xMin:0,xMax:xmax,yMin:0,yMax:1.15,xLabel:"f (Hz)",yLabel:"|Aₖ|"});
@@ -307,7 +313,7 @@ function drawHarmonics(){
    c.font="11px Arial";c.textAlign="center";c.fillStyle=C.pal.muted;c.fillText("k="+(k+1),x,Math.max(box.rect.t+10,y-11));
   });
  }
- $("ss-al-note-1").textContent=tx("Five fundamental periods; the harmonic sum is plotted without audio loudness normalization.","기본 주기 5개를 표시합니다. 파형은 음량 정규화 전의 조화파 합입니다.");
+ $("ss-al-note-1").textContent=tx("Five periods; the audio-clock phase marker updates at display frame rate (not the audio sample rate).","기본 주기 5개를 표시합니다. 오디오 위상 마커는 오디오 샘플률이 아닌 화면 갱신률로 표시됩니다.");
  $("ss-al-note-2").textContent=tx("Analytical harmonic amplitudes at kf₀ (a line spectrum, not an FFT measurement).","kf₀에 있는 이론적 조화파 크기입니다. FFT 측정값이 아닌 선 스펙트럼입니다.");
 }
 function radixFFT(re,im){
@@ -428,31 +434,165 @@ function draw(){
  if(lab==="harmonics")drawHarmonics();else if(lab==="chirp")drawChirp();else drawHelix();
 }
 function scheduleDraw(){if(!framePending){framePending=true;requestAnimationFrame(draw)}}
-async function playAudio(status){
- stopAudio();
+// The Web Audio clock, not requestAnimationFrame time, is the playback authority.
+function audioPosition(){
+ if(audioState.playing&&audioContext)return Math.max(0,Math.min(audioState.duration,audioContext.currentTime-audioState.startedAt));
+ return audioState.offset;
+}
+function setAudioPosition(position){
+ audioState.offset=Math.max(0,Math.min(audioState.duration,position));
+ if(lab==="chirp"){
+  state.pos=audioState.duration>0?100*audioState.offset/audioState.duration:0;
+  const slider=$("ctl-pos");
+  if(slider){
+   slider.value=String(state.pos);
+   const out=slider.parentElement.querySelector("output");
+   if(out)out.textContent=Math.round(state.pos)+"%";
+  }
+ }
+ updateAudioTransport(audioState.offset);
+}
+function timeLabel(seconds){
+ const min=Math.floor(seconds/60),sec=seconds%60;
+ return min+":"+sec.toFixed(2).padStart(5,"0");
+}
+function updateAudioTransport(position){
+ if(lab==="helix")return;
+ const seek=$("ss-al-seek");
+ if(seek)seek.value=String(audioState.duration>0?Math.round(1000*position/audioState.duration):0);
+ const label=$("ss-al-transport-time");
+ if(label)label.textContent=timeLabel(position)+" / "+timeLabel(audioState.duration);
+}
+function refreshAudioButtons(){
+ if(lab==="helix")return;
+ const a=audioState;
+ if(a.playButton){
+  a.playButton.textContent=tx(a.playing?"Playing":"▶ Play",a.playing?"재생 중":"▶ 재생",true);
+  a.playButton.disabled=a.playing;
+ }
+ if(a.pauseButton){
+  a.pauseButton.textContent=tx("Ⅱ Pause","Ⅱ 일시 정지",true);
+  a.pauseButton.disabled=!a.playing;
+ }
+ if(a.stopButton){
+  a.stopButton.textContent=tx("■ Stop","■ 정지",true);
+  a.stopButton.disabled=!a.playing&&a.offset<=0;
+ }
+ if(a.status){
+  a.status.textContent=a.playing?
+   tx("Playing · linked to the audio clock","재생 중 · 오디오 시계에 동기화"):
+   a.offset>0&&a.offset<a.duration?
+    tx("Paused · press Play to resume","일시 정지 · Play로 계속 재생"):
+    tx("Sound plays only after you press Play. Use low headphone volume.","Play 버튼을 누른 경우에만 소리가 시작됩니다. 이어폰 음량을 낮춰주세요.");
+ }
+ updateAudioTransport(audioPosition());
+}
+function closeAudioSource(){
+ const src=audioSource;
+ audioSource=null;
+ if(src){
+  src.onended=null;
+  try{src.stop()}catch(e){}
+  try{src.disconnect()}catch(e){}
+ }
+}
+function stopAudio(reset=true){
+ if(lab==="helix")return;
+ audioRequest++;
+ const current=audioPosition();
+ audioState.playing=false;
+ if(audioFrameId!==null){cancelAnimationFrame(audioFrameId);audioFrameId=null}
+ closeAudioSource();
+ setAudioPosition(reset?0:current);
+ refreshAudioButtons();
+ scheduleDraw();
+}
+function invalidateAudio(){
+ if(lab==="helix")return;
+ stopAudio(true);
+ audioState.buffer=null;
+ audioState.duration=lab==="harmonics"?2:state.T;
+ setAudioPosition(0);
+}
+function startAudioSource(offset){
+ if(!audioContext||!audioState.buffer)return false;
+ closeAudioSource();
+ const source=audioContext.createBufferSource();
+ source.buffer=audioState.buffer;
+ source.connect(audioContext.destination);
+ const position=Math.max(0,Math.min(audioState.duration-.0001,offset));
+ audioState.offset=position;
+ audioState.startedAt=audioContext.currentTime-position;
+ audioState.playing=true;
+ audioSource=source;
+ source.onended=()=>{
+  if(source!==audioSource)return;
+  audioState.playing=false;audioSource=null;
+  if(audioFrameId!==null){cancelAnimationFrame(audioFrameId);audioFrameId=null}
+  setAudioPosition(audioState.duration);
+  refreshAudioButtons();scheduleDraw();
+  if(audioState.status)audioState.status.textContent=tx("Playback finished.","재생이 완료되었습니다.");
+ };
+ source.start(0,position);
+ if(audioFrameId!==null)cancelAnimationFrame(audioFrameId);
+ audioFrameId=requestAnimationFrame(syncAudioFrame);
+ refreshAudioButtons();
+ return true;
+}
+function syncAudioFrame(){
+ audioFrameId=null;
+ if(!audioState.playing)return;
+ const position=audioPosition();
+ setAudioPosition(position);
+ const now=performance.now();
+ if(now-drawAudioAt>32){drawAudioAt=now;scheduleDraw()}
+ if(audioState.playing)audioFrameId=requestAnimationFrame(syncAudioFrame);
+}
+function seekAudio(position){
+ if(lab==="helix")return;
+ const wasPlaying=audioState.playing;
+ if(wasPlaying){
+  if(audioFrameId!==null){cancelAnimationFrame(audioFrameId);audioFrameId=null}
+  audioState.playing=false;
+  closeAudioSource();
+ }
+ setAudioPosition(position);
+ if(wasPlaying&&position<audioState.duration&&audioState.buffer)startAudioSource(position);
+ else refreshAudioButtons();
+ scheduleDraw();
+}
+function buildAudioBuffer(){
+ const duration=lab==="harmonics"?2:state.T,sampleRate=audioContext.sampleRate;
+ const count=Math.max(1,Math.floor(duration*sampleRate)),buffer=audioContext.createBuffer(1,count,sampleRate);
+ const samples=buffer.getChannelData(0),weights=lab==="harmonics"?harmonicWeights():null;
+ const normal=weights?Math.max(1,weights.reduce((a,b)=>a+Math.abs(b),0)):1;
+ const fade=Math.min(.018,duration*.09);
+ for(let i=0;i<count;i++){
+  const t=i/sampleRate,fadeGain=Math.min(1,t/fade,(duration-t)/fade);
+  const value=lab==="harmonics"?harmonicAt(t,weights)/normal:Math.sin(chirpPhase(t));
+  samples[i]=Math.max(-1,Math.min(1,value*fadeGain*.22));
+ }
+ audioState.duration=duration;
+ audioState.buffer=buffer;
+}
+async function playAudio(){
+ if(lab==="helix"||audioState.playing)return;
  const Ctx=window.AudioContext||window.webkitAudioContext;
- if(!Ctx){status.textContent=tx("Web Audio is not available in this browser.","이 브라우저에서는 Web Audio를 지원하지 않습니다.");return}
+ if(!Ctx){if(audioState.status)audioState.status.textContent=tx("Web Audio not supported.","Web Audio 미지원");return}
+ const request=++audioRequest;
  try{
   if(!audioContext)audioContext=new Ctx();
   await audioContext.resume();
-  const sampleRate=audioContext.sampleRate,duration=lab==="harmonics"?2:state.T;
-  const count=Math.round(duration*sampleRate),buffer=audioContext.createBuffer(1,count,sampleRate);
-  const samples=buffer.getChannelData(0),weights=lab==="harmonics"?harmonicWeights():null;
-  const normal=weights?Math.max(1,weights.reduce((a,b)=>a+Math.abs(b),0)):1,fade=Math.min(.025,duration*.08);
-  for(let i=0;i<count;i++){
-   const t=i/sampleRate,gain=Math.min(1,t/fade,(duration-t)/fade);
-   samples[i]=Math.max(-1,Math.min(1,(lab==="harmonics"?harmonicAt(t,weights)/normal:Math.sin(chirpPhase(t)))*gain*.22));
-  }
-  audioSource=audioContext.createBufferSource();
-  audioSource.buffer=buffer;audioSource.connect(audioContext.destination);
-  const node=audioSource;node.onended=()=>{if(audioSource===node){audioSource=null;status.textContent=tx("Playback finished.","재생을 마쳤습니다.")}};
-  audioSource.start();
-  status.textContent=tx("Playing original synthesized sound…","합성음을 재생하고 있습니다…");
- }catch(err){status.textContent=tx("Playback unavailable. Check browser audio permissions.","오디오 재생을 사용할 수 없습니다. 브라우저의 오디오 권한을 확인하세요.");stopAudio()}
+  if(request!==audioRequest)return;
+  if(!audioState.buffer)buildAudioBuffer();
+  if(audioState.offset>=audioState.duration-.001)setAudioPosition(0);
+  startAudioSource(audioState.offset);
+ }catch(e){
+  if(request!==audioRequest)return;
+  if(audioState.status)audioState.status.textContent=tx("Playback unavailable. Check browser audio permissions.","소리 재생을 할 수 없습니다. 오디오 권한을 확인하세요.");
+ }
 }
-function stopAudio(){
- if(audioSource){const source=audioSource;audioSource=null;source.onended=null;try{source.stop()}catch(e){}try{source.disconnect()}catch(e){}}
-}
+function pauseAudio(){if(audioState.playing)stopAudio(false)}
 function animate(now){
  if(!state.playing)return;
  if(!previousTime)previousTime=now;
