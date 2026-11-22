@@ -112,8 +112,6 @@ html[data-c-sidebar=collapsed] .c-sidebar-caption{display:none}
 .c-ss-shell .course-header.c-ss-intro h1{font-size:clamp(23px,2.8vw,32px);margin:4px 0}
 .c-ss-shell .course-header.c-ss-intro p{font-size:15px;line-height:1.65;margin:5px 0}
 .c-ss-shell .course-header.c-ss-intro .course-meta{margin:7px 0 0}
-.c-ss-shell .c-fileio-roadmap{margin:8px clamp(12px,1.8vw,27px) 0}
-.c-ss-shell .c-fileio-roadmap>.learning-route{margin:0;padding:10px}
 .c-ss-shell .c-fileio-workspace .stage p{font-size:16px;line-height:1.7}
 @media(max-width:780px){
  .c-ss-shell>.c-ss-sidebar.sidebar{position:relative;top:auto;height:auto;max-height:none;border-right:0}
