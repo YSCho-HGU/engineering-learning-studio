@@ -64,12 +64,10 @@ if(process.env.C_JOURNEY_BROWSER==="1"){
    assert(await page.locator("#lesson-nav button").count()===8,kind+" 8 working steps");
    assert(await page.locator('[data-els-theme-picker]').count()===1,kind+" exactly one theme picker");
    assert(await page.locator('#c-shared-language select').count()===1,kind+" common language control");
-   await page.locator('#c-shared-language select').selectOption('en');
-   await page.waitForLoadState('domcontentloaded');
+   await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('#c-shared-language select').selectOption('en')]);
    assert(await page.evaluate(()=>document.documentElement.dataset.elsLanguage)==='en',kind+" English mode retained");
    assert(!/[가-힣]/.test(await page.locator('#hero-summary').innerText()),kind+" English hero translation");
-   await page.locator('#c-shared-language select').selectOption('mixed');
-   await page.waitForLoadState('domcontentloaded');
+   await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('#c-shared-language select').selectOption('mixed')]);
    assert(await page.evaluate(()=>document.documentElement.dataset.elsLanguage)==='mixed',kind+" mixed mode retained");
    const conceptIndex=course[kind].lessons[0].quiz.correct;
    await page.locator("#lesson .question label").nth(conceptIndex).click();
