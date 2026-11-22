@@ -186,10 +186,9 @@ function plotTitles(){
    mathml:`<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f of t equals f zero plus f one minus f zero divided by T times t"><mrow><mi>f</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><msub><mi>f</mi><mn>0</mn></msub><mo>+</mo><mfrac><mrow><msub><mi>f</mi><mn>1</mn></msub><mo>−</mo><msub><mi>f</mi><mn>0</mn></msub></mrow><mi>T</mi></mfrac><mi>t</mi></mrow></math>`
   },
   helix:{
-   tex:String.raw`\displaystyle x(t)=e^{(\sigma+j2\pi f)t}=e^{\sigma t}\bigl[\cos(2\pi f t)+j\sin(2\pi f t)\bigr]`,
-   mathml:`<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="x of t equals e to the sigma plus j two pi f times t; equals e to the sigma t times cosine plus j sine"><mrow><mi>x</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><msup><mi>e</mi><mrow><mo>(</mo><mi>σ</mi><mo>+</mo><mi>j</mi><mn>2</mn><mi>π</mi><mi>f</mi><mo>)</mo><mi>t</mi></mrow></msup><mo>=</mo><msup><mi>e</mi><mrow><mi>σ</mi><mi>t</mi></mrow></msup><mo>[</mo><mi mathvariant="normal">cos</mi><mo>(</mo><mn>2</mn><mi>π</mi><mi>f</mi><mi>t</mi><mo>)</mo><mo>+</mo><mi>j</mi><mi mathvariant="normal">sin</mi><mo>(</mo><mn>2</mn><mi>π</mi><mi>f</mi><mi>t</mi><mo>)</mo><mo>]</mo></mrow></math>`
-  }
- };
+   tex:String.raw`\displaystyle \begin{aligned} x(t)&=e^{(\sigma+j2\pi f)t}\\&=e^{\sigma t}\bigl[\cos(2\pi f t)+j\sin(2\pi f t)\bigr]\end{aligned}`,
+   mathml:`<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="x of t equals e to the sigma plus j two pi f times t; second line equals e to the sigma t times cosine plus j sine"><mtable columnalign="left" rowspacing=".4em"><mtr><mtd><mrow><mi>x</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><msup><mi>e</mi><mrow><mo>(</mo><mi>σ</mi><mo>+</mo><mi>j</mi><mn>2</mn><mi>π</mi><mi>f</mi><mo>)</mo><mi>t</mi></mrow></msup></mrow></mtd></mtr><mtr><mtd><mrow><mspace width="1.2em"/><mo>=</mo><msup><mi>e</mi><mrow><mi>σ</mi><mi>t</mi></mrow></msup><mo>[</mo><mi mathvariant="normal">cos</mi><mo>(</mo><mn>2</mn><mi>π</mi><mi>f</mi><mi>t</mi><mo>)</mo><mo>+</mo><mi>j</mi><mi mathvariant="normal">sin</mi><mo>(</mo><mn>2</mn><mi>π</mi><mi>f</mi><mi>t</mi><mo>)</mo><mo>]</mo></mrow></mtd></mtr></mtable></math>`
+  } };
  const formula=$("ss-al-equation"),expression=equations[lab];
  formula.dataset.tex=expression.tex;
  formula.innerHTML=expression.mathml;
