@@ -715,7 +715,17 @@ function beginSource(offset){
  s.onended=()=>{
   if(s!==source)return;audio.playing=false;source=null;
   if(transportId!==null)cancelAnimationFrame(transportId);transportId=null;
-  audio.offset=audio.duration;refreshAudio();drawSoon();
+  audio.offset=audio.duration;
+  if(lab==="sampling"){
+   state.pos=100;
+   const slider=$("ss-extra-pos");
+   if(slider){
+    slider.value="100";
+    const output=slider.parentElement.querySelector("output");
+    if(output)output.textContent="100%";
+   }
+  }
+  refreshAudio();drawSoon();
  };
  s.start(0,audio.offset);if(transportId!==null)cancelAnimationFrame(transportId);
  transportId=requestAnimationFrame(audioFrame);refreshAudio();
