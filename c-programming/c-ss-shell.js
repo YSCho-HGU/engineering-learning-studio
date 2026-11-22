@@ -164,14 +164,14 @@ function init(){
   core.append(link(en()?"Concept learning":"개념 학습","../"));
   const labs=makeGroup(navLinks,"labs","따라하기 실습","Guided Labs",false);
   labs.append(link(en()?"Three guided labs":"따라하기 실습 3개","../core-labs/"));
-  toc.prepend(navLinks);
+  toc.querySelector(".c-sidebar-topline")?.after(navLinks);
  }
  if(practice){
   const toc=aside;
   const navLinks=el("div","c-course-task-links");
   const core=makeGroup(navLinks,"core","필수 학습","Core Concepts",false);
   core.append(link(en()?"Concept learning":"개념 학습","../"));
-  toc.prepend(navLinks);
+  toc.querySelector(".c-sidebar-topline")?.after(navLinks);
   // The P1–P6 buttons already form the Coding Challenges group.
   const heading=el("div","c-learning-task-heading",en()?"Coding Challenges":"Coding Challenges · 직접 구현");
   toc.insertBefore(heading,toc.querySelector(".cp-nav-item"));
