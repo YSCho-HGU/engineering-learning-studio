@@ -5,7 +5,6 @@
 (function(win,doc){
  "use strict";
  if(win.ELSHeaderControls)return;
- const themes=[["white-clean","White Clean"],["warm-neutral","Warm Neutral"],["warm-dark","Warm Dark"],["navy-dark","Navy Dark"],["neutral-dark","Neutral Dark"]];
  function normalize(root){
    const scope=root||doc;
    const header=scope.querySelector(".ss-common-header,.site-header,body > header");
@@ -34,10 +33,11 @@
      if(win.ELSTheme&&typeof win.ELSTheme.get==="function"){
        const active=win.ELSTheme.get();
        const old=[...select.options].map(x=>x.value+"|"+x.textContent).join(";");
-       const required=themes.map(x=>x.join("|")).join(";");
+       const choices=win.ELSTheme.choices||[];
+       const required=choices.map(x=>x.join("|")).join(";");
        if(old!==required){
          select.replaceChildren();
-         for(const [value,title] of themes){
+         for(const [value,title] of choices){
            const option=doc.createElement("option");option.value=value;option.textContent=title;select.append(option);
          }
        }
@@ -51,5 +51,5 @@
  }
  function ready(){normalize();win.addEventListener("els:themechange",()=>normalize());}
  if(doc.readyState==="loading")doc.addEventListener("DOMContentLoaded",ready,{once:true});else ready();
- win.ELSHeaderControls=Object.freeze({normalize:()=>normalize(),themes:themes.map(x=>x[0])});
+ win.ELSHeaderControls=Object.freeze({normalize:()=>normalize(),themes:win.ELSTheme?.options?.slice()||[]});
 })(window,document);

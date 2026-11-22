@@ -3,7 +3,7 @@
  * Dynamic backgrounds and canvas trace colors require a browser visual audit.
  */
 import fs from 'node:fs';
-const css=fs.readFileSync(new URL('../assets/els-theme-v2.css',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../../assets/els-theme-v2.css',import.meta.url),'utf8');
 const themes=['neutral-dark','warm-dark','navy-dark','warm-neutral','white-clean'];
 const luminance=hex=>{
  const rgb=hex.slice(1).match(/../g).map(h=>parseInt(h,16)/255)
