@@ -192,3 +192,7 @@ html .ss-i18n-mixed-paragraph{white-space:pre-line!important;line-height:1.65!im
 
 /* Data-model language views: English-first explanatory paragraphs remain legible. */
 html[data-els-language="mixed"] .ss-layout-main :is(p,.desc,.notice,.insight,.smallnote,.guide-check,.step p,.answer,.ss5-flow-label){white-space:pre-line}
+
+/* The same compact globe language picker serves Overview and Learning Map. */
+html .ss-common-header .ss-common-actions .ss-language-icon{display:inline-flex;align-items:center;justify-content:center;font-size:16px;line-height:1;min-width:19px;user-select:none}
+html .ss-common-header .ss-common-actions .ss-common-language{gap:6px!important}

@@ -1,6 +1,6 @@
 /* Shared theme: one localStorage key for Studio and both courses. */
 (()=>{"use strict";
-const KEY="els-theme-v2",VALID=["white-clean","warm-neutral","neutral-dark","warm-dark","navy-dark"],DEFAULT="neutral-dark";
+const KEY="els-theme-v2",VALID=["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark"],DEFAULT="neutral-dark";
 const root=document.documentElement;
 function safeGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
 function inferLegacy(){
