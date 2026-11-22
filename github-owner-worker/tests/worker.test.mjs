@@ -27,12 +27,12 @@ globalThis.fetch=async(input,opts={})=>{
  if(url==="https://api.github.com/user")return Response.json({id:1234567,login:"school-admin"});
  if(url==="https://api.github.com/user/emails")return Response.json([{email:"yscho@handong.edu",verified:validEmail}]);
  if(url.endsWith("/app/installations/456/access_tokens"))return Response.json({token:"installation-token"});
- if(url.includes("/repos/YSCho-HGU/signals-systems-visual-lab/contents/course-catalog.json")){
+ if(url.includes("/repos/YSCho-HGU/engineering-learning-studio/contents/signals-systems/course-catalog.json")){
   if(method==="GET")return Response.json({type:"file",sha,content:Buffer.from(JSON.stringify(base)).toString("base64")});
   writes.push(JSON.parse(opts.body||"{}"));
   return Response.json({content:{sha:"b".repeat(40)},commit:{sha:"c".repeat(40)}});
  }
- if(url.includes("/contents/index.html"))return Response.json({type:"file",sha,content:Buffer.from("index").toString("base64")});
+ if(url.includes("/contents/signals-systems/chapter2.html"))return Response.json({type:"file",sha,content:Buffer.from("index").toString("base64")});
  return Response.json({message:"Not found"},{status:404});
 };
 test.after(()=>{globalThis.fetch=actualFetch});
