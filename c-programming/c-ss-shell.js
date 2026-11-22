@@ -62,7 +62,7 @@ function init(){
  wrap.parentNode.insertBefore(shell,wrap);shell.append(aside,workspace);workspace.append(wrap);
  function collapsed(v){root.dataset.cSidebar=v?"collapsed":"expanded";toggle.textContent=v?"≫":"≪";toggle.setAttribute("aria-label",v?"Expand lesson navigation":"Collapse lesson navigation");toggle.setAttribute("aria-expanded",String(!v));setSaved(v)}
  toggle.addEventListener("click",()=>collapsed(root.dataset.cSidebar!=="collapsed"));collapsed(getSaved());
- const roadmap=wrap.querySelector(".route:not(.course-phase-details .route)");
+ const roadmap=[...wrap.querySelectorAll(".route")].find(n=>!n.closest("details"));
  if(roadmap && !roadmap.closest("details")){
   const group=el("details","course-phase-details c-ss-roadmap");
   group.append(el("summary","","Three-phase learning roadmap · 학습 로드맵"));
