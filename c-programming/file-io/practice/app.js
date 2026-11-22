@@ -55,7 +55,29 @@ function renderCoreGuide(task){
 }
 function load(i){active=i;document.getElementById("gcc-confirm").checked=!!evidence[i];const t=tasks[i];$("task-id").textContent=(t.id==="M1"?"CORE MINI LAB · ":"PRACTICE ")+t.id+" · "+(t.id==="M1"||i<2?"필수":"선택 심화");
 $("mini-overview").hidden=t.id!=="M1";$("sample-input").hidden=!t.sampleContent;document.querySelectorAll("[data-go-task]").forEach(b=>{const selected=Number(b.dataset.goTask)===i;b.classList.toggle("active",selected);b.setAttribute("aria-current",selected?"step":"false")});$("task-title").textContent=t.title;$("task-desc").textContent=t.desc;renderCoreGuide(t);$("task-objective").textContent=t.objective;$("test-input").textContent=t.input;$("test-output").textContent=t.output;$("hint").textContent=t.hint;let draft=null;try{draft=localStorage.getItem(key(i))}catch(e){}$("editor").value=draft===null?t.starter:draft;$("feedback").textContent="직접 코드를 작성하세요. 핵심 구문 점검은 GCC 컴파일을 대체하지 않습니다.";renderNav();window.dispatchEvent(new CustomEvent("c-fileio-task-change",{detail:{id:t.id}}))}
-function renderNav(){$("task-nav").innerHTML=taskOrder.map(i=>{const t=tasks[i],essential=i<2||t.id==="M1";return '<button type="button" data-task="'+i+'" data-core="'+essential+'" class="'+(i===active?"active":"")+'"><strong>'+(essential?"필수 · ":"선택 · ")+t.id+"</strong> · "+t.title+'<small>'+t.objective+"</small></button>"}).join("");$("task-nav").querySelectorAll("button").forEach(b=>b.onclick=()=>load(Number(b.dataset.task)))}
+function renderNav(){
+ const nav=$("task-nav");nav.replaceChildren();
+ const preserved=nav.dataset.openGroup||"core";
+ const sections=[["core","Coding Challenges · 직접 구현",true],["advanced","Advanced · 선택 심화",false]];
+ const lists={};
+ for(const [id,label,initialOpen] of sections){
+  const details=document.createElement("details");details.className="c-learning-group";details.dataset.group=id;
+  details.open=id===preserved||(!preserved&&initialOpen);
+  const heading=document.createElement("summary");heading.textContent=label;details.append(heading);
+  const list=document.createElement("div");list.className="c-learning-group-items";details.append(list);nav.append(details);
+  lists[id]=list;
+  details.addEventListener("toggle",()=>{if(details.open)nav.dataset.openGroup=id});
+ }
+ taskOrder.forEach(i=>{
+  const t=tasks[i],essential=i<2||t.id==="M1";
+  const b=document.createElement("button");b.type="button";b.dataset.task=String(i);b.dataset.core=String(essential);
+  b.className=i===active?"active":"";
+  b.innerHTML="<strong>"+(essential?"Core · ":"Optional · ")+t.id+"</strong> · "+t.title+"<small>"+t.objective+"</small>";
+  (essential?lists.core:lists.advanced).append(b);
+  b.onclick=()=>load(i);
+ });
+ nav.querySelectorAll("details").forEach(d=>{if(d.querySelector("button.active")){d.open=true;nav.dataset.openGroup=d.dataset.group}});
+}
 function cleanCode(source){return source.replace(/\/\*[\s\S]*?\*\//g,"").replace(/\/\/[^\n]*/g,"").replace(/"(?:\\.|[^"\\])*"/g,m=>m).replace(/'(?:\\.|[^'\\])*'/g,m=>m)}
 $("editor").addEventListener("input",()=>{try{localStorage.setItem(key(active),$("editor").value)}catch(e){}});
 $("check").onclick=()=>{const t=tasks[active],s=cleanCode($("editor").value);const tests=t.checks.map(([label,re])=>({label,ok:re.test(s)}));const passed=tests.filter(x=>x.ok).length;const results=tests.map(x=>(x.ok?"✓ ":"✗ ")+x.label).join("\n");$("feedback").textContent="핵심 구문 점검: "+passed+" / "+tests.length+"\n"+results+"\n\n※ 정규식 기반의 학습 보조 점검입니다. 실행 결과·문법 정확성·예외 처리를 검증하지 않습니다. 예시 입력으로 GCC에서 실제 실행해 확인하세요."; $("feedback").className="feedback "+(passed===tests.length?"pass":"fail")};
