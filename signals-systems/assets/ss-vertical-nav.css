@@ -9,8 +9,8 @@
 .ss-vertical-layout nav#nav button.active,.ss-vertical-layout nav#nav button[aria-current="page"]{background:var(--els-info-bg,#eef5f9)!important;border-color:var(--els-link,#145b78)!important;color:var(--els-ink,#1b2730)!important;box-shadow:inset 3px 0 var(--els-link,#145b78)!important}
 .ss-vertical-layout nav#nav button:focus-visible{outline:3px solid var(--els-focus,#b56b18)!important;outline-offset:2px!important}
 .ss-vertical-layout .ss-side-toggle{position:relative;display:flex;width:calc(100% - 8px);margin:0 4px 12px}
-html[data-ss-sidebar="collapsed"] .ss-vertical-layout{grid-template-columns:58px minmax(0,1fr)!important}
-html[data-ss-sidebar="collapsed"] .ss-vertical-layout>.ss-vertical-sidebar{width:58px!important;min-width:58px!important;padding:9px 2px!important;overflow:hidden}
+html[data-ss-sidebar="collapsed"] .ss-vertical-layout{grid-template-columns:52px minmax(0,1fr)!important}
+html[data-ss-sidebar="collapsed"] .ss-vertical-layout>.ss-vertical-sidebar{width:52px!important;min-width:52px!important;padding:9px 2px!important;overflow:hidden}
 html[data-ss-sidebar="collapsed"] .ss-vertical-layout>.ss-vertical-sidebar>:not(.ss-side-toggle){display:none!important}
 html[data-ss-sidebar="collapsed"] .ss-vertical-layout .ss-side-toggle{width:46px!important;margin:2px 4px!important;padding:9px 3px!important}
 @media(max-width:760px){
@@ -19,5 +19,5 @@ html[data-ss-sidebar="collapsed"] .ss-vertical-layout .ss-side-toggle{width:46px
  .ss-vertical-layout>.ss-vertical-main{padding:0 8px}
  .ss-vertical-heading{font-size:10px;padding:8px 5px}
  .ss-vertical-layout nav#nav button{font-size:11px!important;padding:9px 7px!important}
- html[data-ss-sidebar="collapsed"] .ss-vertical-layout{grid-template-columns:58px minmax(0,1fr)!important}
+ html[data-ss-sidebar="collapsed"] .ss-vertical-layout{grid-template-columns:52px minmax(0,1fr)!important}
 }
