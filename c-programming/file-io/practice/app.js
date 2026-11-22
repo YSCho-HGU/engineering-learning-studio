@@ -19,6 +19,32 @@ sampleFilename:"message.txt",
 sampleContent:"Sensor online\nsecond line ignored\n",
  checks:[["읽기 파일 열기",/fopen\s*\([^;]*["']r["']/],["쓰기 파일 열기",/fopen\s*\([^;]*["']w["']/],["FILE* 열기 실패 검사",/if\s*\([\s\S]*?(?:src|dst)\s*(?:==\s*NULL|!)/],["fgets 1회로 버퍼 크기를 지정",/fgets\s*\(\s*line\s*,\s*sizeof\s*\(?\s*line\s*\)?\s*,\s*src\s*\)/],["읽은 경우에만 fputs 사용",/fputs\s*\(\s*line\s*,\s*dst\s*\)/],["쓰기 실패 검사",/fputs\s*\([^;]*?(?:==\s*EOF|<\s*0)|if\s*\(\s*ferror\s*\(\s*dst\s*\)/],["스트림 닫기",/fclose\s*\(\s*src\s*\)[\s\S]*fclose\s*\(\s*dst\s*\)|fclose\s*\(\s*dst\s*\)[\s\S]*fclose\s*\(\s*src\s*\)/]]}
 ];
+/* Student-facing task descriptions are localized, but starter C code, expected
+   results, task indices and localStorage keys remain unchanged. */
+const tasksEN={
+ P1:{title:"Write Five Numbers to a File",desc:"Read exactly five integers from standard input and write them to numbers.txt, one number per line. Check the input conversion and fopen result, and close the stream after writing.",objective:"fopen(\"w\") · scanf result · fprintf · fclose",hint:"Check the return value of scanf(\"%d\", &x) on every iteration and write each successful integer with fprintf(fp, \"%d\\n\", x)."},
+ P2:{title:"Read and Average File Values",desc:"Read double values from values.txt, count the successful conversions, and calculate the average. Handle an empty file without division by zero and distinguish normal EOF from malformed input.",objective:"fscanf == 1 · counter · sum · EOF vs conversion failure",hint:"Use while (fscanf(fp, \"%lf\", &x) == 1). Check for an empty file before computing the average."},
+ P3:{title:"Copy All Lines between Files (Optional)",desc:"Read every available chunk from input.txt using fgets and write it to copy.txt using fputs. Check both stream opens and close both streams, including on errors.",objective:"two FILE* objects · fgets loop · fputs · cleanup",hint:"Check that both streams opened successfully, and copy only after fgets returns a non-NULL pointer."},
+ P4:{title:"Save Student Records (Optional)",desc:"Write a fixed array of Student records to students.txt in the order ID, name, and score. Preserve the required text format, check file opening, and close the stream.",objective:"struct Student · array traversal · fprintf · record format",hint:"Use struct Student { int id; char name[40]; double score; }; and fprintf(fp, \"%d %s %.1f\\n\", ...) for each record."},
+ P5:{title:"Load Student Records (Optional)",desc:"Read student records into a bounded array, verifying that all three fields converted. Use a width-limited %39s for names, avoid exceeding array capacity, and print the student with the highest score.",objective:"fscanf == 3 · %39s · capacity · maximum search",hint:"Check fscanf(fp, \"%d %39s %lf\", &s[i].id, s[i].name, &s[i].score) == 3, and stop before exceeding the record capacity."},
+ P6:{title:"Generate a Sensor Alert File (Optional)",desc:"Read time-value pairs from sensor_log.txt. Whenever a measurement exceeds the 3.0 threshold, print a matching alert and write it to alerts.txt. Handle both file streams correctly.",objective:"fscanf == 2 · strict threshold > 3.0 · printf/fprintf · cleanup",hint:"Use fscanf(fp, \"%lf %lf\", &time, &value) == 2 and issue alerts only when value > threshold."},
+ M1:{title:"Copy Only the First Line with fgets() and fputs()",desc:"Core mini challenge (10–15 min): read only the first line of message.txt with one fgets call and write it to preview.txt using fputs. Do not copy the second line. Check both open results and close every opened stream.",objective:"fopen(\"r\",\"w\") · one fgets · conditional fputs · NULL/EOF · two fclose calls",hint:"Open the source and check for NULL, then open the destination. If the second open fails, close the first stream. Call fgets once and call fputs only when a line was read. Check the write result and close both streams."}
+};
+const checkEN={
+ P1:["Open write mode","Five-iteration loop","Check input conversion","Write with fprintf","Close the stream"],
+ P2:["Open read mode","Check double conversion","Accumulate sum","Increment count","Handle empty input","Close the stream"],
+ P3:["Open source","Open destination","Read with fgets loop","Write with fputs","Close both streams"],
+ P4:["Declare structure","Declare structure array","Open write mode","Traverse array","Write records","Close stream"],
+ P5:["Use structure array","Open read mode","Require three conversions","Limit name width","Check array capacity","Compare highest score","Close stream"],
+ P6:["Open source","Open alerts file","Convert both fields","Compare threshold","Print alert","Write alert","Close streams"],
+ M1:["Open source","Open destination","Check open failure","Read one bounded line","Write only if read","Check write failure","Close both streams"]
+};
+const langMode=()=>window.ELSLanguage?.get?.()||"mixed";
+const langText=(ko,en)=>langMode()==="en"?en:langMode()==="ko"?ko:en+"\\n"+ko;
+const taskView=t=>{
+ const en=tasksEN[t.id];
+ return {title:en?.title||t.title,desc:langText(t.desc,en?.desc||t.desc),objective:langText(t.objective,en?.objective||t.objective),hint:langText(t.hint,en?.hint||t.hint)};
+};
 let active=0;const key=i=>tasks[i].id==="M1"?"els-c-fileio-practice-m1-v1":"els-c-fileio-practice-p"+(i+1);
 const evidenceKey="els-code-evidence-fileio-v1";
 const taskOrder=[0,1,6,2,3,4,5]; // Preserve P1-P6 indexes and drafts.
@@ -53,12 +79,12 @@ function renderCoreGuide(task){
  $("fileio-guide-check-title").textContent=en?"Verify Your Result":"실행 결과 확인";
  $("fileio-guide-check").textContent=guide.check;
 }
-function load(i){active=i;document.getElementById("gcc-confirm").checked=!!evidence[i];const t=tasks[i];$("task-id").textContent=(t.id==="M1"?"CORE MINI LAB · ":"PRACTICE ")+t.id+" · "+(t.id==="M1"||i<2?"필수":"선택 심화");
-$("mini-overview").hidden=t.id!=="M1";$("sample-input").hidden=!t.sampleContent;document.querySelectorAll("[data-go-task]").forEach(b=>{const selected=Number(b.dataset.goTask)===i;b.classList.toggle("active",selected);b.setAttribute("aria-current",selected?"step":"false")});$("task-title").textContent=t.title;$("task-desc").textContent=t.desc;renderCoreGuide(t);$("task-objective").textContent=t.objective;$("test-input").textContent=t.input;$("test-output").textContent=t.output;$("hint").textContent=t.hint;let draft=null;try{draft=localStorage.getItem(key(i))}catch(e){}$("editor").value=draft===null?t.starter:draft;$("feedback").textContent="직접 코드를 작성하세요. 핵심 구문 점검은 GCC 컴파일을 대체하지 않습니다.";renderNav();window.dispatchEvent(new CustomEvent("c-fileio-task-change",{detail:{id:t.id}}))}
+function load(i){active=i;document.getElementById("gcc-confirm").checked=!!evidence[i];const t=tasks[i],v=taskView(t);$("task-id").textContent=(t.id==="M1"?"CORE MINI CHALLENGE · ":"CODING CHALLENGE ")+t.id+" · "+(t.id==="M1"||i<2?langText("필수","Core"):langText("선택 심화","Optional"));
+$("mini-overview").hidden=t.id!=="M1";$("sample-input").hidden=!t.sampleContent;document.querySelectorAll("[data-go-task]").forEach(b=>{const selected=Number(b.dataset.goTask)===i;b.classList.toggle("active",selected);b.setAttribute("aria-current",selected?"step":"false")});$("task-title").textContent=v.title;$("task-desc").textContent=v.desc;renderCoreGuide(t);$("task-objective").textContent=v.objective;$("test-input").textContent=t.input;$("test-output").textContent=t.output;$("hint").textContent=v.hint;let draft=null;try{draft=localStorage.getItem(key(i))}catch(e){}$("editor").value=draft===null?t.starter:draft;$("feedback").textContent="직접 코드를 작성하세요. 핵심 구문 점검은 GCC 컴파일을 대체하지 않습니다.";renderNav();window.dispatchEvent(new CustomEvent("c-fileio-task-change",{detail:{id:t.id}}))}
 function renderNav(){
  const nav=$("task-nav");const shellControls=[...nav.querySelectorAll(":scope > .c-sidebar-topline, :scope > .c-course-task-links")];nav.replaceChildren(...shellControls);
  const preserved=nav.dataset.openGroup||"core";
- const sections=[["core","Coding Challenges · 직접 구현",true],["advanced","Advanced · 선택 심화",false]];
+ const sections=[["core",langText("Coding Challenges · 필수 코딩","Coding Challenges · Core"),true],["advanced",langText("Coding Challenges · 선택 심화","Coding Challenges · Optional"),false]];
  const lists={};
  for(const [id,label,initialOpen] of sections){
   const details=document.createElement("details");details.className="c-learning-group";details.dataset.group=id;
@@ -69,10 +95,10 @@ function renderNav(){
   details.addEventListener("toggle",()=>{if(details.open)nav.dataset.openGroup=id});
  }
  taskOrder.forEach(i=>{
-  const t=tasks[i],essential=i<2||t.id==="M1";
+  const t=tasks[i],v=taskView(t),essential=i<2||t.id==="M1";
   const b=document.createElement("button");b.type="button";b.dataset.task=String(i);b.dataset.core=String(essential);
   b.className=i===active?"active":"";
-  b.innerHTML="<strong>"+(essential?"Core · ":"Optional · ")+t.id+"</strong> · "+t.title+"<small>"+t.objective+"</small>";
+  b.replaceChildren();const strong=document.createElement("strong"),small=document.createElement("small");strong.textContent=(essential?langText("필수","Core"):langText("선택","Optional"))+" · "+t.id;small.textContent=v.objective;b.append(strong,document.createTextNode(" · "+v.title),small);
   (essential?lists.core:lists.advanced).append(b);
   b.onclick=()=>load(i);
  });
@@ -80,7 +106,7 @@ function renderNav(){
 }
 function cleanCode(source){return source.replace(/\/\*[\s\S]*?\*\//g,"").replace(/\/\/[^\n]*/g,"").replace(/"(?:\\.|[^"\\])*"/g,m=>m).replace(/'(?:\\.|[^'\\])*'/g,m=>m)}
 $("editor").addEventListener("input",()=>{try{localStorage.setItem(key(active),$("editor").value)}catch(e){}});
-$("check").onclick=()=>{const t=tasks[active],s=cleanCode($("editor").value);const tests=t.checks.map(([label,re])=>({label,ok:re.test(s)}));const passed=tests.filter(x=>x.ok).length;const results=tests.map(x=>(x.ok?"✓ ":"✗ ")+x.label).join("\n");$("feedback").textContent="핵심 구문 점검: "+passed+" / "+tests.length+"\n"+results+"\n\n※ 정규식 기반의 학습 보조 점검입니다. 실행 결과·문법 정확성·예외 처리를 검증하지 않습니다. 예시 입력으로 GCC에서 실제 실행해 확인하세요."; $("feedback").className="feedback "+(passed===tests.length?"pass":"fail")};
+$("check").onclick=()=>{const t=tasks[active],s=cleanCode($("editor").value);const tests=t.checks.map(([label,re],idx)=>({label:langText(label,checkEN[t.id]?.[idx]||label),ok:re.test(s)}));const passed=tests.filter(x=>x.ok).length;const results=tests.map(x=>(x.ok?"✓ ":"✗ ")+x.label).join("\n");$("feedback").textContent="핵심 구문 점검: "+passed+" / "+tests.length+"\n"+results+"\n\n※ 정규식 기반의 학습 보조 점검입니다. 실행 결과·문법 정확성·예외 처리를 검증하지 않습니다. 예시 입력으로 GCC에서 실제 실행해 확인하세요."; $("feedback").className="feedback "+(passed===tests.length?"pass":"fail")};
 $("save").onclick=()=>{try{localStorage.setItem(key(active),$("editor").value);$("feedback").textContent="이 브라우저에 초안을 저장했습니다. 다른 기기와 동기화되지 않습니다."}catch(e){$("feedback").textContent="브라우저 저장이 차단되어 있습니다. .c 다운로드를 이용하세요."}};
 $("reset").onclick=()=>{if(!confirm("현재 편집 내용을 Starter Code로 바꾸시겠습니까?"))return;try{localStorage.removeItem(key(active))}catch(e){};delete evidence[active];persistEvidence();$("gcc-confirm").checked=false;$("editor").value=tasks[active].starter;$("feedback").textContent="Starter Code와 저장 초안을 함께 초기화했습니다."};
 $("download").onclick=()=>{const blob=new Blob([$("editor").value],{type:"text/x-csrc;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=tasks[active].id.toLowerCase()+"_file_io.c";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500)};
