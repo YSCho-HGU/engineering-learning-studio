@@ -237,3 +237,29 @@ button:disabled{opacity:.55;cursor:default}
  .ss-al-legend{gap:5px 10px;font-size:11px}
  .ss-al-alias-summary{padding:8px 10px;font-size:12px}
 }
+
+/* Sine/chirp sonification: keep the two primary comparisons visually distinct.
+   2-column controls avoid a narrow fourth button and preserve plot width. */
+.ss-al-audio[data-kind="sampling"]{
+ border:1px solid var(--els-border);border-radius:9px;
+ padding:10px;margin:0 0 11px;background:var(--els-surface-alt)
+}
+.ss-al-audio[data-kind="sampling"] .ss-al-control-buttons{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;
+}
+.ss-al-audio[data-kind="sampling"] .ss-al-control-buttons button{
+ min-height:42px;line-height:1.35;padding:6px 5px;white-space:normal;
+}
+.ss-al-audio[data-kind="sampling"] #ss-al-play-alias{
+ border:1px solid var(--els-link);color:var(--els-ink);font-weight:750
+}
+.ss-al-audio-mode-label{
+ display:block;font-size:12px;font-weight:750;color:var(--els-ink);margin-bottom:4px
+}
+.ss-al-audio-pitch{
+ display:block;width:100%;border:1px solid var(--els-border);border-radius:7px;
+ background:var(--els-surface);color:var(--els-ink);
+ font:13px Arial,"Malgun Gothic",sans-serif;padding:6px 8px;margin-bottom:4px
+}
+.ss-al-audio-caution{font-size:11px;line-height:1.5;color:var(--els-muted);margin:3px 0 10px}
+.ss-al-audio-values{font-size:12px;line-height:1.55;color:var(--els-ink);padding:8px 0 2px}
