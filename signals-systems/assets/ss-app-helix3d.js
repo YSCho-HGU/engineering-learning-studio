@@ -49,6 +49,11 @@ function create(canvas,onViewChanged){
   for(let i=0;i<=6;i++){
    const t=i/6,axisX=-2.5+5*t;
    strokeSegment(ctx,proj([axisX,-.06,0]),proj([axisX,.06,0]),gridColor,1,.45);
+   if(i%2===0){
+    const tick=proj([axisX,-.09,0]);
+    ctx.fillStyle=pal.muted;ctx.font="11px Arial";
+    ctx.fillText((total*t).toFixed(0)+" s",tick.x-8,tick.y+17);
+   }
   }
   const planeSegments=36;
   for(let k=0;k<planeSegments;k++){
@@ -83,7 +88,7 @@ function create(canvas,onViewChanged){
    ctx.fillText(label,clamp(p.x+dx,7,w-26),clamp(p.y+dy,15,h-9));
   }
   ctx.fillStyle=pal.muted;ctx.font="11px Arial, sans-serif";
-  ctx.fillText("3D · "+Math.round(camera.distance*10)/10+"×",12,20);
+  ctx.fillText("Orbit "+Math.round(camera.yaw*180/Math.PI)+"° · Tilt "+Math.round(camera.pitch*180/Math.PI)+"° · Camera distance "+camera.distance.toFixed(1),12,20);
  }
  canvas.tabIndex=0;
  canvas.style.touchAction="none";
