@@ -57,6 +57,7 @@ function renderHeader(){
  $("ss-al-controls-title").textContent=tx("Experiment Controls","실험 변수",true);
  $("ss-al-controls-subtitle").textContent=tx(...info.control);
  $("ss-al-focus").textContent=tx($("ss-al-root").classList.contains("focus")?"Exit focus":"Focus on graphs",$("ss-al-root").classList.contains("focus")?"전체 화면으로 돌아가기":"그래프 집중 보기",true);
+ $("ss-al-focus-toolbar").textContent=$("ss-al-focus").textContent;
  $("ss-al-return").textContent=tx("Back to Applications","Applications 목차로",true);
  $("ss-al-panel-toggle").textContent=tx($("ss-al-root").classList.contains("controls-hidden")?"Show controls":"Hide controls",$("ss-al-root").classList.contains("controls-hidden")?"변수 설정 보기":"변수 설정 접기",true);
  document.querySelectorAll("[data-lab-link]").forEach(a=>{
@@ -432,10 +433,14 @@ function animate(now){
 function onVisibility(){if(document.hidden){stopAudio();if(lab==="helix"&&state.playing){state.playing=false;cancelAnimationFrame(animationId);animationId=null;previousTime=0;renderControls()}}}
 function init(){
  renderHeader();plotTitles();renderControls();scheduleDraw();
- $("ss-al-focus").addEventListener("click",()=>{
+ const toggleFocus=()=>{
   const root=$("ss-al-root"),v=!root.classList.contains("focus");root.classList.toggle("focus",v);
-  $("ss-al-focus").setAttribute("aria-pressed",String(v));renderHeader();requestAnimationFrame(scheduleDraw);
- });
+  $("ss-al-focus").setAttribute("aria-pressed",String(v));
+  $("ss-al-focus-toolbar").setAttribute("aria-pressed",String(v));
+  renderHeader();requestAnimationFrame(scheduleDraw);
+ };
+ $("ss-al-focus").addEventListener("click",toggleFocus);
+ $("ss-al-focus-toolbar").addEventListener("click",toggleFocus);
  $("ss-al-panel-toggle").addEventListener("click",()=>{
   const root=$("ss-al-root"),v=!root.classList.contains("controls-hidden");root.classList.toggle("controls-hidden",v);
   $("ss-al-panel-toggle").setAttribute("aria-expanded",String(!v));renderHeader();requestAnimationFrame(scheduleDraw);
