@@ -436,13 +436,13 @@ function sampledStftPeaks(){
 // A sample-consistent, interval-wise phase-fold interpolation. It passes
 // through every true sample, but is NOT the unique continuous-time signal,
 // not a bandlimited (sinc) reconstruction and not the original source.
-function phaseFoldGuide(t){
- const fs=state.fs,at=Math.max(0,t*fs);
- const n=Math.floor(at),u=at-n;
+function phaseFoldAngle(t){
+ const fs=state.fs,at=Math.max(0,t*fs),n=Math.floor(at),u=at-n;
  const p0=phaseAt(n/fs),p1=phaseAt((n+1)/fs);
  const step=p1-p0-2*Math.PI*Math.round((p1-p0)/(2*Math.PI));
- return Math.sin(p0+step*u);
+ return p0+step*u;
 }
+function phaseFoldGuide(t){return Math.sin(phaseFoldAngle(t))}
 function nyquistCrossings(){
  if(state.kind==="sine"||state.f1===state.f0)return [];
  const lo=Math.min(state.f0,state.f1),hi=Math.max(state.f0,state.f1),cross=[];
@@ -574,42 +574,66 @@ function drawSampling(){
 
 function audioPosition(){return audio.playing&&audioCtx?clamp(audioCtx.currentTime-audio.start,0,audio.duration):audio.offset}
 function updateTransport(){
- if(lab==="sampling")return;
- const position=audioPosition();$("ss-al-seek").value=Math.round(position/audio.duration*1000);
+ const position=audioPosition(),slider=$("ss-al-seek");
+ slider.value=Math.round(position/audio.duration*1000);
  $("ss-al-transport-time").textContent=position.toFixed(2)+" / "+audio.duration.toFixed(2)+" s";
 }
 function refreshAudio(){
  if(!audio.buttons)return;
- const {play,pause,stop}=audio.buttons;
- play.textContent=txt(audio.playing?"Playing":"▶ Play",audio.playing?"재생 중":"▶ 재생",true);
- play.disabled=audio.playing;
+ const {play,pause,stop,aliasPlay}=audio.buttons,active=audio.playing?audio.signal:"";
+ if(lab==="sampling"){
+  play.textContent=txt("▶ Original CT","▶ 원래 CT 소리",true);
+  play.disabled=active==="ct";
+  aliasPlay.textContent=txt("▶ Alias guide","▶ 에일리어스 소리",true);
+  aliasPlay.disabled=active==="alias";
+ }else{
+  play.textContent=txt(audio.playing?"Playing":"▶ Play",audio.playing?"재생 중":"▶ 재생",true);
+  play.disabled=audio.playing;
+ }
  pause.textContent=txt("Ⅱ Pause","Ⅱ 일시 정지",true);pause.disabled=!audio.playing;
  stop.textContent=txt("■ Stop","■ 정지",true);stop.disabled=!audio.playing&&audio.offset===0;
- audio.status.textContent=audio.playing?txt("Playing · audio-clock synchronized","재생 중 · 오디오 시계 동기화"):
-  audio.offset>0&&audio.offset<audio.duration?txt("Paused · resume from current position","일시 정지 · 현재 위치에서 계속"):
-  txt("User-initiated synthesized audio; start with low volume.","버튼으로 시작하는 합성음입니다. 낮은 음량으로 시작하세요.");
+ audio.status.textContent=audio.playing?
+  txt((lab==="sampling"?(audio.signal==="ct"?"Original CT":"Aliased guide")+" · ":"")+"Audio clock",
+      (lab==="sampling"?(audio.signal==="ct"?"원래 CT":"에일리어스 안내 파형")+" · ":"")+"오디오 시간 동기화"):
+  audio.offset>0&&audio.offset<audio.duration?
+   txt("Paused · resume at current position","일시 정지 · 현재 위치에서 계속"):
+   txt("Listen at a low volume. ×8 is for pitch comparison.","낮은 음량으로 청취하세요. ×8은 음정 비교용입니다.");
  updateTransport();
 }
 function closeSource(){
  if(!source)return;const s=source;source=null;s.onended=null;try{s.stop()}catch(e){}try{s.disconnect()}catch(e){}
 }
 function stopAudio(reset=true){
- if(lab==="sampling")return;
  requestId++;
  const pos=audioPosition();audio.playing=false;
  if(transportId!==null){cancelAnimationFrame(transportId);transportId=null}
- closeSource();audio.offset=reset?0:pos;refreshAudio();drawSoon();
+ closeSource();audio.offset=reset?0:pos;
+ refreshAudio();drawSoon();
 }
 function change(){
  fftCache=null;
- if(lab!=="sampling"){stopAudio(true);audio.buffer=null}else if(state.playing){state.playing=false;if(playId!==null)cancelAnimationFrame(playId);playId=null;renderControls()}
+ stopAudio(true);audio.buffer=null;
+ if(lab==="sampling"){
+  audio.duration=state.T;
+  if(state.playing){
+   state.playing=false;
+   if(playId!==null)cancelAnimationFrame(playId);
+   playId=null;renderControls();
+  }
+ }
  if(lab==="amfm"||lab==="sampling")renderFormula();
  drawSoon();
 }
 function fftAudioBuffer(){
  const sr=audioCtx.sampleRate,n=Math.floor(sr*audio.duration);
  const buffer=audioCtx.createBuffer(1,n,sr),data=buffer.getChannelData(0),fade=.015;
- for(let i=0;i<n;i++){const t=i/sr,gain=Math.min(1,t/fade,(audio.duration-t)/fade);data[i]=clamp(.22*gain*audioAt(t),-1,1)}
+ for(let i=0;i<n;i++){
+  const t=i/sr,gain=Math.max(0,Math.min(1,t/fade,(audio.duration-t)/fade));
+  const sample=lab==="sampling"?
+   (audio.signal==="ct"?Math.sin(audio.pitchScale*phaseAt(t)):Math.sin(audio.pitchScale*phaseFoldAngle(t))):
+   audioAt(t);
+  data[i]=clamp(.22*gain*sample,-1,1);
+ }
  audio.buffer=buffer;
 }
 function beginSource(offset){
@@ -623,30 +647,71 @@ function beginSource(offset){
  s.start(0,audio.offset);if(transportId!==null)cancelAnimationFrame(transportId);
  transportId=requestAnimationFrame(audioFrame);refreshAudio();
 }
-async function startAudio(){
- if(lab==="sampling"||audio.playing)return;
+async function startAudio(choice=null){
+ if(lab==="sampling"){
+  if(choice!=="ct"&&choice!=="alias")return;
+  if(state.playing){
+   state.playing=false;
+   if(playId!==null)cancelAnimationFrame(playId);
+   playId=null;renderControls();
+  }
+  if(audio.playing&&audio.signal===choice)return;
+  if(audio.signal!==choice){
+   const saved=audioPosition();
+   stopAudio(false);
+   audio.offset=saved;
+   audio.signal=choice;audio.buffer=null;
+  }
+  audio.duration=state.T;
+ }else if(audio.playing)return;
  const Ctx=window.AudioContext||window.webkitAudioContext;
  if(!Ctx){if(audio.status)audio.status.textContent=txt("Web Audio unavailable.","Web Audio 미지원");return}
  const req=++requestId;
  try{
-  if(!audioCtx)audioCtx=new Ctx();await audioCtx.resume();
+  if(!audioCtx)audioCtx=new Ctx();
+  await audioCtx.resume();
   if(requestId!==req)return;
   if(!audio.buffer)fftAudioBuffer();
   if(audio.offset>=audio.duration-.001)audio.offset=0;
   beginSource(audio.offset);
- }catch(e){if(req===requestId&&audio.status)audio.status.textContent=txt("Playback unavailable.","재생할 수 없습니다.")}
+ }catch(e){
+  if(req===requestId&&audio.status)audio.status.textContent=txt("Playback unavailable.","재생할 수 없습니다.");
+ }
 }
 function audioFrame(){
  transportId=null;if(!audio.playing)return;
  const pos=audioPosition();audio.offset=pos;updateTransport();
+ if(lab==="sampling"){
+  state.pos=100*pos/state.T;
+  const slider=$("ss-extra-pos");
+  if(slider){
+   slider.value=String(state.pos);
+   const output=slider.parentElement.querySelector("output");
+   if(output)output.textContent=Math.round(state.pos)+"%";
+  }
+ }
  if(performance.now()-lastDraw>33)drawSoon();
  if(audio.playing)transportId=requestAnimationFrame(audioFrame);
 }
 function seek(seconds){
- if(lab==="sampling")return;
- const was=audio.playing;if(was){audio.playing=false;if(transportId!==null)cancelAnimationFrame(transportId);transportId=null;closeSource()}
+ const was=audio.playing;
+ if(was){
+  audio.playing=false;
+  if(transportId!==null)cancelAnimationFrame(transportId);
+  transportId=null;closeSource();
+ }
  audio.offset=clamp(seconds,0,audio.duration);
- if(was&&audio.buffer&&audio.offset<audio.duration)beginSource(audio.offset);else refreshAudio();
+ if(lab==="sampling"){
+  state.pos=100*audio.offset/state.T;
+  const slider=$("ss-extra-pos");
+  if(slider){
+   slider.value=String(state.pos);
+   const output=slider.parentElement.querySelector("output");
+   if(output)output.textContent=Math.round(state.pos)+"%";
+  }
+ }
+ if(was&&audio.buffer&&audio.offset<audio.duration)beginSource(audio.offset);
+ else refreshAudio();
  drawSoon();
 }
 function animate(now){
@@ -681,14 +746,15 @@ function init(){
   $("ss-al-panel-toggle").setAttribute("aria-expanded",String(!v));displayNames();requestAnimationFrame(drawSoon);
  });
  $("ss-al-reset").addEventListener("click",()=>{
-  if(lab!=="sampling")stopAudio(true);else if(playId!==null){cancelAnimationFrame(playId);playId=null}
-  Object.keys(initial).forEach(key=>state[key]=initial[key]);fftCache=null;audio.buffer=null;audio.offset=0;
+  stopAudio(true);if(playId!==null){cancelAnimationFrame(playId);playId=null}
+  Object.keys(initial).forEach(key=>state[key]=initial[key]);fftCache=null;audio.buffer=null;audio.offset=0;audio.duration=lab==="sampling"?state.T:2;audio.signal="ct";
   previousFrame=0;displayNames();renderControls();drawSoon();
  });
- if(lab!=="sampling"){
+ {
   $("ss-al-seek").addEventListener("input",e=>seek(Number(e.target.value)/1000*audio.duration));
   updateTransport();
- }else{
+ }
+ if(lab==="sampling"){
   const canvas=canvases[2];canvas.style.cursor="crosshair";
   canvas.addEventListener("click",e=>{
    const bounds=canvas.getBoundingClientRect(),left=56,right=bounds.width-15;
@@ -702,10 +768,10 @@ function init(){
  window.addEventListener("els:themechange",drawSoon);window.addEventListener("resize",drawSoon);
  if(window.ResizeObserver)new window.ResizeObserver(drawSoon).observe($("ss-al-charts"));
  document.addEventListener("visibilitychange",()=>{
-  if(document.hidden){if(lab!=="sampling")stopAudio(true);else{state.playing=false;if(playId!==null)cancelAnimationFrame(playId);playId=null;renderControls()}}
+  if(document.hidden){stopAudio(true);if(lab==="sampling"){state.playing=false;if(playId!==null)cancelAnimationFrame(playId);playId=null;renderControls()}}
  });
  window.addEventListener("pagehide",()=>{
-  if(lab!=="sampling")stopAudio(true);
+  stopAudio(true);
   if(playId!==null)cancelAnimationFrame(playId);
  });
  drawSoon();
