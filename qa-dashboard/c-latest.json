@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "course": "c-programming",
-  "generatedAt": "2026-11-22T05:15:38.870Z",
-  "sourceSha": "c9ea0ee45577e43b3b2b6a9b0e2cee1a493dab44",
-  "runId": "44988529611",
-  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/44988529611",
-  "automaticStatus": "AUTOMATED_PASS",
-  "automatedStatus": "AUTOMATED_PASS",
+  "generatedAt": "2026-11-22T06:02:43.641Z",
+  "sourceSha": "c5342e22951f3dde392443440c7399cf8765fbbc",
+  "runId": "44991908936",
+  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/44991908936",
+  "automaticStatus": "BLOCKED_AUTOMATED",
+  "automatedStatus": "BLOCKED_AUTOMATED",
   "manualStatus": "PENDING",
-  "releaseStatus": "AUTOMATED_PASS_MANUAL_PENDING",
+  "releaseStatus": "BLOCKED_AUTOMATED",
   "chaptersCount": 8,
   "labsCount": 8,
   "plannedUnits": 18,
@@ -46,7 +46,7 @@
     {
       "id": "G5",
       "label": "Progress and saved work",
-      "status": "PASS",
+      "status": "FAIL",
       "required": true
     },
     {
