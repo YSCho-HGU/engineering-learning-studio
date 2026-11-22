@@ -42,6 +42,33 @@ try{
    assert.equal(result.savedLang,'en',path+' preserved language');
    assert.equal(result.savedTheme,index===0?'neutral-dark':'warm-neutral',path+' saved theme');
    if(index===0){
+     // Only the two currently published courses are interactive.
+     const active=page.locator("#available-courses .course-card--available");
+     const planned=page.locator("#planned-courses .course-card--planned");
+     assert.equal(await active.count(),2,"Exactly two active courses");
+     assert.equal(await planned.count(),4,"Logic Design onward should all be Coming soon");
+     assert.deepEqual(await active.evaluateAll(nodes=>nodes.map(n=>n.dataset.course)),["ss","c"]);
+     assert.deepEqual(await planned.evaluateAll(nodes=>nodes.map(n=>n.dataset.course)),["logic","dsp","python","ai"]);
+     assert.equal(await page.locator("#gate,#gate-type").count(),0,"Legacy Logic Design mini lab must be removed");
+     assert.equal(await page.locator("#planned-courses a").count(),0,"Planned courses cannot be clicked");
+     assert.deepEqual(await active.evaluateAll(nodes=>nodes.map(n=>n.getAttribute("href"))),
+       ["./signals-systems/","./c-programming/"]);
+     const subdued=await page.evaluate(()=>{
+       const a=getComputedStyle(document.querySelector(".course-card--available"));
+       const p=getComputedStyle(document.querySelector(".course-card--planned"));
+       return {active:a.backgroundColor,planned:p.backgroundColor,
+         overflow:document.documentElement.scrollWidth-innerWidth};
+     });
+     assert.notEqual(subdued.active,subdued.planned,"Planned cards should be visually subdued");
+     assert.ok(subdued.overflow<=2,"Studio Home horizontal overflow: "+subdued.overflow);
+     assert.match(await planned.first().innerText(),/Coming soon/);
+     for(const [mode,hasKorean] of [["ko",true],["mixed",true],["en",false]]){
+       await page.locator("#lang").selectOption(mode);
+       const activeDescription=await active.first().locator("p").innerText();
+       if(hasKorean)assert.match(activeDescription,/[가-힣]/,"Missing Korean "+mode);
+       else assert.doesNotMatch(activeDescription,/[가-힣]/,"English-only cards contain Korean");
+     }
+     await page.locator("#lang").selectOption("en");
      await page.locator('[data-els-theme-picker]').selectOption('warm-neutral');
      await page.waitForFunction(()=>localStorage.getItem('els-theme-v2')==='warm-neutral');
    }
