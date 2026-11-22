@@ -4,8 +4,8 @@ on:
     paths:
       - 'signals-systems/**'
       - 'shared/**'
-      - 'c-programming/language.js'
-      - 'c-programming/*/index.html'
+      - 'c-programming/**'
+      - 'assets/**'
       - 'index.html'
       - 'tests/studio-monorepo-contract.mjs'
       - '.github/workflows/studio-monorepo-qa.yml'
@@ -22,6 +22,36 @@ jobs:
           node-version: '22'
       - name: Studio migration and localization contracts
         run: node tests/studio-monorepo-contract.mjs
+      - name: C site integrity
+        run: node tests/c-site-integrity.mjs
       - name: Signals content language contract
         working-directory: signals-systems
         run: node tests/ss-data-language-contract.mjs
+  migration-browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser test runtime
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Eight C course browser regression
+        run: node tests/qa-unified-browser.mjs
+      - name: Start Studio root server
+        run: |
+          python3 -m http.server 8788 --bind 127.0.0.1 >/tmp/studio-preview.log 2>&1 &
+          sleep 2
+      - name: Signals chapter navigation and theme regression
+        working-directory: signals-systems
+        env:
+          SS_BASE_URL: http://127.0.0.1:8788/signals-systems/
+        run: node tests/ss-navigation-visual-e2e.mjs
+      - name: Signals English chapter regression
+        working-directory: signals-systems
+        env:
+          SS_BASE_URL: http://127.0.0.1:8788/signals-systems/
+        run: node tests/ss-english-content-e2e.mjs
