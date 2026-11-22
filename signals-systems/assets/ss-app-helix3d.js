@@ -10,7 +10,7 @@ const TAU=2*Math.PI;
 function create(canvas,onViewChanged){
  const camera={yaw:-.54,pitch:.26,distance:9.2};
  const pointers=new Map();
- let previousPinch=0,dragging=false;
+ let previousPinch=0;
  function reset(){camera.yaw=-.54;camera.pitch=.26;camera.distance=9.2;onViewChanged();}
  function rotate(dx,dy){
   camera.yaw+=dx*.009;
@@ -27,7 +27,7 @@ function create(canvas,onViewChanged){
   const x=cy*p[0]+sy*p[2],z1=-sy*p[0]+cy*p[2];
   const y=cp*p[1]-sp*z1,z=sp*p[1]+cp*z1;
   const d=camera.distance-z;
-  const focal=Math.min(w*.90,h*1.10)/Math.tan(42*Math.PI/360);
+  const focal=Math.min(w*.55,h*.55)/Math.tan(42*Math.PI/360);
   const scale=focal/d;
   return {x:w/2+x*scale,y:h*.53-y*scale,depth:d,scale};
  }
@@ -40,7 +40,6 @@ function create(canvas,onViewChanged){
   if(!ctx||w<10||h<10)return;
   const total=3,peak=Math.exp(Math.max(0,sigma)*total),world=(t)=>{const radius=Math.exp(sigma*t)/peak,phi=TAU*f*t;return[-2.5+5*t/total,radius*Math.cos(phi),radius*Math.sin(phi)]};
   const proj=p=>cameraProject(p,w,h);
-  const center=proj([0,0,0]);
   const o=proj([-2.5,0,0]),tEnd=proj([2.5,0,0]),reEnd=proj([-2.5,1.35,0]),imEnd=proj([-2.5,0,1.35]);
   const gridColor=pal.border||"#666";
   // 3D reference axes, tick marks, and the real/imaginary reference circles.
@@ -94,7 +93,7 @@ function create(canvas,onViewChanged){
   if(event.button!==undefined&&event.pointerType==="mouse"&&event.button!==0)return;
   pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
   if(canvas.setPointerCapture)canvas.setPointerCapture(event.pointerId);
-  dragging=true;canvas.style.cursor="grabbing";previousPinch=0;
+  canvas.style.cursor="grabbing";previousPinch=0;
  });
  canvas.addEventListener("pointermove",event=>{
   if(!pointers.has(event.pointerId))return;
@@ -109,8 +108,7 @@ function create(canvas,onViewChanged){
  });
  const finish=event=>{
   pointers.delete(event.pointerId);
-  dragging=pointers.size>0;
-  if(!dragging)canvas.style.cursor="grab";
+  if(!pointers.size)canvas.style.cursor="grab";
   previousPinch=0;
   try{if(canvas.hasPointerCapture?.(event.pointerId))canvas.releasePointerCapture(event.pointerId)}catch(e){}
  };
