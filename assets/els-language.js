@@ -80,8 +80,42 @@
   });
   document.documentElement.dataset.elsLanguage = mode;
   document.documentElement.lang = mode === "en" ? "en" : "ko";
+  // Shared bilingual content contract (C, Signals & Systems, future courses).
+  // Content is projected from immutable originals, never from the last render.
+  function textVariant(en, ko, chosen) {
+    if (chosen === "en") return en == null ? "" : en;
+    if (chosen === "ko") return ko == null ? "" : ko;
+    if (en == null || en === "") return ko == null ? "" : ko;
+    if (ko == null || ko === "" || en === ko) return en;
+    return String(en) + "\\n" + String(ko);
+  }
+  function content(entry, chosen) {
+    var target = valid(chosen) ? chosen : mode;
+    if (entry == null || typeof entry === "string") return entry == null ? "" : entry;
+    return textVariant(entry.en, entry.ko, target);
+  }
+  function project(base, localized, chosen) {
+    var target = valid(chosen) ? chosen : mode;
+    if (!base || typeof base !== "object") return base;
+    if (Array.isArray(base)) return base.map(function(item, i) {
+      return project(item, Array.isArray(localized) ? localized[i] : null, target);
+    });
+    var output = {};
+    Object.keys(base).forEach(function(key) {
+      var value = base[key];
+      var translated = localized && Object.prototype.hasOwnProperty.call(localized, key) ? localized[key] : undefined;
+      if (typeof value === "string" && typeof translated === "string") {
+        output[key] = textVariant(translated, value, target);
+      } else if (value && typeof value === "object") {
+        output[key] = project(value, translated, target);
+      } else {
+        output[key] = value;
+      }
+    });
+    return output;
+  }
   window.ELSLanguage = Object.freeze({
     version: "1.0.0", key: KEY, modes: MODES.slice(), get: get, set: set,
-    subscribe: subscribe, bindSelect: bindSelect, pick: pick
+    subscribe: subscribe, bindSelect: bindSelect, pick: pick, content: content, project: project
   });
 })(window, document);
