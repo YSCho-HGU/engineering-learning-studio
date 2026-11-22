@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-22T06:43:57.698Z",
-  "sourceSha": "5b595c9fc054f311fc34b7de402b2d3f62c4e201",
-  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/44994956578",
+  "generatedAt": "2026-11-22T07:45:50.652Z",
+  "sourceSha": "61a127082a1bcac361e19fcc35427d3149be6800",
+  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/44999593897",
   "sharedPolicy": "docs/qa/studio-quality-policy.json",
   "courses": [
     {
@@ -13,7 +13,7 @@
     {
       "id": "c-programming",
       "kind": "local",
-      "status": "AUTOMATED_PASS_MANUAL_PENDING",
+      "status": "BLOCKED_AUTOMATED",
       "source": "qa-dashboard/c-latest.json"
     },
     {
