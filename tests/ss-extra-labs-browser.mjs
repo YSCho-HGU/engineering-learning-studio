@@ -66,6 +66,14 @@ for(const lab of ["beats","amfm","sampling"]){
    const sineAlias=await page.locator("#ss-al-metrics .ss-al-metric-value").last().innerText();
    if(!almost(parseFloat(sineAlias),18))throw Error("Sine alias 38 Hz at fs=56 should be 18 Hz, got "+sineAlias);
    await page.locator("#ss-extra-kind").selectOption("chirp");
+   const stftToggle=page.locator("#ss-extra-showFFT");
+   if(!await stftToggle.count())throw Error("Measured STFT toggle missing");
+   const fftVisible=await page.locator("#ss-al-canvas-3").evaluate(c=>c.toDataURL());
+   await stftToggle.selectOption("off");
+   await page.waitForTimeout(100);
+   const fftHidden=await page.locator("#ss-al-canvas-3").evaluate(c=>c.toDataURL());
+   if(fftVisible===fftHidden)throw Error("STFT peak visibility toggle did not affect plot");
+   await stftToggle.selectOption("on");
   }
   const changedCanvas=await page.locator("#ss-al-canvas-1").evaluate(c=>c.toDataURL());
   if(initialCanvas===changedCanvas)throw Error("Canvas did not react to user controls");
