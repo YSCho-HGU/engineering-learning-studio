@@ -36,6 +36,7 @@ try{
     localStorage.setItem("qa-preserve-unknown","kept");
    },palette);
    const page=await ctx.newPage();
+   page.setDefaultTimeout(5000);
    const pageErrors=[];
    page.on("pageerror",e=>pageErrors.push("JS "+e.message));
    page.on("response",r=>{if(r.url().startsWith(root)&&r.status()>=400)pageErrors.push("HTTP "+r.status()+" "+r.url())});
@@ -100,6 +101,7 @@ try{
  // Verify the three actual guided labs and the File I/O coding editor routing.
  const ctx=await browser.newContext({viewport:{width:390,height:850}});
  const page=await ctx.newPage();
+ page.setDefaultTimeout(5000);
  try{
   await page.goto(root+"c-programming/file-io/core-labs/",{waitUntil:"load"});
   const nav=page.locator(".side-nav");
