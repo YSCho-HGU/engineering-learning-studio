@@ -5,13 +5,14 @@
 const D=window.C_JOURNEY;
 if(!D||!Array.isArray(D.lessons)||D.lessons.length<1)throw Error("Journey must contain at least one lesson");
 const labSpecs=(window.CGuidedLabSpecs&&window.CGuidedLabSpecs[D.slug])||[];
-D.guidedLabs=labSpecs.map((spec,i)=>({label:"L"+(i+1)+" · "+(window.ELSLanguage?.get()==="en"?spec.en:spec.ko),href:"#lab-"+(i+1)}));
+D.guidedLabs=labSpecs.map((spec,i)=>({label:"L"+(i+1)+" · "+spec.en,href:"#lab-"+(i+1)}));
 const total=D.lessons.length;
 const hasOptional=Number.isInteger(D.coreCount)&&D.coreCount>0&&D.coreCount<total;
 const coreCount=hasOptional?D.coreCount:total;
 const phaseBreaks=Array.isArray(D.phaseBreaks)&&D.phaseBreaks.length===2?D.phaseBreaks:[Math.ceil(total/2),Math.max(Math.ceil(total/2)+1,total-1)];
 const $=id=>document.getElementById(id);
 const ui=(ko,en)=>window.ELSLanguage?.get()==="en"?en:ko;
+const labText=(ko,en)=>{const mode=window.ELSLanguage?.get();return mode==="en"?en:mode==="ko"?ko:en+" · "+ko};
 const version=D.contentRevision||(D.slug==="dynamic-memory"?2:1);
 const key="els-journey-"+D.slug+"-v"+version;
 let completed=[],current=0,activeLab=-1;
@@ -64,9 +65,9 @@ function renderNav(){
  const optional=hasOptional?group("advanced","Advanced · 선택 심화","Advanced · Optional",current>=coreCount):null;
  D.lessons.forEach((l,i)=>{
   const host=i<coreCount?core:optional;
-  const b=element("button",(i===current?"active ":"")+(completed.includes(i)?"done":""),host);
+  const b=element("button",(i===current&&activeLab<0?"active ":"")+(completed.includes(i)?"done":""),host);
   b.type="button";b.dataset.lesson=i;b.setAttribute("aria-controls","lesson");
-  if(i===current)b.setAttribute("aria-current","step");
+  if(i===current&&activeLab<0)b.setAttribute("aria-current","step");
   element("span","n",b,String(i+1).padStart(2,"0"));
   element("span","",b,l.title);
   if(concepts.includes(i))element("span","concept-indicator",b,"✓");
@@ -77,6 +78,7 @@ function renderNav(){
    const link=element("a","c-learning-link",labs,lab.label||"Lab "+(i+1));
    link.href=lab.href;
    if(labProgress.includes(i))link.textContent+=" ✓";
+   if(activeLab===i)link.setAttribute("aria-current","step");
    link.addEventListener("click",e=>{e.preventDefault();location.hash="lab-"+(i+1);showLab(i)});
   });
  }
@@ -322,7 +324,7 @@ function showLab(index){
  renderNav();
  const stage=$("lesson");stage.replaceChildren();
  element("div","tag",stage,"GUIDED LAB · L"+(index+1)+" / "+labSpecs.length);
- element("h2","",stage,ui(spec.ko,spec.en));
+ element("h2","",stage,labText(spec.ko,spec.en));
  element("p","lead",stage,ui("개념 학습과 독립 코딩 사이의 안내 실습입니다. 실제 C 컴파일은 학생 개발 환경에서 수행합니다.","Bridge concept learning and independent coding. Compile and run the C program in your own environment."));
  const task=element("section","concept",stage);
  element("h3","",task,ui("1 · 기존 코드 확인","1 · Read the starting code"));
@@ -330,7 +332,7 @@ function showLab(index){
  element("pre","code",task).textContent=source.code;
  const work=element("section","activity",stage);
  element("h3","",work,ui("2 · 일부 수정하고 결과 예측","2 · Modify and predict"));
- element("p","",work,ui(spec.taskKo,spec.taskEn));
+ element("p","",work,labText(spec.taskKo,spec.taskEn));
  const prediction=element("textarea","",work);
  prediction.setAttribute("aria-label","Modified code and prediction");
  prediction.placeholder=ui("수정할 코드와 예상 결과를 적으세요.","Write the change and predicted result before running.");
@@ -339,7 +341,7 @@ function showLab(index){
  prediction.addEventListener("input",()=>{try{localStorage.setItem(noteKey,prediction.value)}catch(e){}});
  const verify=element("section","transfer",stage);
  element("h3","",verify,ui("3 · 결과 비교와 설명","3 · Compare and explain"));
- element("p","",verify,ui(spec.checkKo,spec.checkEn));
+ element("p","",verify,labText(spec.checkKo,spec.checkEn));
  element("p","legend",verify,ui("이 페이지는 C 코드를 컴파일하거나 실행 결과를 검증하지 않습니다.","This page does not compile C or verify test results."));
  const actions=element("div","navactions",stage);
  const mark=element("button","action primary",actions,labProgress.includes(index)?ui("연습 기록됨 ✓","Practice recorded ✓"):ui("실습 수행 기록","Record practice"));
