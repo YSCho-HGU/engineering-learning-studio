@@ -189,5 +189,12 @@ html[data-c-sidebar=collapsed] .c-sidebar-caption{display:none}
 .c-ss-content :is(.concept p.c-learning-prose,.transfer p.c-learning-prose,.learn p.c-learning-prose,#hero-summary){white-space:pre-line;overflow-wrap:anywhere;line-height:1.8}
 .c-ss-content .concept p.c-learning-prose{font-size:16px;margin:12px 0 5px}
 .c-ss-content :is(code.c-inline-code,code.cp-inline-code){font:600 .93em/1.55 Consolas,"Cascadia Code",monospace;background:var(--els-surface-alt,var(--soft));color:var(--els-ink,var(--ink));border:1px solid var(--els-border,var(--line));border-radius:4px;padding:1px 4px;white-space:normal;overflow-wrap:anywhere}
-.c-ss-content .c-ss-workspace :is(.cp-task-desc,#task-desc){white-space:pre-line;line-height:1.75}
+
 .c-ss-content .c-learning-group .c-learning-link{line-height:1.5}
+
+/* A separate runnable example is an optional reference, not a second Core Concepts step. */
+.c-ss-content details.c-guided-code-example{margin:16px 0;padding:12px 16px;border:1px solid var(--els-border);border-radius:11px;background:var(--els-surface-alt)}
+.c-ss-content details.c-guided-code-example>summary{cursor:pointer;font-weight:760;font-size:15px;line-height:1.6}
+.c-ss-content details.c-guided-code-example>p{font-size:15px;white-space:pre-line;line-height:1.75}
+.c-ss-content details.c-guided-code-example>pre{max-width:100%;overflow-x:auto;margin:12px 0 4px}
+.c-ss-workspace .c-ss-content :is(.cp-task-desc,#task-desc){white-space:pre-line;line-height:1.75}
