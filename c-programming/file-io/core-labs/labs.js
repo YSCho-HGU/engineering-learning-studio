@@ -3,7 +3,7 @@
 const $=id=>document.getElementById(id);
 const language=window.ELSLanguage;
 const translations={
-skip:["본문 바로가기","Skip to main content"],back:["← File I/O 개념 학습","← File I/O concepts"],title:["File I/O 필수 코딩 실습","File I/O Essential Coding Labs"],
+skip:["본문 바로가기","Skip to main content"],back:["← File I/O 개념 학습","← File I/O concepts"],title:["File I/O Guided Labs · 따라하기 실습","File I/O Guided Labs"],
 intro:["1학년이 먼저 익혀야 할 세 가지 프로그램입니다. 전체 C 코드를 읽고, 데이터를 바꾸고, 실행 결과를 예측한 다음 확인하세요. 오류 복구와 복잡한 파싱은 심화 과정에서 다룹니다.","Three essential programs for first-year students. Read the complete C code, change the input, predict the result, then test it. Advanced error recovery and parsing are taught separately."],
 shortWrite:["01 · 파일에 쓰기","01 · Write a file"],shortRead:["02 · 한 줄 읽기","02 · Read one line"],shortStudent:["03 · 학생 레코드","03 · Student record"],
 coreLabel:["필수 실습 · 순서대로","Core labs · In order"],navWrite:["파일에 한 줄 저장하기","Write One Line to a File"],navRead:["파일에서 한 줄 읽고 출력하기","Read One Line and Print It"],navStudent:["학생 레코드를 구조체에 읽고 학점 계산하기","Read a Student Record and Calculate a Grade"],
@@ -20,7 +20,7 @@ studentTitle:["학생 레코드를 구조체에 읽고 학점 계산하기","Rea
 codeStudentNote:["학생 한 명을 처리하는 기본 형태","A complete program for one student"],studentExplain:["fscanf()가 3을 반환하면 학번·이름·점수를 모두 성공적으로 읽은 것입니다. 정수·실수에는 &, 문자 배열 이름에는 & 없이 전달합니다.","A return value of 3 from fscanf() means that ID, name and score were all converted. Use & for the integer and double fields, but not for the character array name."],
 studentInput:["students.txt 내용 · 첫 학생","students.txt contents · First student"],studentPredict:["예측: s.id, s.name, s.score와 A~F 학점은 각각 무엇일까요?","Predict: What are s.id, s.name, s.score and the A–F grade?"],studentRun:["구조체 저장·학점 환산 모의 실행","Simulate reading and grading"],
 studentRule:["성적 기준: A ≥ 90, B ≥ 80, C ≥ 70, D ≥ 60, F < 60 (실습용 기준)","Grade thresholds: A ≥ 90, B ≥ 80, C ≥ 70, D ≥ 60, F < 60 (example only)"],
-finishTitle:["이제 직접 작성해 보세요","Now Write the Code Yourself"],finishText:["세 프로그램의 전체 흐름을 이해했다면 Coding Challenges에서 코드를 직접 작성하세요. P1은 파일 쓰기, M1은 한 줄 복사, P2는 여러 숫자 읽기입니다.","After understanding the three complete programs, write code in the existing Coding Challenges. P1 writes files, M1 copies one line and P2 reads and averages numbers."],
+finishTitle:["이제 직접 작성해 보세요","Now Write the Code Yourself"],finishText:["세 프로그램의 전체 흐름을 이해했다면 Coding Challenges에서 코드를 직접 작성하세요. P1은 파일 쓰기, M1은 한 줄 복사, P2는 여러 숫자 읽기입니다.","After understanding the three complete programs, write code in the Coding Challenges. P1 writes files, M1 copies one line and P2 reads and averages numbers."],
 practiceWrite:["P1 · 직접 파일 쓰기","P1 · Write a File"],practiceRead:["M1 · 한 줄 복사","M1 · Copy One Line"],practiceNumbers:["P2 · 숫자 평균 계산","P2 · Average Numbers"],advancedSummary:["심화 과정은 별도로 펼치기","Expand optional advanced topics"],advancedText:["기본 프로그램을 익힌 뒤 여러 학생 레코드, 형식 오류 감지, 파일 복사, 센서 로그 검증 등은 선택 심화 코딩 과제에서 연습합니다.","After the basics, practice multiple student records, malformed data, file copying and sensor validation in optional advanced exercises."],
 footer:["기본 3개 실습의 실행 기록은 기존 Chapter 17 진도와 별도 저장됩니다. 실제 컴파일 성공을 의미하지 않습니다.","The three simulation completion markers are stored separately from Chapter 17 progress; they do not indicate successful C compilation."]
 };
