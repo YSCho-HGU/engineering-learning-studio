@@ -134,8 +134,8 @@ html[data-c-sidebar=collapsed] .c-sidebar-caption{display:none}
 
 /* File I/O specialist exercises: preserve native editors and simulators. */
 .c-ss-shell>.c-ss-sidebar#task-nav{display:flex;flex-direction:column;gap:7px;width:100%;min-width:0;position:sticky;top:var(--c-header-height);height:calc(100dvh - var(--c-header-height));max-height:calc(100dvh - var(--c-header-height));padding:12px 11px;margin:0;border:0;border-right:1px solid var(--els-border);border-radius:0;overflow-x:hidden;overflow-y:auto;background:var(--els-surface)}
-.c-ss-shell>.c-ss-sidebar#task-nav button{min-height:49px;width:100%;padding:9px;border-radius:9px;color:var(--els-ink);border:1px solid transparent;text-align:left}
-.c-ss-shell>.c-ss-sidebar#task-nav button.active{background:var(--els-surface-alt);border-color:var(--els-link)}
+.c-ss-shell>.c-ss-sidebar#task-nav > button[data-task]{min-height:49px;width:100%;padding:9px;border-radius:9px;color:var(--els-ink);border:1px solid transparent;text-align:left}
+.c-ss-shell>.c-ss-sidebar#task-nav > button[data-task].active{background:var(--els-surface-alt);border-color:var(--els-link)}
 .c-ss-workspace>.c-fileio-task-workspace{box-sizing:border-box;width:100%;max-width:none;min-width:0;padding:15px clamp(12px,1.8vw,27px) 42px;margin:0}
 .c-fileio-task-workspace .layout{display:block!important;width:100%;min-width:0}
 .c-fileio-task-workspace .layout>.work{display:block;box-sizing:border-box;min-width:0;width:100%;max-width:none;margin:0}
