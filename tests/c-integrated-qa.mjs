@@ -32,6 +32,7 @@ for(const kind of ["pointer","structure"]){
   assert(fs.existsSync(base+file),file+" route exists");
  }
  const home=fs.readFileSync(base+kind+"/index.html","utf8");
+ assert(home.includes('class="c-learning-shortcuts"')&&home.includes('class="course-phase-details"')&&home.includes('c-ch5-reading'),kind+" Chapter 5 reading structure");
  assert(home.includes('id="assessment-status"'),kind+" independent concept status");
  assert(home.includes('shared/els-content-model.js')&&home.includes('els-language.js')&&home.includes('../language.js'),kind+" shared immutable language pipeline");
  assert(home.includes('data-els-theme-picker')&&home.includes('id="theme"'),kind+" shared theme picker replaces legacy toggle");
@@ -62,6 +63,12 @@ if(process.env.C_JOURNEY_BROWSER==="1"){
    const errors=[];page.on("pageerror",e=>errors.push(String(e)));page.on("response",r=>{if(r.status()>=400)errors.push("HTTP "+r.status()+" "+r.url())});
    await page.goto("http://127.0.0.1:8876/"+base+kind+"/",{waitUntil:"domcontentloaded"});
    assert(await page.locator("#lesson-nav button").count()===8,kind+" 8 working steps");
+   assert(await page.locator('.c-learning-shortcuts a').count()===3,kind+" three working learning shortcuts");
+   assert(!(await page.locator('.course-phase-details').evaluate(el=>el.open)),kind+" roadmap begins collapsed");
+   await page.locator('.course-phase-details summary').click();
+   assert(await page.locator('.course-phase-details').evaluate(el=>el.open),kind+" roadmap expands on demand");
+   assert(await page.locator('.stage .lead').evaluate(el=>parseFloat(getComputedStyle(el).fontSize))>=16,kind+" readable explanatory text");
+   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+8),kind+" reading layout does not overflow mobile viewport");
    assert(await page.locator('[data-els-theme-picker]').count()===1,kind+" exactly one theme picker");
    assert(await page.locator('#c-shared-language select').count()===1,kind+" common language control");
    await Promise.all([page.waitForNavigation({waitUntil:'domcontentloaded'}),page.locator('#c-shared-language select').selectOption('en')]);
