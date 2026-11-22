@@ -19,6 +19,10 @@ function buildLinks(nav){
   link.textContent='Chapter '+number+' · '+name;
   fragment.appendChild(link);
  });
+ const applications=document.createElement('a');
+ applications.href='./applications.html';applications.dataset.ssView='applications';
+ applications.textContent='Applications · Signals / Systems / FFT / Integration';
+ fragment.appendChild(applications);
  nav.replaceChildren(fragment);
  nav.dataset.ssLinksBuilt='true';
 }
@@ -46,7 +50,8 @@ function init(){
    if(kind==='section'){el.type='button';el.dataset.ssSectionDirection=String(direction);}
    else{
     const target=chapterNumber+direction;
-    if(target<1||target>8){el.setAttribute('aria-disabled','true');el.removeAttribute('href');}
+    if(target===9&&direction===1)el.href='./applications.html';
+    else if(target<1||target>8){el.setAttribute('aria-disabled','true');el.removeAttribute('href');}
     else el.href='./chapter'+target+'.html';
    }
    arrows.append(el);return el;
@@ -142,7 +147,7 @@ function init(){
  function sync(){
   const ch=Number((path.match(/chapter([1-8])\.html$/)||[])[1])||Number((location.hash.match(/^#chapter=(\d+)/)||[])[1])||0;
   const onOverview=/index\.html$|\/$/.test(path);
-  const view=onOverview?(location.hash==='#map'?'map':'overview'):null;
+  const view=/applications\.html$/.test(path)?'applications':onOverview?(location.hash==='#map'?'map':'overview'):null;
   for(const link of links.querySelectorAll('a')){
    const n=Number(link.dataset.ssChapter||0);
    const active=link.dataset.ssView?link.dataset.ssView===view:!!ch&&n===ch;
