@@ -14,7 +14,7 @@
 </style><link rel="stylesheet" href="./learning-nav.css?v=1"><link rel="stylesheet" href="../../assets/els-typography-standard.css?v=1"><link rel="stylesheet" href="../c-ss-shell.css?v=2"></head><body class="els-design c-ss-course" data-fileio-section="concepts">
 <a class="skip" href="#lesson">학습 본문으로 건너뛰기</a>
 <header class="topbar"><a class="brand" href="../">◈ C Programming <small>/ Learning Studio</small></a><div class="toplinks"><a href="../">C Learning Home</a><a href="../learning-journey/">Integrated Journey</a><a href="../../textbook-viewer/?course=c&drive=1pQoUv5072-RW6k7vnjDQULbp1qVNQRDq&title=171_C_File_IO" target="_blank" rel="noopener">교재 171 ↗</a><button id="theme-button" aria-label="화면 테마 전환" aria-pressed="false">◐ Theme</button></div></header>
-<div class="course-header"><div class="eyebrow">2026 · CHAPTER 17 · SELF-STUDY COURSE</div><h1>File I/O <span>Learning Journey</span></h1><p>파일에 기록하고, 다시 읽고, 구조체로 활용하는 기본 방법부터 학습합니다. 센서 로그 분석과 견고한 파일 검증은 별도 선택 심화로 진행합니다.</p><div class="course-meta"><span>필수 개념 7단계 + 선택 심화</span><span>필수 코딩 3개 · 별도 실습</span><span>선택 심화 P3–P6</span></div></div>
+<div class="course-header"><div class="eyebrow">2026 · CHAPTER 17 · SELF-STUDY COURSE</div><h1>File I/O <span>Learning Journey</span></h1><p>파일에 기록하고, 다시 읽고, 구조체로 활용하는 기본 방법부터 학습합니다. 센서 로그 분석과 견고한 파일 검증은 별도 선택 심화로 진행합니다.</p></div>
 <div class="shell">
 <aside class="sidebar" aria-label="학습 단계">
   <div class="progress-panel"><div class="progress-line"><strong>My Learning Activities</strong><output id="progress-text" aria-live="polite">0 / 7</output></div><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0" id="progress-meter"><span id="progress-fill"></span></div></div>
@@ -191,7 +191,7 @@ int main(void) {
   <div class="core-transfer-actions"><button type="button" class="core-transfer-check" data-core-check="4">적용 결과 확인</button><button type="button" class="core-transfer-reset" data-core-reset="4">다시 풀기</button><output class="core-transfer-result" id="core-result-4" aria-live="polite">두 문항을 선택한 뒤 결과를 확인하세요.</output></div>
 </section>
 <div class="check" data-check="3"><div class="check-eyebrow">CHECK YOURSELF · 7.4</div><p class="question-context">입력 파일에는 정수 ID와 실수 점수가 있습니다. fscanf(fp, "%d %lf", &amp;id, &amp;score)의 성공 여부를 반환값으로 검사하려고 합니다.</p><h3><code>fscanf(fp, "%d %lf", &amp;id, &amp;score)</code>가 두 값을 모두 읽었는지 검사하려면?</h3><label><input type="radio" name="q3" value="a"> 반환값이 1인지 검사한다.</label><label><input type="radio" name="q3" value="b"> 반환값이 2인지 검사한다.</label><label><input type="radio" name="q3" value="c"> <code>feof(fp)</code>만 검사한다.</label><button class="check-btn" data-grade="3">답 확인 및 설명</button><div class="answer" id="answer-3" aria-live="polite"></div></div>
-<p class="fileio-basic-link"><a class="practice-link" href="./core-labs/#read">핵심 코딩 실습: 파일에서 한 줄 읽기 →</a></p>
+
 </section>
 <section class="stage" data-stage="4" hidden>
 <section class="lesson" id="m4" aria-labelledby="m4-title"><div class="eyebrow"><span class="stage-heading-number">STEP 05 · EOF & ERRORS</span><small class="stage-reference">§7.4.4</small></div><h2 id="m4-title">EOF와 읽기 오류</h2><p class="caption"><code>while (fscanf(fp, "%d", &amp;x) == 1)</code>은 무엇을 검사하는 조건인가요?</p>
@@ -570,9 +570,9 @@ int main(void) {
 </details>
 <div class="core-next-coding"><strong>개념 이해 후 필수 3개 코딩 과제</strong><p><strong>P1 Write Numbers</strong>(파일 쓰기) → <strong>P2 Read and Average</strong>(파일 읽기·반환값·평균) → <strong>M1 One-Line Copy</strong>(fgets·fputs)를 순서대로 연습하세요. P3~P6은 선택 심화이며, 실제 C 소스는 GCC에서 직접 컴파일·실행해야 합니다.</p></div>
 <p class="fileio-basic-link"><a class="practice-link" href="./core-labs/">필수 코딩 실습 3개: 쓰기 → 읽기 → 구조체·성적 환산 →</a></p>
-<p><a class="practice-link" href="./practice/">교재 P1~P6 · 직접 코드 작성 Practice Lab →</a></p>
+
 <div id="completion-message" class="completion" hidden><strong>Chapter 17 Learning Activities Recorded!</strong><p>일곱 개의 필수 개념 단계가 기록되었습니다. 센서 로그는 별도 선택 심화입니다. 이는 실제 코딩 능력이나 설명의 정확성을 인증하지 않습니다. 교재의 P1~P6을 직접 작성하고 GCC로 검증해 보세요.</p></div>
 </section>
 <div class="step-footer"><button id="prev-stage">← 이전 단계</button><span id="footer-position">1 / 7</span><button class="primary" id="next-stage">다음 단계 →</button></div>
-<div class="page-note">모든 C 코드 표기의 <code>!=</code>와 <code>==</code>는 실제 C 연산자입니다. 글꼴 ligature로 합쳐 보이지 않도록 설정했습니다. 설명용 실습은 실제 C 컴파일러의 동작을 단순화할 수 있으므로 각 예제의 가정을 함께 확인하세요. Self-study companion for <strong>171_C_File_IO_Rev8</strong>. 웹 실험은 교육용 모의 실행입니다. 실제 C 컴파일러 실행이나 파일 시스템 접근이 아닙니다. 학습 성취는 이 브라우저의 로컬 저장소에만 기록됩니다.</div>
+<p class="page-note">이 웹 실습의 결과는 교육용 시뮬레이션입니다. 실제 C 코드는 Coding Challenges에서 작성하고 GCC C11로 검증하세요.</p>
 </main></div><script src="./sensor-model.js?v=2" defer></script><script src="./robust-sensor-model.js?v=1" defer></script><script src="./app.js?v=trace-robust1" defer></script><script src="./core-transfer.js?v=2" defer></script><script src="./sensor-code-trace.js?v=1" defer></script><script src="./sensor-variable-diff.js?v=1" defer></script><script src="./sensor-trace-ui.js?v=5" defer></script><script src="./sensor-assessment.js?v=1" defer></script><script src="./pilot/engine.js?v=unified2" defer></script><script src="./unified-labs.js?v=unified2" defer></script><script src="../../assets/els-theme-v2.js?v=2" defer></script><script src="../../assets/els-language.js?v=1"></script><script src="../../shared/els-content-model.js?v=1"></script><script src="../c-ss-shell.js?v=grouped2"></script><script src="../language.js?v=1"></script></body></html>
