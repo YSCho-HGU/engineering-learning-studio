@@ -13,6 +13,7 @@ on:
       - 'tests/c-journey-qa.mjs'
       - 'tests/c-integrated-qa.mjs'
       - 'tests/c-learning-map-contract.mjs'
+      - 'tests/c-grouped-navigation-e2e.mjs'
       - 'c-programming/arrays/**'
       - 'c-programming/strings/**'
       - 'c-programming/functions/**'
@@ -46,6 +47,7 @@ jobs:
           C_JOURNEY_BROWSER=1 node tests/c-journey-qa.mjs
           C_JOURNEY_BROWSER=1 node tests/c-integrated-qa.mjs
           C_JOURNEY_BROWSER=1 node tests/els-theme-qa.mjs
+          node tests/c-grouped-navigation-e2e.mjs
       - name: Upload validation report
         if: always()
         uses: actions/upload-artifact@v4
