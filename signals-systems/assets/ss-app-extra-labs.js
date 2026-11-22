@@ -637,9 +637,19 @@ function closeSource(){
 }
 function stopAudio(reset=true){
  requestId++;
- const pos=audioPosition();audio.playing=false;
+ const wasActive=audio.playing||audio.offset>0,pos=audioPosition();
+ audio.playing=false;
  if(transportId!==null){cancelAnimationFrame(transportId);transportId=null}
  closeSource();audio.offset=reset?0:pos;
+ if(lab==="sampling"&&wasActive){
+  state.pos=100*audio.offset/state.T;
+  const slider=$("ss-extra-pos");
+  if(slider){
+   slider.value=String(state.pos);
+   const output=slider.parentElement.querySelector("output");
+   if(output)output.textContent=Math.round(state.pos)+"%";
+  }
+ }
  refreshAudio();drawSoon();
 }
 function change(){
