@@ -96,9 +96,9 @@ function setup(){
  if(!nav)return;
  if(!document.getElementById("c-shared-language")){
   const label=document.createElement("label");label.id="c-shared-language";label.style.cssText="display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-size:12px";
-  const caption=document.createElement("span");caption.textContent="Language";
+  const caption=document.createElement("span");caption.textContent="🌐";caption.setAttribute("aria-hidden","true");caption.title="Language / 언어";
   const select=document.createElement("select");select.setAttribute("aria-label","C Programming language");
-  select.style.cssText="background:var(--surface,var(--els-surface,#222));color:var(--ink,var(--els-ink,#fff));border:1px solid var(--border,var(--els-border,#666));border-radius:7px;padding:7px;min-height:36px";
+  select.style.cssText="max-width:138px;background:var(--surface,var(--els-surface,#222));color:var(--ink,var(--els-ink,#fff));border:1px solid var(--border,var(--els-border,#666));border-radius:7px;padding:7px;min-height:36px";
   for(const [value,name] of [["mixed","ENG + 한국어"],["en","ENG"],["ko","한국어"]]){const opt=document.createElement("option");opt.value=value;opt.textContent=name;select.append(opt)}
   select.value=lang;label.append(caption,select);nav.append(label);
   language.bindSelect(select);
