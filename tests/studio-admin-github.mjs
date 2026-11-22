@@ -26,17 +26,19 @@ await page.route("https://api.github.com/**",route=>{
 });
 await page.route(origin+"/api/catalog*",async route=>{
  const request=route.request(),url=new URL(request.url()),course=url.searchParams.get("course");
- if(request.headers().authorization!=="Bearer fake.owner.session")return route.fulfill({status:401,contentType:"application/json",body:'{"error":"로그인 필요"}'});
+ const cors={"Access-Control-Allow-Origin":"http://127.0.0.1:8765","Access-Control-Allow-Methods":"GET, PUT, OPTIONS","Access-Control-Allow-Headers":"Authorization, Content-Type","Vary":"Origin"};
+ if(request.method()==="OPTIONS")return route.fulfill({status:204,headers:cors});
+ if(request.headers().authorization!=="Bearer fake.owner.session")return route.fulfill({status:401,contentType:"application/json",headers:cors,body:'{"error":"로그인 필요"}'});
  if(!["c","ss"].includes(course))return route.fulfill({status:400});
  if(request.method()==="GET")return route.fulfill({
   status:200,contentType:"application/json",
-  headers:{"Access-Control-Allow-Origin":"http://127.0.0.1:8765","Vary":"Origin"},
+  headers:cors,
   body:JSON.stringify({catalog:course==="c"?c:ss,sha:"a".repeat(40),course})
  });
  if(request.method()==="PUT"){
   const body=request.postDataJSON();
   writes.push({course,body});
-  return route.fulfill({status:200,contentType:"application/json",headers:{"Access-Control-Allow-Origin":"http://127.0.0.1:8765"},body:JSON.stringify({sha:"b".repeat(40),changed:["151"]})});
+  return route.fulfill({status:200,contentType:"application/json",headers:cors,body:JSON.stringify({sha:"b".repeat(40),changed:["151"]})});
  }
  return route.fulfill({status:405});
 });
@@ -46,6 +48,11 @@ try{
  if(await page.locator("#admin-private").isVisible())errors.push("Owner console visible before verified session");
  if(await page.locator("#legacy-auth-controls").count())errors.push("Legacy GitHub PAT editor still in page");
  if(await page.locator("#editor").isVisible())errors.push("Unauthenticated editor visible");
+ // Even a forged browser-only auth event must not reveal the manager.
+ await page.evaluate(()=>window.dispatchEvent(new CustomEvent("studio-admin-auth-state",{
+  detail:{authenticated:true,user:{login:"forged"}}})));
+ await page.waitForTimeout(160);
+ if(await page.locator("#admin-private").isVisible())errors.push("Forged frontend event bypassed Worker verification");
  await page.locator("#github-login").click();
  await page.locator("#editor").waitFor({state:"visible",timeout:12000});
  await page.locator("#admin-private").waitFor({state:"visible",timeout:12000});
