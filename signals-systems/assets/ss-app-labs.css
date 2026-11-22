@@ -253,18 +253,10 @@ button:disabled{opacity:.55;cursor:default}
 .ss-al-audio[data-kind="sampling"] #ss-al-play-alias{
  border:1px solid var(--els-link);color:var(--els-ink);font-weight:750
 }
-.ss-al-audio-mode-label{
- display:block;font-size:12px;font-weight:750;color:var(--els-ink);margin-bottom:4px
-}
-.ss-al-audio-pitch{
- display:block;width:100%;border:1px solid var(--els-border);border-radius:7px;
- background:var(--els-surface);color:var(--els-ink);
- font:13px Arial,"Malgun Gothic",sans-serif;padding:6px 8px;margin-bottom:4px
-}
 .ss-al-audio-caution{font-size:11px;line-height:1.5;color:var(--els-muted);margin:3px 0 10px}
 .ss-al-audio-values{font-size:12px;line-height:1.55;color:var(--els-ink);padding:8px 0 2px}
 
-/* Sampling audio output diagnostic after removal of artificial pitch scaling. */
+/* Sampling audio output diagnostic with original-frequency playback. */
 .ss-al-audio[data-kind="sampling"] .ss-al-sound-check{
  display:block;width:100%;margin:8px 0 3px;
  min-height:32px;border:1px dashed var(--els-border);
