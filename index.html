@@ -1,34 +1,124 @@
 <!doctype html>
 <html lang="en"><head><script>/* Apply selected palette before CSS paint. */(function(){var t="neutral-dark";try{var v=localStorage.getItem("els-theme-v2");if(["neutral-dark","warm-dark","navy-dark","warm-neutral","white-clean"].includes(v))t=v;else if(v==="white")t="white-clean";else{var ss=localStorage.getItem("ss-visual-lab-theme"),e=localStorage.getItem("els-theme");if(ss==="light"||e==="light")t="warm-neutral";else if(ss==="dark"||e==="dark")t="navy-dark"}}catch(e){}document.documentElement.dataset.elsTheme=t;document.documentElement.dataset.theme=["warm-neutral","white-clean"].includes(t)?"light":"dark";document.documentElement.style.colorScheme=["warm-neutral","white-clean"].includes(t)?"only light":"dark"})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Open interactive engineering education platform"><title>Engineering Learning Studio</title>
-<style>
-:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light dark}body{margin:0;background:Canvas;color:CanvasText}header,main,footer{max-width:1100px;margin:auto;padding:24px}header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}button,select,.action{font:inherit;padding:9px 13px;border-radius:9px;border:1px solid #8887;background:Canvas;color:CanvasText}button{cursor:pointer}.hero{background:light-dark(#eaf2ff,#182d46);border-radius:20px;padding:36px;margin:10px 0 28px}h1{font-size:clamp(1.8rem,4vw,3rem);margin:8px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px}.card,.lab{border:1px solid #8886;border-radius:16px;padding:22px}.card h3{margin:0 0 8px}.card p{min-height:45px;color:GrayText}.action{display:inline-block;text-decoration:none}.muted{color:GrayText;font-size:.9rem}.lab{margin-top:30px}.lab button{min-width:70px;margin:4px}.output{font-size:1.7rem;font-weight:700;margin-top:12px}footer{color:GrayText}a:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid #3986ff}@media(max-width:550px){header,main{padding:15px}.hero{padding:22px}}
 
-/* Studio home uses the same canonical header geometry as the course pages. */
+<style>
+:root{
+ --studio-width:1160px;
+ font-family:system-ui,-apple-system,"Segoe UI","Malgun Gothic",Arial,sans-serif;
+}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--els-page,#101010);color:var(--els-ink,#f0f0ed);font:15px/1.65 system-ui,-apple-system,"Segoe UI","Malgun Gothic",sans-serif}
-.site-header{position:sticky;top:0;z-index:30;max-width:none;height:70px;padding:0 24px;background:var(--els-surface,#1c1c1c);border-bottom:1px solid var(--els-border,#565b57)}
-.site-header .header-inner{width:min(100%,1160px);height:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.site-header .brand{display:inline-flex;align-items:center;gap:11px;font-size:14px;font-weight:850;letter-spacing:-.02em;white-space:nowrap;text-decoration:none;color:var(--els-ink,#f0f0ed)}
-.site-header .brand-mark{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--els-border,#565b57);border-radius:10px;background:var(--els-surface-alt,#292929);color:var(--els-link,#b9d7c8);font-size:18px}
-.site-header .header-nav{display:flex;align-items:center;gap:9px;min-width:0}
-.site-header label{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--els-muted,#c1c5c1)}
-.site-header select{min-height:34px;height:34px;border:1px solid var(--els-border,#565b57);border-radius:8px;color:var(--els-ink,#f0f0ed);background:var(--els-surface,#1c1c1c);padding:4px 9px;font-size:12px;line-height:1.4;font-family:inherit}
-main,footer{max-width:1160px}
-.hero{background:var(--els-surface-alt,#292929);border:1px solid var(--els-border,#565b57)}
-.card,.lab{background:var(--els-surface,#1c1c1c);border-color:var(--els-border,#565b57)}
-.card p,.muted,footer{color:var(--els-muted,#c1c5c1)}
-.action,button:not(.nav-btn){background:var(--els-surface-alt,#292929);color:var(--els-ink,#f0f0ed);border-color:var(--els-border,#565b57)}
-.skip-link{position:absolute;left:10px;top:-90px;padding:9px 14px;background:var(--els-surface,#1c1c1c);color:var(--els-ink,#fff);z-index:100}
-.skip-link:focus{top:8px}
-@media(max-width:680px){
- .site-header{height:auto;min-height:70px;padding:10px 14px}
- .site-header .header-inner{flex-wrap:wrap;gap:9px}
- .site-header .brand{font-size:13px}
- .site-header .header-nav{margin-left:auto;gap:7px}
- .site-header select{max-width:140px}
+body{
+ margin:0;background:var(--els-page,#101010);color:var(--els-ink,#f0f0ed);
+ font:16px/1.7 system-ui,-apple-system,"Segoe UI","Malgun Gothic",Arial,sans-serif;
 }
+a{color:inherit}
+a:focus-visible,select:focus-visible{outline:3px solid var(--els-focus,#ead18b);outline-offset:3px}
+.skip-link{position:absolute;top:-100px;left:12px;padding:9px 14px;z-index:100;
+ background:var(--els-surface,#1c1c1c);color:var(--els-ink,#fff);border-radius:7px}
+.skip-link:focus{top:8px}
+.site-header{
+ position:sticky;top:0;z-index:30;min-height:70px;background:var(--els-surface,#1c1c1c);
+ border-bottom:1px solid var(--els-border,#565b57);
+}
+.site-header .header-inner{
+ width:min(calc(100% - 48px),var(--studio-width));min-height:70px;margin:auto;
+ display:flex;align-items:center;justify-content:space-between;gap:20px;
+}
+.site-header .brand{display:inline-flex;align-items:center;gap:11px;text-decoration:none;
+ color:var(--els-ink,#f0f0ed);font-size:14px;font-weight:850;letter-spacing:-.02em;white-space:nowrap}
+.site-header .brand-mark{
+ display:grid;place-items:center;width:36px;height:36px;flex-shrink:0;
+ border:1px solid var(--els-border,#565b57);border-radius:10px;
+ background:var(--els-surface-alt,#292929);color:var(--els-link,#b9d7c8);font-size:18px;
+}
+.site-header .header-nav{display:flex;align-items:center;gap:9px;min-width:0}
+.site-header label{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+ font-size:12px;font-weight:700;color:var(--els-muted,#c1c5c1)}
+.site-header select{height:34px;min-height:34px;padding:4px 9px;border-radius:8px;
+ border:1px solid var(--els-border,#565b57);background:var(--els-surface,#1c1c1c);
+ color:var(--els-ink,#f0f0ed);font-size:12px;line-height:1.4;font-family:inherit;max-width:170px}
+.site-header select{font-family:inherit;font-size:12px;line-height:1.4}
+main,.site-footer{width:min(calc(100% - 48px),var(--studio-width));margin:0 auto}
+.studio-intro{
+ margin:30px 0 38px;padding:clamp(27px,4vw,48px);
+ border-radius:18px;border:1px solid var(--els-border,#565b57);
+ background:linear-gradient(120deg,var(--els-surface-alt,#292929),var(--els-surface,#1c1c1c) 75%);
+}
+.eyebrow{margin:0 0 11px;color:var(--els-link,#b9d7c8);font-size:12px;font-weight:850;letter-spacing:.09em}
+.studio-intro h1{font-size:clamp(29px,3.6vw,45px);line-height:1.15;letter-spacing:-.04em;margin:0 0 16px}
+.studio-intro .intro-copy{font-size:16px;line-height:1.75;color:var(--els-muted,#c1c5c1);
+ max-width:760px;margin:0;white-space:pre-line}
+.studio-intro .intro-link{
+ display:inline-flex;margin-top:23px;padding:10px 16px;text-decoration:none;
+ background:var(--els-primary,#aecfc0);color:var(--els-primary-text,#101712);
+ font-size:13px;font-weight:800;border-radius:9px;border:1px solid transparent;
+}
+.studio-intro .intro-link:hover{filter:brightness(1.07)}
+.course-section{margin:0 0 42px}
+.course-section-head{margin-bottom:18px}
+.course-section-head .eyebrow{font-size:11px;margin-bottom:6px}
+.course-section-head h2{font-size:clamp(22px,2.6vw,28px);line-height:1.3;
+ letter-spacing:-.025em;margin:0 0 6px}
+.course-section-head p{margin:0;font-size:14px;color:var(--els-muted,#c1c5c1);white-space:pre-line}
+.available-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.course-card{
+ display:flex;flex-direction:column;min-width:0;padding:24px;border:1px solid var(--els-border,#565b57);
+ border-radius:15px;background:var(--els-surface,#1c1c1c);
+}
+.course-card--available{
+ text-decoration:none;transition:border-color .15s ease,transform .15s ease,background .15s ease
+}
+.course-card--available:hover{transform:translateY(-2px);border-color:var(--els-link,#b9d7c8);
+ background:var(--els-surface-alt,#292929)}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
+.card-symbol{width:41px;height:41px;border:1px solid var(--els-border,#565b57);border-radius:11px;
+ display:grid;place-items:center;background:var(--els-surface-alt,#292929);
+ color:var(--els-link,#b9d7c8);font-size:19px;font-weight:850}
+.card-status{border:1px solid var(--els-border,#565b57);border-radius:999px;
+ padding:4px 10px;font-size:11px;line-height:1.45;font-weight:750;white-space:nowrap}
+.card-status--available{background:var(--els-info-bg,#293833);color:var(--els-info-ink,#e0f2e6)}
+.course-card h3{font-size:21px;line-height:1.32;letter-spacing:-.025em;margin:0 0 8px}
+.course-card .card-korean{font-size:13px;font-weight:600;color:var(--els-muted,#c1c5c1);margin:-3px 0 10px}
+.course-card p{font-size:14px;line-height:1.65;color:var(--els-muted,#c1c5c1);
+ margin:0 0 20px;white-space:pre-line;flex:1}
+.card-action{display:flex;align-items:center;justify-content:space-between;gap:10px;
+ border-top:1px solid var(--els-border,#565b57);padding-top:13px;
+ font-size:13px;font-weight:800;color:var(--els-link,#b9d7c8)}
+.card-action .arrow{font-size:20px;line-height:1}
+.planned-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.course-card--planned{
+ background:color-mix(in srgb,var(--els-surface,#1c1c1c) 55%,var(--els-page,#101010));
+ border-color:color-mix(in srgb,var(--els-border,#565b57) 65%,var(--els-page,#101010));
+}
+.course-card--planned .card-symbol{
+ background:transparent;color:var(--els-muted,#c1c5c1);
+ border-color:color-mix(in srgb,var(--els-border,#565b57) 65%,transparent)
+}
+.course-card--planned .card-status{color:var(--els-muted,#c1c5c1);
+ background:var(--els-surface-alt,#292929);border-color:transparent}
+.course-card--planned h3{font-size:17px}
+.course-card--planned p{font-size:13px;margin-bottom:0}
+.course-card--planned{cursor:default}
+.site-footer{border-top:1px solid var(--els-border,#565b57);margin-top:42px;padding:23px 0 40px;
+ color:var(--els-muted,#c1c5c1);font-size:12px}
+@media(max-width:960px){.planned-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){
+ .site-header .header-inner{flex-wrap:wrap;padding:10px 0;row-gap:6px}
+ .site-header .brand{font-size:13px}
+ .site-header .header-nav{margin-left:auto}
+ .available-grid{grid-template-columns:1fr}
+ .studio-intro{margin-top:19px;margin-bottom:32px;padding:25px}
+}
+@media(max-width:520px){
+ main,.site-footer,.site-header .header-inner{width:min(calc(100% - 28px),var(--studio-width))}
+ .site-header .header-nav{width:100%;justify-content:flex-end}
+ .site-header select{max-width:145px}
+ .planned-grid{grid-template-columns:1fr}
+ .course-card{padding:20px}
+}
+@media(prefers-reduced-motion:reduce){.course-card--available{transition:none}}
 </style><link rel="stylesheet" href="./assets/els-theme-v2.css?v=6"><link rel="stylesheet" href="assets/els-typography-standard.css?v=1"><link rel="stylesheet" href="./assets/els-header-controls.css?v=2"></head><body>
 <a class="skip-link" href="#studio-main">Skip to courses</a>
 <header class="site-header" aria-label="Engineering Learning Studio navigation">
@@ -44,21 +134,107 @@ main,footer{max-width:1160px}
   </nav>
  </div>
 </header>
-<main id="studio-main"><section class="hero"><div class="muted" data-en="OPEN ENGINEERING EDUCATION" data-ko="열린 공학교육 플랫폼">OPEN ENGINEERING EDUCATION</div><h1>Engineering Learning Studio</h1><p data-en="Learn engineering by exploring, experimenting, and coding." data-ko="탐구하고 실험하고 코딩하며 공학을 배웁니다.">Learn engineering by exploring, experimenting, and coding.</p></section>
-<h2 data-en="Explore courses" data-ko="교과목 탐색">Explore courses</h2><div class="grid" id="courses"></div>
-<section class="lab" id="gate"><h2 data-en="Logic Design · Mini Lab" data-ko="논리회로설계 · 미니 실습">Logic Design · Mini Lab</h2><p data-en="Change inputs and observe the logic output." data-ko="입력을 변경하여 논리 출력의 변화를 확인하세요.">Change inputs and observe the logic output.</p>
-<label for="gate-type">Gate </label><select id="gate-type"><option>AND</option><option>OR</option><option>XOR</option><option>NAND</option><option>NOR</option></select><div><button id="a" aria-label="Toggle input A">A = 0</button><button id="b" aria-label="Toggle input B">B = 0</button></div><div class="output" id="out" aria-live="polite">Y = 0</div></section></main>
-<footer>Engineering Learning Studio · Open educational prototype · Phase 1</footer>
+
+<main id="studio-main">
+ <section class="studio-intro" aria-labelledby="studio-title">
+  <p class="eyebrow" data-en="ENGINEERING · INTERACTIVE LEARNING" data-ko="공학 · 인터랙티브 학습">ENGINEERING · INTERACTIVE LEARNING</p>
+  <h1 id="studio-title">Engineering Learning Studio</h1>
+  <p class="intro-copy" data-en="Understand engineering concepts through visual experiments, careful reasoning, and hands-on programming." data-ko="시각적 실험과 단계별 사고, 직접 프로그래밍을 통해 공학의 핵심 개념을 이해합니다."></p>
+  <a class="intro-link" href="#available" data-en="Explore available courses ↓" data-ko="학습 가능한 교과목 보기 ↓">Explore available courses ↓</a>
+ </section>
+ <section class="course-section" id="available" aria-labelledby="available-title">
+  <div class="course-section-head">
+   <p class="eyebrow" data-en="AVAILABLE NOW" data-ko="현재 이용 가능">AVAILABLE NOW</p>
+   <h2 id="available-title" data-en="Explore courses" data-ko="학습 가능한 교과목">Explore courses</h2>
+   <p data-en="Open a course to begin learning with concepts, interactive visualizations, and practice." data-ko="교과목을 선택하여 개념 설명, 시각적 실험, 학습 활동을 시작할 수 있습니다."></p>
+  </div>
+  <div class="available-grid" id="available-courses"></div>
+ </section>
+ <section class="course-section" id="upcoming" aria-labelledby="upcoming-title">
+  <div class="course-section-head">
+   <p class="eyebrow" data-en="PLANNED COURSES" data-ko="준비 중인 교과목">PLANNED COURSES</p>
+   <h2 id="upcoming-title" data-en="Coming soon" data-ko="추후 제공">Coming soon</h2>
+   <p data-en="These courses are planned for future expansion and are not open yet." data-ko="다음 교과목은 향후 확장을 위한 계획이며 아직 학습 페이지가 공개되지 않았습니다."></p>
+  </div>
+  <div class="planned-grid" id="planned-courses"></div>
+ </section>
+</main>
+<footer class="site-footer">Engineering Learning Studio · <span data-en="Interactive engineering education" data-ko="인터랙티브 공학교육">Interactive engineering education</span></footer>
 <script src="./assets/els-language.js?v=1"></script><script>
-const courses=[["Signals & Systems","신호 및 시스템","Signals, LTI, Fourier, Laplace","신호, LTI, 푸리에, 라플라스","./signals-systems/"],["C Programming","C 프로그래밍","Interactive pointers, structures and file I/O","포인터·구조체·파일 입출력 인터랙티브 실습","./c-programming/"],["Logic Design","논리회로설계","Boolean logic, circuits and state machines","불 대수, 논리회로, 상태기계","#gate"],["Digital Signal Processing","디지털신호처리","Filtering, FFT and spectral analysis","필터, FFT, 스펙트럼 분석",null],["Python Programming","파이썬 프로그래밍","Coding, data and visualization","코딩, 데이터, 시각화",null],["AI / AX","AI / AX","AI models and engineering applications","AI 모델과 공학 응용",null]];
+
+"use strict";
+const courses=[
+ {id:"ss",en:"Signals & Systems",ko:"신호 및 시스템",
+  descriptionEn:"Signals, systems, convolution, Fourier and Laplace transforms, sampling, and interactive applications.",
+  descriptionKo:"신호와 시스템, 컨볼루션, 푸리에·라플라스 변환, 샘플링 및 인터랙티브 응용 실습.",
+  href:"./signals-systems/",symbol:"∿",available:true},
+ {id:"c",en:"C Programming",ko:"C 프로그래밍",
+  descriptionEn:"Learn C through concepts, code tracing, visual explanations, and hands-on coding practice.",
+  descriptionKo:"핵심 개념, 코드 실행 예측, 시각적 설명과 직접 코딩하는 학습 활동.",
+  href:"./c-programming/",symbol:"{ }",available:true},
+ {id:"logic",en:"Logic Design",ko:"논리회로설계",
+  descriptionEn:"Boolean logic, combinational and sequential circuits.",
+  descriptionKo:"불 대수, 조합논리회로와 순차논리회로.",
+  symbol:"⊕",available:false},
+ {id:"dsp",en:"Digital Signal Processing",ko:"디지털신호처리",
+  descriptionEn:"Discrete-time processing, FFT, and digital filters.",
+  descriptionKo:"이산시간 신호처리, FFT 및 디지털 필터.",
+  symbol:"≈",available:false},
+ {id:"python",en:"Python Programming",ko:"파이썬 프로그래밍",
+  descriptionEn:"Programming foundations, data processing, and visualization.",
+  descriptionKo:"프로그래밍 기초, 데이터 처리 및 시각화.",
+  symbol:"Py",available:false},
+ {id:"ai",en:"AI / AX",ko:"AI / AX",
+  descriptionEn:"AI models, applications, and engineering transformation.",
+  descriptionKo:"AI 모델, 응용 및 공학 분야의 AI 전환.",
+  symbol:"AI",available:false}
+];
 const language=window.ELSLanguage;
 if(!language)throw Error("Shared language module not loaded");
-let lang=language.get();document.getElementById("lang").value=lang;
-const englishTerm=(en,ko)=>en+(ko&&ko!==en?" ("+ko+")":"");
-function render(){document.querySelectorAll("[data-en]").forEach(el=>el.textContent=lang==="en"?el.dataset.en:lang==="ko"?el.dataset.ko:(el.dataset.en+" · "+el.dataset.ko));document.getElementById("courses").innerHTML=courses.map(c=>'<article class="card"><h3>'+(lang==="en"?c[0]:englishTerm(c[0],c[1]))+'</h3><p>'+(lang==="en"?c[2]:lang==="ko"?c[3]:c[2]+" · "+c[3])+'</p>'+(c[4]?'<a class="action" href="'+(c[4])+'" '+(c[4].startsWith("http")?'target="_blank" rel="noopener noreferrer"':'')+'>'+(lang==="en"?"Open Lab":lang==="ko"?"실습 열기":"Open Lab · 실습 열기")+' →</a>':'<span class="muted">'+(lang==="en"?"Coming soon":lang==="ko"?"추후 제공":"Coming soon · 추후 제공")+'</span>')+'</article>').join("");document.documentElement.lang=lang==="en"?"en":"ko";/* Header language/theme icons are managed by ELSHeaderControls. */document.querySelector('label[for="gate-type"]').textContent=lang==="en"?"Gate ":lang==="ko"?"논리 게이트 ":"Gate · 논리 게이트 "}
+function translate(en,ko,mode){
+ if(mode==="en")return en;
+ if(mode==="ko")return ko;
+ return en===ko?en:en+"\n"+ko;
+}
+function element(tag,cls,value){
+ const e=document.createElement(tag);
+ if(cls)e.className=cls;
+ if(value!=null)e.textContent=value;
+ return e;
+}
+function card(course,mode){
+ const root=element(course.available?"a":"article","course-card "+(course.available?"course-card--available":"course-card--planned"));
+ root.dataset.course=course.id;
+ if(course.available){
+  root.href=course.href;
+  root.setAttribute("aria-label",translate("Open "+course.en,course.ko+" 학습 열기",mode).replace(/\n/g," / "));
+ }else root.setAttribute("aria-disabled","true");
+ const head=element("div","card-head");
+ const symbol=element("span","card-symbol",course.symbol);
+ symbol.setAttribute("aria-hidden","true");
+ const status=element("span","card-status "+(course.available?"card-status--available":""),
+  course.available?translate("Available","이용 가능",mode).replace(/\n/g," · "):
+  translate("Coming soon","추후 제공",mode).replace(/\n/g," · "));
+ head.append(symbol,status);root.append(head);
+ root.append(element("h3","",mode==="ko"?course.ko:course.en));
+ if(mode==="mixed"&&course.ko!==course.en)root.append(element("div","card-korean",course.ko));
+ root.append(element("p","",translate(course.descriptionEn,course.descriptionKo,mode)));
+ if(course.available){
+  const action=element("div","card-action",translate("Open course","교과목 열기",mode).replace(/\n/g," · "));
+  const arrow=element("span","arrow","→");arrow.setAttribute("aria-hidden","true");action.append(arrow);root.append(action);
+ }
+ return root;
+}
+function render(){
+ const mode=language.get();
+ document.documentElement.lang=mode==="en"?"en":"ko";
+ document.querySelectorAll("[data-en][data-ko]").forEach(el=>{
+  el.textContent=translate(el.dataset.en,el.dataset.ko,mode);
+ });
+ document.getElementById("available-courses").replaceChildren(...courses.filter(x=>x.available).map(x=>card(x,mode)));
+ document.getElementById("planned-courses").replaceChildren(...courses.filter(x=>!x.available).map(x=>card(x,mode)));
+}
 language.bindSelect("#lang");
-language.subscribe(next=>{if(next!==lang){lang=next;render()}});
-document.getElementById("lang").setAttribute("aria-label","Language presentation mode");
-/* Theme selection is centralized in els-theme-v2.js. */
-let a=0,b=0;function logic(){const g=document.getElementById("gate-type").value;const v={AND:a&b,OR:a|b,XOR:a^b,NAND:1-(a&b),NOR:1-(a|b)}[g];document.getElementById("a").textContent="A = "+a;document.getElementById("b").textContent="B = "+b;document.getElementById("out").textContent="Y = "+v}document.getElementById("a").onclick=()=>{a^=1;logic()};document.getElementById("b").onclick=()=>{b^=1;logic()};document.getElementById("gate-type").onchange=logic;render();
+language.subscribe(render);
+render();
 </script><script src="./assets/els-theme-v2.js?v=6" defer></script><script src="./assets/els-header-controls.js?v=1" defer></script></body></html>
