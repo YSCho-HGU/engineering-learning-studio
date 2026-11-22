@@ -14,6 +14,11 @@ for(const lab of ["beats","amfm","sampling"]){
   await page.locator("#ss-al-metrics .ss-al-metric").first().waitFor({timeout:15000});
   if(await page.locator("#ss-al-metrics .ss-al-metric").count()!==4)throw Error("Expected 4 metrics");
   if(await page.locator(".ss-al-plot:not([hidden]) canvas").count()!==3)throw Error("Expected 3 active plots");
+  for(const n of [1,2,3]){
+   const legend=page.locator("#ss-al-legend-"+n);
+   await legend.waitFor({state:"visible",timeout:9000});
+   if(!await legend.locator(".ss-al-legend-item").count())throw Error("Graph "+n+" has no external legend");
+  }
   await page.locator("#ss-al-equation math").first().waitFor({timeout:10000});
   const hasEquation=await page.locator("#ss-al-equation").getAttribute("data-tex");
   if(!hasEquation?.includes("\\displaystyle"))throw Error("Equation source missing");
@@ -37,6 +42,20 @@ for(const lab of ["beats","amfm","sampling"]){
    if(!swing.includes("32.0"))throw Error("FM swing βfm incorrect: "+swing);
   }
   if(lab==="sampling"){
+   const summary=page.locator("#ss-al-alias-summary");
+   if(!await summary.isVisible())throw Error("Live alias summary missing");
+   if(await summary.getAttribute("data-aliased")!=="true")throw Error("Default chirp expected aliasing at t=1s");
+   if(!((await summary.innerText()).includes("0.53")&&(await summary.innerText()).includes("1.90")))throw Error("Nyquist crossing times missing");
+   const ticks=(await page.locator("#ss-al-canvas-2").getAttribute("data-integer-ticks"))||"";
+   if(!ticks||ticks.split(",").some(v=>!/^-?\d+$/.test(v)))throw Error("Discrete index ticks must be integers: "+ticks);
+   const aliasGuide=await page.locator("#ss-al-legend-1").innerText();
+   if(!aliasGuide.includes("Aliased-view guide"))throw Error("Alias waveform comparison is missing");
+   await page.locator(".ss-al-preset[data-fs='260']").click();
+   await page.waitForTimeout(110);
+   if(await summary.getAttribute("data-aliased")!=="false")throw Error("fs=260 must avoid aliasing throughout the default chirp");
+   if(!(await summary.innerText()).includes("none"))throw Error("fs=260 should have no Nyquist crossings");
+   await page.locator(".ss-al-preset[data-fs='70']").click();
+   await page.waitForTimeout(80);
    const alias=await page.locator("#ss-al-metrics .ss-al-metric-value").last().innerText();
    if(!almost(parseFloat(alias),11))throw Error("Initial chirp folded alias should be 11 Hz at t=1 s, got "+alias);
    // At f_i=70 Hz (about t=1.216 s), fs=70 Hz gives a locally folded frequency of zero.
@@ -66,6 +85,11 @@ for(const lab of ["beats","amfm","sampling"]){
    const sineAlias=await page.locator("#ss-al-metrics .ss-al-metric-value").last().innerText();
    if(!almost(parseFloat(sineAlias),18))throw Error("Sine alias 38 Hz at fs=56 should be 18 Hz, got "+sineAlias);
    await page.locator("#ss-extra-kind").selectOption("chirp");
+   await page.locator("#ss-extra-aliasGuide").selectOption("off");
+   await page.waitForTimeout(80);
+   const hiddenGuideCount=await page.locator("#ss-al-legend-1 .ss-al-legend-item").count();
+   if(hiddenGuideCount!==2)throw Error("Alias guide did not hide from legend");
+   await page.locator("#ss-extra-aliasGuide").selectOption("on");
    const stftToggle=page.locator("#ss-extra-showFFT");
    if(!await stftToggle.count())throw Error("Measured STFT toggle missing");
    const fftVisible=await page.locator("#ss-al-canvas-3").evaluate(c=>c.toDataURL());
