@@ -1,0 +1,397 @@
+/* Chapter 5 native Laplace Visual Lab — visually aligned with Chapter 6.
+ * Keep original numerical models, plot canvases and ROC/pole pointer events.
+ */
+html.ss5-native{scroll-behavior:smooth}
+html.ss5-native body{min-height:100dvh;overflow-x:hidden;margin:0;background:var(--els-page,#fff);color:var(--els-ink,#213240)}
+html.ss5-native .ss5-home{font-size:12px;font-weight:750;text-decoration:none;white-space:nowrap;color:var(--els-link,#216178)}
+html.ss5-native .ss5-site-title{font-size:13px;font-weight:750;flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html.ss5-native .ss5-header-actions{display:flex;gap:8px;align-items:center;min-width:0}
+html.ss5-native .ss5-site-header label{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;white-space:nowrap}
+html.ss5-native .ss5-site-header select{
+ width:auto;max-width:158px;min-height:30px;padding:3px 6px;border-radius:7px;
+ background:var(--els-surface,#fff);color:var(--els-ink,#222);
+ border:1px solid var(--els-border,#bbb);font-size:11px;cursor:pointer;
+}
+html.ss5-native .shell{
+ display:grid!important;grid-template-columns:230px minmax(0,1fr)!important;
+ align-items:start;min-height:calc(100dvh - 46px)!important;
+}
+
+html.ss5-native .brand{padding:7px 9px 14px!important;border-bottom:1px solid var(--els-border,#ccc)!important}
+html.ss5-native .brand .eyebrow{color:var(--els-muted,#647683)!important;font-size:10px!important}
+html.ss5-native .brand h1{font-size:18px!important;line-height:1.28!important;margin:6px 0!important;color:var(--els-ink,#222)!important}
+html.ss5-native .brand p{font-size:12px!important;color:var(--els-muted,#667)!important}
+html.ss5-native .navlabel{margin:14px 9px 9px!important;font-size:11px!important;color:var(--els-muted,#667)!important}
+
+html.ss5-native .tabname{font-size:12px!important;line-height:1.3!important}
+html.ss5-native .teach{
+ margin-top:14px!important;padding:10px 11px!important;border:1px solid var(--els-border,#bbb)!important;
+ background:var(--els-surface-alt,#f2f4f5)!important;color:var(--els-muted,#667)!important;
+ font-size:12px!important;line-height:1.5!important
+}
+html.ss5-native .teach strong{color:var(--els-ink,#222)!important}
+html.ss5-native .ss5-progress{margin-top:12px;padding:11px;border:1px solid var(--els-border,#bbb);border-radius:9px;display:grid;gap:7px;font-size:12px;color:var(--els-muted,#667)}
+html.ss5-native .main{
+ display:block!important;width:100%!important;max-width:none!important;
+ min-width:0!important;margin:0!important;
+ padding:15px clamp(12px,1.8vw,27px) 42px!important;
+}
+html.ss5-native .top{display:none!important}
+html.ss5-native .heading{padding-bottom:10px!important}
+html.ss5-native .heading h2{font-size:clamp(21px,2.1vw,29px)!important;margin:5px 0 5px!important;line-height:1.3!important}
+html.ss5-native .heading p{font-size:16px!important;line-height:1.6!important;color:var(--els-muted,#667)!important}
+html.ss5-native .heading .sup{font-size:11px!important;color:var(--els-link,#216a80)!important}
+html.ss5-native .formula{
+ margin:10px 0 12px!important;padding:11px 14px!important;
+ background:var(--els-info-bg,#eef5f9)!important;
+ color:var(--els-info-ink,#245270)!important;
+ border:1px solid var(--els-border,#ccd6db)!important;
+ border-left:4px solid var(--els-link,#216a80)!important;
+ border-radius:11px!important;gap:6px!important
+}
+html.ss5-native .formula .math{color:var(--els-info-ink,#245270)!important}
+html.ss5-native .formula .formhint{font-size:12px!important;color:var(--els-muted,#667)!important}
+html.ss5-native .lab{
+ display:grid!important;grid-template-columns:minmax(220px,265px) minmax(0,1fr)!important;
+ gap:12px!important;align-items:start!important;min-width:0!important
+}
+html.ss5-native .panel{
+ position:relative!important;top:auto!important;max-height:none!important;overflow:visible!important;
+ padding:14px!important;margin:0!important;
+ border:1px solid var(--els-border,#bbb)!important;border-radius:12px!important;
+ background:var(--els-surface,#fff)!important;color:var(--els-ink,#222)!important;
+}
+html.ss5-native .panel h3{font-size:18px!important;margin:3px 0 12px!important;color:var(--els-ink,#222)!important}
+html.ss5-native .over{color:var(--els-link,#246a7a)!important;font-size:11px!important}
+html.ss5-native .ctrl{margin:0 0 13px!important}
+html.ss5-native .ctrl label{font-size:14px!important;color:var(--els-ink,#222)!important;line-height:1.45!important;gap:6px!important}
+html.ss5-native .ctrl output{font-size:13px!important;font-weight:700!important;color:var(--els-link,#226e8a)!important}
+html.ss5-native .rangeEnds{font-size:11px!important;color:var(--els-muted,#667)!important}
+html.ss5-native .ctrl select{background:var(--els-surface-alt,#f5f7f8)!important;color:var(--els-ink,#222)!important;border:1px solid var(--els-border,#ccd)!important}
+html.ss5-native .preset{background:var(--els-surface-alt,#f3f6f7)!important;color:var(--els-link,#216a80)!important;border-color:var(--els-border,#ccd)!important;font-size:12px!important}
+html.ss5-native .btn{background:var(--els-surface-alt,#f3f6f7)!important;color:var(--els-ink,#222)!important;border-color:var(--els-border,#ccd)!important}
+html.ss5-native .btn.primary{background:var(--els-link,#246a80)!important;color:var(--els-primary-text,#fff)!important}
+html.ss5-native .smallnote{font-size:14px!important;line-height:1.6!important;color:var(--els-muted,#667)!important}
+html.ss5-native .outputs{gap:10px!important;min-width:0!important}
+html.ss5-native .plots{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+html.ss5-native .figure{
+ min-width:0!important;padding:13px 12px 10px!important;
+ border:1px solid var(--els-border,#ccc)!important;border-radius:12px!important;
+ background:var(--els-surface,#fff)!important;color:var(--els-ink,#222)!important
+}
+html.ss5-native .figure h3{font-size:16px!important;color:var(--els-ink,#222)!important;line-height:1.4!important}
+html.ss5-native .figure .sub{font-size:13px!important;color:var(--els-muted,#667)!important;line-height:1.5!important}
+html.ss5-native .figure canvas{height:clamp(205px,29dvh,320px)!important;max-width:100%!important}
+html.ss5-native .metrics,.ss5-native .compare-grid{min-width:0}
+html.ss5-native .metric{background:var(--els-surface,#fff)!important;color:var(--els-ink,#222)!important;border:1px solid var(--els-border,#ccd)!important}
+html.ss5-native .insight,html.ss5-native .quiz,html.ss5-native .compare-wrap{
+ background:var(--els-surface,#fff)!important;color:var(--els-ink,#222)!important;border-color:var(--els-border,#ccd)!important
+}
+html.ss5-native .compare-head,html.ss5-native .compare-sub,html.ss5-native .compare-footer{color:var(--els-muted,#667)!important}
+html.ss5-native .compare-card{background:var(--els-surface,#fff)!important;color:var(--els-ink,#222)!important;border-color:var(--els-border,#ccd)!important;min-width:0}
+html.ss5-native .compare-card.selected{outline:2px solid var(--els-link,#216a80)!important;outline-offset:-2px}
+html.ss5-native .footer{font-size:11px!important;color:var(--els-muted,#667)!important;margin-top:22px!important;line-height:1.5!important}
+html.ss5-native #studio-back{display:none!important}
+html.ss5-native :is(a,button,input,select):focus-visible{outline:3px solid var(--els-focus,#b56b18)!important;outline-offset:2px!important}
+@media(max-width:1150px){
+ html.ss5-native .shell{grid-template-columns:205px minmax(0,1fr)!important}
+ html.ss5-native .lab{grid-template-columns:minmax(210px,230px) minmax(0,1fr)!important}
+ html.ss5-native .plots{grid-template-columns:1fr!important}
+}
+@media(max-width:780px){
+ html.ss5-native .shell{display:block!important;min-height:0!important}
+ 
+ 
+ 
+ 
+ html.ss5-native .main{padding:10px 11px 34px!important}
+ html.ss5-native .lab{grid-template-columns:1fr!important}
+ html.ss5-native .panel{padding:12px!important}
+ html.ss5-native .controlgrid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px 13px!important}
+ html.ss5-native .figure canvas{height:240px!important}
+}
+@media(max-width:610px){
+ html.ss5-native .ss5-site-header{height:auto;min-height:43px;flex-wrap:wrap;padding:7px 9px;gap:6px}
+ html.ss5-native .ss5-site-title{font-size:12px;flex:1 1 55%}
+ html.ss5-native .ss5-header-actions{width:100%;justify-content:flex-end;gap:5px}
+ html.ss5-native .ss5-site-header label{font-size:0}
+ html.ss5-native .ss5-site-header select{max-width:130px;font-size:11px}
+ html.ss5-native .controlgrid,html.ss5-native .plots{grid-template-columns:1fr!important}
+ html.ss5-native .heading h2{font-size:21px!important}
+}
+
+
+
+/* Chapter 5 final, single-palette authority.
+ * Loaded LAST, after legacy inline styles and all prior chapter CSS.
+ * The explicit Studio selection beats OS prefers-color-scheme and legacy data-theme.
+ * Tokens come exclusively from the SAME shared ELS palette as Chapter 6.
+ */
+html.ss5-native[data-els-theme]{
+ --ss5-page:var(--els-page);
+ --ss5-card:var(--els-surface);
+ --ss5-soft:var(--els-surface-alt);
+ --ss5-fg:var(--els-ink);
+ --ss5-muted:var(--els-muted);
+ --ss5-line:var(--els-border);
+ --ss5-link:var(--els-link);
+ --ss5-info:var(--els-info-bg);
+ --ss5-info-fg:var(--els-info-ink);
+ --bg:var(--els-page)!important;
+ --card:var(--els-surface)!important;
+ --paper:var(--els-surface)!important;
+ --ink:var(--els-ink)!important;
+ --text:var(--els-ink)!important;
+ --muted:var(--els-muted)!important;
+ --line:var(--els-border)!important;
+ --accent:var(--els-link)!important;
+}
+html.ss5-native[data-els-theme="white-clean"],
+html.ss5-native[data-els-theme="warm-neutral"]{color-scheme:only light!important}
+html.ss5-native[data-els-theme="neutral-dark"],
+html.ss5-native[data-els-theme="warm-dark"],
+html.ss5-native[data-els-theme="navy-dark"]{color-scheme:dark!important}
+html.ss5-native[data-els-theme] body,
+html.ss5-native[data-els-theme] .shell,
+html.ss5-native[data-els-theme] .main,
+html.ss5-native[data-els-theme] .lab,
+html.ss5-native[data-els-theme] .outputs,
+html.ss5-native[data-els-theme] .plots{
+ background:var(--ss5-page)!important;
+ color:var(--ss5-fg)!important;
+}
+html.ss5-native[data-els-theme] :is(.ss5-site-header,.nav,.panel,.ss5-predict,.ss5-observe,
+ .figure,.metric,.derivation-panel,.reading-panel,.reading-note,.deriv-step,
+ .insight,.quiz,.compare-wrap,.compare-card,.ss5-check,.ss5-progress,
+ .heading,.teach,.ss5-followup){
+ background:var(--ss5-card)!important;
+ background-image:none!important;
+ color:var(--ss5-fg)!important;
+ border-color:var(--ss5-line)!important;
+}
+html.ss5-native[data-els-theme] :is(.formula,.quiz .answer,.plot-instruction){
+ background:var(--ss5-info)!important;
+ background-image:none!important;
+ color:var(--ss5-info-fg)!important;
+ border-color:var(--ss5-line)!important;
+}
+html.ss5-native[data-els-theme] :is(.heading h2,.heading p,.heading .sup,
+ .nav .brand h1,.nav .brand p,.navlabel,.tabname,.teach strong,
+ .panel h3,.figure h3,.formula .math,.reading-panel h3,.reading-note strong,
+ .deriv-top,.deriv-math,.quiz h3,.metric .v,.ss5-flow-label,
+ .compare-head h3,.compare-title,.ss5-site-title,.ss5-check label){
+ color:var(--ss5-fg)!important;
+ text-shadow:none!important;
+}
+html.ss5-native[data-els-theme] :is(.heading .sup,.nav .eyebrow,.over,.crumb,
+ .figure .sub,.figure .legend,.reading-note p,.reading-note .ko-explain,
+ .deriv-step p,.quiz p,.metric .k,.metric .d,.smallnote,
+ .formhint,.ss5-predict p,.ss5-predict small,.ss5-observe p,
+ .ss5-flow-intro,.compare-head span,.compare-sub,.compare-footer){
+ color:var(--ss5-muted)!important;
+ opacity:1!important;
+}
+html.ss5-native[data-els-theme] :is(.tabs button,.ctrl label,.ctrl output,
+ .ctrl .rangeEnds,.presets button,.btn,.ss5-site-header label){
+ color:var(--ss5-fg)!important
+}
+html.ss5-native[data-els-theme] :is(.tabs button.on,.tabs button:hover,
+ .teach,.ss5-progress button,.preset,.btn:not(.primary)){
+ background:var(--ss5-soft)!important;
+ color:var(--ss5-fg)!important;
+ border-color:var(--ss5-line)!important
+}
+html.ss5-native[data-els-theme] :is(input:not([type="range"]),textarea,select){
+ background:var(--ss5-soft)!important;
+ color:var(--ss5-fg)!important;
+ border-color:var(--ss5-line)!important
+}
+html.ss5-native[data-els-theme] .ss5-site-header [data-els-theme-picker]{
+ background:var(--ss5-card)!important;
+ color:var(--ss5-fg)!important;
+ border-color:var(--ss5-line)!important
+}
+html.ss5-native[data-els-theme] .ss5-site-header [data-els-theme-picker] option{
+ background:var(--ss5-card)!important;color:var(--ss5-fg)!important
+}
+html.ss5-native[data-els-theme] .ss5-flow-label span{
+ background:var(--ss-step-background)!important;
+ color:var(--ss-step-foreground)!important;
+ border-color:var(--ss-step-stroke)!important
+}
+/* Chapter 6.1 four-step rhythm: Step 1 is ONE full-width row.
+ * The existing DOM node is moved before .lab, not copied.
+ */
+html.ss5-native #page>.ss5-predict,
+html.ss5-native #page>.ss5-predict{
+ display:grid!important;
+ grid-template-columns:max-content minmax(260px,1fr) minmax(220px,.8fr)!important;
+ align-items:center!important;
+ gap:8px 16px!important;
+ width:100%!important;min-width:0!important;
+ padding:11px 15px!important;
+ margin:0 0 12px!important;
+ border:1px solid var(--ss5-line,var(--els-border))!important;
+ border-radius:12px!important;
+}
+html.ss5-native #page>.ss5-predict .ss5-flow-label{
+ grid-column:1!important;margin:0!important;white-space:nowrap!important
+}
+html.ss5-native #page>.ss5-predict>p{
+ grid-column:2!important;margin:0!important;
+ font-size:15px!important;line-height:1.55!important;
+ min-width:0!important
+}
+html.ss5-native #page>.ss5-predict #ss5-prediction{
+ grid-column:3!important;min-width:0!important;
+ width:100%!important;max-width:none!important;
+ min-height:44px!important;max-height:95px!important;
+ margin:0!important;padding:8px 10px!important;
+ font-size:14px!important;line-height:1.4!important;
+}
+html.ss5-native #page>.ss5-predict>label,
+html.ss5-native #page>.ss5-predict>small{
+ position:absolute!important;width:1px!important;height:1px!important;
+ padding:0!important;margin:-1px!important;overflow:hidden!important;
+ clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important
+}
+html.ss5-native #page>.lab{
+ display:grid!important;
+ grid-template-columns:minmax(220px,275px) minmax(0,1fr)!important;
+ gap:12px!important;
+ align-items:start!important;
+}
+html.ss5-native #page>.ss5-followup{
+ display:block!important;clear:both!important;
+ width:100%!important;max-width:none!important;
+ margin-top:16px!important
+}
+@media(max-width:1000px){
+ html.ss5-native #page>.ss5-predict{
+  grid-template-columns:max-content minmax(0,1fr)!important;
+ }
+ html.ss5-native #page>.ss5-predict>p{grid-column:2!important}
+ html.ss5-native #page>.ss5-predict #ss5-prediction{grid-column:1/-1!important}
+}
+@media(max-width:780px){
+ html.ss5-native #page>.lab{grid-template-columns:minmax(0,1fr)!important}
+}
+@media(max-width:610px){
+ html.ss5-native #page>.ss5-predict{grid-template-columns:minmax(0,1fr)!important}
+ html.ss5-native #page>.ss5-predict .ss5-flow-label,
+ html.ss5-native #page>.ss5-predict>p,
+ html.ss5-native #page>.ss5-predict #ss5-prediction{
+  grid-column:1!important
+ }
+}
+
+/* Axis ranges and teaching annotations must honor every selected theme.
+ * Legacy :root light-only --ss-axis-* rules were removed from Chapter 5 HTML.
+ * Chart canvas drawing colors remain managed independently by elsPlotColors().
+ */
+html.ss5-native[data-els-theme]{
+ --ss-axis-bg:var(--els-surface-alt);
+ --ss-axis-text:var(--els-ink);
+ --ss-axis-border:var(--els-border);
+}
+html.ss5-native[data-els-theme] :is(.axis-key,.plot-instruction,.ss-hover-hint){
+ background:var(--els-surface-alt)!important;
+ color:var(--els-ink)!important;
+ border-color:var(--els-border)!important;
+}
+html.ss5-native[data-els-theme] .axis-key{
+ display:flex;flex-wrap:wrap;align-items:center;gap:5px 13px;
+ margin:8px 0 4px;padding:8px 11px;border:1px solid var(--els-border)!important;
+ border-radius:8px;font:650 13px/1.65 system-ui,'Malgun Gothic',sans-serif;
+ overflow-wrap:anywhere
+}
+html.ss5-native[data-els-theme] .axis-key .ax-strong{
+ color:var(--els-link)!important;font-weight:850
+}
+html.ss5-native[data-els-theme] :is(.progress-badge,.guide-track,.deriv-math,.reading-note,.guide-actions button){
+ border-color:var(--els-border)!important
+}
+html.ss5-native[data-els-theme] .progress-badge,
+html.ss5-native[data-els-theme] .deriv-math,
+html.ss5-native[data-els-theme] .guide-actions button{
+ background:var(--els-surface-alt)!important;color:var(--els-ink)!important
+}
+html.ss5-native[data-els-theme] .guide-actions button.primary{
+ background:var(--els-primary)!important;
+ border-color:var(--els-primary)!important;
+ color:var(--els-primary-text)!important
+}
+html.ss5-native[data-els-theme] :is(.reading-note strong,.deriv-top,.deriv-step p,.guide-head h3,.reading-panel h3,.guide-check){
+ color:var(--els-ink)!important
+}
+html.ss5-native[data-els-theme] :is(.reading-note p,.reading-note .ko-explain,.guide-head p){
+ color:var(--els-muted)!important
+}
+@media(max-width:560px){
+ html.ss5-native[data-els-theme] .axis-key{font-size:12px;gap:4px 9px;padding:7px 8px}
+}
+
+/* Chapter 5.1/6.1 reading scale and section rhythm — final native layer. */
+html.ss5-native #page :is(.heading p,.insight p,.quiz p,.quiz .answer,.reading-note p,.deriv-step p,.guide-check,.ss5-observe p){
+ font-size:16px!important;line-height:1.7!important;letter-spacing:normal
+}
+html.ss5-native #page>.ss5-predict>p{
+ font-size:16px!important;line-height:1.65!important
+}
+html.ss5-native #page :is(.figure h3,.panel h3,.reading-panel h3,.guide-head h3,.quiz h3){
+ font-size:17px!important;line-height:1.4!important;margin-bottom:7px!important
+}
+html.ss5-native #page :is(.figure .sub,.figure .legend,.axis-key,.metric .k,.metric .d,.formhint,.smallnote){
+ font-size:13px!important;line-height:1.55!important
+}
+html.ss5-native #page .ss5-flow-label{font-size:17px!important;line-height:1.45!important}
+html.ss5-native #page .ctrl label{font-size:14px!important;line-height:1.5!important}
+html.ss5-native #page :is(.guide-actions button,.preset,.btn,.ss5-check label){
+ font-size:14px!important;line-height:1.5!important;
+ min-height:36px
+}
+html.ss5-native #page :is(.derivation-panel,.reading-panel,.insight,.quiz){
+ padding:16px 18px!important;margin-top:18px!important
+}
+html.ss5-native #page .reading-grid{gap:12px!important}
+html.ss5-native #page .reading-note{padding:13px 15px!important}
+html.ss5-native #page .guide-steps{gap:12px!important}
+html.ss5-native #page .deriv-step{padding:14px 16px!important}
+html.ss5-native #page .ss5-predict{gap:9px 16px!important}
+html.ss5-native #page>.lab{gap:14px!important}
+@media(max-width:780px){
+ html.ss5-native #page :is(.derivation-panel,.reading-panel,.insight,.quiz){padding:13px!important}
+ html.ss5-native #page>.lab{gap:12px!important}
+}
+
+/* Primary actions retain readable contrast in all five palettes. */
+html.ss5-native[data-els-theme] #page :is(.btn.primary,.guide-actions button.primary){
+ background:var(--els-primary)!important;color:var(--els-primary-text)!important;
+ border-color:var(--els-primary)!important
+}
+html.ss5-native[data-els-theme] #page :is(.guide-actions button:not(.primary),.preset,.btn:not(.primary)){
+ background:var(--els-surface-alt)!important;color:var(--els-ink)!important;
+ border-color:var(--els-border)!important
+}
+html.ss5-native[data-els-theme] #page :is(.guide-actions button,.preset,.btn):focus-visible{
+ outline:3px solid var(--els-focus)!important;outline-offset:2px
+}
+
+/* Chapter 5 header alignment + accessible chapter title menu, 2026-11-21 */
+html.ss5-native .ss5-site-header{display:flex;align-items:center;gap:12px;overflow:visible}
+html.ss5-native .ss5-chapter-menu{position:relative;flex:0 1 auto;min-width:0;max-width:min(65vw,620px)}
+html.ss5-native .ss5-chapter-menu>.ss5-site-title{display:flex;flex:none;max-width:100%;align-items:center;gap:6px;overflow:visible;text-overflow:clip;white-space:normal;line-height:1.3}
+html.ss5-native .ss5-header-actions{margin-left:auto;flex:0 0 auto;justify-content:flex-end;gap:10px}
+html.ss5-native .ss5-chapter-menu>.ss5-chapter-links{position:absolute;z-index:999;top:calc(100% + 12px);left:0;display:grid;gap:2px;min-width:min(350px,calc(100vw - 20px));max-width:calc(100vw - 20px);max-height:min(65vh,500px);overflow-y:auto;padding:8px;background:var(--els-surface,#fff);color:var(--els-ink,#222);border:1px solid var(--els-border,#999);border-radius:8px;box-shadow:0 12px 32px #0005}
+html.ss5-native .ss5-chapter-menu>.ss5-chapter-links a{color:var(--els-ink,#222);white-space:normal;line-height:1.4}
+html.ss5-native .ss5-chapter-menu>.ss5-chapter-links a:hover,
+html.ss5-native .ss5-chapter-menu>.ss5-chapter-links a:focus-visible{background:var(--els-accent,#0e8491);color:var(--els-surface,#fff)}
+@media(max-width:610px){
+ html.ss5-native .ss5-site-header{flex-wrap:wrap}
+ html.ss5-native .ss5-chapter-menu{flex:1 1 calc(100% - 95px);max-width:calc(100% - 95px)}
+ html.ss5-native .ss5-chapter-menu>.ss5-site-title{font-size:12px;line-height:1.35}
+ html.ss5-native .ss5-header-actions{margin-left:auto;width:100%;justify-content:flex-end}
+}
+
+/* Chapter-specific reading rhythm; formula typography lives in ss-formula-standard.css. */
+html.ss5-native :is(.reading-note p,.figure .sub,.quiz p){line-height:1.85!important}

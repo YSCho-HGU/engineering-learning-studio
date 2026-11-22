@@ -1,0 +1,465 @@
+/* Shared Signals & Systems lab theme adapter v1.0.
+   Loaded inside EACH of the 8 independent srcdoc lab frames, after the
+   experiment's original CSS. Reuses assets/design-system.css tokens.
+   Never change numerical models, canvas paints, SVG series, or trace colors. */
+:root,html[data-theme="light"]{
+ color-scheme:light;
+ --bg:var(--els-page);--card:var(--els-surface);--paper:var(--els-surface);
+ --ink:var(--els-ink);--sub:var(--els-muted);--muted:var(--els-muted);
+ --line:var(--els-border);--pale:var(--els-info-bg);
+ --teal:var(--els-link);--a:var(--els-link);--accent:var(--els-link);
+ --nav:#102338;--nav2:#1d3d5c;--navy:#102338;
+ --gold:var(--els-focus);--coral:#b24a35;--warm:#b24a35;
+}
+html[data-theme="dark"]{
+ color-scheme:dark;
+ --bg:var(--els-page);--card:var(--els-surface);--paper:var(--els-surface);
+ --ink:var(--els-ink);--sub:var(--els-muted);--muted:var(--els-muted);
+ --line:var(--els-border);--pale:var(--els-info-bg);
+ --teal:var(--els-link);--a:var(--els-link);--accent:var(--els-link);
+ --nav:#102338;--nav2:#24455f;--navy:#102338;
+ --gold:var(--els-focus);--coral:#ffad99;--warm:#ffad99;
+}
+html,body{background:var(--els-page)!important;color:var(--els-ink)!important}
+body{font-size:14px;line-height:1.7}
+:is(button,select,input,textarea,a,[tabindex]):focus-visible{
+ outline:3px solid var(--els-focus)!important;outline-offset:3px!important
+}
+button{min-height:40px}
+select{min-height:40px}
+input[type=range]{min-height:24px;accent-color:var(--els-link)}
+a{color:var(--els-link)}
+/* Form and control readability: overlays intentionally exclude graphs. */
+:is(.card,.figure,.learning,.question,.metric,.panel,.controls,.control,
+ .plot-card,.insight,.step,.formula,.answer,.result,.info,.quiz,.readings,
+ .derivation,.experiment-card,.case-card){
+ border-color:var(--els-border);color:var(--els-ink)
+}
+:is(.card,.figure,.learning,.question,.metric,.panel,
+ .controls,.control,.step,.answer,.result,.info,.quiz,.readings){
+ background:var(--els-surface);color:var(--els-ink);
+ border-color:var(--els-border)
+}
+:where(.control,.ctrl,.parameter,.field){min-width:0}
+:is(.control,.ctrl,.parameter,.field) label{color:var(--els-ink)}
+:is(.control,.ctrl,.parameter,.field) output{
+ color:var(--els-link);font-weight:800;font-variant-numeric:tabular-nums
+}
+:is(select,textarea,input:not([type=range]):not([type=checkbox]):not([type=radio])){
+ background:var(--els-surface);color:var(--els-ink);border:1px solid var(--els-border)
+}
+:is(.desc,.intro,.subtitle,.muted,.source,.hint,.caption,
+ .reading p,.learning p,.question p,.insight p){
+ color:var(--els-muted)
+}
+:is(.formula,.math,.mathbox,.equation,.step .math){
+ font-family:"Cambria Math",Cambria,"STIX Two Math",Georgia,serif;
+ overflow-x:auto;
+}
+:is(.formula,.mathbox,.equation,.step .math){
+ background:var(--els-info-bg);color:var(--els-info-ink);
+ border-color:var(--els-border)
+}
+/* Keep chapter gradients readable, especially when a dark theme is forced. */
+header{background:linear-gradient(110deg,#102338,#205173)!important;color:#fff!important}
+header :is(h1,p,.eyebrow){color:#eaf4ff!important}
+header .eyebrow{color:#bce7ff!important}
+/* Each chapter has its own nav implementation. Non-active buttons have
+   readable contrast; active buttons remain visibly selected. */
+nav#nav button,nav.nav button,.tabs button{
+ min-height:44px;
+}
+nav#nav button:not(.active),nav.nav button:not(.active),.tabs button:not(.active){
+ border-color:var(--els-border);background:var(--els-surface);color:var(--els-ink)
+}
+nav#nav button.active,nav.nav button.active,.tabs button.active{
+ background:#275a85;color:#fff;border-color:#a5d3f3
+}
+nav#nav button small,.tabs button small{color:inherit;opacity:.9}
+.sidebar{background:linear-gradient(155deg,#102338,#21475f)!important;color:#f2f8ff!important}
+.sidebar :is(h1,p,.brand,.side-label,.nav-name){color:#eaf4ff}
+.sidebar .nav button:not(.active){background:transparent;color:#e1effa}
+.sidebar .nav button.active{background:#285c83!important;color:#fff!important;box-shadow:inset 3px 0 #badfff}
+.sidebar .nav button.active .num{color:#e8f5ff}
+/* The following are reference panels, not plot backgrounds. */
+:is(.hero-callout,.insight,.note,.tip,.info-box,.callout){
+ border-color:var(--els-border)
+}
+:is(.hero-callout,.insight,.note,.tip,.info-box,.callout){
+ background:var(--els-info-bg);color:var(--els-info-ink)
+}
+:is(.hero-callout,.insight,.note,.tip,.info-box,.callout) :is(p,strong,span){
+ color:inherit
+}
+:where(.plot-card,.plotbox,.plot,.chart,.graph,.plot-area,.figure-plot){
+ border-color:var(--els-border)
+}
+/* Deliberately keep white graph backgrounds and the original SVG/canvas
+   colors: they were chosen together to preserve axis, marker and line contrast.
+   Overriding only graph backgrounds could make series invisible. */
+:where(canvas,svg){max-width:100%}
+/* Current dynamic buttons can be distinguishable without color alone. */
+button.active,button[aria-pressed="true"]{font-weight:800}
+button:disabled{cursor:not-allowed;opacity:.55}
+:where(.plot-title,.plotbox h3,.plot-card .plot-title){font-weight:800}
+@media(max-width:780px){
+ body{font-size:14px}
+ .controls{max-width:100%}
+ .card,.panel{min-width:0}
+ button{min-height:44px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{scroll-behavior:auto!important;
+ transition-duration:0.01ms!important;animation-duration:0.01ms!important}
+}
+
+/* UI/UX audit v1.1: improve small non-graph labels across all 62 labs. */
+:where(nav button,.nav button,.tabs button,.control label,.ctrl label,
+ .legend,.caption,.source,.hint,.step p,.readings p,.breadcrumb,
+ .side-foot,.plot-title,.control output,.ctrl output){
+ font-size:max(12px,.8rem)!important;
+ line-height:1.6;
+}
+:where(button,select,input:not([type=range])){min-height:44px!important}
+:where(.card,.control,.controls,.panel,.learning,.question,.figure){
+ min-width:0;
+}
+:where(.formula,.math,.mathbox,.equation,.step .math){
+ overflow-x:auto;overscroll-behavior-inline:contain;
+}
+:where(nav,.nav,.tabs){scrollbar-width:thin}
+@media(max-width:680px){
+ :where(nav,.nav,.tabs){max-width:100%;overflow-x:auto}
+ :where(.card,.figure,.panel){overflow-wrap:break-word}
+ :where(.controls,.control){max-width:100%}
+ :where(.formula,.math,.mathbox,.equation,.step .math){font-size:clamp(16px,4vw,19px)}
+}
+
+/* Eye Comfort v2: the selected palette supersedes legacy blue lab chrome.
+   This deliberately excludes canvas/svg graph interiors and their series colors. */
+html[data-els-theme] header,
+html[data-els-theme] .sidebar{
+ background:var(--els-surface)!important;
+ color:var(--els-ink)!important;
+ border-color:var(--els-border)!important;
+}
+html[data-els-theme] header :is(h1,h2,p,.eyebrow),
+html[data-els-theme] .sidebar :is(h1,h2,p,.brand,.side-label,.nav-name){
+ color:var(--els-ink)!important;
+}
+html[data-els-theme] header .eyebrow,
+html[data-els-theme] :is(.side-label,.nav-name){
+ color:var(--els-muted)!important;
+}
+html[data-els-theme] nav#nav button.active,
+html[data-els-theme] nav.nav button.active,
+html[data-els-theme] .tabs button.active,
+html[data-els-theme] .sidebar .nav button.active{
+ background:var(--els-surface-alt)!important;
+ color:var(--els-ink)!important;
+ border:2px solid var(--els-link)!important;
+ box-shadow:inset 3px 0 var(--els-link)!important;
+}
+html[data-els-theme] .sidebar .nav button:not(.active){
+ background:transparent!important;
+ color:var(--els-ink)!important;
+}
+html[data-els-theme] .sidebar .nav button.active .num{
+ color:var(--els-link)!important;
+}
+html[data-els-theme] :is(.hero-callout,.insight,.note,.tip,.info-box,.callout){
+ background:var(--els-info-bg)!important;
+ color:var(--els-info-ink)!important;
+ border-color:var(--els-border)!important;
+}
+
+/* Unified exercise-surface palette v2.2 (2026-11-15).
+   Older chapter apps use distinct class names and hard-coded card/section
+   backgrounds. The shared theme now owns non-plot UI surfaces everywhere.
+   Graph canvas/SVG fills and their signal colors are intentionally untouched. */
+html[data-els-theme] body,
+html[data-els-theme] :is(main,.main,.app,.shell,.stage,.workspace,.work,.content,.experiment,.grid){
+ background-color:var(--els-page)!important;
+ color:var(--els-ink)!important;
+}
+html[data-els-theme] :is(
+ .card,.panel,.control,.controls,.ctrl,.parameter,.field,.learning,.question,
+ .metric,.readings,.reading,.derivation,.experiment-card,.case-card,
+ .step,.result,.answer,.quiz,.exercise,.activity,.unit,.box,.block,.section,
+ .figure,.plot-card,.plotbox,.chart-card,.graph-card,.plot-panel,
+ .lab-card,.output-card,.input-card,.formula-card,.summary-card,
+ .tabs,.tab-panel,.info-panel,.info-box,.insight-panel,.analysis,
+ .comparison,.table-wrap,.model-card,.parameter-card,.explain,.method,
+ .teach,.side-foot,.navlabel,.pill,.badge,.topline,.top,
+ .plot-wrap,.graph-wrap,.canvas-wrap
+){
+ background-color:var(--els-surface)!important;
+ background-image:none!important;
+ color:var(--els-ink)!important;
+ border-color:var(--els-border)!important;
+ box-shadow:none;
+}
+html[data-els-theme] :is(
+ .card,.panel,.control,.controls,.ctrl,.parameter,.field,.learning,
+ .question,.metric,.readings,.derivation,.experiment-card,.case-card,
+ .step,.result,.answer,.quiz,.exercise,.activity,.unit,.box,.block,
+ .section,.figure,.lab-card,.output-card,.input-card,.summary-card,
+ .analysis,.comparison,.info-panel,.model-card,.parameter-card,.explain
+) :is(h1,h2,h3,h4,h5,strong,label){
+ color:var(--els-ink)!important;
+}
+html[data-els-theme] :is(
+ .card,.panel,.control,.controls,.ctrl,.parameter,.field,.learning,
+ .question,.metric,.readings,.derivation,.experiment-card,.case-card,
+ .step,.result,.answer,.quiz,.exercise,.activity,.unit,.box,.block,
+ .section,.figure,.lab-card,.output-card,.input-card,.summary-card,
+ .analysis,.comparison,.info-panel,.model-card,.parameter-card,.explain
+) :is(p,small,.hint,.muted,.desc,.caption,.helper,.source,.subtitle){
+ color:var(--els-muted)!important;
+}
+/* Secondary explanation blocks and math backgrounds are softly distinct. */
+html[data-els-theme] :is(
+ .formula,.mathbox,.equation,.math-panel,.formula-panel,.note,.tip,
+ .callout,.insight,.theory,.explanation,.step-detail,.guide,.definition,
+ .highlight,.key-point,.summary,.interpretation
+){
+ background-color:var(--els-info-bg)!important;
+ background-image:none!important;
+ color:var(--els-info-ink)!important;
+ border-color:var(--els-border)!important;
+}
+html[data-els-theme] :is(.formula,.mathbox,.equation,.math-panel,.formula-panel,.note,.tip,.callout,.insight,.theory,.explanation,.definition,.interpretation)
+ :is(p,span,strong,b,em,small){
+ color:inherit!important;
+}
+html[data-els-theme] :is(
+ button:not(.active):not([aria-pressed="true"]),select,
+ input:not([type=range]):not([type=checkbox]):not([type=radio]),textarea
+){
+ background-color:var(--els-surface-alt)!important;
+ background-image:none!important;
+ color:var(--els-ink)!important;
+ border-color:var(--els-border)!important;
+}
+html[data-els-theme] :is(button.active,button[aria-pressed="true"],.tab.active,.choice.active){
+ background-color:var(--els-surface-alt)!important;
+ background-image:none!important;
+ color:var(--els-ink)!important;
+ border-color:var(--els-link)!important;
+ box-shadow:inset 3px 0 var(--els-link)!important;
+}
+/* Some chapter controls are colored via descendant spans instead of buttons. */
+html[data-els-theme] :is(.tab.active,.tabs .active,.nav .active,.selected) :is(span,small,b,strong){
+ color:var(--els-ink)!important;
+}
+html[data-els-theme] :is(.topline,.top,.breadcrumb,.crumb,.navlabel,.over,.eyebrow,.tag){
+ color:var(--els-muted)!important;
+}
+/* Neutral surfaces around charts; never recolor canvas pixels or SVG series. */
+html[data-els-theme] :is(.plot,.chart,.graph,.plot-area,.figure-plot) {
+ border-color:var(--els-border)!important;
+}
+html[data-els-theme] :is(.plot-card,.plotbox,.chart-card,.graph-card,.plot-panel,.plot-wrap,.graph-wrap,.canvas-wrap) :is(h2,h3,.plot-title){
+ color:var(--els-ink)!important;
+}
+
+/* Rev 2.3: structural audit of all 8 embedded chapter implementations.
+   Important: legacy chapter dark-mode rules have specificity 0-2+ and use
+   !important. This integrated-only selector uses 3 root attributes so the
+   chosen Studio palette wins without changing graph SVG/canvas drawings. */
+html[data-els-theme][data-theme][data-ss-unified-nav]{
+ --ss-axis-bg:var(--els-surface-alt);
+ --ss-axis-text:var(--els-ink);
+ --ss-guide-bg:var(--els-info-bg);
+ --ss-guide-ink:var(--els-info-ink);
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(
+ body,.app,.shell,.main,.stage,.work,.workspace,.content,.experiment,.grid
+){
+ background:var(--els-page)!important;color:var(--els-ink)!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(
+ .card,.panel,.controls,.control,.ctrl,.parameter,.field,.figure,.metric,
+ .learning,.question,.quiz,.derivation-panel,.reading-panel,.reading-note,
+ .reading,.readings,.deriv-step,.step,.stepbox,.guide-check,.check,
+ .compare-card,.compare-wrap,.detail-panel,.motion-panel,.fft-guide,
+ .detail-status,.motion-status,.motion-stage,.area-slider,.plot-instruction,
+ .axis-note,.axis-key,.guide-note,.interpretation,.insight,.notice,.intro,
+ .formula-panel,.math-panel,.progress-badge,.step-index,.hero-callout,
+ .plot-card,.plotbox,.chart-card,.graph-card,.plot-panel,.reading .note,
+ .motion-actions,.detail-actions,.guide-actions,.explain,.activity,
+ .fft-status,.detail-pill,.comparison,.help,.mathline,.deriv-math,
+ .guide-head,.lesson,.exercise,.experiment-card,.phase,.hint-box,
+ .theory,.tip,.callout,.note,.solution,.result,.answer,.model-card
+){
+ background:var(--els-surface)!important;
+ background-image:none!important;
+ color:var(--els-ink)!important;
+ border-color:var(--els-border)!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(
+ .math,.mathbox,.equation,.deriv-math,.step .math,.stepbox .math,
+ .hero-callout .formula,.formula,.mathline,.motion-eq,.detail-status b,
+ .note,.tip,.callout,.guide-note,.reading-note,.reading .note,
+ .interpretation,.axis-note,.axis-key,.insight,.check,.step.active,
+ .deriv-step.active,.deriv-step.guide-enter,.fft-guide,.motion-panel,
+ .detail-panel,.motion-status,.detail-status,.motion-stage.current
+){
+ background:var(--els-info-bg)!important;
+ background-image:none!important;
+ color:var(--els-info-ink)!important;
+ border-color:var(--els-border)!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(
+ h1,h2,h3,h4,.guide-head h3,.deriv-top,.detail-head h4,.fft-guide h3,
+ .reading-note strong,.reading .note strong,.compare-title,.figure h3,
+ .plot-card .plot-title,.step strong,.check b,.insight strong,
+ .motion-status strong,.detail-status strong,.motion-panel h3
+){
+ color:var(--els-ink)!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(
+ .intro,.desc,.smallnote,.rangeEnds,.range-ends,.metric .k,.metric .d,
+ .metric b,.legend,.bridge,.footer,.foot,.hint,.source,.crumb,.breadcrumb,
+ .plot-instruction,.axis-note,.motion-lead,.motion-speed,.motion-caution,
+ .motion-status small,.detail-sub,.detail-note,.area-slider label,
+ .area-slider .ends,.fft-guide p,.deriv-step p,.reading-note p,
+ .guide-head p,.learning p,.question p,.metric .detail,.ctrl .ends,
+ .plot-card .plot-title,.reading .note p,.motion-stage small
+){
+ color:var(--els-muted)!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(
+ .overlabel,.over,.plot-number,.eyebrow,.heading .sup,.step-index,
+ .progress-badge,.metric .v,.metric strong,.ctrl output,.control output,
+ .mathline b,.detail-status b,.detail-pill,.area-slider output,
+ .detail-head .overlabel,.axis-key .ax-strong
+){
+ color:var(--els-link)!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(
+ .plot-card .plot-title,.progress-badge,.step-index,.detail-pill,
+ .motion-stage b,.fft-status,.axis-key
+){
+ background:var(--els-surface-alt)!important;
+ border-color:var(--els-border)!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(
+ .btn,.btn:not(.primary),.guide-actions button,.step-buttons button,
+ .actions button,.quiz button,.motion-actions button,.detail-actions button,
+ .preset-row button,.preset,.check button,.tab,.tabs button,.nav button,
+ .motion-stage button,.motion-controls button,.control button,
+ .step button,.detail button,.guide button
+){
+ background:var(--els-surface-alt)!important;
+ background-image:none!important;
+ border-color:var(--els-border)!important;
+ color:var(--els-ink)!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(
+ button.primary,.btn.primary,.guide-actions button.primary,
+ .step-buttons button.primary,.actions button.primary,.motion-primary,
+ .detail-primary,.preset-row button.selected,.preset.selected,
+ .motion-stage.current,.tab.active,.tabs button.active,.tabs button.on,
+ .step-buttons button.on,.check button.active
+){
+ background:var(--els-surface-alt)!important;
+ color:var(--els-ink)!important;
+ border-color:var(--els-link)!important;
+ box-shadow:inset 3px 0 var(--els-link)!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(
+ select,textarea,input[type="number"],input[type="text"],input[type="search"]
+){
+ background:var(--els-surface-alt)!important;
+ color:var(--els-ink)!important;
+ border-color:var(--els-border)!important;
+}
+/* Plot canvases retain their source-provided white coordinate surfaces.
+   Their SVG/Canvas strokes and fills are not recolored. */
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(
+ .plotbox canvas,.figure canvas,.plot-card canvas,.plot-card svg
+){
+ filter:none!important;
+}
+
+/* Guided Derivation + Read the Graphs: dedicated themed hierarchy, v2.4.
+   Applies to Ch2-6 full panels and Ch7-8 simplified step/reading panels.
+   Do not alter plots, SVGs, canvases or their coordinate annotations. */
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(.derivation-panel,.reading-panel,.reading,.stepbox){
+ background:var(--els-surface)!important;
+ color:var(--els-ink)!important;
+ border:1px solid var(--els-border)!important;
+ box-shadow:none!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(.derivation-panel,.reading-panel) :is(.guide-head,.reading-head,.guide-track,.guide-steps,.reading-grid){
+ background:transparent!important;
+ color:var(--els-ink)!important;
+ border-color:var(--els-border)!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(.derivation-panel,.reading-panel) :is(h2,h3,h4,.guide-head h3,.deriv-top,.reading-note strong,.reading-note b){
+ color:var(--els-ink)!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(.derivation-panel,.reading-panel) :is(.guide-head p,.reading-note p,.reading-note .ko-explain,.reading-note small,.guide-check,.plot-instruction,.plot-number){
+ color:var(--els-muted)!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(.derivation-panel,.reading-panel) :is(.deriv-step,.reading-note,.guide-check,.reading .note,.step){
+ background:var(--els-surface-alt)!important;
+ color:var(--els-ink)!important;
+ border:1px solid var(--els-border)!important;
+ box-shadow:none!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(.derivation-panel,.reading-panel) :is(.deriv-step.guide-enter,.deriv-step.active,.step.active,.reading-note.active){
+ background:var(--els-info-bg)!important;
+ border-color:var(--els-link)!important;
+ box-shadow:inset 3px 0 var(--els-link)!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(.derivation-panel,.reading-panel) :is(.deriv-math,.mathline,.step .math,.math,.formula){
+ background:var(--els-info-bg)!important;
+ color:var(--els-info-ink)!important;
+ border-color:var(--els-border)!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(.derivation-panel,.reading-panel) :is(.deriv-step p,.reading-note p,.guide-head p,.reading .note p){
+ color:var(--els-muted)!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(.derivation-panel,.reading-panel) :is(.step-index,.progress-badge,.plot-number,.overlabel){
+ background:var(--els-surface-alt)!important;
+ color:var(--els-link)!important;
+ border-color:var(--els-border)!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(.derivation-panel,.reading-panel) :is(.guide-actions button,.step-buttons button,.check button){
+ background:var(--els-surface-alt)!important;
+ color:var(--els-ink)!important;
+ border:1px solid var(--els-border)!important;
+ box-shadow:none!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(.derivation-panel,.reading-panel) :is(.guide-actions button.primary,.step-buttons button.primary,.guide-actions button[aria-pressed="true"]){
+ background:var(--els-surface-alt)!important;
+ border-color:var(--els-link)!important;
+ color:var(--els-ink)!important;
+ box-shadow:inset 3px 0 var(--els-link)!important;
+}
+/* Read the Graphs tables and narrative headings remain dark-on-dark legible;
+   graphs retain their white coordinate plane and original trace palette. */
+html[data-els-theme][data-theme][data-ss-unified-nav] .reading-panel :is(.reading-grid,.reading-note,.interpretation,.axis-note,.axis-key){
+ border-color:var(--els-border)!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] .reading-panel :is(.axis-key,.axis-note,.interpretation){
+ background:var(--els-info-bg)!important;
+ color:var(--els-info-ink)!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] .reading-panel :is(.axis-key .ax-strong,.plot-number,.reading-note strong){
+ color:var(--els-link)!important;
+}
+html[data-els-theme][data-theme][data-ss-unified-nav] :is(.derivation-panel,.reading-panel) :is(button,a):focus-visible{
+ outline:3px solid var(--els-focus)!important;
+ outline-offset:2px!important;
+}
+@media(max-width:700px){
+ html[data-els-theme][data-theme][data-ss-unified-nav] :is(.derivation-panel,.reading-panel){
+  padding:14px!important;min-width:0;
+ }
+ html[data-els-theme][data-theme][data-ss-unified-nav] :is(.reading-grid,.guide-steps,.deriv-math){
+  min-width:0;max-width:100%;
+ }
+}

@@ -1,0 +1,128 @@
+/* Shared Chapter 5 layout contract — Ch 1–8, 2026-11-22.
+ * Scope: navigation/body geometry and spacing only. Do not modify model
+ * calculations, chart sizing, graph colors, stored progress or lesson logic.
+ * Load AFTER ss-sidebar-layout.css on every standalone chapter.
+ */
+:root{
+ --ss-layout-sidebar-open:var(--ss-sidebar-open,250px);
+ --ss-layout-sidebar-closed:var(--ss-sidebar-closed,52px);
+ --ss-layout-header:46px;
+ --ss-layout-body-top:15px;
+ --ss-layout-body-x:clamp(12px,1.8vw,27px);
+ --ss-layout-body-bottom:42px;
+ --ss-layout-panel-gap:14px;
+ --ss-layout-nav-pad-x:10px;
+ --ss-layout-nav-top:14px;
+ --ss-layout-nav-gap:5px;
+ --ss-layout-nav-item-min:49px;
+ --ss-layout-nav-font:13px;
+}
+/* Independent implementation roots all use a single, two-track grid. */
+html .ss-layout-root{
+ display:grid!important;
+ grid-template-columns:var(--ss-layout-sidebar-open) minmax(0,1fr)!important;
+ column-gap:0!important;
+ align-items:start!important;
+ min-width:0!important;
+ min-height:calc(100dvh - var(--ss-layout-header))!important;
+ width:100%!important;
+ max-width:none!important;
+ margin:0!important;
+ padding:0!important;
+ box-sizing:border-box!important;
+ transition:grid-template-columns 240ms cubic-bezier(.22,.75,.25,1)!important;
+}
+/* Disable animation for users requesting reduced motion or while initial state is uninitialized. */
+@media(prefers-reduced-motion:reduce){
+ html .ss-layout-root{transition:none!important}
+}
+/* Shared content rectangle: all chapters start 15px below header, with
+ * Chapter 5's exact horizontal padding clamp. Inner learning steps are intact. */
+html :is(
+  #ch1-app>.ss-ch1-workspace,
+  #app>.main,
+  .shell>.main,
+  .ss7-workspace>main,
+  .ss8-workspace>main
+){
+ box-sizing:border-box!important;
+ display:block!important;
+ grid-column:2!important;
+ grid-row:1!important;
+ width:100%!important;
+ max-width:none!important;
+ min-width:0!important;
+ margin:0!important;
+ padding:var(--ss-layout-body-top) var(--ss-layout-body-x) var(--ss-layout-body-bottom)!important;
+ background:var(--els-bg)!important;
+ color:var(--els-ink)!important;
+}
+/* Ch 7/8 carry a wrapper between the grid root and the actual main. */
+html :is(.ss7-shell>.ss7-workspace,.ss8-shell>.ss8-workspace){
+ display:block!important;
+ grid-column:2!important;grid-row:1!important;
+ width:100%!important;max-width:none!important;
+ min-width:0!important;margin:0!important;padding:0!important;
+ background:var(--els-bg)!important;
+}
+html :is(
+  #ch1-app>.ss-ch1-workspace,
+  #app>.main,
+  .shell>.main,
+  .ss7-workspace>main,
+  .ss8-workspace>main
+)>:first-child{
+ margin-top:0!important;
+}
+html :is(
+  #ch1-app>.ss-ch1-workspace,
+  #app>.main,
+  .shell>.main,
+  .ss7-workspace>main,
+  .ss8-workspace>main
+) :is(#content,#page,.ss7-standard-layout,.ss8-standard-layout,.ss-found-four-step){
+ width:100%!important;
+ max-width:none!important;
+ min-width:0!important;
+}
+/* Chapter 5 doesn't show the separate legacy page-status strip. Remove the
+ * obsolete duplicates in Chapters 1–4 and 6; keep buttons/logics elsewhere. */
+html.ss-foundations-standard[data-ss-foundation-chapter="1"] #ch1-app .ss-ch1-workspace-top,
+html.ss-foundations-standard[data-ss-foundation-chapter="2"] #app>.main>.topline,
+html.ss-foundations-standard[data-ss-foundation-chapter="3"] #app>.main>.topline,
+html.ss-foundations-standard[data-ss-foundation-chapter="4"] #app>.main>.topline,
+html.ss6-compact-workspace #app>.main>.topline{
+ display:none!important;
+}
+html.ss-foundations-standard[data-ss-foundation-chapter="1"] #ch1-app>.ss-ch1-workspace>.ss-found-four-step{
+ margin-top:0!important;
+}
+/* Preserve the essential Change+Observe side-by-side learning design; keep
+ * chapter-specific ratios and collapse only when the workspace is narrow. */
+html :is(
+  .ss-found-four-step,.ss7-standard-layout,.ss8-standard-layout
+){
+ row-gap:var(--ss-layout-panel-gap)!important;
+}
+html :is(
+  .ss-found-23,.ss7-stage-pair,.ss8-stage-pair
+){
+ column-gap:var(--ss-layout-panel-gap)!important;
+ min-width:0!important;
+}
+html :is(
+  .ss-found-23>.ss-found-controls,.ss-found-23>.ss-found-observe,
+  .ss7-stage-pair>.ss7-stage-change,.ss7-stage-pair>.ss7-stage-observe,
+  .ss8-stage-pair>.ss8-stage-change,.ss8-stage-pair>.ss8-stage-observe
+){
+ min-width:0!important;
+}
+/* Sidebar collapse and mobile widths are owned by ss-sidebar-layout.css. */
+@media(max-width:780px){
+ :root{--ss-layout-body-top:12px;--ss-layout-body-x:12px;--ss-layout-body-bottom:32px}
+}
+/* Chapter 1's original native navigation file has a more specific workspace
+ * selector; make its content rectangle obey the exact Chapter 5 tokens. */
+html.ss-foundations-standard[data-ss-foundation-chapter="1"][data-els-theme] #ch1-app.app>.ss-ch1-workspace{
+ padding:var(--ss-layout-body-top) var(--ss-layout-body-x) var(--ss-layout-body-bottom)!important;
+}

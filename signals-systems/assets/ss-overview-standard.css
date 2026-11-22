@@ -1,0 +1,570 @@
+/* Overview and Learning Map: shared Chapter 5 typography, tokens and header. */
+html[data-ss-view="overview"] body,html[data-ss-view="map"] body{
+ background:var(--els-bg,var(--els-page,#171a19))!important;
+ color:var(--els-ink,#f0f1ee)!important;
+ font:16px/1.7 Arial,"Malgun Gothic",sans-serif;
+}
+html :is(#overview,#map-view){color:var(--els-ink);font-size:16px;line-height:1.7}
+html .ss-common-header.topbar{height:46px!important;min-height:46px!important;
+ background:var(--els-surface,#1e2220)!important;box-shadow:none!important;
+ padding:5px 15px!important;gap:12px!important}
+html .ss-common-header.topbar .ss-common-actions{
+ margin-left:auto!important;display:flex!important;align-items:center!important;gap:10px!important
+}
+html .ss-common-header.topbar .theme-picker{
+ display:flex!important;align-items:center!important;gap:5px!important;
+ background:transparent!important;border:0!important;padding:0!important;color:inherit!important
+}
+html .ss-common-header.topbar .theme-picker label{
+ font-size:11px!important;font-weight:650!important;margin:0!important;color:inherit!important
+}
+html .ss-common-header.topbar .ss-common-actions select{
+ width:auto!important;max-width:158px!important;min-height:30px!important;height:30px!important;
+ padding:3px 6px!important;border-radius:7px!important;
+ background:var(--els-surface)!important;color:var(--els-ink)!important;
+ border:1px solid var(--els-border)!important;font-size:11px!important
+}
+html .ss-common-header.topbar .ss-common-home{color:var(--els-link,var(--els-primary))!important}
+html .ss-common-header.topbar .ss-common-title{font-size:13px!important;color:var(--els-ink)!important}
+html .ss-common-header.topbar .ss-common-links{
+ background:var(--els-surface)!important;border-color:var(--els-border)!important
+}
+html :is(#overview,#map-view) :is(.container,.ss-home-wrap){
+ max-width:1560px!important;width:100%!important;
+ padding-left:clamp(14px,2.6vw,38px)!important;
+ padding-right:clamp(14px,2.6vw,38px)!important;margin-left:auto!important;margin-right:auto!important
+}
+html #overview .ss-home-section{margin:27px 0!important}
+html #overview .ss-course-hero{
+ border-radius:14px!important;box-shadow:none!important;gap:22px!important;
+ padding:clamp(21px,3vw,36px)!important;
+ background:var(--els-surface)!important;
+ border:1px solid var(--els-border)!important;color:var(--els-ink)!important
+}
+html #overview .ss-course-hero :is(h1,p,.ss-overline){
+ color:var(--els-ink)!important;
+}
+html #overview .ss-course-hero h1{
+ font-size:clamp(27px,3vw,42px)!important;line-height:1.23!important;margin:8px 0 12px!important
+}
+html #overview .ss-course-hero p{font-size:16px!important;line-height:1.75!important}
+html #overview .ss-hero-aside{
+ background:var(--els-surface-alt)!important;border:1px solid var(--els-border)!important;
+ color:var(--els-ink)!important;border-radius:12px!important;padding:18px!important
+}
+html #overview .ss-hero-aside :is(strong,p,small,.ss-overline){color:var(--els-ink)!important}
+html #overview .ss-aside-flow{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+html #overview .ss-aside-flow span{
+ background:var(--els-surface)!important;border-color:var(--els-border)!important;
+ color:var(--els-ink)!important;font-size:12px!important
+}
+html #overview .ss-course-hero .ss-home-primary{
+ background:var(--els-primary)!important;color:var(--els-primary-text,#fff)!important;
+ border:1px solid var(--els-primary)!important
+}
+html #overview .ss-course-hero .ss-home-outline{
+ color:var(--els-ink)!important;background:var(--els-surface-alt)!important;
+ border:1px solid var(--els-border)!important
+}
+html :is(#overview,#map-view) .section-head h2{
+ color:var(--els-ink)!important;font-size:clamp(21px,2.1vw,27px)!important
+}
+html :is(#overview,#map-view) .section-head p{font-size:15px!important;color:var(--els-muted)!important}
+html #overview .chapter-grid{
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important
+}
+html #overview .chapter-card{
+ min-height:0!important;padding:20px!important;border-radius:12px!important;
+ display:flex!important;flex-direction:column!important;align-items:stretch!important
+}
+html #overview .chapter-card h3{font-size:19px!important;line-height:1.3!important}
+html #overview .chapter-card p{font-size:14px!important;line-height:1.65!important}
+html #overview .chapter-card .formula{
+ margin-top:auto!important;font-size:17px!important;line-height:1.6!important;
+ min-height:54px!important;max-width:100%!important;overflow-x:auto!important
+}
+html #overview .chapter-card .formula .katex{font-size:1.06em!important}
+html #overview .chapter-card .foot{margin-top:10px!important}
+html #overview .ss-method-strip div{
+ background:var(--els-surface)!important;border:1px solid var(--els-border)!important;
+ padding:15px!important
+}
+html #overview .ss-method-strip b{font-size:15px!important}
+html #overview .ss-method-strip span{font-size:13px!important;line-height:1.55!important}
+html :is(#overview,#map-view) :is(.map-wrap,.map-node,.map-key,.tm-panel,.tm-detail-main,.tm-detail-side,
+ .tm-formula,.tm-demo-chart,.eng-card,.eng-detail,.compare-table,.ss-map-compact){
+ background:var(--els-surface)!important;color:var(--els-ink)!important;
+ border-color:var(--els-border)!important
+}
+html :is(#overview,#map-view) :is(.tm-formula,.chapter-card .formula){
+ font-family:Cambria,Georgia,"Times New Roman",serif;
+ overflow-x:auto;max-width:100%
+}
+html #map-view .tm-formula{font-size:19px!important;line-height:1.7!important}
+html :is(#overview,#map-view) :is(.tm-detail p,.eng-detail p,.map-explain,.map-note){
+ color:var(--els-muted)!important
+}
+html #map-view .compare-table th{background:var(--els-surface-alt)!important;color:var(--els-ink)!important}
+html #map-view .compare-table td{background:var(--els-surface)!important;color:var(--els-ink)!important}
+html :is(#overview,#map-view) :is(.map-node,.eng-card,.chapter-card):focus-visible{
+ outline:3px solid var(--els-focus,#b98b38)!important;outline-offset:3px!important
+}
+html :is(#overview,#map-view) button{min-height:40px}
+html[data-ss-view="map"] #map-view{padding-top:18px!important}
+@media(max-width:1150px){
+ html #overview .chapter-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ html #overview .ss-course-hero{grid-template-columns:1fr!important}
+}
+@media(max-width:720px){
+ html .ss-common-header.topbar{height:auto!important;min-height:46px!important;flex-wrap:wrap!important}
+ html .ss-common-header.topbar .ss-common-actions{
+  width:100%!important;justify-content:flex-end!important
+ }
+ html #overview .chapter-grid{grid-template-columns:1fr!important}
+ html #overview .ss-method-strip{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ html #overview .ss-aside-flow{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+
+/* Learning Map graphs: axes, canvas and labels honor the selected palette.
+ * Retain semantic ROC fills and data-series hues. */
+html #map-view .tm-demo-chart svg{
+ background:var(--els-surface)!important;color:var(--els-ink)!important
+}
+html #map-view .tm-demo-chart > svg > rect:first-child{
+ fill:var(--els-surface)!important
+}
+html #map-view .tm-demo-chart svg text{
+ fill:var(--els-ink)!important
+}
+html #map-view .tm-demo-chart svg line[stroke="#edf2f5"]{
+ stroke:var(--els-border)!important
+}
+html #map-view .tm-formula .katex-display{margin:.15em 0}
+html #map-view .tm-formula .katex{font-size:1.02em}
+
+
+/* Map and overview: control, form, graph surfaces and captions follow theme. */
+html[data-els-theme] :is(#overview,#map-view) :is(.tm-demo-select,.tm-control,.tm-condition,.tm-demo-insight,
+ .tm-demo-head,.tm-demo-controls,.tm-legend,.tm-choice-group button,.tm-scenario-row button,
+ .eng-quiz,.eng-quiz-choices button,.eng-question,.eng-number,.eng-watch,.map-track,.map-column){
+ background:var(--els-surface-alt)!important;color:var(--els-ink)!important;
+ border-color:var(--els-border)!important;
+}
+html[data-els-theme] :is(#overview,#map-view) :is(.tm-demo-select,.tm-control) :is(label,select,output,input){
+ color:var(--els-ink)!important;
+}
+html[data-els-theme] :is(#overview,#map-view) :is(.tm-demo-select,.tm-control select,.tm-choice-group select){
+ background:var(--els-surface)!important;color:var(--els-ink)!important;
+ border:1px solid var(--els-border)!important;
+}
+html[data-els-theme] :is(#overview,#map-view) :is(.tm-chip,.tm-note,.tm-control label,.tm-condition,
+ .tm-demo-insight p,.tm-detail p,.tm-panel p,.tm-legend){
+ color:var(--els-ink)!important;
+}
+html[data-els-theme] :is(#overview,#map-view) :is(.tm-panel h3,.eng-detail h4,.map-column h3){
+ color:var(--els-ink)!important;
+}
+html[data-els-theme] #map-view :is(.tm-demo-chart,.tm-demo-insight,.tm-panel,.map-wrap,.tm-detail-main,.tm-detail-side){
+ border-radius:12px!important;border:1px solid var(--els-border)!important;
+}
+html[data-els-theme] #map-view .tm-demo-chart{
+ overflow-x:auto!important;max-width:100%!important;
+}
+html[data-els-theme] #map-view .tm-demo-chart svg{
+ max-width:100%!important;height:auto!important;
+}
+html[data-els-theme] #map-view .tm-demo-chart svg > rect:first-child{
+ fill:var(--els-surface)!important;
+}
+html[data-els-theme] #map-view .tm-demo-chart svg text[fill="#647d8a"],
+html[data-els-theme] #map-view .tm-demo-chart svg text[fill="#345c6c"]{
+ fill:var(--els-muted)!important;
+}
+html[data-els-theme] #map-view .tm-formula{
+ max-width:100%!important;overflow-x:auto!important;
+ background:var(--els-surface-alt)!important;
+ color:var(--els-ink)!important;
+}
+html[data-els-theme] #map-view .tm-formula .katex-display{
+ max-width:100%;overflow-x:auto;
+}
+@media(max-width:700px){
+ html[data-els-theme] #map-view .tm-demo-chart svg{
+  min-width:650px!important;width:650px!important;
+ }
+}
+
+
+/* Curriculum-scale Learning Map readability + five explicit theme variants. */
+html[data-els-theme] #map-view{
+ --tm-ink:var(--els-ink);--tm-muted:var(--els-muted);
+ color:var(--els-ink)!important;font-size:16px!important;line-height:1.7!important;
+}
+html[data-els-theme] #map-view .tm{
+ --tm-ink:var(--els-ink);--tm-muted:var(--els-muted);
+ color:var(--els-ink)!important;
+}
+html[data-els-theme] #map-view :is(.tm-panel,.tm-detail-main,.tm-detail-side,.tm-map-scroll,.tm-map-board,
+ .tm-node,.tm-edge-btn,.tm-lane,.tm-demo-chart,.tm-demo-insight,.tm-decision-answer,.tm-mis,
+ .eng-cards,.eng-detail,.eng-card,.eng-quiz,.eng-quiz-feedback,.eng-question,.eng-number,.eng-watch,
+ .tm-formula,.tm-control,.tm-chip,.tm-condition,.tm-demo-select,.tm-toggle,.tm-scenario-row button,
+ .tm-choice-group button,.eng-filters button,.eng-quiz-choices button,.eng-path span){
+ background:var(--els-surface)!important;
+ color:var(--els-ink)!important;
+ border-color:var(--els-border)!important;
+ box-shadow:none!important;
+}
+html[data-els-theme] #map-view :is(.tm-lane,.tm-decision-answer,.tm-demo-insight,.tm-condition,
+ .eng-question,.eng-number,.eng-watch,.eng-quiz-feedback,.tm-formula,.tm-control,.eng-path span){
+ background:var(--els-surface-alt)!important;
+}
+html[data-els-theme] #map-view :is(.tm h3,.tm h4,.tm-detail h4,.tm-node strong,.tm-node .tm-node-top,
+ .tm-node small,.tm-node .tm-available,.tm-lane span,.tm-detail p,.tm-sub,.tm-note,.tm-legend,
+ .tm-legend span,.tm-chip,.tm-eyebrow,.tm-control label,.tm-control output,.tm-demo-insight,
+ .tm-demo-insight strong,.tm-condition,.tm-mis strong,.tm-mis span,.tm-source,.tm-source a,
+ .eng-detail p,.eng-detail h4,.eng-card strong,.eng-card small,.eng-label,.eng-case-number,
+ .eng-question b,.eng-number b,.eng-watch b,.eng-quiz-q,.eng-quiz-feedback,.eng-quiz-progress,
+ .tm-decision-answer h4,.tm-decision-answer p,.eng-path span){
+ color:var(--els-ink)!important;opacity:1!important;
+}
+html[data-els-theme] #map-view .tm-panel-head .tm-sub,
+html[data-els-theme] #map-view .tm-source,
+html[data-els-theme] #map-view .eng-card small,
+html[data-els-theme] #map-view .tm-node small{
+ color:var(--els-muted)!important;
+}
+html[data-els-theme] #map-view .tm-sub,
+html[data-els-theme] #map-view .tm-detail p,
+html[data-els-theme] #map-view .tm-decision-answer p,
+html[data-els-theme] #map-view .eng-detail p,
+html[data-els-theme] #map-view .tm-mis span,
+html[data-els-theme] #map-view .tm-demo-insight,
+html[data-els-theme] #map-view .tm-condition{
+ font-size:15px!important;line-height:1.75!important;
+}
+html[data-els-theme] #map-view .tm-panel-head .tm-eyebrow{font-size:12px!important;letter-spacing:.075em!important}
+html[data-els-theme] #map-view :is(.tm-chip,.tm-toggle,.tm-scenario-row button,.tm-choice-group button,
+ .eng-filters button,.eng-quiz-choices button,.tm-demo-select,.tm-control label,.tm-control output){
+ font-size:14px!important;min-height:36px!important;
+}
+html[data-els-theme] #map-view :is(.tm-toggle.active,.tm-choice-group button.active,
+ .eng-filters button.active,.eng-card.active,.eng-quiz-choices button.correct){
+ background:var(--els-info-bg)!important;color:var(--els-info-ink)!important;
+ border-color:var(--els-link)!important;
+}
+html[data-els-theme] #map-view .eng-quiz-choices button.wrong{
+ background:var(--els-surface-alt)!important;color:var(--els-ink)!important;
+ border-color:var(--els-border)!important;
+}
+html[data-els-theme] #map-view .tm-node{padding:10px 12px!important}
+html[data-els-theme] #map-view .tm-node strong{font-size:20px!important;line-height:1.25!important}
+html[data-els-theme] #map-view .tm-node .tm-node-top{font-size:12px!important;letter-spacing:0!important}
+html[data-els-theme] #map-view .tm-node small{font-size:13px!important;line-height:1.28!important;padding-right:26px!important}
+html[data-els-theme] #map-view .tm-node .tm-available{
+ font-size:11px!important;bottom:6px!important;right:8px!important;
+ background:var(--els-surface-alt)!important;
+}
+html[data-els-theme] #map-view .tm-node.dim{opacity:.62!important}
+html[data-els-theme] #map-view .tm-edge-btn{
+ font-size:12px!important;min-height:33px!important;padding:5px 9px!important;
+ background:var(--els-surface)!important;
+}
+html[data-els-theme] #map-view .tm-edge-btn.dim{opacity:.55!important}
+html[data-els-theme] #map-view .tm-edge-btn:is(:hover,.active),
+html[data-els-theme] #map-view .tm-node:is(:hover,.active){
+ background:var(--els-info-bg)!important;color:var(--els-info-ink)!important;
+ border-color:var(--els-link)!important;
+}
+html[data-els-theme] #map-view .tm-lane span{font-size:13px!important}
+html[data-els-theme] #map-view .tm-legend{font-size:13px!important;gap:10px 17px!important}
+html[data-els-theme] #map-view .tm-map-scroll{
+ background:var(--els-surface-alt)!important;scrollbar-color:var(--els-border) var(--els-surface-alt)!important;
+}
+html[data-els-theme] #map-view .tm-map-board{
+ background:var(--els-surface-alt)!important;
+}
+html[data-els-theme] #map-view .tm-lane{background:var(--els-surface)!important}
+html[data-els-theme] #map-view .eng-card strong{font-size:15px!important;line-height:1.4!important}
+html[data-els-theme] #map-view .eng-card small{font-size:12px!important;line-height:1.5!important}
+html[data-els-theme] #map-view :is(.eng-label,.eng-question b,.eng-number b,.eng-watch b,
+ .eng-case-number,.eng-quiz-progress,.tm-source){font-size:13px!important}
+html[data-els-theme] #map-view .eng-path span{font-size:13px!important}
+html[data-els-theme] #map-view .tm-demo-chart :is(svg>rect:first-child,svg rect[fill="white"],svg rect[fill="#fff"]){
+ fill:var(--els-surface)!important
+}
+html[data-els-theme] #map-view .tm-demo-chart svg rect[fill="#e0f2ed"]{
+ fill:var(--els-info-bg)!important
+}
+html[data-els-theme] #map-view .tm-demo-chart svg text{
+ fill:var(--els-ink)!important;font-size:13px!important
+}
+html[data-els-theme] #map-view .tm-demo-chart svg :is(line,path)[stroke="#edf2f5"]{
+ stroke:var(--els-border)!important
+}
+html[data-els-theme] #map-view .tm-demo-chart svg{
+ background:var(--els-surface)!important
+}
+html[data-els-theme] #map-view .tm-control input[type="range"]{
+ accent-color:var(--els-primary)!important
+}
+html[data-els-theme] #map-view .tm-actions .tm-action,
+html[data-els-theme] #map-view .tm-action,
+html[data-els-theme] #map-view .ss-curriculum-steps button{
+ background:var(--els-primary)!important;color:var(--els-primary-text)!important;
+ border:1px solid var(--els-primary)!important;font-size:14px!important;
+}
+html[data-els-theme] #map-view .tm-action.secondary{
+ background:var(--els-surface-alt)!important;color:var(--els-ink)!important;
+ border:1px solid var(--els-border)!important
+}
+html[data-els-theme] #map-view :is(.tm-action,.tm-toggle,.tm-node,.tm-edge-btn,.eng-card):focus-visible{
+ outline:3px solid var(--els-focus)!important;outline-offset:2px!important
+}
+html[data-els-theme] #map-view .ss-curriculum-path,
+html[data-els-theme] #map-view .ss-application-preview{
+ border:1px solid var(--els-border)!important;
+ border-radius:13px!important;background:var(--els-surface)!important;
+ padding:20px!important;margin:0 0 19px!important;color:var(--els-ink)!important
+}
+html[data-els-theme] #map-view .ss-curriculum-path h3{
+ margin:0 0 8px;font-size:23px!important;color:var(--els-ink)!important
+}
+html[data-els-theme] #map-view .ss-curriculum-path h3 span{
+ font-size:17px;color:var(--els-muted)!important
+}
+html[data-els-theme] #map-view .ss-curriculum-intro,
+html[data-els-theme] #map-view .ss-curriculum-bridge{
+ font-size:16px!important;line-height:1.75!important;color:var(--els-ink)!important
+}
+html[data-els-theme] #map-view .ss-curriculum-steps{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0
+}
+html[data-els-theme] #map-view .ss-curriculum-steps>div{
+ display:flex;flex-direction:column;gap:8px;padding:16px;border-radius:10px;
+ border:1px solid var(--els-border);background:var(--els-surface-alt);
+ min-width:0
+}
+html[data-els-theme] #map-view .ss-curriculum-steps strong{
+ font-size:16px!important;color:var(--els-ink)!important
+}
+html[data-els-theme] #map-view .ss-curriculum-steps span{
+ font-size:14px!important;line-height:1.6!important;color:var(--els-muted)!important;flex:1
+}
+html[data-els-theme] #map-view .ss-curriculum-steps button{
+ border-radius:9px;padding:8px 10px;cursor:pointer;text-align:center
+}
+html[data-els-theme] #map-view .ss-curriculum-bridge{
+ border-top:1px solid var(--els-border);padding-top:12px;margin-bottom:0
+}
+html[data-els-theme] #map-view .ss-application-preview{
+ display:flex;align-items:center;justify-content:space-between;gap:20px
+}
+html[data-els-theme] #map-view .ss-application-preview strong{
+ font-size:18px!important;color:var(--els-ink)!important
+}
+html[data-els-theme] #map-view .ss-application-preview p{
+ font-size:15px!important;line-height:1.7!important;color:var(--els-muted)!important
+}
+html[data-els-theme] #map-view .ss-application-preview>span{
+ white-space:nowrap;font-size:13px!important;color:var(--els-muted)!important
+}
+html[data-els-theme] #map-view .ss-map-foundation-note{
+ font-size:15px!important;line-height:1.7!important;
+ background:var(--els-surface-alt)!important;color:var(--els-ink)!important;
+ border-left:4px solid var(--els-link)!important;border-radius:9px;
+ padding:12px 14px!important;margin-bottom:15px!important;
+}
+@media(max-width:1150px){
+ html[data-els-theme] #map-view .ss-curriculum-steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:700px){
+ html[data-els-theme] #map-view .ss-curriculum-steps{grid-template-columns:1fr}
+ html[data-els-theme] #map-view .ss-application-preview{display:block}
+ html[data-els-theme] #map-view .ss-application-preview>span{display:block;margin-top:8px}
+}
+
+
+/* Transform relationship map: connection hierarchy and theme-aware contrast. */
+#map-view .tm-map-instruction{
+ margin:10px 0 14px!important;padding:11px 14px!important;
+ border:1px solid var(--els-border)!important;border-left:4px solid var(--els-link)!important;
+ border-radius:9px!important;background:var(--els-surface-alt)!important;
+ color:var(--els-ink)!important;font-size:14px!important;line-height:1.6!important
+}
+#map-view .tm-map-instruction strong{color:var(--els-ink)!important}
+#map-view .tm-map-instruction span{color:var(--els-muted)!important}
+#map-view .tm-edge-path{
+ stroke-width:5!important;opacity:1!important;filter:drop-shadow(0 1px 1px rgba(0,0,0,.22))!important;
+ transition:opacity .2s,stroke-width .2s,filter .2s!important
+}
+#map-view .tm-edge-path.active{
+ stroke-width:7!important;opacity:1!important;filter:drop-shadow(0 0 4px currentColor)!important
+}
+#map-view .tm-edge-path.dim{opacity:.22!important;stroke-width:4!important}
+#map-view .tm-edge-btn{
+ min-height:36px!important;padding:7px 11px!important;
+ border:2px solid var(--els-border)!important;border-radius:9px!important;
+ background:var(--els-surface)!important;color:var(--els-ink)!important;
+ box-shadow:0 2px 7px rgba(0,0,0,.12)!important;
+ font-size:13px!important;font-weight:800!important;line-height:1.25!important;
+}
+#map-view .tm-edge-btn i{width:15px!important;height:5px!important;flex:0 0 15px!important}
+#map-view .tm-edge-btn.dim{opacity:.55!important}
+#map-view .tm-edge-btn:is(:hover,.active){
+ border-color:var(--els-link)!important;background:var(--els-info-bg)!important;
+ box-shadow:0 0 0 2px var(--els-border),0 3px 9px rgba(0,0,0,.16)!important
+}
+#map-view .tm-node{border-width:2px!important;box-shadow:0 3px 10px rgba(0,0,0,.10)!important}
+#map-view .tm-node.active{
+ border-width:3px!important;border-color:var(--els-link)!important;
+ background:var(--els-info-bg)!important;
+ box-shadow:0 0 0 3px var(--els-border),0 4px 14px rgba(0,0,0,.14)!important
+}
+#map-view .tm-legend{font-size:14px!important;line-height:1.6!important}
+#map-view .tm-line{width:28px!important;border-top-width:4px!important}
+/* Fixed palette matches the edge legend and maintains contrast on light and dark backgrounds. */
+html[data-els-theme="neutral-dark"] #map-view .tm-edge-path,
+html[data-els-theme="warm-dark"] #map-view .tm-edge-path,
+html[data-els-theme="navy-dark"] #map-view .tm-edge-path{
+ filter:drop-shadow(0 0 2px rgba(255,255,255,.24))!important
+}
+html[data-els-theme="neutral-dark"] #map-view .tm-edge-path[data-type="limit"],
+html[data-els-theme="warm-dark"] #map-view .tm-edge-path[data-type="limit"],
+html[data-els-theme="navy-dark"] #map-view .tm-edge-path[data-type="limit"]{stroke:#62d5df!important}
+html[data-els-theme="neutral-dark"] #map-view .tm-edge-path[data-type="roc"],
+html[data-els-theme="warm-dark"] #map-view .tm-edge-path[data-type="roc"],
+html[data-els-theme="navy-dark"] #map-view .tm-edge-path[data-type="roc"]{stroke:#c2a0f4!important}
+html[data-els-theme="neutral-dark"] #map-view .tm-edge-path[data-type="sampling"],
+html[data-els-theme="warm-dark"] #map-view .tm-edge-path[data-type="sampling"],
+html[data-els-theme="navy-dark"] #map-view .tm-edge-path[data-type="sampling"]{stroke:#f6be63!important}
+html[data-els-theme="neutral-dark"] #map-view .tm-edge-path[data-type="record"],
+html[data-els-theme="warm-dark"] #map-view .tm-edge-path[data-type="record"],
+html[data-els-theme="navy-dark"] #map-view .tm-edge-path[data-type="record"]{stroke:#8ec9ff!important}
+html[data-els-theme="neutral-dark"] #map-view .tm-edge-path[data-type="normalization"],
+html[data-els-theme="warm-dark"] #map-view .tm-edge-path[data-type="normalization"],
+html[data-els-theme="navy-dark"] #map-view .tm-edge-path[data-type="normalization"]{stroke:#ffa9c5!important}
+html[data-els-theme="neutral-dark"] #map-view .tm-edge-path[data-type="algorithm"],
+html[data-els-theme="warm-dark"] #map-view .tm-edge-path[data-type="algorithm"],
+html[data-els-theme="navy-dark"] #map-view .tm-edge-path[data-type="algorithm"]{stroke:#bdd5dd!important}
+@media (prefers-reduced-motion:reduce){
+ #map-view .tm-edge-path{transition:none!important}
+}
+
+/* SVG arrowheads use the same high-contrast relationship palette as their paths. */
+html[data-els-theme="neutral-dark"] #map-view marker#tm-arr-limit path,
+html[data-els-theme="warm-dark"] #map-view marker#tm-arr-limit path,
+html[data-els-theme="navy-dark"] #map-view marker#tm-arr-limit path{fill:#62d5df!important}
+html[data-els-theme="neutral-dark"] #map-view marker#tm-arr-roc path,
+html[data-els-theme="warm-dark"] #map-view marker#tm-arr-roc path,
+html[data-els-theme="navy-dark"] #map-view marker#tm-arr-roc path{fill:#c2a0f4!important}
+html[data-els-theme="neutral-dark"] #map-view marker#tm-arr-sampling path,
+html[data-els-theme="warm-dark"] #map-view marker#tm-arr-sampling path,
+html[data-els-theme="navy-dark"] #map-view marker#tm-arr-sampling path{fill:#f6be63!important}
+html[data-els-theme="neutral-dark"] #map-view marker#tm-arr-record path,
+html[data-els-theme="warm-dark"] #map-view marker#tm-arr-record path,
+html[data-els-theme="navy-dark"] #map-view marker#tm-arr-record path{fill:#8ec9ff!important}
+html[data-els-theme="neutral-dark"] #map-view marker#tm-arr-normalization path,
+html[data-els-theme="warm-dark"] #map-view marker#tm-arr-normalization path,
+html[data-els-theme="navy-dark"] #map-view marker#tm-arr-normalization path{fill:#ffa9c5!important}
+html[data-els-theme="neutral-dark"] #map-view marker#tm-arr-algorithm path,
+html[data-els-theme="warm-dark"] #map-view marker#tm-arr-algorithm path,
+html[data-els-theme="navy-dark"] #map-view marker#tm-arr-algorithm path{fill:#bdd5dd!important}
+
+/* Readable transform relation hierarchy: prevent card text/badges overlap. */
+#map-view .tm-node{height:126px!important;padding:13px 13px 29px!important;overflow:hidden!important}
+#map-view .tm-node .tm-node-top{font-size:11px!important;line-height:1.25!important;letter-spacing:.015em!important;white-space:normal!important}
+#map-view .tm-node strong{font-size:21px!important;line-height:1.22!important;margin-top:5px!important}
+#map-view .tm-node small{display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;overflow:hidden!important;font-size:12px!important;line-height:1.35!important;max-height:34px!important;padding-right:0!important}
+#map-view .tm-node .tm-available{bottom:7px!important;right:10px!important;font-size:10px!important;padding:2px 5px!important}
+#map-view .tm-edge-path{stroke-width:5.5!important}
+#map-view .tm-edge-path.active{stroke-width:8!important}
+#map-view .tm-edge-btn{font-size:13px!important;min-height:37px!important;z-index:5!important}
+#map-view .tm-lane span{font-size:13px!important;font-weight:850!important}
+html[data-els-theme] .ss-common-header.topbar{
+ height:46px!important;min-height:46px!important;max-height:46px!important;
+ background:var(--els-surface)!important;border-bottom:1px solid var(--els-border)!important;
+ color:var(--els-ink)!important;display:flex!important;align-items:center!important;
+ padding:5px 15px!important;gap:12px!important;border-radius:0!important
+}
+html[data-els-theme] .ss-common-header.topbar .ss-common-menu > summary.ss-common-title{
+ border:1px solid var(--els-border)!important;border-radius:8px!important;
+ padding:5px 12px!important;min-height:34px!important;max-width:min(65vw,620px)!important;
+ color:var(--els-ink)!important;background:var(--els-surface-alt)!important
+}
+html[data-els-theme] .ss-common-header.topbar .ss-common-actions{
+ margin-left:auto!important;flex:0 0 auto!important
+}
+@media(max-width:700px){
+ html[data-els-theme] .ss-common-header.topbar{height:auto!important;max-height:none!important;min-height:46px!important;flex-wrap:wrap!important}
+}
+
+/* Transform cards: name first, centered; classification second; rendered mathematics third. */
+html[data-els-theme] #map-view .tm-node{
+ display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;
+ width:205px!important;height:126px!important;padding:12px 10px 27px!important;
+ border-radius:13px!important;text-align:center!important;overflow:hidden!important;
+ gap:3px!important
+}
+html[data-els-theme] #map-view .tm-node > .tm-node-name{
+ display:block!important;width:100%!important;order:1!important;
+ font-size:23px!important;line-height:1.2!important;letter-spacing:0!important;
+ text-align:center!important;font-weight:850!important;margin:0!important;
+}
+html[data-els-theme] #map-view .tm-node > .tm-node-top{
+ display:block!important;width:100%!important;order:2!important;
+ font-size:10.5px!important;font-weight:750!important;letter-spacing:.025em!important;
+ line-height:1.3!important;text-align:center!important;white-space:normal!important;
+}
+html[data-els-theme] #map-view .tm-node > .tm-node-math{
+ display:flex!important;order:3!important;align-items:center!important;justify-content:center!important;
+ max-width:100%!important;min-height:22px!important;overflow:hidden!important;
+ white-space:nowrap!important;font-size:13px!important;line-height:1.4!important;
+ color:var(--els-ink)!important
+}
+html[data-els-theme] #map-view .tm-node > .tm-node-math .katex{font-size:1em!important;max-width:100%!important}
+html[data-els-theme] #map-view .tm-node > .tm-available{
+ order:4!important;bottom:5px!important;right:8px!important
+}
+html[data-els-theme] #map-view .tm-node.system{
+ border-color:var(--els-link)!important;
+ background:var(--els-surface-alt)!important
+}
+html[data-els-theme] #map-view .tm-node.system .tm-node-name{color:var(--els-ink)!important}
+html[data-els-theme] #map-view .tm-node.active{
+ border-width:3px!important;background:var(--els-info-bg)!important;
+ box-shadow:0 0 0 2px var(--els-border),0 4px 14px rgba(0,0,0,.13)!important
+}
+html[data-els-theme] #map-view .tm-formula .katex{font-size:1.12em!important}
+html[data-els-theme] #map-view .tm-system-tag{
+ position:absolute!important;z-index:2!important;left:813px!important;
+ font-size:11px!important;font-weight:850!important;line-height:1.25!important;
+ letter-spacing:.02em!important;padding:5px 9px!important;border-radius:7px!important;
+ color:var(--els-ink)!important;background:var(--els-surface-alt)!important;
+ border:1px solid var(--els-link)!important;pointer-events:none!important;
+}
+html[data-els-theme] #map-view .tm-system-ct{top:60px!important}
+html[data-els-theme] #map-view .tm-system-dt{top:335px!important}
+/* Solid relationships are stronger; dashed paths remain fine and precise. */
+html[data-els-theme] #map-view .tm-edge-path:not([stroke-dasharray]){
+ stroke-width:4.7!important
+}
+html[data-els-theme] #map-view .tm-edge-path[stroke-dasharray]{
+ stroke-width:3.2!important;stroke-dasharray:7 6!important
+}
+html[data-els-theme] #map-view .tm-edge-path.active:not([stroke-dasharray]){
+ stroke-width:6.5!important
+}
+html[data-els-theme] #map-view .tm-edge-path.active[stroke-dasharray]{
+ stroke-width:4.4!important;stroke-dasharray:7 5!important
+}
+html[data-els-theme] #map-view .tm-edge-path.dim[stroke-dasharray]{
+ stroke-width:2.5!important;opacity:.25!important
+}
+html[data-els-theme] #map-view .tm-edge-btn{font-size:12px!important;min-height:33px!important;padding:5px 9px!important}
+html[data-els-theme] .ss-common-header.topbar .ss-language-label-text{
+ display:inline!important;white-space:nowrap!important;font-size:12px!important;
+ color:var(--els-ink)!important
+}
+html[data-els-theme] .ss-common-header.topbar #ss-language-select{
+ display:block!important;min-width:84px!important;max-width:116px!important;
+}
