@@ -6,6 +6,8 @@ on:
       - 'signals-systems/assets/ss-app-*.js'
       - 'signals-systems/assets/ss-app-*.css'
       - 'signals-systems/assets/ss-applications-hub.js'
+      - 'signals-systems/assets/ss-app-extra-labs.js'
+      - 'tests/ss-extra-labs-browser.mjs'
       - 'signals-systems/assets/ss-common-header.js'
       - 'tests/ss-applications-browser.mjs'
       - '.github/workflows/ss-applications-browser.yml'
@@ -23,6 +25,8 @@ jobs:
         run: |
           node --check signals-systems/assets/ss-app-labs.js
           node --check signals-systems/assets/ss-applications-hub.js
+          node --check signals-systems/assets/ss-app-extra-labs.js
+          node --check tests/ss-extra-labs-browser.mjs
           node --check tests/ss-applications-browser.mjs
       - name: Install Playwright Chromium
         run: |
@@ -32,8 +36,10 @@ jobs:
         run: |
           python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/ss-applications-server.log 2>&1 &
           sleep 2
-      - name: Check desktop, mobile, controls, plots, language and theme
+      - name: Check original Harmonics, Chirp and Helix labs
         run: node tests/ss-applications-browser.mjs
+      - name: Check Beats, AM/FM and Sampling aliasing labs
+        run: node tests/ss-extra-labs-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
