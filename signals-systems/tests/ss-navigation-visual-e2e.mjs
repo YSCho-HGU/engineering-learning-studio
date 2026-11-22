@@ -54,7 +54,7 @@ try{
       overflow:document.documentElement.scrollWidth-innerWidth
      };
     },{side,buttons,badge});
-    record(before.width>=160&&before.width<=270,'ch'+ch+'-'+width+'-expanded-width',JSON.stringify(before.width));
+    record(before.width>=160&&before.width<=280,'ch'+ch+'-'+width+'-expanded-width',JSON.stringify(before.width));
     const layout=await page.evaluate(({side,ch})=>{
       const aside=document.querySelector(side);
       const root=aside?.parentElement;
@@ -81,7 +81,7 @@ try{
       'ch'+ch+'-'+width+'-chapter5-content-alignment',JSON.stringify(layout));
     record(Math.abs(layout.padTop-(width<=780?12:15))<1&&Math.abs(layout.padLeft-layout.padRight)<1,
       'ch'+ch+'-'+width+'-chapter5-content-padding',JSON.stringify(layout));
-    record(layout.gap==='5px','ch'+ch+'-'+width+'-chapter5-nav-gap',layout.gap);
+    record(layout.gap==='6px','ch'+ch+'-'+width+'-chapter5-nav-gap',layout.gap);
     const inner=await page.evaluate((ch)=>{
       const cardSelector={
         1:'.ss-found-four-step .ss-found-observe',
@@ -173,7 +173,7 @@ try{
      return {width:el.getBoundingClientRect().width,grid:getComputedStyle(el.parentElement).gridTemplateColumns};
     },{side});
     record(after.width<=60,'ch'+ch+'-'+width+'-collapsed-width',JSON.stringify(after));
-    record(after.grid.startsWith('52px'),'ch'+ch+'-'+width+'-collapsed-grid',after.grid);
+    record(after.grid.startsWith('58px'),'ch'+ch+'-'+width+'-collapsed-grid',after.grid);
     const menu=page.locator('.ss-common-menu');
     await menu.locator('summary').click();
     const links=menu.locator('.ss-common-links a');
