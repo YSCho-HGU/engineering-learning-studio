@@ -109,7 +109,7 @@ function move(delta){
  if(target)location.hash="part-"+target;
 }
 function init(){
- if(language?.bindSelect)language.bindSelect("#ss-app-language");
+ // Language selection is bound once by the shared chapter header controller.
  language?.subscribe?.(()=>{localizeStatic();renderTopics();updateNavigation()});
  localizeStatic();renderTopics();updateNavigation();
  document.getElementById("ss-app-prev").addEventListener("click",()=>move(-1));
