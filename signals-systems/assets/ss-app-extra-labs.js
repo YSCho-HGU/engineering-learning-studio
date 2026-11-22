@@ -434,7 +434,7 @@ function drawSampling(){
  let C=canvasContext(canvases[0]);
  if(C){
   const B=axes(C,{xmin:begin,xmax:end,ymin:-1.2,ymax:1.2,
-   xlabel:"t (ms)",ylabel:"Amplitude",xticks:4,xformat:t=>Math.round(1000*t).toString(),yvalues:[-1,0,1]});
+   xlabel:"t (ms)",ylabel:"x(t)",xticks:4,xformat:t=>Math.round(1000*t).toString(),yvalues:[-1,0,1]});
   const original=[],guide=[];
   for(let i=0;i<=1250;i++){
    const t=begin+span*i/1250;
