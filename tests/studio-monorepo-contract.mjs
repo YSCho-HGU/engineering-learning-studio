@@ -27,6 +27,8 @@ for(let i=1;i<=8;i++){
  assert.match(html,/\.\.\/assets\/els-language\.js/);
  assert.match(html,/\.\.\/assets\/els-theme-v2\.css/);
  assert.match(html,/\.\.\/assets\/els-theme-v2\.js/);
+ assert.match(html,/<script defer src="\.\.\/shared\/els-instructional-dom\.js\?v=/,'translator must be deferred until language module');
+
  for(const m of html.matchAll(/(?:src|href)=(["'])([^"']+)\1/g)){
   const link=m[2].split('?')[0].split('#')[0];
   if(!link||/^(?:https?:|mailto:|tel:|data:|javascript:|#|\/)/.test(link))continue;
@@ -37,5 +39,9 @@ for(const unit of ['arrays','functions','pointer','structure','strings','standar
  const html=read('c-programming/'+unit+'/index.html');
  assert.match(html,/shared\/els-content-model\.js/,'shared model missing: '+unit);
 }
+const sidebarCss=read('signals-systems/assets/ss-sidebar-layout.css');
+const verticalCss=read('signals-systems/assets/ss-vertical-nav.css');
+assert.match(sidebarCss,/--ss-sidebar-closed:52px/);
+assert.ok(!/58px/.test(verticalCss),'no legacy 58px vertical rail');
 assert.match(read('index.html'),/\.\/signals-systems\//);
 console.log('Studio monorepo static contract passed: 8 SS chapters, 8 C chapters, immutable language model.');
