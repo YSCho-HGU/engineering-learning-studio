@@ -77,21 +77,12 @@ function init(){
  wrap.parentNode.insertBefore(shell,wrap);shell.append(aside,workspace);workspace.append(wrap);
  function collapsed(v){root.dataset.cSidebar=v?"collapsed":"expanded";toggle.textContent=v?"≫":"≪";toggle.setAttribute("aria-label",v?"Expand lesson navigation":"Collapse lesson navigation");toggle.setAttribute("aria-expanded",String(!v));setSaved(v)}
  toggle.addEventListener("click",()=>collapsed(root.dataset.cSidebar!=="collapsed"));collapsed(getSaved());
- const roadmap=(fileio||practice||fileioTask||fileioLabs)?null:[...wrap.querySelectorAll(".route")].find(n=>!n.closest("details"));
- if(roadmap && !roadmap.closest("details")){
-  const group=el("details","course-phase-details c-ss-roadmap");
-  group.append(el("summary","","Three-phase learning roadmap · 학습 로드맵"));
-  const heading=wrap.querySelector(".route-heading");if(heading)group.append(heading);
-  group.append(roadmap);wrap.insertBefore(group,layout);
- }
  // The original course and practice exercises remain mounted under the same IDs.
  if(fileioLabs){const intro=document.querySelector("body > .hero");if(intro){intro.classList.add("c-ss-intro");workspace.insertBefore(intro,wrap)}}
  if(fileioTask){const empty=wrap.querySelector(".practice-full-list");if(empty)empty.remove()}
  if(fileio){
   const intro=document.querySelector("body > .course-header");
-  const route=document.querySelector("body > .learning-route");
   if(intro){intro.classList.add("c-ss-intro");workspace.insertBefore(intro,wrap)}
-  if(route)route.remove();
  }
 
  // Standard four-part learning map. Only populated groups are rendered.
