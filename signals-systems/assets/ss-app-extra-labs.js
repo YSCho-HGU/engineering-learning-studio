@@ -387,43 +387,143 @@ function sampledStftPeaks(){
  fftCache={signature,result};
  return result;
 }
+// A sample-consistent, interval-wise phase-fold interpolation. It passes
+// through every true sample, but is NOT the unique continuous-time signal,
+// not a bandlimited (sinc) reconstruction and not the original source.
+function phaseFoldGuide(t){
+ const fs=state.fs,at=Math.max(0,t*fs);
+ const n=Math.floor(at),u=at-n;
+ const p0=phaseAt(n/fs),p1=phaseAt((n+1)/fs);
+ const step=p1-p0-2*Math.PI*Math.round((p1-p0)/(2*Math.PI));
+ return Math.sin(p0+step*u);
+}
+function nyquistCrossings(){
+ if(state.kind==="sine"||state.f1===state.f0)return [];
+ const lo=Math.min(state.f0,state.f1),hi=Math.max(state.f0,state.f1),cross=[];
+ for(let k=0;k<Math.ceil(hi/state.fs)+2;k++){
+  const freq=(k+.5)*state.fs;
+  if(freq>lo&&freq<hi){
+   const t=(freq-state.f0)*state.T/(state.f1-state.f0);
+   if(t>=0&&t<=state.T)cross.push(t);
+  }
+ }
+ return cross.sort((a,b)=>a-b);
+}
+function renderAliasSummary(){
+ const el=$("ss-al-alias-summary");if(!el)return;
+ el.hidden=false;
+ const t=state.T*state.pos/100,fi=freqAt(t),signed=foldedSigned(fi,state.fs);
+ const aliased=fi>state.fs/2;
+ const crossings=nyquistCrossings();
+ const times=crossings.length?crossings.map(t=>t.toFixed(2)+" s").join(", "):txt("none","없음",true);
+ const heading=aliased?txt("ALIASING at selected time","선택 시각: 에일리어싱",true):txt("Below Nyquist at selected time","선택 시각: 나이퀴스트 이하",true);
+ const direction=signed<-.001?txt("reversed phase rotation","위상 회전 방향 반전",true):
+   txt("normal phase rotation","정방향 위상 회전",true);
+ el.dataset.aliased=String(aliased);
+ el.textContent=heading+"  ·  t="+t.toFixed(2)+" s  ·  "+
+  txt("CT frequency","CT 주파수",true)+" "+fi.toFixed(1)+" Hz  →  "+
+  txt("signed alias","부호 있는 에일리어스",true)+" "+signed.toFixed(1)+" Hz ("+direction+")  ·  "+
+  txt("Nyquist crossings","나이퀴스트 교차",true)+": "+times;
+}
 function drawSampling(){
- const T=state.T,center=T*state.pos/100,span=Math.min(.24,T),begin=clamp(center-span/2,0,T-span),end=begin+span;
+ const T=state.T,center=T*state.pos/100,span=Math.min(Number(state.windowMs)/1000,T);
+ const begin=clamp(center-span/2,0,T-span),end=begin+span;
+ renderAliasSummary();
  let C=canvasContext(canvases[0]);
  if(C){
-  const B=axes(C,{xmin:begin,xmax:end,ymin:-1.2,ymax:1.2,xlabel:"t (s)",ylabel:"x(t)"}),wave=[];
-  for(let i=0;i<=1150;i++){const t=begin+span*i/1150;wave.push([t,continuousAt(t)])}
-  line(C,B,wave,C.pal.line,1.8);plotSamples(C,B,begin,end,true);
-  legend(C,[[txt("CT input","CT 입력",true),C.pal.line],[txt("samples","표본",true),C.pal.alt]]);
-  marker(C,B,center,continuousAt(center),C.pal.alt);
- }
- C=canvasContext(canvases[1]);if(C){
-  const n0=Math.max(0,Math.ceil(begin*state.fs)),n1=Math.max(n0+1,Math.floor(end*state.fs));
-  const B=axes(C,{xmin:n0-.6,xmax:n1+.6,ymin:-1.2,ymax:1.2,xlabel:"n (sample index)",ylabel:"x[n]"});
-  for(let n=n0;n<=n1;n++){
-   const v=continuousAt(n/state.fs),x=B.x(n);C.ctx.strokeStyle=C.pal.line;C.ctx.lineWidth=1.4;C.ctx.beginPath();C.ctx.moveTo(x,B.y(0));C.ctx.lineTo(x,B.y(v));C.ctx.stroke();circle(C.ctx,x,B.y(v),C.pal.alt,3.7);
+  const B=axes(C,{xmin:begin,xmax:end,ymin:-1.2,ymax:1.2,
+   xlabel:"t (ms)",ylabel:"Amplitude",xticks:4,xformat:t=>Math.round(1000*t).toString(),yvalues:[-1,0,1]});
+  const original=[],guide=[];
+  for(let i=0;i<=1250;i++){
+   const t=begin+span*i/1250;
+   original.push([t,continuousAt(t)]);
+   if(state.aliasGuide==="on")guide.push([t,phaseFoldGuide(t)]);
   }
-  hint(C,"x[n] = x(n / fₛ)");
+  line(C,B,original,C.pal.muted,1.3);
+  if(guide.length)line(C,B,guide,C.pal.line,2.6,[7,4]);
+  plotSamples(C,B,begin,end,false);
+  marker(C,B,center,continuousAt(center),C.pal.alt);
+  outsideLegend(1,[
+   [txt("Original CT x(t)","원래 CT x(t)",true),C.pal.muted],
+   ...(state.aliasGuide==="on"?[[txt("Aliased-view guide","에일리어스 안내 파형",true),C.pal.line,"dash"]]:[]),
+   [txt("Exact samples","실제 표본점",true),C.pal.alt,"dot"]
+  ]);
  }
- C=canvasContext(canvases[2]);if(C){
+ C=canvasContext(canvases[1]);
+ if(C){
+  const n0=Math.max(0,Math.ceil(begin*state.fs)),n1=Math.max(n0+1,Math.floor(end*state.fs));
+  const B=axes(C,{xmin:n0-.55,xmax:n1+.55,ymin:-1.2,ymax:1.2,
+   xlabel:"n",ylabel:"x[n]",xvalues:integerTicks(n0,n1,5),
+   xformat:n=>String(Math.round(n)),yvalues:[-1,0,1]});
+  const ctx=C.ctx;
+  ctx.strokeStyle=C.pal.muted;ctx.lineWidth=1;ctx.beginPath();
+  ctx.moveTo(B.r.l,B.y(0));ctx.lineTo(B.r.right,B.y(0));ctx.stroke();
+  const selectedN=Math.round(center*state.fs);
+  for(let n=n0;n<=n1;n++){
+   const v=continuousAt(n/state.fs),x=B.x(n);
+   ctx.strokeStyle=C.pal.line;ctx.lineWidth=1.4;
+   ctx.beginPath();ctx.moveTo(x,B.y(0));ctx.lineTo(x,B.y(v));ctx.stroke();
+   circle(ctx,x,B.y(v),n===selectedN?C.pal.alt:C.pal.line,n===selectedN?5.1:3.2);
+  }
+  outsideLegend(2,[[txt("Discrete samples at integer n","정수 n에서의 이산 표본",true),C.pal.line,"dot"]]);
+ }
+ C=canvasContext(canvases[2]);
+ if(C){
   const fmax=Math.max(state.kind==="sine"?state.tone:Math.max(state.f0,state.f1),state.fs/2)*1.18;
-  const B=axes(C,{xmin:0,xmax:T,ymin:0,ymax:fmax,xlabel:"t (s)",ylabel:"f (Hz)"}),original=[],fold=[],ny=[];
-  for(let i=0;i<=750;i++){const t=T*i/750,f=freqAt(t);original.push([t,f]);fold.push([t,Math.abs(foldedSigned(f,state.fs))]);ny.push([t,state.fs/2])}
-  line(C,B,original,C.pal.muted,1.7);line(C,B,fold,C.pal.line,2.4);line(C,B,ny,C.pal.alt,1.8,[6,5]);
+  const B=axes(C,{xmin:0,xmax:T,ymin:0,ymax:fmax,
+   xlabel:"t (s)",ylabel:"f (Hz)",yformat:v=>Math.round(v).toString()});
+  const original=[],fold=[],ny=[];
+  const ctx=C.ctx;
+  // Lightly shade the time regions where the original instantaneous frequency
+  // exceeds Nyquist. The threshold line remains visible above the shading.
+  ctx.save();ctx.globalAlpha=.075;ctx.fillStyle=C.pal.alt;
+  for(let i=0;i<300;i++){
+   const t0=T*i/300,t1=T*(i+1)/300;
+   if(freqAt((t0+t1)/2)>state.fs/2)ctx.fillRect(B.x(t0),B.r.t,B.x(t1)-B.x(t0)+1,B.r.height);
+  }
+  ctx.restore();
+  for(let i=0;i<=750;i++){
+   const t=T*i/750,frequency=freqAt(t);
+   original.push([t,frequency]);fold.push([t,Math.abs(foldedSigned(frequency,state.fs))]);ny.push([t,state.fs/2]);
+  }
+  line(C,B,original,C.pal.muted,1.6);
+  line(C,B,ny,C.pal.alt,1.8,[6,4]);
+  line(C,B,fold,C.pal.line,2.5);
   if(state.showFFT==="on"){
    const measured=sampledStftPeaks();
    for(const [t,f] of measured.points){
     if(t<0||t>T)continue;
-    C.ctx.save();C.ctx.globalAlpha=.86;circle(C.ctx,B.x(t),B.y(f),C.pal.peak,2.7);C.ctx.restore();
+    ctx.save();ctx.globalAlpha=.90;circle(ctx,B.x(t),B.y(f),C.pal.peak,2.8);ctx.restore();
    }
   }
-  legend(C,[[txt("input fᵢ","입력 fᵢ",true),C.pal.muted],[txt("folded |fₐ|","접힌 |fₐ|",true),C.pal.line],[txt("Nyquist","나이퀴스트",true),C.pal.alt],[txt("STFT peaks","STFT 피크",true),C.pal.peak]]);
+  for(const t of nyquistCrossings()){
+   ctx.save();ctx.strokeStyle=C.pal.alt;ctx.lineWidth=1.4;ctx.setLineDash([2,4]);
+   ctx.beginPath();ctx.moveTo(B.x(t),B.r.t);ctx.lineTo(B.x(t),B.r.b);ctx.stroke();
+   ctx.setLineDash([]);ctx.fillStyle=C.pal.alt;ctx.font="11px Arial";
+   ctx.textAlign="center";ctx.fillText(t.toFixed(2)+" s",B.x(t),B.r.b-10);ctx.restore();
+  }
   marker(C,B,center,Math.abs(foldedSigned(freqAt(center),state.fs)),C.pal.alt);
+  outsideLegend(3,[
+   [txt("Input fᵢ(t)","입력 fᵢ(t)",true),C.pal.muted],
+   [txt("Folded |fₐ(t)|","접힌 |fₐ(t)|",true),C.pal.line],
+   [txt("Nyquist fₛ/2","나이퀴스트 fₛ/2",true),C.pal.alt,"dash"],
+   ...(state.showFFT==="on"?[[txt("Measured STFT peaks","표본 STFT 피크",true),C.pal.peak,"dot"]]:[])
+  ]);
  }
- $("ss-al-note-1").textContent=txt("Original continuous waveform (green) and exact samples taken at t=n/fₛ (orange). Dashed links are not interpolation.","연속시간 파형(녹색)과 t=n/fₛ에서 얻은 정확한 표본점(주황색)입니다. 점선 연결은 보간 복원이 아닙니다.");
- $("ss-al-note-2").textContent=txt("Sample stems against integer index n, not equally spaced points on a rescaled continuous waveform.","표본을 연속시간축이 아니라 정수 첨자 n에 대해 막대 형태로 나타냅니다.");
- $("ss-al-note-3").textContent=txt("Green: theoretical local folded frequency; purple dots: finite-window STFT peak of x[n] (approximate, possibly smeared). Nyquist crossings can repeat.","녹색은 이론적인 국소 접힌 주파수이며 보라색 점은 x[n]의 유한 윈도 STFT 피크(근사값·퍼짐 가능)입니다. 나이퀴스트 경계는 여러 번 통과할 수 있습니다.");
+ $("ss-al-note-1").textContent=txt(
+  "Thin gray: original CT waveform. Green dashed: a sample-consistent phase-fold guide; both pass through the same orange samples. The guide is NOT a unique reconstruction.",
+  "얇은 회색은 원래 CT 파형, 녹색 점선은 표본에 일치하는 위상 접힘 안내선입니다. 둘 다 주황색 표본을 통과하지만 안내선은 유일한 복원 결과가 아닙니다."
+ );
+ $("ss-al-note-2").textContent=txt(
+  "Sample index n always uses integer ticks. Orange highlights the nearest sample to the selected time.",
+  "표본 첨자 n에는 정수 눈금만 사용합니다. 주황색 점은 선택 시각에 가장 가까운 표본입니다."
+ );
+ $("ss-al-note-3").textContent=txt(
+  "Shaded intervals: source fᵢ(t) exceeds fₛ/2; vertical marks: Nyquist crossings. Purple points are finite-window STFT estimates and may differ near rapid folds.",
+  "음영은 입력 순간주파수가 fₛ/2를 넘는 구간, 수직 점선은 나이퀴스트 교차 시각입니다. 보라색 점은 유한 윈도 STFT 추정값으로 급격한 접힘에서 오차가 날 수 있습니다."
+ );
 }
+
 function audioPosition(){return audio.playing&&audioCtx?clamp(audioCtx.currentTime-audio.start,0,audio.duration):audio.offset}
 function updateTransport(){
  if(lab==="sampling")return;
