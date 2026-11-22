@@ -204,5 +204,8 @@ $("sensor-download").onclick=()=>downloadSensorBlob($("sensor-edit").value,"sens
 $("sensor-download-c").onclick=()=>downloadSensorBlob($("sensor-c-source").textContent,"sensor_log_analyzer.c","text/x-csrc;charset=utf-8");
 sensorInputsChanged();
 $("build-check").onclick=()=>{const good=$("blank-mode").value==="r"&&$("blank-read").value==="good"&&$("blank-close").value==="fclose";$("build-feedback").textContent=good?"올바른 선택입니다. fopen 실패 확인, 읽기 반환값, fclose를 모두 갖췄습니다.":"수정이 필요합니다: 읽기 모드 r, fscanf 반환값 == 1, fclose(fp)를 선택하세요."};
+function navigateFromHash(){if(location.hash==="#optional")navigate(6,false);else{const m=/^#step-(\d+)$/.exec(location.hash);if(m){const i=Number(m[1])-1;if(i>=0&&i<7)navigate(coreStageOrder[i],false)}}}
 navigate(0,false);
+navigateFromHash();
+window.addEventListener("hashchange",navigateFromHash);
 })();
