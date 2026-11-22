@@ -25,10 +25,20 @@ for(const name of ["harmonics","chirp","helix"]){
   if(canvas.length<(name==="harmonics"?2:3)||canvas.some(([w,h])=>w<250||h<175))throw Error("Plots too small: "+JSON.stringify(canvas));
   if(canvasCss.some(([w,h])=>w<240||h<260))throw Error("Visible graphs too small: "+JSON.stringify(canvasCss));
   await page.screenshot({path:"tests/screenshots/"+name+"-desktop.png"});
+  const beforeBitmap=await page.locator(".ss-al-plot canvas").first().evaluate(c=>c.toDataURL());
   const old=await page.locator("#ss-al-metrics .ss-al-metric-value").first().innerText();
   await page.locator("#ss-al-control-fields input[type=range]").first().evaluate((slider,value)=>{slider.value=value;slider.dispatchEvent(new Event("input",{bubbles:true}))},name==="harmonics"?"440":name==="chirp"?"360":"2.0");
   await page.waitForTimeout(120);
   if(name!=="helix"&&old===await page.locator("#ss-al-metrics .ss-al-metric-value").first().innerText())throw Error("Slider failed");
+  const afterBitmap=await page.locator(".ss-al-plot canvas").first().evaluate(c=>c.toDataURL());
+  if(beforeBitmap===afterBitmap)throw Error("Canvas did not redraw after input");
+  if(name==="helix"){
+    const changedPhasor=await page.locator("#ss-al-metrics .ss-al-metric-value").nth(2).innerText();
+    await page.locator("#ss-al-reset").click();
+    await page.waitForTimeout(70);
+    const defaultPhasor=await page.locator("#ss-al-metrics .ss-al-metric-value").nth(2).innerText();
+    if(changedPhasor===defaultPhasor)throw Error("Helix phasor did not respond to frequency change");
+  }
   await page.locator("#ss-al-reset").click();
   await page.waitForTimeout(70);
   const reset=await page.locator("#ss-al-metrics .ss-al-metric-value").first().innerText();
@@ -44,9 +54,13 @@ for(const name of ["harmonics","chirp","helix"]){
   await page.waitForTimeout(75);
   if(!/[가-힣]/.test(await page.locator("#ss-al-title").innerText()))throw Error("Language not applied");
   await page.locator("#ss-al-language").selectOption("en");
+  for(const theme of ["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark"]){
+    await page.locator("#ss-al-theme").selectOption(theme);
+    await page.waitForTimeout(40);
+    if(await page.locator("html").getAttribute("data-els-theme")!==theme)throw Error("Theme not applied: "+theme);
+  }
   await page.locator("#ss-al-theme").selectOption("white-clean");
   await page.waitForTimeout(75);
-  if(await page.locator("html").getAttribute("data-els-theme")!=="white-clean")throw Error("Theme not applied");
   await page.setViewportSize({width:390,height:844});await page.waitForTimeout(100);
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
   if(overflow>6)throw Error("Mobile horizontal overflow "+overflow+"px");
