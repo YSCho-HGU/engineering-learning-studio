@@ -149,7 +149,7 @@ function init(){
    const labs=makeGroup(toc,"labs","따라하기 실습","Guided Labs",true);
    anchors.forEach(a=>labs.append(a));
    const adv=makeGroup(toc,"advanced","선택 심화","Advanced / Optional",false);
-   adv.append(link(en()?"Advanced concepts":"선택 심화","../#step-7"));
+   adv.append(link(en()?"Advanced concepts":"선택 심화","../#optional"));
    const challenges=makeGroup(toc,"challenges","직접 구현","Coding Challenges",false);
    challenges.append(link(en()?"Open coding challenges":"직접 구현 과제","../practice/"));
   }
