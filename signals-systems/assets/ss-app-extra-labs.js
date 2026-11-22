@@ -56,7 +56,7 @@ const dom=(tag,cls,text,parent)=>{
 const clear=node=>node.replaceChildren();
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 let plotDirty=false,lastDraw=0,fftCache=null,playId=null,previousFrame=0,audioCtx=null,source=null,transportId=null,requestId=0;
-const audio={playing:false,offset:0,start:0,buffer:null,duration:duration,buttons:null,status:null};
+const audio={playing:false,offset:0,start:0,buffer:null,duration:duration,buttons:null,status:null,signal:"ct",pitchScale:8};
 function palette(){
  const c=getComputedStyle(document.documentElement),v=n=>c.getPropertyValue(n).trim();
  return {ink:v("--els-ink")||"#e8e9e6",muted:v("--els-muted")||"#9ba4a1",line:v("--els-link")||"#87c5a5",border:v("--els-border")||"#666",bg:v("--els-surface")||"#171a19",alt:document.documentElement.dataset.theme==="light"?"#b66134":"#ffc08d",peak:document.documentElement.dataset.theme==="light"?"#764aa5":"#bea5e7"};
@@ -141,7 +141,11 @@ function select(host,{key,en,ko,values}){
  input.id="ss-extra-"+key;label.htmlFor=input.id;
  for(const [value,textEn,textKo] of values){const op=dom("option",null,txt(textEn,textKo,true),input);op.value=value}
  input.value=state[key];input.addEventListener("change",()=>{
-  state[key]=input.value;renderControls();
+  state[key]=input.value;
+  if(lab==="sampling"&&key==="kind"){
+   state.fs=state.kind==="sine"?56:70;state.pos=50;
+  }
+  renderControls();
   if(lab==="sampling"&&["windowMs","aliasGuide","showFFT"].includes(key)){drawSoon();return}
   change();
  });return input;
@@ -154,7 +158,7 @@ function displayNames(){
  $("ss-al-panel-toggle").textContent=txt($("ss-al-root").classList.contains("controls-hidden")?"Show controls":"Hide controls",$("ss-al-root").classList.contains("controls-hidden")?"변수 보기":"변수 접기",true);
  $("ss-al-reset").textContent=txt("Reset lab","실습 초기화",true);
  $("ss-al-return").textContent=txt("Back to Applications","Applications 목차로",true);
- $("ss-al-transport").hidden=lab==="sampling";$("ss-al-camera-tools").hidden=true;
+ $("ss-al-transport").hidden=false;$("ss-al-camera-tools").hidden=true;
  $("ss-al-transport-label").textContent=txt("Playback position","재생 위치",true);
  $("ss-al-seek").setAttribute("aria-label",txt("Playback position","재생 위치",true));
  for(const a of document.querySelectorAll("[data-lab-link]")){
@@ -188,7 +192,7 @@ function renderFormula(){
 }
 function renderControls(){
  const h=$("ss-al-control-fields"),a=$("ss-al-audio");clear(h);clear(a);
- a.hidden=lab==="sampling";
+ a.hidden=false;
  if(lab==="beats"){
   range(h,{key:"f1",en:"First frequency f₁",ko:"첫 번째 주파수 f₁",min:150,max:550,step:10,unit:" Hz"});
   range(h,{key:"delta",en:"Frequency difference Δf",ko:"주파수 차이 Δf",min:0,max:16,step:.5,digits:1,unit:" Hz"});
@@ -216,7 +220,10 @@ function renderControls(){
    range(h,{key:"T",en:"Chirp duration T",ko:"처프 길이 T",min:1,max:3,step:.25,digits:2,unit:" s"});
   }
   const presetRow=dom("div","ss-al-presets",null,h);
-  for(const [f,labelEn,labelKo] of [[260,"No alias · 260 Hz","전구간 무에일리어싱 · 260Hz"],[70,"Fold twice · 70 Hz","두 번 접힘 · 70Hz"],[50,"Strong alias · 50 Hz","강한 접힘 · 50Hz"]]){
+  const presets=state.kind==="sine"?
+   [[120,"No alias · 120 Hz","무에일리어싱 · 120Hz"],[56,"38 → 18 Hz alias","38 → 18Hz 에일리어싱"],[40,"38 → 2 Hz alias","38 → 2Hz 에일리어싱"]]:
+   [[260,"No alias · 260 Hz","전구간 무에일리어싱 · 260Hz"],[70,"Fold twice · 70 Hz","두 번 접힘 · 70Hz"],[50,"Strong alias · 50 Hz","강한 접힘 · 50Hz"]];
+  for(const [f,labelEn,labelKo] of presets){
    const preset=dom("button","ss-al-preset",txt(labelEn,labelKo,true),presetRow);
    preset.type="button";preset.dataset.fs=String(f);
    preset.setAttribute("aria-pressed",String(state.fs===f));
@@ -225,18 +232,50 @@ function renderControls(){
   select(h,{key:"windowMs",en:"Visible time span",ko:"표시 시간 범위",values:[["120","120 ms","120 ms"],["240","240 ms","240 ms"],["480","480 ms","480 ms"]]});
   select(h,{key:"aliasGuide",en:"Sample-consistent alias guide",ko:"표본 일치 에일리어스 안내선",values:[["on","Show alias guide","에일리어스 안내선 표시"],["off","Hide alias guide","안내선 숨기기"]]});
   select(h,{key:"showFFT",en:"Measured STFT peaks",ko:"표본의 STFT 피크",values:[["on","Show STFT peaks","STFT 피크 표시"],["off","Hide STFT peaks","STFT 피크 숨기기"]]});
-  range(h,{key:"pos",en:"Observation time",ko:"관찰 시각",min:0,max:100,step:1,unit:"%",changed:()=>{scheduleDraw()}});
+  range(h,{key:"pos",en:"Observation time",ko:"관찰 시각",min:0,max:100,step:1,unit:"%",changed:()=>{
+   if(audio.playing)seek(state.T*state.pos/100);else drawSoon();
+  }});
   const actions=dom("div","ss-al-control-buttons",null,h),play=dom("button",null,null,actions);
   play.type="button";play.id="ss-extra-animate";play.textContent=txt(state.playing?"Pause sweep":"Play sweep",state.playing?"움직임 일시 정지":"시간 변화 재생",true);
-  play.addEventListener("click",()=>{state.playing=!state.playing;previousFrame=0;play.textContent=txt(state.playing?"Pause sweep":"Play sweep",state.playing?"움직임 일시 정지":"시간 변화 재생",true);if(state.playing)playId=requestAnimationFrame(animate)});
+  play.addEventListener("click",()=>{
+   if(!state.playing&&audio.playing)stopAudio(true);
+   state.playing=!state.playing;previousFrame=0;
+   play.textContent=txt(state.playing?"Pause sweep":"Play sweep",state.playing?"움직임 일시 정지":"시간 변화 재생",true);
+   if(state.playing)playId=requestAnimationFrame(animate);
+   else if(playId!==null){cancelAnimationFrame(playId);playId=null}
+  });
  }
- if(lab!=="sampling"){
+ if(lab==="sampling"){
+  const label=dom("label","ss-al-audio-mode-label",txt("Listening pitch","청취 음정",true),a);
+  const pitch=dom("select","ss-al-audio-pitch",null,a);
+  pitch.id="ss-al-pitch-scale";label.htmlFor=pitch.id;
+  for(const [factor,en,ko] of [[8,"×8 · Audible comparison","×8 · 듣기 쉬운 음정"],[1,"×1 · Actual frequencies","×1 · 실제 주파수"]]){
+   const option=dom("option",null,txt(en,ko,true),pitch);option.value=String(factor);
+  }
+  pitch.value=String(audio.pitchScale);
+  pitch.addEventListener("change",()=>{
+   audio.pitchScale=Number(pitch.value);stopAudio(true);audio.buffer=null;refreshAudio();
+  });
+  dom("p","ss-al-audio-caution",txt(
+   "×8 is pitch sonification, not the physical frequency or a reconstructed signal.",
+   "×8은 청취용 음정 변환이며 실제 신호 주파수나 복원 결과가 아닙니다."
+  ),a);
+ }
+ {
   const buttons=dom("div","ss-al-control-buttons",null,a);
   const play=dom("button","ss-al-primary",null,buttons),pause=dom("button",null,null,buttons),stop=dom("button",null,null,buttons);
   play.id="ss-al-play";pause.id="ss-al-pause";stop.id="ss-al-stop";
+  let aliasPlay=null;
+  if(lab==="sampling"){
+   aliasPlay=dom("button",null,null,buttons);
+   aliasPlay.id="ss-al-play-alias";aliasPlay.type="button";
+   play.id="ss-al-play-ct";
+   play.addEventListener("click",()=>startAudio("ct"));
+   aliasPlay.addEventListener("click",()=>startAudio("alias"));
+  }
   const status=dom("p","ss-al-audio-status",null,a);status.setAttribute("role","status");
-  audio.buttons={play,pause,stop};audio.status=status;
-  play.addEventListener("click",startAudio);
+  audio.buttons={play,pause,stop,aliasPlay};audio.status=status;
+  if(lab!=="sampling")play.addEventListener("click",startAudio);
   pause.addEventListener("click",()=>stopAudio(false));
   stop.addEventListener("click",()=>stopAudio(true));
   refreshAudio();
