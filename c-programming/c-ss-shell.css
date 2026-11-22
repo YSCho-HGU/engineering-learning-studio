@@ -172,3 +172,12 @@ html[data-c-sidebar=collapsed] .c-sidebar-caption{display:none}
 .c-ss-shell .c-learning-group-items .n,.c-ss-shell .c-learning-group-items .num{flex:0 0 28px}
 .c-ss-shell .c-ss-sidebar #lesson-nav.c-grouped-toc{grid-template-columns:1fr}
 @media(max-width:780px){.c-ss-shell>.c-ss-sidebar #lesson-nav.c-grouped-toc{display:flex;flex-direction:column}}
+
+/* File I/O independently rendered task groups. */
+.c-ss-shell #task-nav>.c-learning-group{width:100%;flex:0 0 auto}
+.c-ss-shell #task-nav .c-learning-group-items>button[data-task]{width:100%;min-height:49px;padding:10px 9px;color:var(--els-ink);border:1px solid transparent;border-radius:8px;text-align:left;background:transparent}
+.c-ss-shell #task-nav .c-learning-group-items>button[data-task].active{background:var(--els-surface-alt);border-color:var(--els-link);box-shadow:inset 3px 0 var(--els-link)}
+.c-ss-shell #task-nav .c-learning-group-items>button[data-task] small{display:block;font-size:12px;line-height:1.45}
+.c-ss-shell .c-course-task-links{display:flex;flex-direction:column;gap:7px}
+.c-ss-shell .c-learning-task-heading{font-weight:800;font-size:13px;margin:10px 7px 3px}
+.c-ss-shell .c-ss-sidebar .progress-panel small:empty{display:none}
