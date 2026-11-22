@@ -20,6 +20,17 @@ const persistConcepts=()=>{try{localStorage.setItem(assessmentKey,JSON.stringify
 
 try{const v=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(v))completed=[...new Set(v.filter(n=>Number.isInteger(n)&&n>=0&&n<total))]}catch(e){}
 function element(tag,cls,parent,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;parent.appendChild(n);return n}
+// Only isolated backtick terms are formatted as inline code; all text nodes stay escaped.
+function richText(host,value){
+ host.replaceChildren();
+ const pieces=String(value??"").split(/(`[^`\n]+`)/g);
+ for(const piece of pieces){
+  if(!piece)continue;
+  if(piece[0]==="`"&&piece[piece.length-1]==="`"&&piece.length>2)element("code","c-inline-code",host,piece.slice(1,-1));
+  else host.append(document.createTextNode(piece));
+ }
+ return host;
+}
 function renderNav(){
  const nav=$("lesson-nav");
  const previousOpen={};
@@ -291,10 +302,10 @@ function show(i){
  element("h2","",stage,l.title);element("p","lead",stage,l.goal);
  if(l.minutes)element("p","legend",stage,ui("권장 개념 학습 시간: 약 ","Suggested concept study: ")+l.minutes+ui("분 · 코딩 실습은 별도"," min · Coding practice is separate"));
  const concept=element("section","concept",stage);
- element("h3","",concept,ui("핵심 개념 · Understand","Core Concept · Understand"));element("p","",concept,l.concept);
+ element("h3","",concept,ui("Understand · 핵심 원리","Understand the Concept"));richText(element("p","c-learning-prose",concept),l.concept);
  const learn=element("div","learn",stage);
  const c=element("section","",learn);element("h3","",c,ui("전체 프로그램 · 코드 읽기","Complete C Program · Read the Code"));createCode(c,l.code);
- const e=element("section","",learn);element("h3","",e,ui("실행 결과 예측하기","Predict the Output"));element("p","",e,l.predict);
+ const e=element("section","",learn);element("h3","",e,ui("Predict · 실행 결과 예상","Predict the Output"));richText(element("p","c-learning-prose",e),l.predict);
  const reveal=element("button","action",e,ui("참조 출력 확인","Reveal Reference Output"));
  const out=element("div","explain",e);out.hidden=true;
  const outPre=element("pre","",out);outPre.style.whiteSpace="pre-wrap";outPre.textContent=l.output;
@@ -302,11 +313,11 @@ function show(i){
  renderTrace(stage,l);renderMemoryLayout(stage,l);renderModel(stage,l);renderQuiz(stage,l);
  const transfer=element("section","transfer",stage);
  element("h3","",transfer,ui("응용 · 내 말로 설명하기","Apply and Explain"));
- element("p","",transfer,l.transfer);
+ richText(element("p","c-learning-prose",transfer),l.transfer);
  const textarea=element("textarea","",transfer);textarea.placeholder="Explain why, sketch memory, or write pseudocode here...";textarea.setAttribute("aria-label","Personal explanation; stored only in this browser");
  const draftkey=key+"-note-"+current;try{textarea.value=localStorage.getItem(draftkey)||""}catch(e){}
  textarea.addEventListener("input",()=>{try{localStorage.setItem(draftkey,textarea.value)}catch(e){}});
- const hint=element("details","",transfer);element("summary","",hint,ui("해설 가이드 펼치기","Show Instructor Guidance"));element("p","",hint,l.guide);
+ const hint=element("details","",transfer);element("summary","",hint,ui("해설 가이드 펼치기","Show Instructor Guidance"));richText(element("p","c-learning-prose",hint),l.guide);
  const actions=element("div","navactions",stage);
  const mark=element("button","action primary",actions,completed.includes(current)?ui("학습 확인 완료 ✓","Activity reviewed ✓"):ui("학습 내용 확인 ✓","Mark activity reviewed ✓"));
  mark.addEventListener("click",()=>{if(!completed.includes(current)){completed.push(current);completed.sort((a,b)=>a-b);try{localStorage.setItem(key,JSON.stringify(completed))}catch(e){}}
@@ -315,7 +326,7 @@ function show(i){
 }
 function init(){
  $("hero-title").textContent=D.title+" Learning Journey";
- $("hero-summary").textContent=D.summary;
+ richText($("hero-summary"),D.summary);
  $("hero-count").textContent=(hasOptional?coreCount+" Core + "+(total-coreCount)+" Optional · ":total+" Learning Steps · ")+D.book;
  const heading=document.querySelector(".route-heading span");if(heading)heading.textContent=total+" Learning Steps / "+D.practice.length+" Coding Challenges";
  const meter=$("progress-bar")?.parentElement;if(meter)meter.setAttribute("aria-valuemax",String(hasOptional?coreCount:total));
