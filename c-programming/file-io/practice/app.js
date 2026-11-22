@@ -40,7 +40,7 @@ const checkEN={
  M1:["Open source","Open destination","Check open failure","Read one bounded line","Write only if read","Check write failure","Close both streams"]
 };
 const langMode=()=>window.ELSLanguage?.get?.()||"mixed";
-const langText=(ko,en)=>langMode()==="en"?en:langMode()==="ko"?ko:en+"\\n"+ko;
+const langText=(ko,en)=>langMode()==="en"?en:langMode()==="ko"?ko:en+"\n"+ko;
 const taskView=t=>{
  const en=tasksEN[t.id];
  return {title:en?.title||t.title,desc:langText(t.desc,en?.desc||t.desc),objective:langText(t.objective,en?.objective||t.objective),hint:langText(t.hint,en?.hint||t.hint)};
