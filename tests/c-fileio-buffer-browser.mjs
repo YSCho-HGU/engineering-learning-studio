@@ -15,7 +15,7 @@ for(const width of [390,1280]){
  if(!text.includes("14개"))errors.push(width+" normal fgets length unexpected: "+text);
  await next.click();
  const preview=await page.locator("#buffer-dest").innerText();
- if(preview!=="Sensor online\n".trimEnd())errors.push(width+" fputs data unexpected: "+JSON.stringify(preview));
+ if(preview!=="Sensor online\n")errors.push(width+" fputs data unexpected: "+JSON.stringify(preview));
  await page.locator("#buffer-scenario").selectOption("empty");for(let i=0;i<4;i++)await next.click();
  if(!(await page.locator("#buffer-result").innerText()).includes("쓰기 생략"))errors.push(width+" empty file must skip fputs");
  if((await page.locator("#buffer-dest").innerText())!=="∅ 빈 파일")errors.push(width+" empty file expected empty output");

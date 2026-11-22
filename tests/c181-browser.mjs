@@ -26,7 +26,7 @@ for(const width of [390,1280]){
  if(await fullUnit.count()!==8)problems.push(width+' expected 8 fully linked roadmap cards');
  if(await fullUnit.first().getAttribute('href')!=='./arrays/')problems.push(width+' roadmap card destination incorrect');
  if(await page.locator('#course-overview-details').evaluate(e=>e.open))problems.push(width+' overview should begin collapsed');
- await page.locator('#course-roadmap-link').click();
+ await page.locator('#course-overview-details > summary').click();
  if(!await page.locator('#course-overview-details').evaluate(e=>e.open))problems.push(width+' roadmap link did not open overview');
  if(await page.locator('#units .unit').count()!==18)problems.push(width+' expected 18 roadmap chapters');
  const groupHeads=await page.locator('#units .course-group h3').allTextContents();
