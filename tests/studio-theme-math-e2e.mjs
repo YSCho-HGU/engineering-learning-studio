@@ -12,7 +12,7 @@ await new Promise(resolve=>setTimeout(resolve,1200));
 const browser=await chromium.launch({headless:true});
 const themes=['white-clean','warm-neutral','warm-dark','navy-dark','neutral-dark'];
 const results=[];
-const lum=s=>{const m=s.match(/[\d.]+/g);if(!m||m.length<3)return null;const rgb=m.slice(0,3).map(x=>Number(x)/255).map(v=>v<=0.04045?v/12.92:((v+0.055)/1.055)**2.4);return rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722};
+const lum=s=>{let v;if(/^#[0-9a-f]{6}$/i.test(s))v=[1,3,5].map(i=>parseInt(s.slice(i,i+2),16));else{const m=s.match(/[\\d.]+/g);if(!m||m.length<3)return null;v=m.slice(0,3).map(Number)}const rgb=v.map(x=>x/255).map(t=>t<=0.04045?t/12.92:((t+0.055)/1.055)**2.4);return rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722};
 const contrast=(a,b)=>{const x=lum(a),y=lum(b);return x===null||y===null?null:(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
 let failures=0;
 try{
