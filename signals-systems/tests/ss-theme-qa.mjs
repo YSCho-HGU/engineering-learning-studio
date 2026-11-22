@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import {spawn} from 'node:child_process';
 const report=[],failures=[];
 function check(ok,msg){report.push({pass:!!ok,msg});if(!ok)failures.push(msg)}
-const html=fs.readFileSync('index.html','utf8'),css=fs.readFileSync('assets/els-theme-v2.css','utf8'),js=fs.readFileSync('assets/els-theme-v2.js','utf8');
+const html=fs.readFileSync('index.html','utf8'),css=fs.readFileSync('../assets/els-theme-v2.css','utf8'),js=fs.readFileSync('../assets/els-theme-v2.js','utf8');
 for(const q of ['els-theme-v2.css','els-theme-v2.js','ss-set-theme','__ssApplyTheme','iframe.srcdoc=decodeLab(ch)']){
  check(html.includes(q),'S&S page preserves '+q);
 }
@@ -12,7 +12,7 @@ for(const theme of ['neutral-dark','warm-dark','navy-dark','warm-neutral']){
  check(css.includes('data-els-theme="'+theme+'"'),'S&S theme colors '+theme);
  check(js.includes('"'+theme+'"'),'S&S selector supports '+theme);
 }
-check(html.includes('assets/els-theme-v2.css?v=')&&js.includes('dataset.elsTheme'),'Lab and site include shared theme CSS');
+check(html.includes('../assets/els-theme-v2.css?v=')&&js.includes('dataset.elsTheme'),'Lab and site include shared theme CSS');
 check(html.includes('localStorage.getItem(\'els-theme-v2\')'),'prepaint theme persistence');
 let browserStatus='NOT_RUN',browser,server;
 if(process.env.C_JOURNEY_BROWSER==='1'){

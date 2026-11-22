@@ -1,0 +1,26 @@
+name: ELS shared asset deduplication regression
+on:
+  pull_request:
+    paths:
+      - 'assets/**'
+      - 'signals-systems/**'
+      - 'tests/els-shared-asset-contract.mjs'
+      - '.github/workflows/els-deduplication.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Canonical shared asset contract
+        run: node tests/els-shared-asset-contract.mjs
+      - name: S&S all-theme contrast regression
+        run: node signals-systems/tests/theme-contrast-audit.mjs
+      - name: SS theme compatibility regression
+        working-directory: signals-systems
+        run: node tests/ss-theme-qa.mjs

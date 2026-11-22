@@ -1,6 +1,6 @@
 /* Shared theme: one localStorage key for Studio and both courses. */
 (()=>{"use strict";
-const KEY="els-theme-v2",VALID=["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark"],DEFAULT="neutral-dark";
+const KEY="els-theme-v2",CHOICES=[["white-clean","White Clean"],["warm-neutral","Warm Neutral"],["warm-dark","Warm Dark"],["navy-dark","Navy Dark"],["neutral-dark","Neutral Dark"]],VALID=CHOICES.map(x=>x[0]),DEFAULT="neutral-dark";
 const root=document.documentElement;
 function safeGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
 function inferLegacy(){
@@ -34,7 +34,7 @@ function apply(value,persist=true){
  window.dispatchEvent(new CustomEvent("els:themechange",{detail:{theme:v,scheme:light?"light":"dark"}}));
  return v;
 }
-window.ELSTheme={get:()=>root.dataset.elsTheme||selected(),set:apply,options:VALID};
+window.ELSTheme={get:()=>root.dataset.elsTheme||selected(),set:apply,options:VALID,choices:CHOICES.map(x=>x.slice())};
 function setup(){
  if(safeGet(KEY)==="white")try{localStorage.setItem(KEY,"white-clean")}catch(e){}
  const old=document.getElementById("theme-select"),portal=document.getElementById("theme");
@@ -51,7 +51,7 @@ function setup(){
  }
  document.querySelectorAll("[data-els-theme-picker]").forEach(select=>{
   select.replaceChildren();
-  for(const [value,label] of [["white-clean","White Clean"],["warm-neutral","Warm Neutral"],["warm-dark","Warm Dark"],["navy-dark","Navy Dark"],["neutral-dark","Neutral Dark"]]){
+  for(const [value,label] of CHOICES){
    const o=document.createElement("option");o.value=value;o.textContent=label;select.append(o);
   }
   select.value=selected();

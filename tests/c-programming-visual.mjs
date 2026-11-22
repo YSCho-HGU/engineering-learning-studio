@@ -9,7 +9,7 @@ for(const theme of ['neutral-dark','warm-neutral']){
   const page=await context.newPage();
   page.on('pageerror',e=>failures.push(theme+' '+width+' JS: '+e.message));
   await page.goto('http://127.0.0.1:8765/c-programming/',{waitUntil:'load'});
-  await page.locator('#units .unit').first().waitFor();
+  await page.locator('#units .unit').first().waitFor({state:'attached'});
   const result=await page.evaluate(()=>{
    const doc=document.documentElement;
    const overflow=doc.scrollWidth>innerWidth+2;
