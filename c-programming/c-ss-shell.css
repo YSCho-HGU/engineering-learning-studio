@@ -1,0 +1,96 @@
+/* C Programming — shared Signals & Systems Chapter 5 geometry.
+   Coordinates only; lesson data, model calculations and saved student work untouched. */
+:root{--c-sidebar-width:272px;--c-sidebar-rail:52px;--c-header-height:46px}
+html,body{min-width:0}
+body.c-ss-course{margin:0;background:var(--els-page,#101010);color:var(--els-ink,#f0f0ed)}
+body.c-ss-course>.ss-common-header{
+ box-sizing:border-box;position:sticky;top:0;z-index:110;display:flex;align-items:center;
+ min-height:var(--c-header-height);height:auto;gap:10px;padding:5px 13px;
+ background:var(--els-surface,#1c1c1c);color:var(--els-ink,#f0f0ed);
+ border-bottom:1px solid var(--els-border,#555);
+ font:600 13px/1.3 Arial,"Malgun Gothic",sans-serif;
+}
+.c-ss-header a{color:var(--els-ink);text-decoration:none}
+.c-ss-header .ss-common-home{white-space:nowrap}
+.c-ss-header .ss-common-menu{position:relative;min-width:0}
+.c-ss-header .ss-common-title{cursor:pointer;max-width:min(40vw,405px);min-height:34px;display:flex;align-items:center;padding:5px 10px;border:1px solid var(--els-border);border-radius:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c-ss-header .ss-common-links{display:none;position:absolute;top:calc(100% + 5px);left:0;width:min(390px,85vw);max-height:75dvh;overflow:auto;z-index:150;padding:8px;background:var(--els-surface);border:1px solid var(--els-border);border-radius:10px;box-shadow:0 9px 30px #0005}
+.c-ss-header .ss-common-menu[open] .ss-common-links{display:grid;gap:3px}
+.c-ss-header .ss-common-links a{display:block;padding:10px 9px;border-radius:6px;font-size:13px;line-height:1.45}
+.c-ss-header .ss-common-links a:hover,.c-ss-header .ss-common-links a[aria-current=page]{background:var(--els-surface-alt);color:var(--els-link)}
+.c-ss-header .ss-four-navigation{display:flex;align-items:center;gap:5px;margin-inline:auto}
+.c-ss-header .ss-chapter-arrow{box-sizing:border-box;display:grid;place-items:center;min-width:34px;width:34px;height:34px;border:1px solid var(--els-border);border-radius:8px;background:var(--els-surface-alt);color:var(--els-ink);font-size:18px;font-weight:800;cursor:pointer;text-decoration:none}
+.c-ss-header .ss-chapter-arrow:is(:disabled,[aria-disabled=true]){opacity:.33;cursor:default;pointer-events:none}
+.c-ss-header .ss-common-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+.c-ss-header .ss-common-language{display:inline-flex;align-items:center;gap:5px}
+.c-ss-header .ss-common-language select,.c-ss-header .ss-common-theme select{
+ box-sizing:border-box;min-height:34px;height:34px;padding:4px 8px;
+ color:var(--els-ink);background:var(--els-surface);border:1px solid var(--els-border);border-radius:8px;font:600 12px/1.2 Arial,"Malgun Gothic",sans-serif
+}
+.c-ss-header .ss-common-theme select{max-width:150px}
+.c-ss-header .ss-language-icon{font-size:17px}
+.c-ss-header :is(a,button,select,summary):focus-visible,.c-sidebar-toggle:focus-visible{outline:3px solid var(--els-focus,#ead18b);outline-offset:2px}
+.c-ss-shell{display:grid;grid-template-columns:var(--c-sidebar-width) minmax(0,1fr);min-height:calc(100dvh - var(--c-header-height));width:100%;gap:0}
+.c-ss-shell>.c-ss-sidebar{
+ box-sizing:border-box;display:block;grid-column:1;position:sticky;top:var(--c-header-height);
+ height:calc(100dvh - var(--c-header-height));max-height:calc(100dvh - var(--c-header-height));
+ width:100%;min-width:0;overflow-x:hidden;overflow-y:auto;
+ margin:0;padding:12px 11px;border:0;border-right:1px solid var(--els-border);
+ border-radius:0;background:var(--els-surface);box-shadow:none
+}
+.c-sidebar-topline{display:flex;align-items:center;gap:10px;margin-bottom:12px;min-height:37px}
+.c-sidebar-toggle{flex:0 0 40px;height:36px;font-size:22px;font-weight:850;border-radius:8px;border:1px solid var(--els-border);background:var(--els-surface-alt);color:var(--els-ink);cursor:pointer}
+.c-sidebar-caption{font:750 12px/1.4 Arial,"Malgun Gothic",sans-serif;color:var(--els-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c-ss-shell>.c-ss-sidebar nav#lesson-nav{display:flex;flex-direction:column;gap:5px}
+.c-ss-shell>.c-ss-sidebar nav#lesson-nav>button{
+ box-sizing:border-box;min-height:49px;display:flex;align-items:center;gap:9px;width:100%;
+ background:transparent;border:1px solid transparent;border-radius:9px;padding:9px;color:var(--els-ink);text-align:left;font-size:14px;line-height:1.5
+}
+.c-ss-shell>.c-ss-sidebar nav#lesson-nav>button:is(.active,[aria-current=step]){border-color:var(--els-link);background:var(--els-surface-alt);box-shadow:inset 3px 0 var(--els-link)}
+.c-ss-shell>.c-ss-sidebar nav#lesson-nav>button .n{display:inline-grid;place-items:center;flex:0 0 30px;height:30px;border:1px solid var(--els-border);border-radius:7px;background:var(--els-surface-alt);color:var(--els-ink);font-weight:800}
+.c-ss-shell>.c-ss-sidebar nav#lesson-nav>button>span:nth-child(2){flex:1;min-width:0;overflow-wrap:anywhere}
+.c-ss-shell>.c-ss-workspace{min-width:0;width:100%;background:var(--els-page)}
+.c-ss-workspace>.c-ss-content{box-sizing:border-box;width:100%;max-width:none;padding:15px clamp(12px,1.8vw,27px) 42px;margin:0}
+.c-ss-content>.layout{display:block!important;min-width:0;margin:0}
+.c-ss-content>.layout>main{display:block;width:100%;max-width:none;min-width:0}
+.c-ss-content .hero{margin:0 0 12px;padding:14px 18px}
+.c-ss-content .hero-aside{padding:10px 12px}
+.c-ss-content .hero .over{font-size:11px}
+.c-ss-content .hero h1{font-size:clamp(23px,2.8vw,32px)}
+.c-ss-content .hero p{font-size:15px;line-height:1.65}
+.c-ss-content .course-phase-details{margin:8px 0 12px}
+.c-ss-content .course-core-links,.c-ss-content .c-learning-shortcuts{margin:8px 0 12px}
+.c-ss-content .stage{width:100%;min-width:0}
+.c-ss-content .journey-assessment{margin-top:7px}
+.c-ss-content .stage :is(.lead,.concept p,.activity p,.quiz p,.transfer p){font-size:16px;line-height:1.7}
+.c-ss-content .stage .learn{grid-template-columns:repeat(2,minmax(0,1fr))}
+.c-ss-content .stage .trace-layout{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr)}
+html[data-c-sidebar=collapsed] .c-ss-shell{grid-template-columns:var(--c-sidebar-rail) minmax(0,1fr)}
+html[data-c-sidebar=collapsed] .c-ss-shell>.c-ss-sidebar{padding:8px 5px}
+html[data-c-sidebar=collapsed] .c-ss-shell>.c-ss-sidebar>:not(.c-sidebar-topline){display:none}
+html[data-c-sidebar=collapsed] .c-sidebar-topline{margin:0;justify-content:center}
+html[data-c-sidebar=collapsed] .c-sidebar-caption{display:none}
+@media(max-width:1080px){
+ .c-ss-header .ss-common-title{max-width:240px}
+ .c-ss-content .stage .trace-layout{grid-template-columns:1fr}
+ .c-ss-content .stage .learn{grid-template-columns:1fr}
+}
+@media(max-width:780px){
+ .c-ss-shell{grid-template-columns:minmax(0,1fr)}
+ .c-ss-shell>.c-ss-sidebar{position:relative;top:auto;grid-column:1;height:auto;max-height:none;border-right:0;border-bottom:1px solid var(--els-border);padding:9px 12px}
+ .c-ss-shell>.c-ss-sidebar nav#lesson-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .c-ss-shell>.c-ss-workspace{grid-column:1}
+ html[data-c-sidebar=collapsed] .c-ss-shell{grid-template-columns:1fr}
+ .c-ss-header{flex-wrap:wrap}
+ .c-ss-header .ss-four-navigation{margin-left:0}
+ .c-ss-header .ss-common-actions{margin-left:auto}
+ .c-ss-content .hero{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+ .c-ss-header .ss-common-title{max-width:calc(100vw - 140px)}
+ .c-ss-header .ss-common-actions{width:100%;justify-content:flex-end}
+ .c-ss-shell>.c-ss-sidebar nav#lesson-nav{grid-template-columns:1fr}
+ .c-ss-workspace>.c-ss-content{padding:12px 12px 32px}
+ .c-ss-content .stage{padding:12px}
+}
+@media(prefers-reduced-motion:reduce){.c-ss-shell{transition:none}}
