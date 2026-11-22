@@ -2,6 +2,7 @@ name: Integrated Studio Admin QA
 on:
   push:
     paths:
+      - 'index.html'
       - 'admin/**'
       - 'c-programming/admin/**'
       - 'c-programming/course-catalog.*'
@@ -26,11 +27,12 @@ jobs:
       - name: Validate admin and Worker JavaScript syntax
         run: |
           node --check admin/admin.js
+          node --check admin/admin-access.js
           node --check admin/github-owner.js
           node --check github-owner-worker/src/index.js
           node --check github-owner-worker/src/catalog-core.js
           node --check tests/studio-admin-github.mjs
-      - name: Validate legacy administrator editor
+      - name: Verify fail-closed admin gate and retired C admin entry
         run: node tests/studio-admin.mjs
       - name: Validate GitHub Owner sign-in and protected Worker API mode
         run: node tests/studio-admin-github.mjs
