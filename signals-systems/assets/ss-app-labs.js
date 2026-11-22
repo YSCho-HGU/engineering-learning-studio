@@ -602,6 +602,16 @@ function animate(now){
 }
 function onVisibility(){if(document.hidden){stopAudio();if(lab==="helix"&&state.playing){state.playing=false;cancelAnimationFrame(animationId);animationId=null;previousTime=0;renderControls()}}}
 function init(){
+ if(lab==="helix"){
+  helixView=window.SSPerspectiveHelix?.create?.(plotCanvases[0],scheduleDraw)||null;
+  $("ss-al-camera-reset").addEventListener("click",()=>helixView?.reset());
+ }else{
+  $("ss-al-seek").addEventListener("input",event=>{
+   const progress=Number(event.target.value)/1000;
+   seekAudio(progress*audioState.duration);
+  });
+  updateAudioTransport(0);
+ }
  renderHeader();plotTitles();renderControls();scheduleDraw();
  const at=MODES.indexOf(lab),prev=$("ss-al-prev-lab"),next=$("ss-al-next-lab");
  prev.disabled=at===0;next.disabled=at===MODES.length-1;
@@ -611,6 +621,13 @@ function init(){
   if(animationId!==null){cancelAnimationFrame(animationId);animationId=null}
   previousTime=0;
   Object.keys(initial).forEach(key=>{state[key]=Array.isArray(initial[key])?initial[key].slice():initial[key]});
+  stftCache=null;
+  if(lab==="helix")helixView?.reset();
+  else{
+   audioState.buffer=null;
+   audioState.duration=lab==="harmonics"?2:state.T;
+   setAudioPosition(0);
+  }
   renderControls();renderHeader();scheduleDraw();
  });
  prev.addEventListener("click",()=>{if(at>0)location.href="./applications-lab.html?lab="+MODES[at-1]});
@@ -632,7 +649,10 @@ function init(){
  window.addEventListener("resize",scheduleDraw);
  if(window.ResizeObserver){new ResizeObserver(scheduleDraw).observe($("ss-al-charts"))}
  document.addEventListener("visibilitychange",onVisibility);
- window.addEventListener("pagehide",stopAudio);
+ window.addEventListener("pagehide",()=>{
+  stopAudio(true);
+  if(animationId!==null){cancelAnimationFrame(animationId);animationId=null}
+ });
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
 })();
