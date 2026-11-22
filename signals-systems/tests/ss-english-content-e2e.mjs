@@ -44,16 +44,6 @@ try{
     });
     await page.waitForTimeout(80);
    }
-   if(ch===1&&section===0){
-    console.log('LANGUAGE_DIAGNOSTIC',JSON.stringify(await page.evaluate(()=>{
-      const original=document.querySelector('.ss-found-intro')?.textContent||'';
-      const present=!!window.ELSInstructionalDOM;
-      const language=window.ELSLanguage?.get?.();
-      window.ELSInstructionalDOM?.refresh?.();
-      return {present,language,original,iframeCount:document.querySelectorAll('iframe').length,
-        guided:[...document.querySelectorAll('div')].map(x=>x.textContent?.trim()).find(x=>x==='GUIDED EXPLANATION · 단계별 이해')||null};
-    })));
-   }
    const result=await page.evaluate(()=>{
     const root=document.querySelector('.ss-layout-root')||document.querySelector('main')||document.body;
     const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
