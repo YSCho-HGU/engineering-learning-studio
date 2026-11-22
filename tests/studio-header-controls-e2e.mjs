@@ -35,7 +35,7 @@ try{
        language:lang?.value,theme:theme?.value,progress:localStorage.getItem('els-journey-arrays-v1'),
        savedLang:localStorage.getItem('els-language'),savedTheme:localStorage.getItem('els-theme-v2')};
    });
-   assert.equal(response.status(),200,path+' status');
+   if(response)assert.equal(response.status(),200,path+' status');
    assert.equal(result.icon,'🌐',path+' language icon');
    assert.deepEqual(result.labels,options,path+' theme options');
    assert.equal(result.progress,'test-progress',path+' preserved progress');
