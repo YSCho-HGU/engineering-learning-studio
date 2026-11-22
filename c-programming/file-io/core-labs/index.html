@@ -20,7 +20,7 @@
 <p class="progress" id="lab-progress" aria-live="polite"></p>
 </aside>
 <main>
-<div class="notice"><strong data-i18n="modelTitle">실행 방식</strong><p data-i18n="model">이 페이지는 C 코드를 실제로 컴파일하지 않습니다. 코드는 GCC C11용 전체 예제이며, 버튼은 같은 입력에 대한 교육용 모의 실행을 보여 줍니다. 실제 코딩은 아래의 Practice Lab에서 .c 파일로 저장해 GCC로 확인하세요.</p></div>
+<div class="notice"><strong data-i18n="modelTitle">실행 방식</strong><p data-i18n="model">이 페이지는 C 코드를 실제로 컴파일하지 않습니다. 코드는 GCC C11용 전체 예제이며, 버튼은 같은 입력에 대한 교육용 모의 실행을 보여 줍니다. 실제 코딩은 아래의 Coding Challenges에서 .c 파일로 저장해 GCC로 확인하세요.</p></div>
 <section id="write" class="lab" aria-labelledby="title-write">
 <div class="lab-head"><span class="step">CORE 01</span><h2 id="title-write" data-i18n="writeTitle">파일에 한 줄 저장하기</h2><p data-i18n="writeIntro">상황: 프로그램이 실행되면 message.txt를 새로 만들거나 기존 내용을 지우고, 한 줄을 기록합니다. 코드를 읽은 뒤 어떤 내용이 파일에 남을지 먼저 예측하세요.</p></div>
 <div class="pipeline"><span>fopen("w")</span><span>fprintf()</span><span>fclose()</span></div><details class="core-lab-writing-guide">
@@ -91,7 +91,7 @@ int main(void) {
 }</pre><div class="hint" data-i18n="studentExplain">fscanf()가 3을 반환하면 학번·이름·점수를 모두 성공적으로 읽은 것입니다. 정수·실수에는 &amp;, 문자 배열 이름에는 &amp; 없이 전달합니다.</div></div>
 <div class="play-panel"><label for="input-student" data-i18n="studentInput">students.txt 내용 · 첫 학생</label><textarea id="input-student" rows="4" spellcheck="false">101 Mina 92.5</textarea><p class="micro" data-i18n="studentPredict">예측: s.id, s.name, s.score와 A~F 학점은 각각 무엇일까요?</p><button id="run-student" type="button" data-i18n="studentRun">구조체 저장·학점 환산 모의 실행</button><output id="out-student" class="output" aria-live="polite" data-i18n="beforeRun">실행 전에 결과를 예측해 보세요.</output><p class="micro" data-i18n="studentRule">성적 기준: A ≥ 90, B ≥ 80, C ≥ 70, D ≥ 60, F &lt; 60 (실습용 기준)</p></div>
 </div></section>
-<section class="finish"><h2 data-i18n="finishTitle">이제 직접 작성해 보세요</h2><p data-i18n="finishText">세 프로그램의 전체 흐름을 이해했다면 기존 Practice Lab에서 코드를 직접 작성하세요. P1은 파일 쓰기, M1은 한 줄 복사, P2는 여러 숫자 읽기입니다.</p><div class="links"><a href="../practice/#p1" data-i18n="practiceWrite">P1 · 직접 파일 쓰기</a><a href="../practice/#m1" data-i18n="practiceRead">M1 · 한 줄 복사</a><a href="../practice/#p2" data-i18n="practiceNumbers">P2 · 숫자 평균 계산</a></div>
+<section class="finish"><h2 data-i18n="finishTitle">이제 직접 작성해 보세요</h2><p data-i18n="finishText">세 프로그램의 전체 흐름을 이해했다면 Coding Challenges에서 코드를 직접 작성하세요. P1은 파일 쓰기, M1은 한 줄 복사, P2는 여러 숫자 읽기입니다.</p><div class="links"><a href="../practice/#p1" data-i18n="practiceWrite">P1 · 직접 파일 쓰기</a><a href="../practice/#m1" data-i18n="practiceRead">M1 · 한 줄 복사</a><a href="../practice/#p2" data-i18n="practiceNumbers">P2 · 숫자 평균 계산</a></div>
 <details><summary data-i18n="advancedSummary">심화 과정은 별도로 펼치기</summary><p data-i18n="advancedText">기본 프로그램을 익힌 뒤 여러 학생 레코드, 형식 오류 감지, 파일 복사, 센서 로그 검증 등은 선택 심화 코딩 과제에서 연습합니다.</p><a href="../practice/#p3" data-i18n="advancedGo">심화 코딩 과제 P3–P6</a></details></section>
 <footer><a href="../" data-i18n="back">← File I/O 개념 학습</a><p data-i18n="footer">기본 3개 실습의 실행 기록은 기존 Chapter 17 진도와 별도 저장됩니다. 실제 컴파일 성공을 의미하지 않습니다.</p></footer>
 </main></div>
