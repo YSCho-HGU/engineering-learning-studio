@@ -1,42 +1,80 @@
-# GitHub Single Owner Admin — Cloudflare Worker deployment
+# Engineering Learning Studio — GitHub Owner Admin / Cloudflare Worker deployment
 
-## Implementation and activation state
+## Current state — 2026-11-22
 
-The Firebase runtime has been replaced in the live admin page by a **GitHub App OAuth (user-to-server) + Cloudflare Worker** implementation. This repository's `admin/github-config.js` currently has `enabled:false`. Until the Worker and GitHub App credentials are provisioned, the old manually entered GitHub fine-grained token remains the administrator's fallback. **This is not live GitHub OAuth until configured and deployed.**
+This repository contains an **implemented but not yet activated** GitHub App OAuth and Cloudflare Worker integration. The public `admin/github-config.js` remains **enabled:false**, with no Worker URL. The /admin/ page is fail-closed; there is **no PAT-based fallback**. Do not claim that production authentication is complete until an actual owner login and Worker API checks have passed.
 
-- Current admin: `https://yscho-hgu.github.io/engineering-learning-studio/admin/`
-- Worker: `github-owner-worker/src/index.js`; Cloudflare deploy config `github-owner-worker/wrangler.toml`.
-- One owner: fixed GitHub numeric `OWNER_GITHUB_ID` **and** a verified GitHub account email `yscho@handong.edu` (not merely a matching public profile email).
-- Current admin edits: **only** C Programming `c-programming/course-catalog.json` and S&S `course-catalog.json`. No arbitrary repository/path access.
-- GitHub OAuth access tokens and App signing keys remain on the Worker. The browser gets a signed, short-lived, non-GitHub session bearer (30 min, current-tab sessionStorage only).
-- A browser session ends on logout, tab close or timeout; it survives same-tab refresh. **Stateless tokens cannot be revoked individually**: stolen session tokens remain valid until expiry. For later role-based or persistent sessions add revocation storage (Cloudflare KV/D1).
+The current single-owner policy requires BOTH a GitHub user numeric ID equal to `OWNER_GITHUB_ID` and a GitHub **verified** email equal to `yscho@handong.edu`. The Worker grants only catalog metadata reads and guarded writes.
 
-## Step 1 — GitHub App (no Firebase or Google Cloud)
+Both course catalogs now live in **YSCho-HGU/engineering-learning-studio**:
+- C: `c-programming/course-catalog.json`
+- Signals & Systems: `signals-systems/course-catalog.json`
 
-Create a GitHub App owned by the account with access to both repositories. Enable OAuth authorization callback and set the **exact callback URL** to:
+A publishing change validates that `signals-systems/chapterN.html` (or the C course lesson page) exists before publishing. Do not point the editor back to the legacy `signals-systems-visual-lab` repository.
 
-`https://<your-worker-hostname>/auth/github/callback`
+## 1. Prepare Cloudflare and a GitHub App
 
-GitHub App permissions:
-- Repository: **Contents: Read & write**, Metadata: Read.
-- Account: **Email addresses: Read** (required to check the verified school email).
-- Install only in `YSCho-HGU/engineering-learning-studio` and `YSCho-HGU/signals-systems-visual-lab`.
-- Set **User-to-server token expiration** enabled, and keep the app's client secret safe.
-- A single installation ID can serve both repos if they're installed under the same owner/installation.
+You need the **Cloudflare account owner** to provision Workers and choose the existing `workers.dev` subdomain. The Worker script is named `els-owner-admin` in `github-owner-worker/wrangler.toml`. The resulting HTTPS hostname should be known **before** creating the GitHub App, so the callback can match exactly:
 
-Record the non-sensitive identifiers **Client ID, App ID, Installation ID** and your GitHub profile's **numeric user ID**, distinct from the username. Obtain the numeric ID via the authenticated GitHub REST `GET /user` API or GitHub profile API as appropriate. Email is checked on `GET /user/emails`: the address must have `verified:true`.
+`https://els-owner-admin.<YOUR-CLOUDFLARE-SUBDOMAIN>.workers.dev/auth/github/callback`
 
-Generate the app private PEM key. Cloudflare Web Crypto currently imports **PKCS#8** RSA private keys for signing; GitHub PEM files may use PKCS#1 (`BEGIN RSA PRIVATE KEY`). Convert locally without exposing the key:
+Do not use a guessed hostname; read your actual Workers subdomain in the Cloudflare dashboard. A custom HTTPS domain is also possible but must match every configured URL exactly.
 
-```sh
+Create a GitHub App owned by the account that can install it on the repository. Configure:
+- **User authorization callback**: the exact Worker URL plus `/auth/github/callback`
+- **Repository permission**: Contents — Read and write; Metadata — Read
+- **Account permission**: Email addresses — Read
+- **Install only in** `YSCho-HGU/engineering-learning-studio`. The legacy Signals repository is not required.
+
+Record the App Client ID, App ID and Installation ID; obtain the **numeric GitHub user ID of the account that will sign in**. Ensure the GitHub account lists `yscho@handong.edu` as a verified email. An email entered on a web form, an unverified profile address or an account with a different numeric ID will be denied.
+
+Generate and protect the GitHub App private key. If the GitHub App downloads an RSA PKCS#1 PEM, convert it locally to a PKCS#8 PEM (never upload it to this public repository):
+
+```powershell
 openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in github-app.pem -out github-app-pkcs8.pem
 ```
 
-Use the resulting `-----BEGIN PRIVATE KEY-----` file for the Worker secret. Never commit either PEM file.
+Use the full contents of the `-----BEGIN PRIVATE KEY-----` PKCS#8 PEM when provisioning the key.
 
-## Step 2 — Deploy Worker
+## 2. Provision encrypted GitHub Actions secrets
 
-Create a Cloudflare account and enable Workers. On a trusted Windows terminal with Node.js:
+In the GitHub repository, open Settings → Secrets and variables → Actions → Repository secrets. Set the following **secret names** (values must not be pasted in chat, code, PR comments or screenshots):
+
+| Secret name | Value |
+|---|---|
+| `CLOUDFLARE_ACCOUNT_ID` | Actual Cloudflare account ID |
+| `CLOUDFLARE_API_TOKEN` | Scope-limited token permitted to create/update the Worker and manage its secrets |
+| `GITHUB_CLIENT_ID` | GitHub App Client ID |
+| `GITHUB_CLIENT_SECRET` | GitHub App client secret |
+| `GITHUB_APP_ID` | GitHub App numeric App ID |
+| `GITHUB_INSTALLATION_ID` | App installation ID for the repo |
+| `GITHUB_APP_PRIVATE_KEY` | Entire multiline PKCS#8 PEM |
+| `OWNER_GITHUB_ID` | Verified owner's **numeric** GitHub user ID |
+| `SESSION_SECRET` | At least 32 high-entropy random bytes/characters |
+| `OAUTH_CALLBACK_URL` | The exact Worker HTTPS callback URL |
+
+Choose a **least-privilege** Cloudflare API token scoped to this account, Workers Scripts edit and the Worker secrets needed to deploy; avoid broad account administration rights.
+
+For `SESSION_SECRET`, use a cryptographic random generator locally. On Windows PowerShell with .NET:
+
+```powershell
+[Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(48))
+```
+
+Avoid spaces or newlines in this value. The authentication code signs only 30-minute owner sessions. The Worker and Cloudflare APIs cannot verify account ownership without the above credentials.
+
+## 3. Deploy with the prepared manual GitHub Actions workflow
+
+In GitHub Actions, select **Deploy Owner Admin Worker (manual)** → Run workflow → main. The workflow:
+1. Runs existing Worker protocol and catalog tests.
+2. Checks required secret presence, callback URL format and owner numeric ID.
+3. Deploys the script with `cloudflare/wrangler-action@v4` and writes Worker secrets.
+4. Confirms the callback hostname matches the real deployment URL.
+5. Confirms `GET /api/catalog?course=c` from `Origin: https://yscho-hgu.github.io` **without a bearer** returns HTTP **401**, and an unapproved Origin returns **403**.
+
+A green deployment is a **necessary, not sufficient**, requirement for enabling the UI. It does not prove a real GitHub login succeeded. If the hostname differs, correct the callback URL in GitHub App and `OAUTH_CALLBACK_URL`, then redeploy. A missing secret must fail rather than expose unprotected data.
+
+### Optional: deploy locally with Wrangler
 
 ```powershell
 cd engineering-learning-studio\github-owner-worker
@@ -46,70 +84,47 @@ npx wrangler login
 npx wrangler deploy
 ```
 
-The first deploy produces the Worker hostname. Configure its GitHub App callback URL exactly as above. Then register configuration using **Worker Secrets** (the CLI will prompt for each value). The public identifiers may also be managed as Worker environment variables; this example uses Secrets uniformly:
+If deploying locally instead of Actions, provision the eight Worker secrets with `npx wrangler secret put SECRET_NAME` and then repeat the same unauthorized smoke tests. Do not place keys in `wrangler.toml` or `admin/github-config.js`.
 
-```powershell
-npx wrangler secret put GITHUB_CLIENT_ID
-npx wrangler secret put GITHUB_CLIENT_SECRET
-npx wrangler secret put GITHUB_APP_ID
-npx wrangler secret put GITHUB_INSTALLATION_ID
-npx wrangler secret put GITHUB_APP_PRIVATE_KEY
-npx wrangler secret put OWNER_GITHUB_ID
-npx wrangler secret put SESSION_SECRET
-npx wrangler secret put OAUTH_CALLBACK_URL
-```
+## 4. Activate the public admin interface only after deployment
 
-- `SESSION_SECRET`: generate at least **32 cryptographically random characters** locally and store it as a Worker secret.
-- `OAUTH_CALLBACK_URL`: `https://<your-worker-hostname>/auth/github/callback`.
-- `GITHUB_APP_PRIVATE_KEY`: paste the **PKCS#8** key with original newlines. Verify exact multiline contents through Cloudflare secret management.
-- Never commit App private key, OAuth client secret, or session signing secret to GitHub.
-- The Worker is publicly reachable only as an OAuth entrypoint. Every API call validates signed session token, owner numeric ID, GitHub verified email at login, CORS origin and metadata allowlist.
-
-### Suggested budget and protection
-
-Cloudflare Workers Free/paid eligibility, quotas and limits can change. Verify the plan before launch; activate account 2FA and basic traffic/abuse monitoring. A request-limit/WAF rule for `/auth/github/start` and `/auth/github/callback` is appropriate.
-
-## Step 3 — API smoke test
-
-Without credentials, a request from the administrator origin to `/api/catalog?course=c` must return **401**. Requests from other origins must return **403**. The OAuth callback requires the valid state cookie and matching state query.
-
-When logged in with the registered owner, reads of C and S&S catalogs must return `{catalog,sha}`. PUT on an unknown course, changed IDs, unpublished nonexisting paths, invalid `book` URL, stale SHA, or missing authorization must fail. A valid metadata-only PUT creates a GitHub commit.
-
-Do not paste authorization tokens or PEM contents into issue trackers, screenshots, terminal history, or chats.
-
-## Step 4 — Activate GitHub login on the existing Pages site
-
-Edit `admin/github-config.js`:
+Update the public **nonsecret** file `admin/github-config.js` with the verified Worker base URL:
 
 ```js
 window.STUDIO_ADMIN_GITHUB=Object.freeze({
  enabled:true,
- workerUrl:"https://<your-worker-hostname>"
+ workerUrl:"https://els-owner-admin.<YOUR-CLOUDFLARE-SUBDOMAIN>.workers.dev"
 });
 ```
 
-Commit this public config. When GitHub Pages deploys, the admin screen shows **Login with GitHub** instead of manual token entry. The Worker sends the session directly to the Pages opener using `postMessage` with a **fixed origin**; the page checks the exact Worker origin and popup window identity. The browser sends only the 30-minute signed Worker session via `Authorization` on catalog calls.
+Commit the change to main so GitHub Pages publishes it. Public `/admin/` will now display the GitHub login control. No secrets belong in this file.
 
-**Do not enable this flag before the Worker is fully functional**. In enabled mode there is no manual-token fallback.
+## 5. Complete *real-account* acceptance testing
 
-## Tests
+Visit `https://yscho-hgu.github.io/engineering-learning-studio/admin/` and verify:
 
-```sh
-cd github-owner-worker
-npm test
-cd ..
-node tests/studio-admin.mjs
-node tests/studio-admin-github.mjs
-```
+- **Unauthenticated**: editor and QA controls are not shown; Worker API returns 401.
+- **Wrong GitHub user or unverified school email**: authentication is rejected (HTTP 403 at callback) without an owner session.
+- **Correct GitHub user ID plus verified `yscho@handong.edu`**: login produces a short-lived session, C and S&S catalogs load, editor opens.
+- **Catalog update**: make a small legitimate metadata-only change, save and confirm the intended file/commit in the integrated GitHub repository. Revert the test change if appropriate.
+- **Logout / expiry**: editor is hidden, session is cleared, API rejects requests without a valid session.
 
-The repository's `Integrated Studio Admin QA` workflow runs Worker OAuth protocol unit tests and a mocked Chromium login/editor/logout journey. **Mock tests are not live GitHub OAuth verification**. The remaining live activation requires the user's GitHub App and Cloudflare credentials.
+The static HTML of public GitHub Pages remains publicly downloadable; the **Worker**, not a hidden menu or an email string in JavaScript, enforces API permissions. To protect the source of the admin UI or confidential QA data from public access, host those resources behind separate authenticated hosting.
 
-## Security limitations
+## 6. Troubleshooting
 
-- This is a **single owner** system. Additional editors require a server-side ACL/roles design.
-- Current file API manages *catalog metadata only*. More admin functions can be added later through discrete, validated endpoints; do not introduce an unrestricted arbitrary-file GitHub proxy.
-- `published:false` hides public menu entries; it does **not** make a GitHub Pages URL private.
-- GitHub email can be private; only verified emails returned through OAuth `/user/emails` are accepted.
-- Sessions are stored only in per-tab sessionStorage, never localStorage or cookies. Refresh keeps the login until the 30-minute expiry. Logout cannot revoke a previously copied token before its 30-minute expiry; reducing expiry or adding a session revocation store can mitigate this.
-- GitHub App installation token is generated server-side from its private key; the raw OAuth token and installation token never leave the Worker.
-- Protect the GitHub account with passkeys or 2FA, and audit GitHub App permissions regularly.
+| Failure | Typical cause |
+|---|---|
+| GitHub login button absent | `enabled:false` or missing/invalid Worker URL |
+| Worker API 503 | Missing Worker secret, incorrect key format or callback URL |
+| Callback state verification fails | Missing state cookie, mismatched domain/redirect or expired state |
+| GitHub identity rejected | Different numeric GitHub ID, unverified school email or Email addresses permission missing |
+| GitHub App installation API rejected | Wrong Installation ID, app key or repo Contents permissions |
+| Admin loads C but not S&S | Check `signals-systems/course-catalog.json` and Worker catalog-core version |
+| Browser CORS error | Verify exact `https://yscho-hgu.github.io` origin and Worker deployment |
+
+## Security and operational notes
+
+SessionStorage is per tab; session tokens expire after 30 minutes. Logout clears the browser session but does **not** revoke already copied stateless tokens until expiry. Use GitHub passkeys or 2FA, keep App and Cloudflare credentials outside the public repo, and rotate leaked secrets immediately. Review Cloudflare Worker usage and GitHub App installations periodically.
+
+Automatic unit tests and mocked browser tests are useful, but **cannot substitute for real GitHub App consent and Cloudflare account access**. That final owner verification must occur with the actual authorized account.
