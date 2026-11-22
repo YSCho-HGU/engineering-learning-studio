@@ -121,7 +121,7 @@ function init(){
     labs.forEach(a=>labGroup.append(a));
    }
    originalLabs?.remove();
-   const advancedGroup=makeGroup(toc,"advanced","선택 심화","Advanced / Optional",false);
+   const advancedGroup=makeGroup(toc,"advanced","선택 심화","Advanced / Optional",location.hash==="#optional");
    if(advancedButton)advancedGroup.append(advancedButton);
    const oldAdvanced=aside.querySelector(".fileio-advanced-nav");oldAdvanced?.remove();
    const challenges=makeGroup(toc,"challenges","직접 구현","Coding Challenges",false);
