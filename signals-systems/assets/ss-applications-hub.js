@@ -4,9 +4,9 @@
 const sections=["a","b","c","d"];
 const topics={
  a:[
-  {en:"Harmonics and Musical Sound",ko:"조화파와 악기 음색",kind:"Sound & periodicity",concept:"CTFS · Harmonics · Timbre",questionEn:"Why do instruments playing the same pitch sound different?",questionKo:"같은 음높이인데 악기마다 음색이 다른 이유는?",observeEn:"Fundamental frequency, harmonic amplitudes, time waveform, spectrum, and audio playback.",observeKo:"기본주파수·조화파 크기·시간 파형·스펙트럼·소리 재생",ch:[3,4,6]},
-  {en:"Chirp Signals and Frequency Sweeps",ko:"처프 신호와 주파수 변화",kind:"Time-varying frequency",concept:"Instantaneous frequency · STFT",questionEn:"How does a rising-frequency chirp differ from a fixed-frequency tone?",questionKo:"주파수가 증가하는 처프는 고정 주파수 정현파와 어떻게 다른가?",observeEn:"Linear/exponential sweep, waveform spacing, and a time-frequency spectrogram.",observeKo:"선형·지수 스윕, 파형 간격 변화, 시간-주파수 스펙트로그램",ch:[1,4,6]},
-  {en:"Complex Exponential and 3D Helix",ko:"복소지수함수와 3D 나선",kind:"Complex signals",concept:"Euler relation · Phasor · e^(σ+jω)t",questionEn:"How does a rotating phasor generate a sine wave?",questionKo:"회전하는 페이저가 어떻게 정현파를 만드는가?",observeEn:"Complex-plane rotation, 3D helix, real/imaginary projections, growth and decay.",observeKo:"복소평면 회전·3D 나선·실수부/허수부 투영·감쇠와 증가",ch:[1,3,5]},
+  {lab:"harmonics",en:"Harmonics and Musical Sound",ko:"조화파와 악기 음색",kind:"Sound & periodicity",concept:"CTFS · Harmonics · Timbre",questionEn:"Why do instruments playing the same pitch sound different?",questionKo:"같은 음높이인데 악기마다 음색이 다른 이유는?",observeEn:"Fundamental frequency, harmonic amplitudes, time waveform, spectrum, and audio playback.",observeKo:"기본주파수·조화파 크기·시간 파형·스펙트럼·소리 재생",ch:[3,4,6]},
+  {lab:"chirp",en:"Chirp Signals and Frequency Sweeps",ko:"처프 신호와 주파수 변화",kind:"Time-varying frequency",concept:"Instantaneous frequency · STFT",questionEn:"How does a rising-frequency chirp differ from a fixed-frequency tone?",questionKo:"주파수가 증가하는 처프는 고정 주파수 정현파와 어떻게 다른가?",observeEn:"Linear/exponential sweep, waveform spacing, and a time-frequency spectrogram.",observeKo:"선형·지수 스윕, 파형 간격 변화, 시간-주파수 스펙트로그램",ch:[1,4,6]},
+  {lab:"helix",en:"Complex Exponential and 3D Helix",ko:"복소지수함수와 3D 나선",kind:"Complex signals",concept:"Euler relation · Phasor · e^(σ+jω)t",questionEn:"How does a rotating phasor generate a sine wave?",questionKo:"회전하는 페이저가 어떻게 정현파를 만드는가?",observeEn:"Complex-plane rotation, 3D helix, real/imaginary projections, growth and decay.",observeKo:"복소평면 회전·3D 나선·실수부/허수부 투영·감쇠와 증가",ch:[1,3,5]},
   {en:"Beats and Interference",ko:"맥놀이와 간섭",kind:"Sound & superposition",concept:"Sum of sinusoids · Envelope",questionEn:"Why can two similar tones produce periodic loudness changes?",questionKo:"주파수가 비슷한 두 음을 동시에 내면 왜 소리 크기가 주기적으로 달라지는가?",observeEn:"Two nearby frequencies, their sum, beat envelope, and audible difference.",observeKo:"가까운 두 주파수·합성 파형·맥놀이 포락선·청각적 차이",ch:[1,3]},
   {en:"AM and FM Signal Intuition",ko:"AM·FM 신호의 직관",kind:"Communication signals",concept:"Carrier · Modulation · Spectrum",questionEn:"How can a message be represented by a carrier's amplitude or frequency?",questionKo:"정보를 반송파의 진폭이나 주파수 변화로 어떻게 나타내는가?",observeEn:"Message/carrier signals, AM envelope, FM instantaneous frequency, and spectra.",observeKo:"정보 신호와 반송파·AM 포락선·FM 순간주파수·스펙트럼",ch:[3,4,6]},
   {en:"Sampling and Aliasing in Daily Life",ko:"일상 속 표본화와 에일리어싱",kind:"Sampling",concept:"Sampling rate · Aliasing · Reconstruction",questionEn:"Why can a rotating wheel appear to turn backward on video?",questionKo:"영상에서 회전 바퀴가 거꾸로 도는 것처럼 보이는 이유는?",observeEn:"Continuous waveform, sampled points, sampling rate, and apparent frequency.",observeKo:"연속 파형·표본점·샘플링 주파수·관찰되는 주파수",ch:[1,6,7]}
@@ -74,8 +74,14 @@ function renderTopics(){
    const kindKo={"Sound & periodicity":"소리와 주기성","Time-varying frequency":"시간가변 주파수","Complex signals":"복소 신호","Sound & superposition":"소리와 중첩","Communication signals":"통신 신호","Sampling":"표본화","Circuits":"회로","Digital filtering":"디지털 필터링","Audio systems":"오디오 시스템","Frequency-selective systems":"주파수 선택 시스템","Dynamics":"동적 시스템","Spatial systems":"공간 시스템","FFT Foundations":"FFT 기초","Audio & Time-frequency":"오디오와 시간-주파수","Audio & Sensors":"오디오와 센서","Image Processing":"영상 처리","Video Processing":"동영상 처리","FFT Engineering":"FFT 공학 응용","Audio":"오디오","Sensors & IoT":"센서와 IoT","Radar & Sonar":"레이더와 소나","Biomedical":"바이오메디컬","Image & Vision":"이미지와 비전","Communications":"통신"};
    const label=node("span","ss-app-topic-label",i18n(x.kind,kindKo[x.kind]||x.kind,true));
    summary.append(label);details.append(summary);
+   if(x.lab)details.classList.add("ss-app-topic-ready");
    const body=node("div","ss-app-topic-details");
-   body.append(node("span","ss-app-status",i18n("Planned module","개발 예정",true)));
+   body.append(node("span","ss-app-status",x.lab?i18n("Interactive lab available","인터랙티브 실습 제공",true):i18n("Planned module","개발 예정",true)));
+   if(x.lab){
+    const run=node("a","ss-app-open-lab",i18n("Open Interactive Lab →","실습 열기 →",true));
+    run.href="./applications-lab.html?lab="+x.lab;
+    body.append(run);
+   }
    const concept=node("span","ss-app-topic-label",x.concept);
    body.append(concept);
    const q=node("p",null,i18n("Question: "+x.questionEn,"핵심 질문: "+x.questionKo));body.append(q);
