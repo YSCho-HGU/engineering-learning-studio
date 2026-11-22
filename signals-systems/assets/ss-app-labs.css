@@ -145,3 +145,51 @@ button:disabled{opacity:.55;cursor:default}
  .ss-al-charts[data-kind=chirp] .ss-al-plot:not(:first-child) canvas,
  .ss-al-charts[data-kind=helix] .ss-al-plot:not(:first-child) canvas{height:clamp(265px,36vh,390px)}
 }
+
+/* Additional Part A applications share the primary + two support graph pattern.
+   The wide overview plot stays visible alongside the controls on desktop. */
+.ss-al-charts[data-kind=beats],
+.ss-al-charts[data-kind=amfm],
+.ss-al-charts[data-kind=sampling]{
+ grid-template-columns:minmax(0,1.17fr) minmax(0,.83fr);
+ grid-template-rows:auto auto
+}
+.ss-al-charts[data-kind=beats] .ss-al-plot:first-child,
+.ss-al-charts[data-kind=amfm] .ss-al-plot:first-child,
+.ss-al-charts[data-kind=sampling] .ss-al-plot:first-child{grid-row:span 2}
+.ss-al-charts[data-kind=beats] .ss-al-plot:first-child canvas,
+.ss-al-charts[data-kind=amfm] .ss-al-plot:first-child canvas,
+.ss-al-charts[data-kind=sampling] .ss-al-plot:first-child canvas{
+ height:clamp(335px,calc(100dvh - 390px),560px);flex:1
+}
+.ss-al-charts[data-kind=beats] .ss-al-plot:not(:first-child) canvas,
+.ss-al-charts[data-kind=amfm] .ss-al-plot:not(:first-child) canvas,
+.ss-al-charts[data-kind=sampling] .ss-al-plot:not(:first-child) canvas{
+ height:clamp(151px,calc((100dvh - 440px)/2),260px)
+}
+.ss-extra-number-row{display:grid;grid-template-columns:minmax(0,1fr) 86px;gap:8px;align-items:center;margin:-4px 0 12px}
+.ss-extra-number-row label{color:var(--els-muted);font-size:12px;line-height:1.5}
+.ss-extra-number-row input{width:100%;min-width:0;min-height:34px;text-align:center;background:var(--els-surface-alt);border:1px solid var(--els-border);border-radius:7px;color:var(--els-ink);font:700 14px Arial}
+.ss-extra-number-row input:focus-visible{outline:2px solid var(--els-link);outline-offset:2px}
+@media(max-width:1080px){
+ .ss-al-charts[data-kind=beats],
+ .ss-al-charts[data-kind=amfm],
+ .ss-al-charts[data-kind=sampling]{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .ss-al-charts[data-kind=beats] .ss-al-plot:first-child,
+ .ss-al-charts[data-kind=amfm] .ss-al-plot:first-child,
+ .ss-al-charts[data-kind=sampling] .ss-al-plot:first-child{grid-column:span 2;grid-row:auto}
+ .ss-al-charts[data-kind=beats] .ss-al-plot:first-child canvas,
+ .ss-al-charts[data-kind=amfm] .ss-al-plot:first-child canvas,
+ .ss-al-charts[data-kind=sampling] .ss-al-plot:first-child canvas{height:clamp(330px,42vh,510px)}
+}
+@media(max-width:760px){
+ .ss-al-charts[data-kind=beats],
+ .ss-al-charts[data-kind=amfm],
+ .ss-al-charts[data-kind=sampling]{grid-template-columns:minmax(0,1fr)}
+ .ss-al-charts[data-kind=beats] .ss-al-plot:first-child,
+ .ss-al-charts[data-kind=amfm] .ss-al-plot:first-child,
+ .ss-al-charts[data-kind=sampling] .ss-al-plot:first-child{grid-column:auto}
+ .ss-al-charts[data-kind=beats] .ss-al-plot:not(:first-child) canvas,
+ .ss-al-charts[data-kind=amfm] .ss-al-plot:not(:first-child) canvas,
+ .ss-al-charts[data-kind=sampling] .ss-al-plot:not(:first-child) canvas{height:clamp(270px,36vh,420px)}
+}
