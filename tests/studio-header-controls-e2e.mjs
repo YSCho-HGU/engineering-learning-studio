@@ -62,11 +62,43 @@ try{
      assert.notEqual(subdued.active,subdued.planned,"Planned cards should be visually subdued");
      assert.ok(subdued.overflow<=2,"Studio Home horizontal overflow: "+subdued.overflow);
      assert.match(await planned.first().innerText(),/Coming soon/);
+     // Q1/Q2: native, theme-aware learning previews (not screenshots or external embeds).
+     const signalCard=page.locator('#available-courses [data-course="ss"]');
+     const codeCard=page.locator('#available-courses [data-course="c"]');
+     assert.equal(await signalCard.locator('.ss-diagram-svg').count(),2,"Input and output signal plots");
+     assert.equal(await signalCard.locator('.ss-diagram .system-block').innerText(),"LTI");
+     assert.equal(await signalCard.locator('.ss-diagram .flow-arrow').count(),2);
+     assert.equal(await signalCard.locator('.course-method').count(),4,"S&S learning topics");
+     assert.equal(await codeCard.locator('.course-method').count(),5,"C five-phase workflow");
+     assert.match(await codeCard.locator('.c-code-source code').innerText(),/int x = 3/);
+     assert.match(await codeCard.locator('.c-code-source code').innerText(),/printf/);
+     assert.equal((await codeCard.locator('.c-code-result .result-number').innerText()).trim(),"5");
+     const plotted=await signalCard.locator('svg path.signal').evaluateAll(nodes=>nodes.map(n=>n.getAttribute("d")));
+     assert.equal(plotted.length,2,"Both paths use real SVG geometry");
+     assert.ok(plotted.every(d=>d?.startsWith("M")&&!d.includes("NaN")&&!d.includes("Infinity")));
+     for(const theme of ["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark"]){
+       await page.locator('[data-els-theme-picker]').selectOption(theme);
+       await page.waitForFunction(t=>document.documentElement.dataset.elsTheme===t,theme);
+       const props=await page.evaluate(()=>{
+         const panel=getComputedStyle(document.querySelector('.course-preview'));
+         const signal=getComputedStyle(document.querySelector('.ss-diagram-svg .signal'));
+         const card=getComputedStyle(document.querySelector('.course-card--available'));
+         return {panel:panel.backgroundColor,plot:signal.stroke,card:card.backgroundColor};
+       });
+       assert.notEqual(props.panel,"rgba(0, 0, 0, 0)","Preview surface missing in "+theme);
+       assert.notEqual(props.plot,"none","Signal path not themed in "+theme);
+     }
      for(const [mode,hasKorean] of [["ko",true],["mixed",true],["en",false]]){
        await page.locator("#lang").selectOption(mode);
        const activeDescription=await active.first().locator("p").innerText();
-       if(hasKorean)assert.match(activeDescription,/[가-힣]/,"Missing Korean "+mode);
-       else assert.doesNotMatch(activeDescription,/[가-힣]/,"English-only cards contain Korean");
+       const visualText=await page.locator("#available-courses .course-preview, #available-courses .course-methods").allInnerTexts();
+       if(hasKorean){
+         assert.match(activeDescription,/[가-힣]/,"Missing Korean "+mode);
+         assert.ok(visualText.some(v=>/[가-힣]/.test(v)),"Localized diagram labels missing: "+mode);
+       }else{
+         assert.doesNotMatch(activeDescription,/[가-힣]/,"English-only cards contain Korean");
+         assert.ok(visualText.every(v=>!/[가-힣]/.test(v)),"English-only diagram contains Korean");
+       }
      }
      await page.locator("#lang").selectOption("en");
      await page.locator('[data-els-theme-picker]').selectOption('warm-neutral');
