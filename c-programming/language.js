@@ -9,21 +9,10 @@ const lang=language.get();
 const pristine=original?JSON.parse(JSON.stringify(original)):null;
 function applyContent(mode){
  if(!original||!pristine)return;
- Object.assign(original,{summary:pristine.summary,phases:pristine.phases});
- original.lessons.forEach((l,i)=>{const source=pristine.lessons[i];for(const k of ["goal","concept","predict","transfer","guide"])if(source[k]!==undefined)l[k]=source[k];l.quiz={...source.quiz};});
- original.practice.forEach((p,i)=>{p.title=pristine.practice[i].title;p.task=pristine.practice[i].task});
- if(mode!=="en"||!english)return;
- if(english.summary)original.summary=english.summary;
- if(english.phases?.length===original.phases.length)original.phases=english.phases;
- original.lessons.forEach((l,i)=>{
-  const en=english.lessons?.[i];if(!en)return;
-  for(const k of ["goal","concept","predict","transfer","guide"]){if(typeof en[k]==="string")l[k]=en[k]}
-  if(en.model && l.model)Object.assign(l.model,en.model);
-  if(Array.isArray(en.trace)&&Array.isArray(l.trace))l.trace.forEach((item,j)=>{if(en.trace[j]?.meaning)item.meaning=en.trace[j].meaning});
-  if(en.quiz){for(const k of ["q","explain"])if(typeof en.quiz[k]==="string")l.quiz[k]=en.quiz[k];
-   if(Array.isArray(en.quiz.options)&&en.quiz.options.length===l.quiz.options.length)l.quiz.options=en.quiz.options;}
- });
- original.practice.forEach((p,i)=>{const en=english.practice?.[i];if(!en)return;if(en.title)p.title=en.title;if(en.task)p.task=en.task});
+ const model=window.ELSContentModel;
+ if(!model)throw Error("Load shared/els-content-model.js before C language.js");
+ const projected=model.project(pristine,english,mode);
+ Object.keys(projected).forEach(key=>{original[key]=projected[key]});
 }
 applyContent(lang);
 const dict=new Map([
