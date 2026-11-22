@@ -12,6 +12,12 @@ on:
       - 'c-programming/index.html'
       - 'tests/c-journey-qa.mjs'
       - 'tests/c-integrated-qa.mjs'
+      - 'tests/c-learning-map-contract.mjs'
+      - 'c-programming/arrays/**'
+      - 'c-programming/strings/**'
+      - 'c-programming/functions/**'
+      - 'c-programming/standard-library/**'
+      - 'c-programming/dynamic-memory/**'
       - 'tests/els-theme-qa.mjs'
       - 'assets/els-theme-v2.css'
       - 'assets/els-theme-v2.js'
@@ -33,6 +39,8 @@ jobs:
         run: |
           npm install --no-save playwright@1.56.0
           npx playwright install --with-deps chromium
+      - name: Validate C learning taxonomy and sidebar structure
+        run: node tests/c-learning-map-contract.mjs
       - name: Run C11 GCC oracle and browser interaction tests
         run: |
           C_JOURNEY_BROWSER=1 node tests/c-journey-qa.mjs
