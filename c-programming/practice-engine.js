@@ -87,7 +87,7 @@ root.innerHTML="";
 const shell=txt("div","cp-layout",root);
 const sidebar=txt("nav","cp-menu",shell);sidebar.setAttribute("aria-label","Coding practice P1 to P"+d.practice.length);
 const content=txt("section","cp-content",shell);
-txt("div","cp-eyebrow",content,optionalPractice?corePracticeCount+" Core / "+(d.practice.length-corePracticeCount)+" Optional Coding Tasks":"AFTER CLASS · CODING PRACTICE");
+txt("div","cp-eyebrow",content,optionalPractice?corePracticeCount+" Core / "+(d.practice.length-corePracticeCount)+" Optional Coding Challenges":"AFTER CLASS · CODING CHALLENGES");
 const title=txt("h2","",content,"");
 const description=txt("p","cp-description",content,"");
 const guides=window.C_PRACTICE_GUIDES?.[d.slug]||[];
@@ -204,5 +204,7 @@ download.addEventListener("click",()=>{
  persistDraft();const file=new Blob([editor.value],{type:"text/x-c;charset=utf-8"}),url=URL.createObjectURL(file),a=document.createElement("a");
  a.href=url;a.download=d.slug+"_p"+(selection+1)+".c";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500);
 });
-show(0);
+const hashTask=()=>{const match=/^#p(\d+)$/i.exec(location.hash);return match?Math.max(0,Math.min(d.practice.length-1,Number(match[1])-1)):0};
+show(hashTask());
+window.addEventListener("hashchange",()=>show(hashTask()));
 })();
