@@ -16,7 +16,7 @@ for(const name of ["harmonics","chirp","helix"]){
   if(canvas.length<(name==="harmonics"?2:3)||canvas.some(([w,h])=>w<250||h<175))throw Error("Plots too small: "+JSON.stringify(canvas));
   await page.screenshot({path:"tests/screenshots/"+name+"-desktop.png"});
   const old=await page.locator("#ss-al-metrics .ss-al-metric-value").first().innerText();
-  await page.locator("#ss-al-control-fields input[type=range]").first().fill(name==="harmonics"?"440":name==="chirp"?"360":"2.0");
+  await page.locator("#ss-al-control-fields input[type=range]").first().evaluate((slider,value)=>{slider.value=value;slider.dispatchEvent(new Event("input",{bubbles:true}))},name==="harmonics"?"440":name==="chirp"?"360":"2.0");
   await page.waitForTimeout(120);
   if(name!=="helix"&&old===await page.locator("#ss-al-metrics .ss-al-metric-value").first().innerText())throw Error("Slider failed");
   await page.locator("#ss-al-focus-toolbar").click();
