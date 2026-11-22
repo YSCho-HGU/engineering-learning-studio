@@ -130,7 +130,7 @@ function chirpFrequency(t){return state.f0+(state.f1-state.f0)*t/state.T}
 function helixValue(t){const amp=Math.exp(state.sigma*t),phi=2*Math.PI*state.f*t;return{re:amp*Math.cos(phi),im:amp*Math.sin(phi),amp,phi}}
 function renderControls(){
  const host=$("ss-al-control-fields");clear(host);
- const audio=$("ss-al-audio");clear(audio);
+ const audio=$("ss-al-audio");clear(audio);audio.hidden=lab==="helix";
  if(lab==="harmonics"){
   fieldSelect(host,{key:"preset",en:"Harmonic preset",ko:"조화파 유형",values:[["sine","Pure sine","단일 정현파"],["square","Square-wave approximation","사각파 근사"],["saw","Sawtooth approximation","톱니파 근사"],["custom","Custom amplitudes","개별 크기 조절"]],rebuild:true});
   fieldRange(host,{key:"f0",en:"Fundamental frequency f₀",ko:"기본주파수 f₀",min:110,max:880,step:10,format:v=>v+" Hz"});
