@@ -112,7 +112,7 @@ if(process.env.C_JOURNEY_BROWSER==="1"){
   await fileio.close();
   const filePractice=await browser.newPage({viewport:{width:390,height:850}});
   await filePractice.goto("http://127.0.0.1:8876/"+base+"file-io/practice/",{waitUntil:"domcontentloaded"});
-  assert(await filePractice.locator('#task-nav button').count()===7,"File I/O six P tasks plus M1 retained");
+  assert(await filePractice.locator('#task-nav button[data-task]').count()===7,"File I/O six P tasks plus M1 retained");
   await filePractice.locator("#gcc-confirm").check();
   await filePractice.locator("#editor").fill("/* changed code */");
   assert(!(await filePractice.locator("#gcc-confirm").isChecked()),"File I/O code edit revokes GCC self-report");
@@ -165,7 +165,7 @@ if(process.env.C_JOURNEY_BROWSER==="1"){
    await page.close();
   }
   for(const [route,selector,count] of [
-   ["file-io/practice/","#task-nav button",7],
+   ["file-io/practice/","#task-nav button[data-task]",7],
    ["file-io/core-labs/",".side-nav a[data-lab-link]",3]
   ]){
    const page=await browser.newPage({viewport:{width:1280,height:850}});
