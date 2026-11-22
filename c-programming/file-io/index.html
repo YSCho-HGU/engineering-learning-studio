@@ -11,7 +11,7 @@
 .core-example-result{margin-top:12px;padding:14px;white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid #8794a8;border-radius:8px;min-height:70px;font-family:ui-monospace,monospace;line-height:1.65}
 .core-example-note{font-size:.87rem;opacity:.85}.question-context{padding:10px 12px;margin:12px 0;border-inline-start:3px solid #ac9c7f;background:rgba(145,135,105,.12);line-height:1.7}
 @media(max-width:750px){.core-example-layout{grid-template-columns:1fr}.core-example-lab{padding:14px}}
-</style><link rel="stylesheet" href="../../assets/els-typography-standard.css?v=1"><link rel="stylesheet" href="../c-ss-shell.css?v=2"></head><body class="els-design c-ss-course" data-fileio-section="concepts">
+</style><link rel="stylesheet" href="../../assets/els-typography-standard.css?v=1"><link rel="stylesheet" href="../c-ss-shell.css?v=2"><style>.sensor-learning-flow{margin:12px 0 17px;padding:12px 15px;border-left:3px solid var(--els-link,#7c9985);background:var(--els-surface-alt,#f6f5f1);color:var(--els-ink,inherit);border-radius:7px;font-size:14px;line-height:1.75}</style></head><body class="els-design c-ss-course" data-fileio-section="concepts">
 <a class="skip" href="#lesson">학습 본문으로 건너뛰기</a>
 <header class="topbar"><a class="brand" href="../">◈ C Programming <small>/ Learning Studio</small></a><div class="toplinks"><a href="../">C Learning Home</a><a href="../learning-journey/">Integrated Journey</a><a href="../../textbook-viewer/?course=c&drive=1pQoUv5072-RW6k7vnjDQULbp1qVNQRDq&title=171_C_File_IO" target="_blank" rel="noopener">교재 171 ↗</a><button id="theme-button" aria-label="화면 테마 전환" aria-pressed="false">◐ Theme</button></div></header>
 <div class="course-header"><div class="eyebrow">2026 · CHAPTER 17 · SELF-STUDY COURSE</div><h1>File I/O <span>Learning Journey</span></h1><p>파일에 기록하고, 다시 읽고, 구조체로 활용하는 기본 방법부터 학습합니다. 센서 로그 분석과 견고한 파일 검증은 별도 선택 심화로 진행합니다.</p></div>
@@ -322,7 +322,7 @@ int main(void) {
 
 </section>
 <section class="stage" data-stage="6" hidden>
-<div class="topic"><span class="stage-heading-number">OPTIONAL · SENSOR LAB</span><small class="stage-reference">§7.5.3</small></div><h2>센서 로그 분석</h2><section class="study-scope" aria-label="선택 심화 센서 학습">
+<div class="topic"><span class="stage-heading-number">OPTIONAL · SENSOR LAB</span><small class="stage-reference">§7.5.3</small></div><h2>Sensor Log Analysis · 선택 심화</h2><p class="sensor-learning-flow"><strong>학습 순서</strong> · ① 파일의 시간·측정값 쌍 이해 → ② 평균과 경보를 먼저 예측 → ③ Simulate Run으로 비교 → ④ 첫 레코드의 <code>fscanf()</code> 흐름 관찰 → ⑤ EOF와 입력 오류 구분. Part B의 <code>fgets()</code>/<code>strtod()</code> 행 검증은 필요할 때만 펼쳐 봅니다.</p><section class="study-scope" aria-label="선택 심화 센서 학습">
   <div class="study-scope-core">
     <span class="study-scope-badge">선택 심화</span>
     <div><strong>Sensor Log를 읽고 count, sum, 평균과 경보를 계산</strong><p><b>완료 기준</b> · sensor_log.txt의 값 하나를 바꾸고 먼저 예측한 후, 첫 측정값의 4개 C 문장을 추적해 설명하세요.</p></div>
