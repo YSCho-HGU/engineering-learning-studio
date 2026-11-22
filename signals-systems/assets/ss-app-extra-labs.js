@@ -89,7 +89,16 @@ function axes(C,{xmin,xmax,ymin,ymax,xlabel,ylabel,xticks=4,yticks=4,xvalues=nul
   const q=y(p);c.globalAlpha=.20;c.strokeStyle=pal.border;c.beginPath();c.moveTo(r.l,q);c.lineTo(r.right,q);c.stroke();c.globalAlpha=1;
   c.fillStyle=pal.muted;c.textAlign="right";c.fillText(yformat(p),r.l-7,q+4);
  }
- c.strokeStyle=pal.muted;c.globalAlpha=.8;c.strokeRect(r.l,r.t,r.width,r.height);c.globalAlpha=1;
+ // Draw the axes more strongly than the background grid, especially x(t)=0.
+ c.save();
+ c.strokeStyle=pal.muted;c.globalAlpha=.95;c.lineWidth=1.8;
+ c.beginPath();c.moveTo(r.l,r.b);c.lineTo(r.right,r.b);c.stroke();
+ if(ymin<0&&ymax>0){
+  c.strokeStyle=pal.ink;c.globalAlpha=.56;c.lineWidth=1.75;
+  c.beginPath();c.moveTo(r.l,y(0));c.lineTo(r.right,y(0));c.stroke();
+ }
+ c.restore();
+ c.strokeStyle=pal.muted;c.globalAlpha=.76;c.lineWidth=1.15;c.strokeRect(r.l,r.t,r.width,r.height);c.globalAlpha=1;
  c.fillStyle=pal.ink;c.font="12px Arial, sans-serif";c.textAlign="center";
  c.fillText(xlabel,r.l+r.width/2,h-5);
  c.save();c.translate(16,r.t+r.height/2);c.rotate(-Math.PI/2);c.fillText(ylabel,0,0);c.restore();
@@ -747,7 +756,7 @@ function init(){
  });
  $("ss-al-reset").addEventListener("click",()=>{
   stopAudio(true);if(playId!==null){cancelAnimationFrame(playId);playId=null}
-  Object.keys(initial).forEach(key=>state[key]=initial[key]);fftCache=null;audio.buffer=null;audio.offset=0;audio.duration=lab==="sampling"?state.T:2;audio.signal="ct";
+  Object.keys(initial).forEach(key=>state[key]=initial[key]);fftCache=null;audio.buffer=null;audio.offset=0;audio.duration=lab==="sampling"?state.T:2;audio.signal="ct";audio.pitchScale=8;
   previousFrame=0;displayNames();renderControls();drawSoon();
  });
  {
