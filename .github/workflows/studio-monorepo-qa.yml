@@ -47,6 +47,10 @@ jobs:
         run: |
           python3 -m http.server 8788 --bind 127.0.0.1 >/tmp/studio-preview.log 2>&1 &
           sleep 2
+      - name: Shared cross-course language, theme and progress regression
+        id: shared_state
+        continue-on-error: true
+        run: node tests/studio-cross-course-state-e2e.mjs
       - name: Signals chapter navigation and theme regression
         id: ss_nav
         continue-on-error: true
@@ -65,5 +69,6 @@ jobs:
         if: always()
         run: |
           test '${{ steps.c_browser.outcome }}' = 'success'
+          test '${{ steps.shared_state.outcome }}' = 'success'
           test '${{ steps.ss_nav.outcome }}' = 'success'
           test '${{ steps.ss_english.outcome }}' = 'success'
