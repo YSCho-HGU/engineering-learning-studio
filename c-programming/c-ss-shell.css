@@ -131,3 +131,26 @@ html[data-c-sidebar=collapsed] .c-sidebar-caption{display:none}
  .c-ss-shell>.c-ss-sidebar.cp-menu .c-sidebar-topline{grid-column:1/-1}
 }
 @media(max-width:520px){.c-ss-shell>.c-ss-sidebar.cp-menu{grid-template-columns:1fr}}
+
+/* File I/O specialist exercises: preserve native editors and simulators. */
+.c-ss-shell>.c-ss-sidebar#task-nav{display:flex;flex-direction:column;gap:7px;width:100%;min-width:0;position:sticky;top:var(--c-header-height);height:calc(100dvh - var(--c-header-height));max-height:calc(100dvh - var(--c-header-height));padding:12px 11px;margin:0;border:0;border-right:1px solid var(--els-border);border-radius:0;overflow-x:hidden;overflow-y:auto;background:var(--els-surface)}
+.c-ss-shell>.c-ss-sidebar#task-nav button{min-height:49px;width:100%;padding:9px;border-radius:9px;color:var(--els-ink);border:1px solid transparent;text-align:left}
+.c-ss-shell>.c-ss-sidebar#task-nav button.active{background:var(--els-surface-alt);border-color:var(--els-link)}
+.c-ss-workspace>.c-fileio-task-workspace{box-sizing:border-box;width:100%;max-width:none;min-width:0;padding:15px clamp(12px,1.8vw,27px) 42px;margin:0}
+.c-fileio-task-workspace .layout{display:block!important;width:100%;min-width:0}
+.c-fileio-task-workspace .layout>.work{display:block;box-sizing:border-box;min-width:0;width:100%;max-width:none;margin:0}
+.c-fileio-task-workspace .hero{margin:0 0 10px;padding:14px 18px}
+.c-fileio-task-workspace .hero h1{font-size:clamp(23px,2.8vw,32px)}
+.c-fileio-task-workspace .hero p,.c-fileio-task-workspace .work p{line-height:1.7}
+.c-fileio-task-workspace .work textarea{max-width:100%}
+.c-ss-shell>.c-ss-sidebar.sidebar:has(.side-nav){position:sticky;top:var(--c-header-height);height:calc(100dvh - var(--c-header-height));max-height:calc(100dvh - var(--c-header-height));overflow:auto;background:var(--els-surface);border:0;border-right:1px solid var(--els-border);padding:12px 11px;margin:0;width:100%}
+.c-ss-shell>.c-ss-sidebar .side-nav{display:flex;flex-direction:column;gap:6px}
+.c-ss-shell>.c-ss-sidebar .side-nav a{display:flex;align-items:center;gap:9px;min-height:49px;width:100%;border-radius:9px;border:1px solid transparent;padding:9px;color:var(--els-ink);background:transparent;text-decoration:none;line-height:1.5}
+.c-ss-shell>.c-ss-sidebar .side-nav a:is(:hover,[aria-current=page]){border-color:var(--els-link);background:var(--els-surface-alt)}
+.c-ss-shell .c-fileio-labs-workspace.shell{display:block!important;width:100%;max-width:none;grid-template-columns:none!important;margin:0;padding:0;min-height:0}
+.c-ss-shell .c-fileio-labs-workspace.shell>main{width:100%;max-width:none;min-width:0;padding:14px clamp(12px,1.8vw,27px) 42px;margin:0;display:block}
+.c-ss-shell .hero.c-ss-intro{margin:15px clamp(12px,1.8vw,27px) 5px;padding:14px 18px}
+.c-ss-shell .hero.c-ss-intro h1{font-size:clamp(23px,2.8vw,32px)}
+@media(max-width:780px){
+ .c-ss-shell>.c-ss-sidebar#task-nav,.c-ss-shell>.c-ss-sidebar.sidebar:has(.side-nav){position:relative;top:auto;height:auto;max-height:none;border-right:0;border-bottom:1px solid var(--els-border)}
+}
