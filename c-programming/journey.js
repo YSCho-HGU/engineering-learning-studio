@@ -50,13 +50,6 @@ function renderNav(){
   const title=element("summary","c-learning-group-title",d,ui(ko,en));
   title.setAttribute("aria-label",en);
   const list=element("div","c-learning-group-items",d);
-  const guidance={
-   core:[ "개념을 이해하고 출력 결과를 예측한 후, 시각적 모델과 설명으로 검증합니다.","Understand the concept, predict output, then verify with the model and your own explanation." ],
-   labs:[ "완성 예제를 따라 실행하고 값을 바꾸어 결과를 비교합니다.","Run the worked example, change a value, and compare the behavior." ],
-   challenges:[ "문제 요구사항에서 시작하여 코드를 직접 작성하고 테스트합니다.","Start from requirements; write and test your own C program." ],
-   advanced:[ "필수 단계를 마친 뒤 필요에 따라 확장합니다.","Extend your understanding after the core lessons." ]
-  };
-  if(guidance[id])element("p","c-learning-group-guide",list,ui(...guidance[id]));
   return list;
  }
  const core=group("core","Core Concepts · 핵심 개념","Core Concepts",current<coreCount);
