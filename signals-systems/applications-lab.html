@@ -65,6 +65,7 @@
     <div class="ss-al-graph-actions"><button type="button" id="ss-al-reset">Reset</button><button type="button" id="ss-al-focus-toolbar" aria-pressed="false">Focus on graphs</button><button type="button" id="ss-al-panel-toggle" aria-expanded="true" aria-controls="ss-al-controls">Hide controls</button></div>
    </div>
    <div class="ss-al-metrics" id="ss-al-metrics" aria-live="off"></div>
+   <div id="ss-al-alias-summary" class="ss-al-alias-summary" hidden aria-live="off"></div>
    <div class="ss-al-transport" id="ss-al-transport" hidden>
     <span class="ss-al-transport-label" id="ss-al-transport-label">Audio timeline</span>
     <label class="ss-al-transport-track" for="ss-al-seek">
@@ -80,9 +81,9 @@
         <span id="ss-al-camera-hint">Drag to rotate · Scroll to zoom</span>
        </div>
       </div>
-      <canvas id="ss-al-canvas-1" role="img" aria-label="Time waveform plot"></canvas><p class="ss-al-plot-note" id="ss-al-note-1"></p></article>
-    <article class="ss-al-plot"><h2 id="ss-al-plot-title-2">Harmonic spectrum</h2><canvas id="ss-al-canvas-2" role="img" aria-label="Harmonic amplitude spectrum"></canvas><p class="ss-al-plot-note" id="ss-al-note-2"></p></article>
-    <article class="ss-al-plot" id="ss-al-third" hidden><h2 id="ss-al-plot-title-3">Additional view</h2><canvas id="ss-al-canvas-3" role="img" aria-label="Additional signal plot"></canvas><p class="ss-al-plot-note" id="ss-al-note-3"></p></article>
+      <div id="ss-al-legend-1" class="ss-al-legend" hidden aria-label="Plot legend"></div><canvas id="ss-al-canvas-1" role="img" aria-label="Time waveform plot"></canvas><p class="ss-al-plot-note" id="ss-al-note-1"></p></article>
+    <article class="ss-al-plot"><h2 id="ss-al-plot-title-2">Harmonic spectrum</h2><div id="ss-al-legend-2" class="ss-al-legend" hidden aria-label="Plot legend"></div><canvas id="ss-al-canvas-2" role="img" aria-label="Harmonic amplitude spectrum"></canvas><p class="ss-al-plot-note" id="ss-al-note-2"></p></article>
+    <article class="ss-al-plot" id="ss-al-third" hidden><h2 id="ss-al-plot-title-3">Additional view</h2><div id="ss-al-legend-3" class="ss-al-legend" hidden aria-label="Plot legend"></div><canvas id="ss-al-canvas-3" role="img" aria-label="Additional signal plot"></canvas><p class="ss-al-plot-note" id="ss-al-note-3"></p></article>
    </div>
    <div class="ss-al-insight" id="ss-al-insight"></div>
   </section>
@@ -93,7 +94,7 @@
 <script src="./assets/ss-common-header.js?v=applications2" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js" defer></script>
 <script src="./assets/ss-app-helix3d.js?v=1" defer></script>
-<script src="./assets/ss-app-extra-labs.js?v=4" defer></script>
+<script src="./assets/ss-app-extra-labs.js?v=5" defer></script>
 <script src="./assets/ss-app-labs.js?v=4" defer></script>
 <script src="../assets/els-header-controls.js?v=1" defer></script>
 </body></html>
