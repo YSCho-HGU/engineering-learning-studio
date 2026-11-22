@@ -144,3 +144,13 @@ html[data-ss-sidebar="collapsed"] body > #ss-sidebar-restore:not([hidden]){
 @media(max-width:900px){:root{--ss-sidebar-open:232px}}
 @media(max-width:780px){:root{--ss-sidebar-open:208px}}
 @media(max-width:560px){:root{--ss-sidebar-open:188px}}
+
+/* Release invariant: Chapter 5 reference rail is always 52px when collapsed.
+   Override legacy vertical-navigation rules that otherwise create 58px rails. */
+html[data-ss-sidebar="collapsed"] body .ss-layout-root.ss-vertical-layout,
+html[data-ss-sidebar="collapsed"] body .ss-layout-root{
+ grid-template-columns:52px minmax(0,1fr)!important;
+}
+html[data-ss-sidebar="collapsed"] body .ss-layout-root > .ss-layout-sidebar{
+ box-sizing:border-box!important;width:52px!important;min-width:0!important;
+}
