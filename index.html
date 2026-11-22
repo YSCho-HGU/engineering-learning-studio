@@ -271,9 +271,11 @@ function learningMethods(course,mode){
   [["Signals","신호"],["Systems","시스템"],["Transforms","변환"],["Applications","응용"]]:
   [["Understand","이해"],["Predict","예측"],["Explore","탐색"],["Practice","실습"],["Check","점검"]];
  const row=element("div","course-methods");
+ row.setAttribute("role","list");
  row.setAttribute("aria-label",translate("Learning topics and activities","학습 주제 및 활동",mode).replace(/\n/g," / "));
  for(const [index,item] of methods.entries()){
   const chip=element("span","course-method");
+  chip.setAttribute("role","listitem");
   chip.append(element("span","course-method-number",String(index+1).padStart(2,"0")),
               document.createTextNode(translate(item[0],item[1],mode).replace(/\n/g," · ")));
   row.append(chip);
