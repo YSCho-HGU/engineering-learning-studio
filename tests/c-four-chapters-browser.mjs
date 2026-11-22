@@ -21,7 +21,7 @@ for(const width of [390,1280]){
   await page.goto('http://127.0.0.1:8765/c-programming/'+slug+'/',{waitUntil:'networkidle'});
   await page.locator('#lesson-nav button').first().waitFor();
   if(await page.locator('#lesson-nav button').count()!==counts[id])issues.push(id+' navigation count');
-  if(await page.locator('#practice article').count()!==6)issues.push(id+' coding overview count');
+  if(await page.locator('.journey-next a.journey-practice-link').count()!==1)issues.push(id+' coding challenge destination missing');
   for(let i=0;i<counts[id];i++){
    const target=page.locator('#lesson-nav button').nth(i);
     await target.evaluate(b=>{const group=b.closest("details.c-learning-group");if(group)group.open=true});
