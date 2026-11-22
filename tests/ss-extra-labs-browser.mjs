@@ -18,7 +18,8 @@ for(const lab of ["beats","amfm","sampling"]){
      let peak=0,energy=0,n=0;
      const start=Math.min(d.length-1,Math.round(d.length*.10)),end=Math.min(d.length,start+4000);
      for(let i=start;i<end;i++){peak=Math.max(peak,Math.abs(d[i]));energy+=d[i]*d[i];n++}
-     window.__ssAudioBuffers.push({peak,rms:Math.sqrt(energy/Math.max(1,n)),length:d.length});
+     window.__ssAudioBuffers.push({peak,rms:Math.sqrt(energy/Math.max(1,n)),length:d.length,
+      probe:Array.from(d.slice(start,Math.min(start+48,end))).map(v=>Math.round(v*10000))});
     }
     return original.apply(this,args);
    };
@@ -152,11 +153,39 @@ for(const lab of ["beats","amfm","sampling"]){
    await page.locator("#ss-al-stop").click();
    if(Number(await page.locator("#ss-al-seek").inputValue())!==0)throw Error("Stop did not reset audio timeline");
   }else{
-   await page.locator("#ss-extra-animate").click();
-   await page.waitForTimeout(130);
+   const sweep=page.locator("#ss-extra-animate");
+   const baseline=await page.evaluate(()=>(window.__ssAudioBuffers||[]).length);
+   await sweep.click();
+   await page.waitForTimeout(165);
+   if(!(await sweep.innerText()).includes("Pause sweep"))throw Error("Play sweep did not enter audible playback state");
    const progress=Number(await page.locator("#ss-extra-pos").inputValue());
-   if(progress<=50)throw Error("Sampling time animation did not advance");
-   await page.locator("#ss-extra-animate").click();
+   const timeline=Number(await page.locator("#ss-al-seek").inputValue());
+   if(progress<2||timeline<20)throw Error("Audible sweep failed to advance the graph and audio clock");
+   if(Math.abs(progress-0.1*timeline)>2)throw Error("Sweep graph position differs from audio timeline: "+progress+" vs "+timeline);
+   if(!(await page.locator("#ss-al-audio .ss-al-audio-status").innerText()).includes("Aliased guide"))
+    throw Error("Play sweep did not select current sampled-alias audio");
+   const audioData=await page.evaluate(()=>window.__ssAudioBuffers||[]);
+   if(audioData.length<=baseline||audioData.at(-1).peak<.10||audioData.at(-1).rms<.05)
+    throw Error("Play sweep produced no audible PCM: "+JSON.stringify(audioData.slice(-1)));
+   const originalProbe=audioData.at(-1).probe.join(",");
+   await sweep.click();
+   if(!(await sweep.innerText()).includes("Play sweep"))throw Error("Sweep did not enter paused state");
+   const paused=Number(await page.locator("#ss-al-seek").inputValue());
+   await page.waitForTimeout(105);
+   if(Math.abs(Number(await page.locator("#ss-al-seek").inputValue())-paused)>4)
+    throw Error("Paused sweep kept moving");
+   await sweep.click();
+   await page.waitForTimeout(100);
+   if(Number(await page.locator("#ss-al-seek").inputValue())<=paused)
+    throw Error("Sweep failed to resume from paused location");
+   await page.locator("#ss-al-stop").click();
+   await page.locator(".ss-al-preset[data-fs='16000']").click();
+   await page.waitForTimeout(75);
+   await sweep.click();
+   await page.waitForTimeout(90);
+   const newProbe=await page.evaluate(()=>window.__ssAudioBuffers?.at(-1)?.probe?.join(","));
+   if(newProbe===originalProbe)throw Error("Changing sampling frequency did not change audible alias waveform");
+   await page.locator("#ss-al-stop").click();
   }
   for(const language of ["ko","mixed","en"]){
    await page.locator("#ss-al-language").selectOption(language);
