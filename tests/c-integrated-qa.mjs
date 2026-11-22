@@ -13,7 +13,8 @@ for(const kind of ["pointer","structure"]){
  const d=context.window.C_JOURNEY;course[kind]=d;
  assert(d.lessons.length===8,kind+" lessons = 8");
  assert(d.practice.length===6,kind+" exercises = 6");
- assert(d.lessons.every(x=>x.quiz.options[x.quiz.correct]===x.output),kind+" quiz oracle");
+ assert(d.lessons.every(x=>Array.isArray(x.quiz.options)&&x.quiz.options.length>=2&&Number.isInteger(x.quiz.correct)&&x.quiz.correct>=0&&x.quiz.correct<x.quiz.options.length&&String(x.quiz.options[x.quiz.correct]).trim().length>0&&x.quiz.explain),kind+" conceptual quiz answer key");
+ assert(d.lessons.every(x=>typeof x.output==="string"&&x.output.trim().length>0),kind+" reference stdout specified separately from conceptual answer");
  assert(d.practice.every(x=>x.starter.includes("TODO")&&x.expected),kind+" draft and expected outputs");
  for(const file of [kind+"/index.html",kind+"/practice/index.html"]){
   assert(fs.existsSync(base+file),file+" route exists");
@@ -50,9 +51,9 @@ if(process.env.C_JOURNEY_BROWSER==="1"){
    await page.locator("#lesson .question label").nth(conceptIndex).click();
    await page.locator("#lesson .question button").click();
    assert((await page.locator("#assessment-status").innerText()).includes("Concept Check Passed 1/8"),kind+" concept pass recorded");
-   assert((await page.locator("#progress-text").innerText()).includes("Activity 0/8"),kind+" activity not silently awarded");
+   assert((await page.locator("#progress-text").innerText()).includes("0/6"),kind+" core activity not silently awarded");
    await page.locator("#lesson .navactions button").nth(1).click();
-   assert((await page.locator("#progress-text").innerText()).includes("Activity 1/8"),kind+" activity marked independently");
+   assert((await page.locator("#progress-text").innerText()).includes("1/6"),kind+" core activity marked independently");
    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+8),kind+" no mobile page overflow");
    assert(errors.length===0,kind+" no runtime errors "+errors.join(";"));
    await page.close();
