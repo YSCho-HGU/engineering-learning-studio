@@ -58,6 +58,7 @@ function renderHeader(){
  $("ss-al-controls-subtitle").textContent=tx(...info.control);
  $("ss-al-focus").textContent=tx($("ss-al-root").classList.contains("focus")?"Exit focus":"Focus on graphs",$("ss-al-root").classList.contains("focus")?"전체 화면으로 돌아가기":"그래프 집중 보기",true);
  $("ss-al-focus-toolbar").textContent=$("ss-al-focus").textContent;
+ $("ss-al-reset").textContent=tx("Reset lab","실습 초기화",true);
  $("ss-al-return").textContent=tx("Back to Applications","Applications 목차로",true);
  $("ss-al-panel-toggle").textContent=tx($("ss-al-root").classList.contains("controls-hidden")?"Show controls":"Hide controls",$("ss-al-root").classList.contains("controls-hidden")?"변수 설정 보기":"변수 설정 접기",true);
  document.querySelectorAll("[data-lab-link]").forEach(a=>{
@@ -436,6 +437,13 @@ function init(){
  const at=MODES.indexOf(lab),prev=$("ss-al-prev-lab"),next=$("ss-al-next-lab");
  prev.disabled=at===0;next.disabled=at===MODES.length-1;
  prev.setAttribute("aria-disabled",String(prev.disabled));next.setAttribute("aria-disabled",String(next.disabled));
+ $("ss-al-reset").addEventListener("click",()=>{
+  stopAudio();
+  if(animationId!==null){cancelAnimationFrame(animationId);animationId=null}
+  previousTime=0;
+  Object.keys(initial).forEach(key=>{state[key]=Array.isArray(initial[key])?initial[key].slice():initial[key]});
+  renderControls();renderHeader();scheduleDraw();
+ });
  prev.addEventListener("click",()=>{if(at>0)location.href="./applications-lab.html?lab="+MODES[at-1]});
  next.addEventListener("click",()=>{if(at<MODES.length-1)location.href="./applications-lab.html?lab="+MODES[at+1]});
  const toggleFocus=()=>{
