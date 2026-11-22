@@ -305,6 +305,15 @@ function show(i){
  element("h3","",concept,ui("Understand · 핵심 원리","Understand the Concept"));richText(element("p","c-learning-prose",concept),l.concept);
  const learn=element("div","learn",stage);
  const c=element("section","",learn);element("h3","",c,ui("전체 프로그램 · 코드 읽기","Complete C Program · Read the Code"));createCode(c,l.code);
+ // Some lessons need a second full program with real stdin, beyond the deterministic prediction example.
+ if(l.extraExample&&l.extraExample.code){
+  const extra=element("details","c-guided-code-example",stage);
+  element("summary","",extra,l.extraExample.title||ui("추가 C11 예제","Additional C11 Example"));
+  richText(element("p","c-learning-prose",extra),l.extraExample.description||"");
+  const source=element("pre","code",extra);
+  source.setAttribute("aria-label","Additional complete C11 source");
+  source.textContent=l.extraExample.code;
+ }
  const e=element("section","",learn);element("h3","",e,ui("Predict · 실행 결과 예상","Predict the Output"));richText(element("p","c-learning-prose",e),l.predict);
  const reveal=element("button","action",e,ui("참조 출력 확인","Reveal Reference Output"));
  const out=element("div","explain",e);out.hidden=true;
