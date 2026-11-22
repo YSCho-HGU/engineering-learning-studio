@@ -123,3 +123,6 @@ body{overflow-x:hidden}
  .hero>*{min-width:0;max-width:100%;overflow-wrap:anywhere}
  
 }
+
+/* Shared purpose labels for Core Concepts, Guided Labs and Coding Challenges. */
+.c-course-journey .c-learning-group-guide {font-size:.79rem;line-height:1.55;margin:5px 8px 10px;color:var(--els-muted,var(--muted));}
