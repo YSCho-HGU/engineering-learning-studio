@@ -167,9 +167,9 @@ function renderControls(){
  }
  if(lab!=="helix"){
   const buttons=elt("div","ss-al-control-buttons",null,audio);
-  const play=elt("button","ss-al-primary",null,buttons);play.type="button";
-  const pause=elt("button",null,null,buttons);pause.type="button";
-  const stop=elt("button",null,null,buttons);stop.type="button";
+  const play=elt("button","ss-al-primary",null,buttons);play.type="button";play.id="ss-al-play";
+  const pause=elt("button",null,null,buttons);pause.type="button";pause.id="ss-al-pause";
+  const stop=elt("button",null,null,buttons);stop.type="button";stop.id="ss-al-stop";
   const status=elt("p","ss-al-audio-status",null,audio);status.setAttribute("role","status");
   audioState.status=status;audioState.playButton=play;audioState.pauseButton=pause;audioState.stopButton=stop;
   play.addEventListener("click",()=>playAudio());
