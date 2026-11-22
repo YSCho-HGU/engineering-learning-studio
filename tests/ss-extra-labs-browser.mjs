@@ -19,7 +19,7 @@ for(const lab of ["beats","amfm","sampling"]){
      const start=Math.min(d.length-1,Math.round(d.length*.10)),end=Math.min(d.length,start+4000);
      for(let i=start;i<end;i++){peak=Math.max(peak,Math.abs(d[i]));energy+=d[i]*d[i];n++}
      window.__ssAudioBuffers.push({peak,rms:Math.sqrt(energy/Math.max(1,n)),length:d.length,
-      probe:Array.from(d.slice(start,Math.min(start+48,end))).map(v=>Math.round(v*10000))});
+      probe:Array.from(d.slice(Math.min(d.length-50,Math.round(d.length*.75)),Math.min(d.length-2,Math.round(d.length*.75)+48))).map(v=>Math.round(v*10000))});
     }
     return original.apply(this,args);
    };
