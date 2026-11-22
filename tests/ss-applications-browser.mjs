@@ -19,6 +19,10 @@ for(const name of ["harmonics","chirp","helix"]){
   await page.locator("#ss-al-control-fields input[type=range]").first().evaluate((slider,value)=>{slider.value=value;slider.dispatchEvent(new Event("input",{bubbles:true}))},name==="harmonics"?"440":name==="chirp"?"360":"2.0");
   await page.waitForTimeout(120);
   if(name!=="helix"&&old===await page.locator("#ss-al-metrics .ss-al-metric-value").first().innerText())throw Error("Slider failed");
+  await page.locator("#ss-al-reset").click();
+  await page.waitForTimeout(70);
+  const reset=await page.locator("#ss-al-metrics .ss-al-metric-value").first().innerText();
+  if(reset!==old)throw Error("Reset did not restore defaults");
   await page.locator("#ss-al-focus-toolbar").click();
   if(!await page.locator("#ss-al-root").evaluate(el=>el.classList.contains("focus")))throw Error("Focus failed");
   await page.locator("#ss-al-focus-toolbar").click();
