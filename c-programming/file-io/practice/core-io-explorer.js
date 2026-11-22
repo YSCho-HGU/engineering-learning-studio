@@ -110,6 +110,7 @@ $("coreio-play").addEventListener("click",()=>{
  clock=setInterval(()=>{stepTo(index+1)},950);
 });
 window.addEventListener("c-fileio-task-change",e=>enterTask(e.detail?.id));
-const first=document.querySelector("#task-id")?.textContent||"";
-enterTask(first.includes("PRACTICE P1")?"P1":first.includes("PRACTICE P2")?"P2":null);
+// Use the stable task index, not a localized display label.
+const first=Number(document.querySelector("#task-nav button.active[data-task]")?.dataset.task);
+enterTask(first===0?"P1":first===1?"P2":null);
 })();
