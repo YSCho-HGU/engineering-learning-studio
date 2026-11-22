@@ -154,3 +154,21 @@ html[data-c-sidebar=collapsed] .c-sidebar-caption{display:none}
 @media(max-width:780px){
  .c-ss-shell>.c-ss-sidebar#task-nav,.c-ss-shell>.c-ss-sidebar.sidebar:has(.side-nav){position:relative;top:auto;height:auto;max-height:none;border-right:0;border-bottom:1px solid var(--els-border)}
 }
+
+/* Unified learning groups: preserve the existing lesson buttons and saved state. */
+.c-ss-shell .c-learning-group{display:block;min-width:0;border:1px solid var(--els-border,var(--line));border-radius:10px;margin:5px 0 9px;background:var(--els-surface,var(--surface))}
+.c-ss-shell .c-learning-group>summary{cursor:pointer;list-style:none;padding:11px 9px;font-size:13px;line-height:1.55;font-weight:800;color:var(--els-ink,var(--ink));border-radius:9px}
+.c-ss-shell .c-learning-group>summary::-webkit-details-marker{display:none}
+.c-ss-shell .c-learning-group>summary::before{content:"▸";display:inline-block;margin-right:8px;color:var(--els-link,var(--blue));transition:transform .15s ease}
+.c-ss-shell .c-learning-group[open]>summary::before{transform:rotate(90deg)}
+.c-ss-shell .c-learning-group>summary:focus-visible{outline:2px solid var(--els-link,var(--blue));outline-offset:2px}
+.c-ss-shell .c-learning-group-items{display:flex;flex-direction:column;gap:4px;padding:2px 6px 8px}
+.c-ss-shell #lesson-nav.c-grouped-toc{display:flex;flex-direction:column;gap:3px}
+.c-ss-shell #lesson-nav.c-grouped-toc .c-learning-group-items>button,.c-ss-shell #lesson-nav .c-learning-group-items>button{display:flex;align-items:flex-start;gap:9px;width:100%;min-height:42px;padding:9px 8px;color:var(--els-ink,var(--ink));text-align:left;border:1px solid transparent;border-radius:8px;background:transparent}
+.c-ss-shell #lesson-nav .c-learning-group-items>button:is(.active,.current){border-color:var(--els-link,var(--blue));background:var(--els-surface-alt,var(--soft));box-shadow:inset 3px 0 var(--els-link,var(--blue))}
+.c-ss-shell .c-learning-group-items>a,.c-ss-shell .c-learning-link{display:block;min-height:38px;padding:8px 9px;border-radius:8px;line-height:1.45;color:var(--els-ink,var(--ink));text-decoration:none;font-size:13px;overflow-wrap:anywhere}
+.c-ss-shell .c-learning-group-items>a:hover,.c-ss-shell .c-learning-group-items>a:focus-visible{background:var(--els-surface-alt,var(--soft));text-decoration:underline}
+.c-ss-shell .c-learning-group .concept-indicator{margin-left:auto;color:var(--els-link,var(--blue))}
+.c-ss-shell .c-learning-group-items .n,.c-ss-shell .c-learning-group-items .num{flex:0 0 28px}
+.c-ss-shell .c-ss-sidebar #lesson-nav.c-grouped-toc{grid-template-columns:1fr}
+@media(max-width:780px){.c-ss-shell>.c-ss-sidebar #lesson-nav.c-grouped-toc{display:flex;flex-direction:column}}
