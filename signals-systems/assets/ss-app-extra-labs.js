@@ -424,7 +424,7 @@ function renderAliasSummary(){
  el.dataset.aliased=String(aliased);
  el.textContent=heading+"  ·  t="+t.toFixed(2)+" s  ·  "+
    "fᵢ="+fi.toFixed(1)+" Hz → fₐ="+signed.toFixed(1)+" Hz ("+direction+")  ·  "+
-   "fₙ="+(state.fs/2).toFixed(1)+" Hz  ·  "+
+   "fₛ/2="+(state.fs/2).toFixed(1)+" Hz  ·  "+
    txt("crossings","교차 시각",true)+": "+times;
 }
 function drawSampling(){
