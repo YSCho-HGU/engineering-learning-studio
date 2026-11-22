@@ -1,0 +1,345 @@
+{
+  "schemaVersion": 1,
+  "source": "GitHub Actions / Visual Lab Accessibility and Regression Audit",
+  "generatedAt": "2026-11-22T05:21:13.032Z",
+  "sourceSha": "21235d4faeba3333d88d25f34027e84dbd23c433",
+  "runId": "44988332581",
+  "runUrl": "https://github.com/YSCho-HGU/signals-systems-visual-lab/actions/runs/44988332581",
+  "latestCommitUrl": "https://github.com/YSCho-HGU/signals-systems-visual-lab/commit/21235d4faeba3333d88d25f34027e84dbd23c433",
+  "automatedStatus": "BLOCKED_AUTOMATED",
+  "manualStatus": "PENDING",
+  "releaseStatus": "BLOCKED_AUTOMATED",
+  "chaptersCount": 8,
+  "labsCount": 62,
+  "visual": {
+    "expected": 248,
+    "observed": 0,
+    "issues": null,
+    "qualityStatus": "NOT_RUN"
+  },
+  "gates": [
+    {
+      "id": "G0",
+      "label": "Catalog and source integrity",
+      "status": "FAIL",
+      "required": true
+    },
+    {
+      "id": "G1",
+      "label": "Sampling and transform mathematics",
+      "status": "FAIL",
+      "required": true
+    },
+    {
+      "id": "G2",
+      "label": "Native Chapter 6 browser journey",
+      "status": "FAIL",
+      "required": true
+    },
+    {
+      "id": "G2b",
+      "label": "Native Chapter 5 and 6 five-palette Chromium/Edge regression",
+      "status": "FAIL",
+      "required": true
+    },
+    {
+      "id": "G3",
+      "label": "Theme and language persistence",
+      "status": "FAIL",
+      "required": true
+    },
+    {
+      "id": "G4",
+      "label": "Learning aids and sonification",
+      "status": "FAIL",
+      "required": true
+    },
+    {
+      "id": "G5",
+      "label": "Storage and 62-lab regression",
+      "status": "FAIL",
+      "required": true
+    },
+    {
+      "id": "G6",
+      "label": "248-screenshot visual and accessibility smoke audit",
+      "status": "FAIL",
+      "required": true
+    },
+    {
+      "id": "G7",
+      "label": "Evidence postprocessing",
+      "status": "FAIL",
+      "required": true
+    },
+    {
+      "id": "CH8_MATH",
+      "label": "Chapter 8 key, guided, Predict and Observe math typesetting",
+      "status": "PASS",
+      "required": true
+    }
+  ],
+  "chapters": [
+    {
+      "id": 1,
+      "title": "Signals & Systems",
+      "labCount": 9,
+      "visual": {
+        "status": "NOT_RUN",
+        "expected": 36,
+        "observed": 0,
+        "issues": 0,
+        "missing": 36
+      },
+      "issueExamples": [],
+      "missingExamples": [
+        "1:1:390:warm-neutral",
+        "1:1:390:neutral-dark",
+        "1:1:1280:warm-neutral",
+        "1:1:1280:neutral-dark",
+        "1:2:390:warm-neutral",
+        "1:2:390:neutral-dark",
+        "1:2:1280:warm-neutral",
+        "1:2:1280:neutral-dark"
+      ],
+      "coverage": {
+        "dimensions": "2 viewport widths × 2 themes",
+        "numericalReference": "PENDING_INDEPENDENT_ORACLE"
+      },
+      "manual": {
+        "axesAndLegends": "PENDING",
+        "mathematics": "PENDING",
+        "pedagogy": "PENDING"
+      }
+    },
+    {
+      "id": 2,
+      "title": "Convolution and LTI",
+      "labCount": 9,
+      "visual": {
+        "status": "NOT_RUN",
+        "expected": 36,
+        "observed": 0,
+        "issues": 0,
+        "missing": 36
+      },
+      "issueExamples": [],
+      "missingExamples": [
+        "2:1:390:warm-neutral",
+        "2:1:390:neutral-dark",
+        "2:1:1280:warm-neutral",
+        "2:1:1280:neutral-dark",
+        "2:2:390:warm-neutral",
+        "2:2:390:neutral-dark",
+        "2:2:1280:warm-neutral",
+        "2:2:1280:neutral-dark"
+      ],
+      "coverage": {
+        "dimensions": "2 viewport widths × 2 themes",
+        "numericalReference": "PENDING_INDEPENDENT_ORACLE"
+      },
+      "manual": {
+        "axesAndLegends": "PENDING",
+        "mathematics": "PENDING",
+        "pedagogy": "PENDING"
+      }
+    },
+    {
+      "id": 3,
+      "title": "Fourier Series",
+      "labCount": 7,
+      "visual": {
+        "status": "NOT_RUN",
+        "expected": 28,
+        "observed": 0,
+        "issues": 0,
+        "missing": 28
+      },
+      "issueExamples": [],
+      "missingExamples": [
+        "3:1:390:warm-neutral",
+        "3:1:390:neutral-dark",
+        "3:1:1280:warm-neutral",
+        "3:1:1280:neutral-dark",
+        "3:2:390:warm-neutral",
+        "3:2:390:neutral-dark",
+        "3:2:1280:warm-neutral",
+        "3:2:1280:neutral-dark"
+      ],
+      "coverage": {
+        "dimensions": "2 viewport widths × 2 themes",
+        "numericalReference": "PENDING_INDEPENDENT_ORACLE"
+      },
+      "manual": {
+        "axesAndLegends": "PENDING",
+        "mathematics": "PENDING",
+        "pedagogy": "PENDING"
+      }
+    },
+    {
+      "id": 4,
+      "title": "Continuous-Time Fourier Transform",
+      "labCount": 8,
+      "visual": {
+        "status": "NOT_RUN",
+        "expected": 32,
+        "observed": 0,
+        "issues": 0,
+        "missing": 32
+      },
+      "issueExamples": [],
+      "missingExamples": [
+        "4:1:390:warm-neutral",
+        "4:1:390:neutral-dark",
+        "4:1:1280:warm-neutral",
+        "4:1:1280:neutral-dark",
+        "4:2:390:warm-neutral",
+        "4:2:390:neutral-dark",
+        "4:2:1280:warm-neutral",
+        "4:2:1280:neutral-dark"
+      ],
+      "coverage": {
+        "dimensions": "2 viewport widths × 2 themes",
+        "numericalReference": "PENDING_INDEPENDENT_ORACLE"
+      },
+      "manual": {
+        "axesAndLegends": "PENDING",
+        "mathematics": "PENDING",
+        "pedagogy": "PENDING"
+      }
+    },
+    {
+      "id": 5,
+      "title": "Laplace Transform",
+      "labCount": 8,
+      "visual": {
+        "status": "NOT_RUN",
+        "expected": 32,
+        "observed": 0,
+        "issues": 0,
+        "missing": 32
+      },
+      "issueExamples": [],
+      "missingExamples": [
+        "5:1:390:warm-neutral",
+        "5:1:390:neutral-dark",
+        "5:1:1280:warm-neutral",
+        "5:1:1280:neutral-dark",
+        "5:2:390:warm-neutral",
+        "5:2:390:neutral-dark",
+        "5:2:1280:warm-neutral",
+        "5:2:1280:neutral-dark"
+      ],
+      "coverage": {
+        "dimensions": "2 viewport widths × 2 themes",
+        "numericalReference": "PENDING_INDEPENDENT_ORACLE"
+      },
+      "manual": {
+        "axesAndLegends": "PENDING",
+        "mathematics": "PENDING",
+        "pedagogy": "PENDING"
+      }
+    },
+    {
+      "id": 6,
+      "title": "Discrete-Time Fourier Transform",
+      "labCount": 6,
+      "visual": {
+        "status": "NOT_RUN",
+        "expected": 24,
+        "observed": 0,
+        "issues": 0,
+        "missing": 24
+      },
+      "issueExamples": [],
+      "missingExamples": [
+        "6:1:390:warm-neutral",
+        "6:1:390:neutral-dark",
+        "6:1:1280:warm-neutral",
+        "6:1:1280:neutral-dark",
+        "6:2:390:warm-neutral",
+        "6:2:390:neutral-dark",
+        "6:2:1280:warm-neutral",
+        "6:2:1280:neutral-dark"
+      ],
+      "coverage": {
+        "dimensions": "2 viewport widths × 2 themes",
+        "numericalReference": "6.1 sampling identity only"
+      },
+      "manual": {
+        "axesAndLegends": "PENDING",
+        "mathematics": "PENDING",
+        "pedagogy": "PENDING"
+      }
+    },
+    {
+      "id": 7,
+      "title": "Sampling",
+      "labCount": 7,
+      "visual": {
+        "status": "NOT_RUN",
+        "expected": 28,
+        "observed": 0,
+        "issues": 0,
+        "missing": 28
+      },
+      "issueExamples": [],
+      "missingExamples": [
+        "7:1:390:warm-neutral",
+        "7:1:390:neutral-dark",
+        "7:1:1280:warm-neutral",
+        "7:1:1280:neutral-dark",
+        "7:2:390:warm-neutral",
+        "7:2:390:neutral-dark",
+        "7:2:1280:warm-neutral",
+        "7:2:1280:neutral-dark"
+      ],
+      "coverage": {
+        "dimensions": "2 viewport widths × 2 themes",
+        "numericalReference": "PENDING_INDEPENDENT_ORACLE"
+      },
+      "manual": {
+        "axesAndLegends": "PENDING",
+        "mathematics": "PENDING",
+        "pedagogy": "PENDING"
+      }
+    },
+    {
+      "id": 8,
+      "title": "Z-Transform",
+      "labCount": 8,
+      "visual": {
+        "status": "NOT_RUN",
+        "expected": 32,
+        "observed": 0,
+        "issues": 0,
+        "missing": 32
+      },
+      "issueExamples": [],
+      "missingExamples": [
+        "8:1:390:warm-neutral",
+        "8:1:390:neutral-dark",
+        "8:1:1280:warm-neutral",
+        "8:1:1280:neutral-dark",
+        "8:2:390:warm-neutral",
+        "8:2:390:neutral-dark",
+        "8:2:1280:warm-neutral",
+        "8:2:1280:neutral-dark"
+      ],
+      "coverage": {
+        "dimensions": "2 viewport widths × 2 themes",
+        "numericalReference": "PENDING_INDEPENDENT_ORACLE"
+      },
+      "manual": {
+        "axesAndLegends": "PENDING",
+        "mathematics": "PENDING",
+        "pedagogy": "PENDING"
+      }
+    }
+  ],
+  "notes": [
+    "초록색 자동 검사 결과는 축·수식·학습 효과에 대한 최종 승인이 아닙니다.",
+    "Chapter별 시각 검사 통과와 모든 G0–G7 검사의 전체 통과를 구분합니다.",
+    "Chapter 6의 수학 검증은 현재 6.1 관련 사례에 한정됩니다."
+  ]
+}

@@ -1,0 +1,13 @@
+/* Chapter 1-specific content details only.
+ * Former duplicated sidebar/grid/button rules live in:
+ *   ss-sidebar-layout.css (navigation appearance)
+ *   ss-chapter5-layout-standard.css (navigation + workspace geometry)
+ *   ss-chapter5-internal-rhythm.css (teaching cards and plot spacing).
+ * Keep this file deliberately small so Chapter 1 cannot diverge again.
+ */
+html.ss-foundations-standard[data-ss-foundation-chapter="1"] #ch1-app .footer{
+ display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+ font-size:12px!important;color:var(--els-muted)!important;
+ border-top:1px solid var(--els-border)!important;
+ margin-top:24px!important;
+}

@@ -1,0 +1,21 @@
+{
+  "name": "signals-systems-visual-lab-qa",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "qa:visual": "node tests/visual-audit.mjs",
+    "qa:learning": "node tests/learning-aids-qa.mjs",
+    "qa:navigation": "node tests/ss-navigation-contract.mjs",
+    "qa:navigation:visual": "node tests/ss-navigation-visual-e2e.mjs",
+    "qa:graph-math": "node tests/ss-graph-math-visual-e2e.mjs",
+    "qa:graph-all-labs": "node tests/ss-all-lab-graph-audit.mjs",
+    "qa:graph-geometry": "node tests/ss-graph-geometry-e2e.mjs",
+    "qa:math-independent": "node tests/ss-independent-math-e2e.mjs",
+    "qa:english": "node tests/ss-english-content-e2e.mjs",
+    "qa:language-model": "node tests/ss-data-language-contract.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.0"
+  }
+}

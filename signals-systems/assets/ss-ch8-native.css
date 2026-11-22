@@ -1,0 +1,148 @@
+/* Chapter 8 native Z-Transform workspace: chapter-specific layout only.
+ * Shared header/navigation/step numbers/focus/surfaces in ss-ui-standard.css.
+ * Mathematical typography in ss-formula-standard.css.
+ */
+html.ss8-native,html.ss8-native body{min-height:100%;background:var(--els-page,#f4f6f7)!important;color:var(--els-ink,#25353b)!important;color-scheme:inherit}
+html.ss8-native body{margin:0;overflow-x:hidden;font:16px/1.7 system-ui,"Malgun Gothic",Arial,sans-serif}
+html.ss8-native .ss8-shell{display:grid;grid-template-columns:var(--ss-ui-sidebar-width,230px) minmax(0,1fr);align-items:start;min-height:calc(100dvh - 46px);max-width:none}
+
+
+
+
+
+
+
+
+
+html.ss8-native .ss8-progress{margin:17px 8px;padding:12px;border:1px solid var(--els-border,#bbb);border-radius:10px;background:var(--els-surface-alt,#edf2f2);display:grid;gap:8px;font-size:12px;color:var(--els-muted,#64747a)}
+html.ss8-native .ss8-progress strong{color:var(--els-ink,#263540);font-size:13px}
+html.ss8-native .ss8-progress button{width:100%;padding:7px 10px}
+html.ss8-native .ss8-progress small{font-size:11px;line-height:1.55}
+html.ss8-native[data-ss-sidebar="collapsed"] .ss8-shell{grid-template-columns:52px minmax(0,1fr)}
+
+
+
+
+html.ss8-native .ss8-workspace{min-width:0}
+html.ss8-native main{max-width:none!important;min-width:0;width:100%;margin:0;padding:15px var(--ss-ui-content-pad-x,clamp(12px,1.8vw,27px)) 42px!important}
+html.ss8-native .ss8-standard-layout{width:100%;display:grid;grid-template-columns:minmax(0,1fr);gap:14px;min-width:0}
+html.ss8-native .ss8-card{min-width:0;padding:15px 16px;background:var(--els-surface,#fff);color:var(--els-ink,#22343a);border:1px solid var(--els-border,#bccacc);border-radius:12px;box-shadow:none}
+html.ss8-native .ss8-chapter-lead{padding:16px 18px}
+html.ss8-native .ss8-chapter-lead .eyebrow{font-size:11px;color:var(--els-muted,#526b70)}
+html.ss8-native #title{font-size:clamp(21px,2.1vw,29px);margin:4px 0 8px;line-height:1.3;color:var(--els-ink,#263540)}
+html.ss8-native #intro{font-size:16px;line-height:1.7;color:var(--els-ink,#263540);margin:0}
+html.ss8-native .ss8-key-formula{min-width:0;padding:12px 16px 13px;background:var(--els-surface-alt,#edf4f5);border:1px solid var(--els-border,#bccacc);border-left:4px solid var(--els-link,#20738a);border-radius:11px}
+html.ss8-native .ss8-key-label{font-size:11px;font-weight:750;letter-spacing:.05em;color:var(--els-muted,#526b70);margin-bottom:7px}
+html.ss8-native .ss8-key-equation{max-width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;min-height:28px}
+html.ss8-native .ss8-key-equation .katex-display{margin:.25em 0;text-align:left;overflow-x:auto}
+html.ss8-native .ss8-stage-head{display:flex;align-items:flex-start;gap:10px;margin:0 0 12px;line-height:1.45}
+html.ss8-native .ss8-stage-head small{display:block;font-weight:550;font-size:13px;line-height:1.55;color:var(--els-muted,#526b70)}
+html.ss8-native .ss8-stage-predict p{font-size:16px;line-height:1.7;margin:0;color:var(--els-ink,#263540)}
+html.ss8-native .ss8-stage-pair{display:grid;grid-template-columns:minmax(220px,275px) minmax(0,1fr);gap:14px;align-items:start}
+html.ss8-native .ss8-stage-change,html.ss8-native .ss8-stage-observe{min-width:0}
+html.ss8-native #controls{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin:0}
+html.ss8-native .control{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;min-width:0;margin:0;padding:12px;border-radius:10px;border:1px solid var(--els-border,#bccacc);background:var(--els-surface-alt,#edf4f5);color:var(--els-ink,#263540)}
+html.ss8-native .control label{font-size:14px;line-height:1.45;color:var(--els-ink,#263540);min-width:0}
+html.ss8-native .control input[type="range"]{width:100%;min-width:0;accent-color:var(--els-accent,#16889a)}
+html.ss8-native .control select{width:100%;background:var(--els-surface,#fff);color:var(--els-ink,#263540);border:1px solid var(--els-border,#bccacc)}
+html.ss8-native .control output{font-size:14px;text-align:left;color:var(--els-ink,#263540);min-width:0}
+html.ss8-native #plots{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,385px),1fr));gap:14px;min-width:0}
+html.ss8-native #plots .plot-card{min-width:0;margin:0;background:var(--els-surface,#fff);color:var(--els-ink,#263540);border:1px solid var(--els-border,#bccacc);border-radius:12px;overflow:hidden}
+html.ss8-native .plot-card .plot-title{font-size:16px;font-weight:750;line-height:1.4;padding:10px 12px;background:var(--els-surface-alt,#edf4f5);color:var(--els-ink,#263540);border-bottom:1px solid var(--els-border,#bccacc);overflow-wrap:anywhere}
+html.ss8-native .plot-card svg{display:block;width:100%;max-width:100%;height:auto;aspect-ratio:2/1;background:var(--els-surface,#fff)}
+html.ss8-native .plot-card svg text{font-size:14px}
+html.ss8-native .plot-card .legend{font-size:13px;line-height:1.55;gap:7px 14px;color:var(--els-muted,#536b71);padding:9px 12px}
+html.ss8-native .plot-card .axis-key{font-size:13px;line-height:1.55;overflow-wrap:anywhere;color:var(--els-ink,#263540)}
+html.ss8-native .insight{font-size:16px;line-height:1.7;margin:14px 0 0;padding:12px 14px;border-left:4px solid var(--els-accent,#16889a);background:var(--els-surface-alt,#edf4f5);color:var(--els-ink,#263540)}
+html.ss8-native .insight strong{color:var(--els-ink,#263540)}
+html.ss8-native .hint{font-size:13px;line-height:1.5;color:var(--els-muted,#536b71)}
+html.ss8-native .ss8-stage-explain{grid-column:1/-1;min-width:0}
+html.ss8-native .ss8-explain-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;min-width:0}
+html.ss8-native .ss8-derivation,html.ss8-native .ss8-interpret{min-width:0}
+html.ss8-native .ss8-derivation h3,html.ss8-native .ss8-interpret h3{font-size:18px;line-height:1.45;margin:4px 0 12px;color:var(--els-ink,#263540)}
+html.ss8-native #step-content{display:grid;gap:12px;min-width:0}
+html.ss8-native .step{margin:0!important;border:1px solid var(--els-border,#bccacc);border-radius:11px;padding:14px 16px;background:var(--els-surface-alt,#edf4f5);color:var(--els-ink,#263540)}
+html.ss8-native .step strong{font-size:16px;line-height:1.4}
+html.ss8-native .step p{font-size:16px;line-height:1.7;color:var(--els-ink,#263540);margin:6px 0}
+html.ss8-native .step .math{font-size:clamp(18px,1.55vw,22px);margin:9px 0;padding:13px 15px;background:var(--els-surface,#fff);border:1px solid var(--els-border,#bccacc);color:var(--els-ink,#263540);border-radius:9px;max-width:100%;overflow-x:auto;overflow-y:hidden}
+html.ss8-native .step .math .katex-display{margin:.25em 0;text-align:left;overflow-x:auto;overflow-y:hidden}
+html.ss8-native .step-buttons{display:flex;gap:8px;flex-wrap:wrap;margin:13px 0}
+html.ss8-native .step-buttons button{min-height:36px;padding:7px 10px;border:1px solid var(--els-border,#bccacc);border-radius:8px;background:var(--els-surface-alt,#edf4f5);color:var(--els-ink,#263540);font-size:13px}
+html.ss8-native .step-buttons .primary{background:var(--els-link,#18708a);color:#fff;border-color:var(--els-link,#18708a)}
+html.ss8-native .progress{background:var(--els-border,#bccacc)}
+html.ss8-native .progress>div{background:var(--els-link,#18708a)}
+html.ss8-native .reading{margin:0}
+html.ss8-native .reading .note{margin:10px 0;padding:12px 14px;background:var(--els-surface-alt,#edf4f5);border:1px solid var(--els-border,#bccacc);border-radius:10px}
+html.ss8-native .reading .note strong{font-size:15px;color:var(--els-ink,#263540)}
+html.ss8-native .reading .note p{font-size:16px;line-height:1.7;color:var(--els-ink,#263540)}
+html.ss8-native .check{font-size:15px;line-height:1.6;background:var(--els-surface-alt,#edf4f5);border:1px solid var(--els-border,#bccacc);border-radius:10px;color:var(--els-ink,#263540);padding:13px 14px}
+html.ss8-native .check b,html.ss8-native .check button{color:var(--els-link,#18708a)}
+html.ss8-native .check .answer{color:var(--els-ink,#263540)}
+html.ss8-native .foot{color:var(--els-muted,#536b71);font-size:12px}
+@media(max-width:1150px){html.ss8-native .ss8-shell{grid-template-columns:205px minmax(0,1fr)}html.ss8-native .ss8-stage-pair{grid-template-columns:minmax(205px,230px) minmax(0,1fr)}}
+@media(max-width:1050px){html.ss8-native .ss8-explain-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:780px){html.ss8-native .ss8-shell{display:block}html.ss8-native .ss8-progress{display:none}html.ss8-native .ss8-stage-pair{grid-template-columns:minmax(0,1fr)}html.ss8-native main{padding:12px!important}html.ss8-native .ss8-card{padding:13px}html.ss8-native[data-ss-sidebar="collapsed"] .ss8-shell{display:block}}
+
+/* Chapter 8 semantic Predict stage: variable-length explanation and question.
+   Keep the full-width reading stage separate from Change/Observe. */
+html.ss8-native .ss8-stage-predict #ss8-predict-question{display:grid;gap:12px;min-width:0}
+html.ss8-native .ss8-predict-background,
+html.ss8-native .ss8-predict-task{padding:13px 16px;border-radius:10px;min-width:0}
+html.ss8-native .ss8-predict-background{background:var(--els-surface-alt);border:1px solid var(--els-border)}
+html.ss8-native .ss8-predict-task{background:var(--els-info-bg);border-left:4px solid var(--els-primary);color:var(--els-ink)}
+html.ss8-native :is(.ss8-predict-background,.ss8-predict-task) strong{display:block;font-size:15px;margin-bottom:4px;color:var(--els-ink)}
+html.ss8-native :is(.ss8-predict-background,.ss8-predict-task) p{font-size:16px;line-height:1.75;margin:0;color:var(--els-ink)}
+/* Both time sequences share one coordinate system; the two ROC maps remain
+   visibly paired when space allows, without shrinking their chart labels. */
+html.ss8-native #plots>.ss8-roc-pair{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:12px;min-width:0}
+html.ss8-native #plots>.ss8-roc-pair>.plot-card{min-width:0}
+html.ss8-native #plots:has(.ss8-roc-pair)>.plot-card{grid-column:1/-1}
+@media(max-width:780px){html.ss8-native #plots>.ss8-roc-pair{grid-template-columns:1fr}}
+
+
+/* 8.2 unified stage order: h[n], transform, ROC. Observe keeps full graph width. */
+html.ss8-native #plots:has(.ss8-82-sequence){display:block!important}
+html.ss8-native .ss8-82-sequence{display:grid;gap:12px;min-width:0}
+html.ss8-native .ss8-82-stage{min-width:0;border:1px solid var(--els-border);background:var(--els-surface);border-radius:12px;padding:12px}
+html.ss8-native .ss8-82-stage h3{display:flex;align-items:center;gap:9px;font-size:16px;line-height:1.5;margin:0 0 11px;color:var(--els-ink)}
+html.ss8-native .ss8-82-stage h3>span{display:grid;place-items:center;flex:0 0 27px;height:27px;border-radius:7px;background:var(--els-surface-alt);border:1px solid var(--els-border);font-size:14px}
+html.ss8-native .ss8-82-stage>.plot-card{margin:0;width:100%}
+html.ss8-native .ss8-82-equations{display:grid;gap:10px;min-width:0}
+html.ss8-native .ss8-equation-row{display:grid;grid-template-columns:76px minmax(0,1fr);align-items:center;gap:10px;min-width:0}
+html.ss8-native .ss8-equation-label{font-size:13px;font-weight:750;color:var(--els-muted)}
+html.ss8-native .ss8-math-source{font-size:16px;min-width:0;max-width:100%;overflow-x:auto;overflow-y:hidden;line-height:1.6;color:var(--els-ink)}
+html.ss8-native .ss8-math-source .katex-display{margin:.24em 0;text-align:left;overflow-x:auto;overflow-y:hidden}
+html.ss8-native .ss8-equation-summary{display:grid;gap:6px;border-top:1px solid var(--els-border);padding-top:10px;font-size:15px;color:var(--els-ink)}
+html.ss8-native .ss8-82-roc-formula{padding:8px 10px;background:var(--els-surface-alt);border-radius:8px;margin-bottom:9px;font-weight:700}
+html.ss8-native .ss8-comparison-context{display:grid;gap:5px;padding:12px;border:1px solid var(--els-border);border-radius:10px;background:var(--els-surface-alt);color:var(--els-ink)}
+html.ss8-native .ss8-comparison-context small{font-size:13px;line-height:1.6}
+@media(max-width:650px){html.ss8-native .ss8-equation-row{grid-template-columns:1fr}html.ss8-native .ss8-82-stage{padding:9px}}
+
+/* Shared mathematical rendering: consistent layout and explicit failure states. */
+html.ss8-native [data-ss-math]:not(.ss8-prose-math),
+html.ss8-native [data-latex]:not(.ss8-prose-math){
+ color:var(--els-ink);
+ min-width:0;
+ max-width:100%;
+ overflow-x:auto;
+ overflow-y:hidden;
+ scrollbar-width:thin;
+}
+html.ss8-native [data-ss-math] .katex-display,
+html.ss8-native [data-latex] .katex-display{
+ margin:.3em 0!important;
+ text-align:left!important;
+ overflow-x:auto;
+ overflow-y:hidden;
+}
+html.ss8-native [data-ss-math-state="error"]:not(.ss8-prose-math),
+html.ss8-native [data-ss-math-state="missing"]:not(.ss8-prose-math),
+html.ss8-native [data-ss-math-error]:not(.ss8-prose-math){
+ border-left:3px solid var(--els-accent,#c75b4e);
+ padding-left:9px;
+ font-family:"Cambria Math",serif;
+}
+html.ss8-native .ss8-math-source,
+html.ss8-native .ss8-latex{font-size:var(--ss-math-step-size,19px)}
+html.ss8-native .ss8-key-equation{font-size:var(--ss-math-key-size,20px)}
+

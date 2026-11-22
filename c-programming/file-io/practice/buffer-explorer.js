@@ -23,7 +23,7 @@ function addCell(container,label,value,kind=""){
 function update(){
  const data=scenarios[scenario],hasSource=data.text!==null;
  const srcOpened=hasSource&&step>=1, dstOpened=srcOpened&&step>=2;
- const readDone=dstOpened&&step>=3, bytes=readDone?data.text.slice(0,capacity-1):"";
+ const readDone=dstOpened&&step>=3, firstLine=readDone?data.text.slice(0,capacity-1):"", bytes=firstLine.includes("\n")?firstLine.slice(0,firstLine.indexOf("\n")+1):firstLine;
  const readSuccess=readDone&&bytes.length>0, writing=readSuccess&&step>=4;
  const sourceClosed=step>=6&&srcOpened,dstClosed=step>=5&&dstOpened;
  const destValue=writing?bytes:"";
