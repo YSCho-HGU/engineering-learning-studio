@@ -19,7 +19,6 @@ try{const v=JSON.parse(localStorage.getItem(assessmentKey)||"[]");if(Array.isArr
 const persistConcepts=()=>{try{localStorage.setItem(assessmentKey,JSON.stringify(concepts))}catch(e){}};
 
 try{const v=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(v))completed=[...new Set(v.filter(n=>Number.isInteger(n)&&n>=0&&n<total))]}catch(e){}
-function safe(x){return String(x??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;")}
 function element(tag,cls,parent,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;parent.appendChild(n);return n}
 function renderNav(){
  const nav=$("lesson-nav");
@@ -35,10 +34,10 @@ function renderNav(){
   const list=element("div","c-learning-group-items",d);
   return list;
  }
- const core=group("core","Core Concepts · 필수 학습","Core Concepts",current<coreCount);
+ const core=group("core","Core Concepts · 핵심 개념","Core Concepts",current<coreCount);
  const labData=Array.isArray(D.guidedLabs)?D.guidedLabs:[];
  const labs=labData.length?group("labs","Guided Labs · 따라하기 실습","Guided Labs",false):null;
- const optional=hasOptional?group("advanced","Advanced · 선택 심화","Advanced / Optional",current>=coreCount):null;
+ const optional=hasOptional?group("advanced","Advanced · 선택 심화","Advanced · Optional",current>=coreCount):null;
  D.lessons.forEach((l,i)=>{
   const host=i<coreCount?core:optional;
   const b=element("button",(i===current?"active ":"")+(completed.includes(i)?"done":""),host);
@@ -56,9 +55,11 @@ function renderNav(){
   });
  }
  if(Array.isArray(D.practice)&&D.practice.length){
-  const challenges=group("challenges","Coding Challenges · 직접 구현","Coding Challenges",false);
+  const challenges=group("challenges","Coding Challenges · 직접 코딩","Coding Challenges",false);
   D.practice.forEach((task,i)=>{
-   const link=element("a","c-learning-link",challenges,"P"+(i+1)+" · "+task.title);
+   const optionalTask=Number.isInteger(D.practiceCoreCount)&&i>=D.practiceCoreCount;
+   const scope=optionalTask?ui("[선택] ","[Optional] "):"";
+   const link=element("a","c-learning-link",challenges,"P"+(i+1)+" · "+scope+task.title);
    link.href="./practice/#p"+(i+1);
    link.dataset.challenge=String(i+1);
   });
@@ -72,7 +73,7 @@ function renderNav(){
 }
 function createCode(host,source){
  const wrap=element("div","c-code-example",host);
- element("p","c-code-caption",wrap,ui("전체 C11 예제 · 실행 결과를 먼저 예측하세요","Complete C11 example · Predict the output before revealing it"));
+ element("p","c-code-caption",wrap,ui("변수와 반복 조건을 확인하고, 실행 결과를 공개하기 전에 직접 예측하세요.","Identify the variables and loop conditions; predict the output before revealing it."));
  const pre=element("pre","code",wrap);
  pre.setAttribute("aria-label","Complete C11 example");
  pre.textContent=source;
@@ -145,7 +146,7 @@ function modelOutput(model,v){
 function renderMemoryDiagram(host, step, lesson){
  host.replaceChildren();
  const header=element("div","mem-diagram-title",host);
- element("strong","",header,"Memory Diagram · 메모리 상태");
+ element("strong","",header,ui("Memory Diagram · 메모리 상태","Memory Diagram"));
  element("small","",header,"Virtual addresses / conceptual view");
  const board=element("div","mem-diagram-board",host);
  const state=step.state.replaceAll("\\n","\n");
@@ -216,9 +217,9 @@ function renderMemoryLayout(stage,l){
 
 function renderTrace(stage,l){
  const section=element("section","activity trace-lab",stage);
- element("span","tag",section,"GUIDED EXECUTION · LINE-BY-LINE");
- element("h3","",section,"Trace the code · 코드 실행 흐름 추적");
- element("p","legend",section,"Educational execution walkthrough aligned to the C example. Each snapshot is manually specified, not obtained from a JavaScript C interpreter.");
+ element("span","tag",section,ui("GUIDED EXPLORATION · 단계별 관찰","GUIDED EXPLORATION · STEP BY STEP"));
+ element("h3","",section,ui("Observe · 코드 실행 흐름 추적","Observe the Execution"));
+ element("p","legend",section,ui("코드를 한 줄씩 선택하며 값의 변화를 관찰하세요. 표시된 상태는 수업용 예시이며 실제 C 실행 결과를 수집한 것은 아닙니다.","Move through the highlighted C statements and observe the state changes. These are authored learning snapshots, not recorded results from a C compiler."));
  const panel=element("div","trace-layout",section),left=element("div","trace-code",panel),right=element("div","trace-state",panel);
  const lines=l.code.split("\n");
  const code=element("div","trace-lines",left);
@@ -244,18 +245,18 @@ function renderTrace(stage,l){
  const explanation=element("p","trace-explanation",right);
  const position=element("p","legend",right);
  const controls=element("div","trace-controls",section);
- const previous=element("button","action",controls,"← Previous");
- const next=element("button","action primary",controls,"Next →");
- const restart=element("button","action",controls,"Restart");
+ const previous=element("button","action",controls,ui("← 이전","← Previous"));
+ const next=element("button","action primary",controls,ui("다음 →","Next →"));
+ const restart=element("button","action",controls,ui("다시 시작","Restart"));
  let pointer=0;
  function showTrace(userAction=false){
   const step=steps[pointer];
   rendered.forEach((row,i)=>{row.classList.toggle("active",i+1===step.line);if(i+1===step.line)row.setAttribute("aria-current","step");else row.removeAttribute("aria-current")});
-  status.textContent="Step "+(pointer+1)+" / "+steps.length+" · Line "+step.line;
+  status.textContent=ui("단계 ","Step ")+(pointer+1)+" / "+steps.length+" · "+ui("코드 줄 ","Line ")+step.line;
   currentState.textContent=step.state.replaceAll("\\n","\n");
   renderMemoryDiagram(diagram,step,l);
   explanation.textContent=step.meaning;
-  position.textContent="Read the highlighted C line, then explain how the stored values change.";
+  position.textContent=ui("강조된 C 코드 줄을 읽고, 변수 값이 왜 바뀌는지 설명하세요.","Read the highlighted C line and explain why each stored value changes.");
   previous.disabled=pointer===0;next.disabled=pointer===steps.length-1;
   if(userAction){const row=rendered.find((r,i)=>i+1===step.line);if(row)code.parentElement.scrollTop=Math.max(0,row.offsetTop-code.offsetTop-65)}
  }
@@ -267,9 +268,9 @@ function renderTrace(stage,l){
 
 function renderModel(stage,l){
  const section=element("section","activity",stage);
- element("span","tag",section,"INTERACTIVE MODEL · 개념 실험");
+ element("span","tag",section,ui("INTERACTIVE EXPLORATION · 변수 조절","INTERACTIVE EXPLORATION · CHANGE INPUTS"));
  element("h3","",section,l.model.title);
- element("p","legend",section,"Values and addresses are illustrative. This is a JavaScript learning model, not a C compiler.");
+ element("p","legend",section,ui("슬라이더를 움직여 입력값과 모델 결과의 관계를 관찰하세요. 표시된 값과 주소는 교육용이며 실제 C 컴파일러 실행이 아닙니다.","Change the input to explore how the modeled output changes. Values and addresses are illustrative; this simulation does not execute a C program."));
  const grid=element("div","learn",section),left=element("div","model",grid),right=element("div","model",grid);
  const label=element("label","",left,l.model.controlLabel);
  const slider=element("input","",left);
@@ -307,11 +308,9 @@ function show(i){
  textarea.addEventListener("input",()=>{try{localStorage.setItem(draftkey,textarea.value)}catch(e){}});
  const hint=element("details","",transfer);element("summary","",hint,ui("해설 가이드 펼치기","Show Instructor Guidance"));element("p","",hint,l.guide);
  const actions=element("div","navactions",stage);
- const prev=element("button","action",actions,"← Previous");prev.disabled=current===0;prev.addEventListener("click",()=>show(current-1));
- const mark=element("button","action primary",actions,completed.includes(current)?"Activity reviewed ✓":"Mark activity reviewed ✓");
+ const mark=element("button","action primary",actions,completed.includes(current)?ui("학습 확인 완료 ✓","Activity reviewed ✓"):ui("학습 내용 확인 ✓","Mark activity reviewed ✓"));
  mark.addEventListener("click",()=>{if(!completed.includes(current)){completed.push(current);completed.sort((a,b)=>a-b);try{localStorage.setItem(key,JSON.stringify(completed))}catch(e){}}
- renderNav();updateAssessmentSummary();mark.textContent="Activity reviewed ✓";$("activity-note").textContent=ui("활동 확인 기록입니다. 실제 C 코딩 숙달을 인증하지 않습니다.","Activity reviewed. This is not evidence of C coding proficiency.")});
- const next=element("button","action",actions,"Next →");next.disabled=current===total-1;next.addEventListener("click",()=>show(current+1));
+ renderNav();updateAssessmentSummary();mark.textContent=ui("학습 확인 완료 ✓","Activity reviewed ✓");$("activity-note").textContent=ui("활동 확인 기록입니다. 실제 C 코딩 숙달을 인증하지 않습니다.","Activity reviewed. This is not evidence of C coding proficiency.")});
  $("activity-note").textContent=ui("학습 활동 표시이며, 퀴즈 정답이나 실제 C 컴파일 성공을 의미하지 않습니다.","This activity marker does not indicate a correct quiz answer or successful C compilation.");
 }
 function init(){
