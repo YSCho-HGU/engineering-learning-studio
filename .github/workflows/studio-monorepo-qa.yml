@@ -1,0 +1,27 @@
+name: Studio monorepo migration contract
+on:
+  pull_request:
+    paths:
+      - 'signals-systems/**'
+      - 'shared/**'
+      - 'c-programming/language.js'
+      - 'c-programming/*/index.html'
+      - 'index.html'
+      - 'tests/studio-monorepo-contract.mjs'
+      - '.github/workflows/studio-monorepo-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  migration-static:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Studio migration and localization contracts
+        run: node tests/studio-monorepo-contract.mjs
+      - name: Signals content language contract
+        working-directory: signals-systems
+        run: node tests/ss-data-language-contract.mjs
