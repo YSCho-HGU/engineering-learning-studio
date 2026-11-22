@@ -22,7 +22,7 @@ function markConcept(n){conceptDone.add(n);try{localStorage.setItem(conceptKey,J
 const coreStageOrder=[0,1,2,3,4,5,7];
 const isCoreStage=n=>coreStageOrder.includes(n);
 const completedCoreCount=()=>coreStageOrder.filter(n=>done.has(n)).length;
-function updateConceptStatus(){const el=$("concept-count");if(el)el.textContent="Concept Check Passed "+coreStageOrder.filter(n=>conceptDone.has(n)).length+"/7 (필수)"}
+function updateConceptStatus(){/* Concept evidence remains saved independently; sidebar shows activity progress only. */}
 
 window.addEventListener("els:conceptPassed",e=>{const n=Number(e.detail?.stage);if(Number.isInteger(n)&&n>=0&&n<8)markConcept(n)});
 
