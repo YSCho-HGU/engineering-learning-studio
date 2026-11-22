@@ -29,13 +29,15 @@ function renderNav(){
  function group(id,ko,en,openDefault){
   const d=element("details","c-learning-group",nav);
   d.dataset.group=id;
-  d.open=Object.prototype.hasOwnProperty.call(previousOpen,id)?previousOpen[id]:openDefault;
+  d.open=openDefault||(Object.prototype.hasOwnProperty.call(previousOpen,id)?previousOpen[id]:false);
   const title=element("summary","c-learning-group-title",d,ui(ko,en));
   title.setAttribute("aria-label",en);
   const list=element("div","c-learning-group-items",d);
   return list;
  }
  const core=group("core","Core Concepts · 필수 학습","Core Concepts",current<coreCount);
+ const labData=Array.isArray(D.guidedLabs)?D.guidedLabs:[];
+ const labs=labData.length?group("labs","Guided Labs · 따라하기 실습","Guided Labs",false):null;
  const optional=hasOptional?group("advanced","Advanced · 선택 심화","Advanced / Optional",current>=coreCount):null;
  D.lessons.forEach((l,i)=>{
   const host=i<coreCount?core:optional;
@@ -47,9 +49,8 @@ function renderNav(){
   if(concepts.includes(i))element("span","concept-indicator",b,"✓");
   b.addEventListener("click",()=>show(i));
  });
- if(Array.isArray(D.guidedLabs)&&D.guidedLabs.length){
-  const labs=group("labs","Guided Labs · 따라하기 실습","Guided Labs",false);
-  D.guidedLabs.forEach((lab,i)=>{
+ if(labs){
+  labData.forEach((lab,i)=>{
    const link=element("a","c-learning-link",labs,lab.label||"Lab "+(i+1));
    link.href=lab.href;
   });
@@ -321,7 +322,7 @@ function init(){
  $("hero-summary").textContent=D.summary;
  $("hero-count").textContent=(hasOptional?coreCount+" Core + "+(total-coreCount)+" Optional · ":total+" Learning Steps · ")+D.book;
  const stepLabel=document.querySelector(".hero-aside small");if(stepLabel)stepLabel.textContent=total+" LEARNING STEPS";
- const heading=document.querySelector(".route-heading span");if(heading)heading.textContent=total+" Learning Steps / "+D.practice.length+" Coding Practices";
+ const heading=document.querySelector(".route-heading span");if(heading)heading.textContent=total+" Learning Steps / "+D.practice.length+" Coding Challenges";
  const intro=document.querySelector("#coding-practice h2");if(intro)intro.textContent="P1–P"+D.practice.length+" · Coding Challenges";
  const meter=$("progress-bar")?.parentElement;if(meter)meter.setAttribute("aria-valuemax",String(hasOptional?coreCount:total));
  $("course-number").textContent=D.book;
