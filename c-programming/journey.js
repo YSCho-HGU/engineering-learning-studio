@@ -312,11 +312,12 @@ function init(){
   const btn=element("button","action",details,"Copy starter code");
   btn.addEventListener("click",()=>navigator.clipboard?.writeText(p.starter));
  });
- $("theme").addEventListener("click",()=>{
+ const themeToggle=$("theme");
+ if(themeToggle && themeToggle.tagName==="BUTTON")themeToggle.addEventListener("click",()=>{
   if(window.ELSTheme){
    const next=window.ELSTheme.get()==="warm-neutral"?"neutral-dark":"warm-neutral";
    window.ELSTheme.set(next);
-   $("theme").setAttribute("aria-pressed",String(next!=="warm-neutral"));
+   themeToggle.setAttribute("aria-pressed",String(next!=="warm-neutral"));
   }
  });
  renderNav();show(0);updateAssessmentSummary();
