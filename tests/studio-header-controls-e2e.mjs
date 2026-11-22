@@ -45,6 +45,22 @@ try{
      // Only the two currently published courses are interactive.
      const active=page.locator("#available-courses .course-card--available");
      const planned=page.locator("#planned-courses .course-card--planned");
+     assert.equal(await page.locator(".studio-intro .intro-link").count(),0,"Redundant Explore available courses CTA must be removed");
+     assert.equal(await page.locator(".studio-intro a").count(),0,"Hero should not contain extra navigation button");
+     const compact=await page.evaluate(()=>{
+       const rect=selector=>document.querySelector(selector)?.getBoundingClientRect();
+       const hero=rect(".studio-intro"),first=rect(".course-card--available"),grid=rect(".available-grid");
+       return {
+         heroHeight:hero?.height,firstCardHeight:first?.height,
+         firstCardTop:first?.top,gridBottom:grid?.bottom,
+         viewport:innerHeight,
+         scrollWidth:document.documentElement.scrollWidth
+       };
+     });
+     assert.ok(compact.heroHeight<=(width>=900?230:300),"Hero takes too much vertical space: "+JSON.stringify(compact));
+     assert.ok(compact.firstCardHeight<=(width>=900?425:540),"Active course card still too tall: "+JSON.stringify(compact));
+     assert.ok(compact.firstCardTop<(width>=900?380:530),"Available courses start too low: "+JSON.stringify(compact));
+     if(width>=900)assert.ok(compact.gridBottom<compact.viewport+45,"Available courses should be visible in one desktop viewport: "+JSON.stringify(compact));
      assert.equal(await active.count(),2,"Exactly two active courses");
      assert.equal(await planned.count(),4,"Logic Design onward should all be Coming soon");
      assert.deepEqual(await active.evaluateAll(nodes=>nodes.map(n=>n.dataset.course)),["ss","c"]);
