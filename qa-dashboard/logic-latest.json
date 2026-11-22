@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "course": "logic-design",
-  "generatedAt": "2026-11-22T08:10:20.795Z",
-  "sourceSha": "1612053507b6e29cc1a12106b817b30e76f8d7e3",
-  "runId": "45001426137",
-  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/45001426137",
+  "generatedAt": "2026-11-22T09:19:13.841Z",
+  "sourceSha": "ee3d144f9a98b708b2902afb917ed39682346fa6",
+  "runId": "45006837242",
+  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/45006837242",
   "mode": "prototype",
-  "automatedStatus": "PILOT_PASS",
-  "releaseStatus": "PILOT_PASS_FUTURE_COURSE_PENDING",
+  "automatedStatus": "PILOT_BLOCKED",
+  "releaseStatus": "PILOT_BLOCKED",
   "formalCourseStatus": "NOT_RUN",
   "manualStatus": "PENDING",
   "plannedUnits": null,
@@ -66,7 +66,7 @@
     {
       "id": "G7",
       "label": "Evidence and approval status",
-      "status": "PASS",
+      "status": "NOT_RUN",
       "required": true
     }
   ],
