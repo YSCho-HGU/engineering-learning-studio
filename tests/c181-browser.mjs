@@ -52,7 +52,7 @@ for(const width of [390,1280]){
  if(await page.locator('.dm-nav-group').count()!==2)problems.push(width+' core / optional split missing');
  await heap.locator('[data-phase=used]').click();
  if(!(await heap.locator('#dm-detail').innerText()).includes('값 10'))problems.push(width+' selected cell value wrong');
- await heap.locator('[data-index="3"]').click();
+ await heap.locator('#dm-cells .dm-cell').nth(3).click();
  if(!(await heap.locator('#dm-detail').innerText()).includes('0x100C'))problems.push(width+' pointer address incorrect');
  await heap.locator('[data-phase=released]').click();
  if(!(await heap.locator('#dm-pointer-value').innerText()).includes('NULL'))problems.push(width+' free pointer state incorrect');

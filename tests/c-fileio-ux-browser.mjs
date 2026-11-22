@@ -7,9 +7,9 @@ for(const width of [390,768,1280]){
  page.on("pageerror",e=>failures.push(width+" runtime JS "+e.message));
  await page.goto("http://127.0.0.1:8765/c-programming/file-io/",{waitUntil:"networkidle"});
  if(await page.locator(".route-more").evaluate(el=>el.open))failures.push(width+" roadmap unexpectedly expanded");
- if(await page.locator("[data-jump-stage]").count()!==2)failures.push(width+" learning shortcuts missing");
- await page.locator("[data-jump-stage='5']").click();
- if(!await page.locator("#step-label").innerText().then(x=>x.includes("06")))failures.push(width+" failed to jump to step 6");
+ if(await page.locator(".core-quick-path [data-jump-stage]").count()!==1)failures.push(width+" core-concept shortcut missing");
+ await page.locator("[data-jump-stage='0']").click();
+ if(!await page.locator("#step-label").innerText().then(x=>x.includes("01")))failures.push(width+" failed to jump to core concepts");
  await page.locator(".route-more summary").click();
  if(!await page.locator(".route-more").evaluate(el=>el.open))failures.push(width+" full roadmap unavailable");
  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+3))failures.push(width+" course horizontal overflow");
@@ -35,4 +35,4 @@ for(const width of [390,768,1280]){
 }
 await browser.close();
 if(failures.length){console.error(failures.join("\n"));process.exit(1)}
-console.log("PASS: compact 171 navigation, 3 core shortcuts, saved drafts, 7 optional task menu and responsive UI");
+console.log("PASS: compact 171 navigation, core-concept shortcut, saved drafts, 7 optional task menu and responsive UI");
