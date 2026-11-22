@@ -123,6 +123,33 @@ if(process.env.C_JOURNEY_BROWSER==="1"){
   assert(await page.locator("[data-course]").count()===3,"integrated dashboard renders all courses");
   assert(dashboardErrors.length===0,"integrated dashboard no missing resources or JS errors "+dashboardErrors.join(";"));
   await page.close();
+  // Cross-chapter shell: the same header, course picker, section arrows,
+  // and chapter sidebar must work for all eight published C chapters.
+  for(const slug of ["arrays","strings","standard-library","functions","pointer","structure","file-io","dynamic-memory"]){
+   const page=await browser.newPage({viewport:{width:1280,height:850}});
+   const shellErrors=[];page.on("pageerror",e=>shellErrors.push(e.message));
+   await page.goto("http://127.0.0.1:8876/"+base+slug+"/",{waitUntil:"domcontentloaded"});
+   assert(await page.locator("body > .ss-common-header").count()===1,slug+" single SS-style header");
+   assert(await page.locator(".c-ss-shell > .c-ss-sidebar").count()===1,slug+" left chapter sidebar");
+   assert(await page.locator(".c-ss-shell > .c-ss-workspace").count()===1,slug+" right learning workspace");
+   assert(await page.locator(".ss-common-menu .ss-common-links a").count()===9,slug+" eight chapter links plus home");
+   assert(await page.locator(".c-four-navigation > *").count()===4,slug+" four chapter/section arrows");
+   assert(await page.locator("#lesson-nav button").count()>0,slug+" section TOC preserved");
+   assert(await page.locator("#c-language").count()===1,slug+" common language picker");
+   assert(await page.locator("[data-els-theme-picker]").count()===1,slug+" one common theme picker");
+   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+8),slug+" no full-page overflow");
+   assert(shellErrors.length===0,slug+" no shell runtime errors "+shellErrors.join(";"));
+   if(slug==="pointer"){
+    const before=await page.locator("#lesson h2").innerText();
+    await page.locator(".c-four-navigation button").last().click();
+    assert((await page.locator("#lesson h2").innerText())!==before,slug+" header next-section navigation");
+    await page.locator(".c-sidebar-toggle").click();
+    assert(await page.evaluate(()=>document.documentElement.dataset.cSidebar)==="collapsed",slug+" collapsible sidebar");
+    await page.locator(".c-sidebar-toggle").click();
+    assert(await page.evaluate(()=>document.documentElement.dataset.cSidebar)==="expanded",slug+" sidebar restores");
+   }
+   await page.close();
+  }
   browserStatus="RAN";
  }catch(e){assert(false,"Browser integration test failed: "+String(e))}
  finally{if(browser)await browser.close();if(server)server.kill()}
