@@ -234,7 +234,7 @@ function drawBeats(){
   const waveform=[],top=[],bottom=[];
   for(let i=0;i<=3600;i++){const t=2*i/3600,e=envelope(t);waveform.push([t,beatsAt(t)]);top.push([t,e]);bottom.push([t,-e])}
   line(C,B,waveform,C.pal.line,1.3);line(C,B,top,C.pal.alt,2);line(C,B,bottom,C.pal.alt,1.5,[5,5]);
-  legend(C,[["x(t)",C.pal.line],["± envelope",C.pal.alt]]);
+  legend(C,[["x(t)",C.pal.line],[txt("± envelope","± 포락선",true),C.pal.alt]]);
   marker(C,B,(audioPosition()%2),beatsAt(audioPosition()%2),C.pal.alt);
  }
  C=canvasContext(canvases[1]);
@@ -243,7 +243,7 @@ function drawBeats(){
   const a=[],b=[],c=[];
   for(let i=0;i<=900;i++){const t=t0+dt*i/900;a.push([t,Math.sin(2*Math.PI*state.f1*t)]);b.push([t,state.ratio*Math.sin(2*Math.PI*(state.f1+state.delta)*t)]);c.push([t,beatsAt(t)])}
   line(C,B,a,C.pal.muted,1);line(C,B,b,C.pal.alt,1);line(C,B,c,C.pal.line,2);
-  legend(C,[["tone 1",C.pal.muted],["tone 2",C.pal.alt],["sum",C.pal.line]]);
+  legend(C,[[txt("tone 1","신호 1",true),C.pal.muted],[txt("tone 2","신호 2",true),C.pal.alt],[txt("sum","합",true),C.pal.line]]);
  }
  C=canvasContext(canvases[2]);
  if(C){
@@ -294,7 +294,7 @@ function drawAMFM(){
   }
   line(C,B,wave,C.pal.line,1.2);
   if(am){line(C,B,eP,C.pal.alt,2);line(C,B,eN,C.pal.alt,1.7,[5,4])}
-  legend(C,am?[["AM",C.pal.line],["envelope",C.pal.alt]]:[["FM · constant amplitude",C.pal.line]]);
+  legend(C,am?[["AM",C.pal.line],[txt("envelope","포락선",true),C.pal.alt]]:[[txt("FM · constant amplitude","FM · 일정 진폭",true),C.pal.line]]);
   const t=audioPosition()%tmax;marker(C,B,t,modAt(t),C.pal.alt);
  }
  C=canvasContext(canvases[1]);if(C){
@@ -354,7 +354,7 @@ function drawSampling(){
   const B=axes(C,{xmin:begin,xmax:end,ymin:-1.2,ymax:1.2,xlabel:"t (s)",ylabel:"x(t)"}),wave=[];
   for(let i=0;i<=1150;i++){const t=begin+span*i/1150;wave.push([t,continuousAt(t)])}
   line(C,B,wave,C.pal.line,1.8);plotSamples(C,B,begin,end,true);
-  legend(C,[["CT input",C.pal.line],["samples",C.pal.alt]]);
+  legend(C,[[txt("CT input","CT 입력",true),C.pal.line],[txt("samples","표본",true),C.pal.alt]]);
   marker(C,B,center,continuousAt(center),C.pal.alt);
  }
  C=canvasContext(canvases[1]);if(C){
@@ -377,7 +377,7 @@ function drawSampling(){
     C.ctx.save();C.ctx.globalAlpha=.86;circle(C.ctx,B.x(t),B.y(f),C.pal.peak,2.7);C.ctx.restore();
    }
   }
-  legend(C,[["input fᵢ",C.pal.muted],["folded |fₐ|",C.pal.line],["Nyquist",C.pal.alt],["STFT peaks",C.pal.peak]]);
+  legend(C,[[txt("input fᵢ","입력 fᵢ",true),C.pal.muted],[txt("folded |fₐ|","접힌 |fₐ|",true),C.pal.line],[txt("Nyquist","나이퀴스트",true),C.pal.alt],[txt("STFT peaks","STFT 피크",true),C.pal.peak]]);
   marker(C,B,center,Math.abs(foldedSigned(freqAt(center),state.fs)),C.pal.alt);
  }
  $("ss-al-note-1").textContent=txt("Original continuous waveform (green) and exact samples taken at t=n/fₛ (orange). Dashed links are not interpolation.","연속시간 파형(녹색)과 t=n/fₛ에서 얻은 정확한 표본점(주황색)입니다. 점선 연결은 보간 복원이 아닙니다.");
