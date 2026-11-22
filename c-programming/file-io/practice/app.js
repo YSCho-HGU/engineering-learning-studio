@@ -56,7 +56,7 @@ function renderCoreGuide(task){
 function load(i){active=i;document.getElementById("gcc-confirm").checked=!!evidence[i];const t=tasks[i];$("task-id").textContent=(t.id==="M1"?"CORE MINI LAB · ":"PRACTICE ")+t.id+" · "+(t.id==="M1"||i<2?"필수":"선택 심화");
 $("mini-overview").hidden=t.id!=="M1";$("sample-input").hidden=!t.sampleContent;document.querySelectorAll("[data-go-task]").forEach(b=>{const selected=Number(b.dataset.goTask)===i;b.classList.toggle("active",selected);b.setAttribute("aria-current",selected?"step":"false")});$("task-title").textContent=t.title;$("task-desc").textContent=t.desc;renderCoreGuide(t);$("task-objective").textContent=t.objective;$("test-input").textContent=t.input;$("test-output").textContent=t.output;$("hint").textContent=t.hint;let draft=null;try{draft=localStorage.getItem(key(i))}catch(e){}$("editor").value=draft===null?t.starter:draft;$("feedback").textContent="직접 코드를 작성하세요. 핵심 구문 점검은 GCC 컴파일을 대체하지 않습니다.";renderNav();window.dispatchEvent(new CustomEvent("c-fileio-task-change",{detail:{id:t.id}}))}
 function renderNav(){
- const nav=$("task-nav");nav.replaceChildren();
+ const nav=$("task-nav");const shellControls=[...nav.querySelectorAll(":scope > .c-sidebar-topline, :scope > .c-course-task-links")];nav.replaceChildren(...shellControls);
  const preserved=nav.dataset.openGroup||"core";
  const sections=[["core","Coding Challenges · 직접 구현",true],["advanced","Advanced · 선택 심화",false]];
  const lists={};
