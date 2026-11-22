@@ -7,24 +7,18 @@ const COURSES={
 };
 const $=id=>document.getElementById(id);
 const ownerSettings=window.STUDIO_ADMIN_GITHUB||{};
-const secureMode=ownerSettings.enabled===true;
-let selected="c",token="",catalog=null,sha="",busy=false,secureIdentity=null;
+let selected="c",catalog=null,sha="",busy=false,secureIdentity=null;
 function apiURL(){return new URL("/api/catalog?course="+encodeURIComponent(selected),ownerSettings.workerUrl).href}
 async function ownerHeaders(){return {"Accept":"application/json","Authorization":"Bearer "+await window.StudioAdminOwner.token()}}
 function isSignedIn(){return !!secureIdentity&&!!window.StudioAdminOwner}
 function msg(text){$("status").textContent=text}
-function authHeader(){return {"Accept":"application/vnd.github+json","Authorization":"Bearer "+token,"X-GitHub-Api-Version":"2022-11-28"}}
-function apiPath(file){return "https://api.github.com/repos/"+COURSES[selected].repo+"/contents/"+file}
-function encode(s){const bytes=new TextEncoder().encode(s);let b="";for(let i=0;i<bytes.length;i+=8192)b+=String.fromCharCode(...bytes.subarray(i,i+8192));return btoa(b)}
-function decode(content){const raw=atob(content.replace(/\s/g,""));return new TextDecoder().decode(Uint8Array.from(raw,c=>c.charCodeAt(0)))}
 function courseChange(id){
- selected=id;token="";catalog=null;sha="";$("token").value="";$("editor").hidden=true;
+ selected=id;catalog=null;sha="";$("editor").hidden=true;
  $("course-c").setAttribute("aria-selected",String(id==="c"));
  $("course-ss").setAttribute("aria-selected",String(id==="ss"));
  $("repo-label").textContent="Repository: "+COURSES[id].repo+" · "+COURSES[id].path;
- if(secureMode)msg(COURSES[id].name+(isSignedIn()?" · GitHub Owner 계정으로 최신 강의 설정을 읽습니다.":" · GitHub Owner 로그인이 필요합니다."));
- else msg(COURSES[id].name+" 관리 모드입니다. 해당 저장소 권한으로 인증하세요.");
- if(secureMode&&isSignedIn())load();
+ msg(COURSES[id].name+(isSignedIn()?" · 인증된 관리자 세션으로 강의 설정을 불러옵니다.":" · 관리자 로그인이 필요합니다."));
+ if(isSignedIn())load();
 }
 function check(data){
  if(!data||data.schemaVersion!==1||!Array.isArray(data.chapters))throw Error("잘못된 카탈로그 형식입니다.");
@@ -87,36 +81,20 @@ function nextCatalog(){
  }
  return next;
 }
-async function ensurePage(ch){
- if(selected==="c"){
-  if(!/^\.\/[a-z0-9-]+\/$/.test(ch.url))throw Error(ch.id+"번 경로 오류");
-  const p="c-programming/"+ch.url.slice(2)+"index.html";
-  const res=await fetch(apiPath(p),{headers:authHeader(),cache:"no-store"});
-  if(!res.ok)throw Error(ch.id+"번 학습 페이지가 없습니다: "+p+" (HTTP "+res.status+")");
- }else{
-  // All eight S&S chapters are embedded in index.html; check only the known chapter range.
-  if(!/^[1-8]$/.test(String(ch.id)))throw Error("Unknown S&S chapter "+ch.id);
-  const res=await fetch(apiPath("index.html"),{headers:authHeader(),cache:"no-store"});
-  if(!res.ok)throw Error("S&S index.html 확인 실패 (HTTP "+res.status+")");
- }
-}
 async function load(){
- if(secureMode&&!isSignedIn()){msg("GitHub Owner 계정으로 로그인하세요.");return;}
- if(!secureMode&&!token){msg("토큰을 입력하세요.");return}
+ if(!isSignedIn()){msg("GitHub Owner 계정으로 로그인하세요.");return}
  try{
-  busy=true;$("connect").disabled=true;$("save").disabled=true;
+  busy=true;$("save").disabled=true;
   msg("선택한 과목의 GitHub 공개 설정을 읽는 중...");
   const requested=selected;
-  const res=secureMode?
-    await fetch(apiURL(),{headers:await ownerHeaders(),cache:"no-store"}):
-    await fetch(apiPath(COURSES[selected].path),{headers:authHeader(),cache:"no-store"});
+  const res=await fetch(apiURL(),{headers:await ownerHeaders(),cache:"no-store"});
   if(!res.ok){const issue=await res.json().catch(()=>({}));throw Error(issue.error||"인증/조회 실패 HTTP "+res.status);}
-  const data=await res.json(),loaded=secureMode?data.catalog:JSON.parse(decode(data.content));
-  if(requested!==selected||secureMode&&!isSignedIn())return;
+  const data=await res.json(),loaded=data.catalog;
+  if(requested!==selected||!isSignedIn())return;
   check(loaded);catalog=loaded;sha=data.sha;render();$("editor").hidden=false;
   msg("최신 데이터 불러오기 완료. 수정 사항은 저장 전까지 게시되지 않습니다.");
  }catch(e){msg(e.message);$("editor").hidden=true}
- finally{busy=false;$("connect").disabled=false;$("save").disabled=false}
+ finally{busy=false;$("save").disabled=false}
 }
 async function save(){
  if(busy||!catalog)return;
@@ -124,45 +102,31 @@ async function save(){
  const changed=next.chapters.filter((c,i)=>JSON.stringify(c)!==JSON.stringify(catalog.chapters[i]));
  if(!changed.length){msg("변경한 항목이 없습니다.");return}
  if(!confirm(COURSES[selected].name+" · "+changed.length+"개 단원 변경 내용을 GitHub에 저장할까요?"))return;
- const newly=changed.filter(c=>c.published&&!catalog.chapters.find(old=>old.id===c.id)?.published);
- try{
+  try{
   busy=true;$("save").disabled=true;$("reload").disabled=true;
-  if(!secureMode)for(const ch of newly){msg(ch.id+"번 학습 콘텐츠 확인 중...");await ensurePage(ch)}
   msg("GitHub에 저장 중...");
   const currentSelection=selected;
-  const res=secureMode?
-   await fetch(apiURL(),{
-    method:"PUT",headers:{...await ownerHeaders(),"Content-Type":"application/json"},
-    body:JSON.stringify({sha,catalog:next})
-   }):
-   await fetch(apiPath(COURSES[selected].path),{
-    method:"PUT",headers:{...authHeader(),"Content-Type":"application/json"},
-    body:JSON.stringify({message:"Manage "+COURSES[selected].name+" chapter metadata: "+changed.map(c=>c.id).join(","),content:encode(JSON.stringify(next,null,2)+"\n"),sha})
-   });
+  const res=await fetch(apiURL(),{
+   method:"PUT",headers:{...await ownerHeaders(),"Content-Type":"application/json"},
+   body:JSON.stringify({sha,catalog:next})
+  });
   if(!res.ok){let info="";try{const data=await res.json();info=data.error||data.message||""}catch(e){}throw Error("저장 실패 HTTP "+res.status+": "+info+". 최신 설정을 다시 읽어 충돌을 확인하세요.")}
   const result=await res.json();
-  if(currentSelection!==selected||secureMode&&!isSignedIn())return;
-  catalog=next;sha=secureMode?result.sha:result.content.sha;render();
+  if(currentSelection!==selected||!isSignedIn())return;
+  catalog=next;sha=result.sha;render();
   msg("GitHub에 변경 사항 저장 완료. Pages 배포 후 학생 화면을 새로고침하면 반영됩니다.");
  }catch(e){msg(e.message)}
  finally{busy=false;$("save").disabled=false;$("reload").disabled=false}
 }
 $("course-c").addEventListener("click",()=>courseChange("c"));
 $("course-ss").addEventListener("click",()=>courseChange("ss"));
-$("connect").addEventListener("click",()=>{if(secureMode)return;token=$("token").value.trim();$("token").value="";load()});
-$("clear").addEventListener("click",()=>{if(secureMode)return;token="";catalog=null;sha="";$("token").value="";$("editor").hidden=true;msg("이 탭의 인증 정보를 지웠습니다.")});
 $("save").addEventListener("click",save);
 $("reload").addEventListener("click",()=>{if(confirm("저장 전 변경 사항을 버리고 최신 데이터를 불러올까요?"))load()});
-if(secureMode){
- $("legacy-auth-controls").hidden=true;
- $("legacy-auth-copy").hidden=true;
- $("github-auth-controls").hidden=false;
- window.addEventListener("studio-admin-auth-state",event=>{
-  secureIdentity=event.detail?.authenticated?event.detail.user:null;
-  token="";catalog=null;sha="";$("editor").hidden=true;
-  $("save").disabled=!secureIdentity;
-  if(secureIdentity)load();else msg("GitHub Owner로 로그인하면 단원 정보를 편집할 수 있습니다.");
- });
-}
+window.addEventListener("studio-admin-auth-state",event=>{
+ secureIdentity=event.detail?.authenticated?event.detail.user:null;
+ catalog=null;sha="";$("editor").hidden=true;
+ $("save").disabled=!secureIdentity;
+ if(secureIdentity)load();else msg("GitHub Owner로 로그인하면 단원 정보를 편집할 수 있습니다.");
+});
 courseChange("c");
 })();
