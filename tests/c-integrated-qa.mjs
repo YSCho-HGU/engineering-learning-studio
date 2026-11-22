@@ -150,6 +150,20 @@ if(process.env.C_JOURNEY_BROWSER==="1"){
    }
    await page.close();
   }
+  // After-class editors use the same persistent shell without replacing drafts.
+  for(const slug of ["arrays","strings","standard-library","functions","pointer","structure","dynamic-memory"]){
+   const page=await browser.newPage({viewport:{width:1280,height:850}});
+   const errors=[];page.on("pageerror",e=>errors.push(e.message));
+   await page.goto("http://127.0.0.1:8876/"+base+slug+"/practice/",{waitUntil:"domcontentloaded"});
+   assert(await page.locator("body > .ss-common-header").count()===1,slug+" practice common header");
+   assert(await page.locator(".c-ss-shell > .cp-menu.c-ss-sidebar").count()===1,slug+" task sidebar");
+   assert(await page.locator(".c-practice-workspace .cp-editor").count()===1,slug+" original editor retained");
+   assert(await page.locator(".cp-menu .cp-nav-item").count()===6,slug+" six tasks accessible");
+   assert(await page.locator("[data-els-theme-picker] option").count()===5,slug+" five shared themes");
+   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+8),slug+" practice no overflow");
+   assert(errors.length===0,slug+" practice no JS errors "+errors.join(";"));
+   await page.close();
+  }
   browserStatus="RAN";
  }catch(e){assert(false,"Browser integration test failed: "+String(e))}
  finally{if(browser)await browser.close();if(server)server.kill()}
