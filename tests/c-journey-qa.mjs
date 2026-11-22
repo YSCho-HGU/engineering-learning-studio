@@ -27,7 +27,7 @@ for(const kind of ['pointer','structure']){
  check(data.lessons.every((l,i)=>kind==='structure'&&i===6 || l.trace.some(t=>t.state.replaceAll(String.fromCharCode(92)+"n",String.fromCharCode(10)).includes(l.output))),kind+': trace output corresponds to reference C stdout');
 
  const html=fs.readFileSync(path.join(base,'index.html'),'utf8');
- for(const id of ['lesson','lesson-nav','progress-text','progress-bar','practice','theme'])
+ for(const id of ['lesson','lesson-nav','progress-text','progress-bar','hero-count','theme'])
   check(html.includes('id="'+id+'"'),kind+': DOM target '+id);
  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'c-journey-'));
  for(let i=0;i<data.lessons.length;i++){
