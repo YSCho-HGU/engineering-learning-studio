@@ -78,7 +78,7 @@ button:disabled{opacity:.55;cursor:default}
 .ss-al-root.focus .ss-al-charts[data-kind=chirp] .ss-al-plot:first-child canvas,.ss-al-root.focus .ss-al-charts[data-kind=helix] .ss-al-plot:first-child canvas{height:clamp(480px,76vh,780px)}
 .ss-al-root.controls-hidden .ss-al-controls{display:none}
 .ss-al-root.controls-hidden .ss-al-workspace{grid-template-columns:minmax(0,1fr)}
-@media(max-width:1080px){.ss-al-workspace{grid-template-columns:230px minmax(0,1fr)}.ss-al-charts{grid-template-columns:1fr}.ss-al-charts[data-kind=chirp],.ss-al-charts[data-kind=helix]{grid-template-columns:1fr 1fr}.ss-al-charts[data-kind=chirp] .ss-al-plot:first-child,.ss-al-charts[data-kind=helix] .ss-al-plot:first-child{grid-column:span 2;grid-row:auto}.ss-al-charts[data-kind=chirp] .ss-al-plot:first-child canvas,.ss-al-charts[data-kind=helix] .ss-al-plot:first-child canvas{height:360px}}
+@media(max-width:1080px){.ss-al-workspace{grid-template-columns:230px minmax(0,1fr)}.ss-al-charts{grid-template-columns:repeat(2,minmax(0,1fr))}.ss-al-charts[data-kind=chirp],.ss-al-charts[data-kind=helix]{grid-template-columns:1fr 1fr}.ss-al-charts[data-kind=chirp] .ss-al-plot:first-child,.ss-al-charts[data-kind=helix] .ss-al-plot:first-child{grid-column:span 2;grid-row:auto}.ss-al-charts[data-kind=chirp] .ss-al-plot:first-child canvas,.ss-al-charts[data-kind=helix] .ss-al-plot:first-child canvas{height:360px}}
 @media(max-width:760px){.ss-al-workspace{grid-template-columns:1fr}.ss-al-controls{max-height:none;overflow:visible;position:static}.ss-al-intro{padding:12px}.ss-al-heading-line{flex-wrap:wrap}.ss-al-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.ss-al-charts[data-kind=chirp],.ss-al-charts[data-kind=helix]{grid-template-columns:1fr}.ss-al-charts[data-kind=chirp] .ss-al-plot:first-child,.ss-al-charts[data-kind=helix] .ss-al-plot:first-child{grid-column:auto}.ss-al-charts[data-kind=chirp] .ss-al-plot:first-child canvas,.ss-al-charts[data-kind=helix] .ss-al-plot:first-child canvas{height:clamp(290px,42vh,450px)}.ss-al-root.focus .ss-al-plot canvas{height:clamp(300px,50vh,550px)}}
 @media(max-width:520px){.ss-al-root{padding:0 8px 15px}.ss-al-intro{margin-top:8px}.ss-al-tabs a{flex:1 1 100%;font-size:12px}.ss-al-plot{padding:9px}.ss-al-metric{padding:9px}.ss-al-equation{font-size:16px}.ss-al-metric-value{font-size:16px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
@@ -136,3 +136,6 @@ button:disabled{opacity:.55;cursor:default}
  .ss-al-plot-heading{align-items:flex-start}
  .ss-al-camera-tools{flex-wrap:wrap}
 }
+
+/* Keep both harmonic plots side by side on tablets; stack only where axes become too narrow. */
+@media(max-width:680px){.ss-al-charts{grid-template-columns:minmax(0,1fr)}}
