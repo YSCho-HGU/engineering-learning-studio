@@ -184,3 +184,10 @@ html[data-c-sidebar=collapsed] .c-sidebar-caption{display:none}
 .c-ss-shell .c-course-task-links{display:flex;flex-direction:column;gap:7px}
 .c-ss-shell .c-learning-task-heading{font-weight:800;font-size:13px;margin:10px 7px 3px}
 .c-ss-shell .c-ss-sidebar .progress-panel small:empty{display:none}
+
+/* Bilingual explanations and C expressions: keep paragraphs readable and code semantic. */
+.c-ss-content :is(.concept p.c-learning-prose,.transfer p.c-learning-prose,.learn p.c-learning-prose,#hero-summary){white-space:pre-line;overflow-wrap:anywhere;line-height:1.8}
+.c-ss-content .concept p.c-learning-prose{font-size:16px;margin:12px 0 5px}
+.c-ss-content :is(code.c-inline-code,code.cp-inline-code){font:600 .93em/1.55 Consolas,"Cascadia Code",monospace;background:var(--els-surface-alt,var(--soft));color:var(--els-ink,var(--ink));border:1px solid var(--els-border,var(--line));border-radius:4px;padding:1px 4px;white-space:normal;overflow-wrap:anywhere}
+.c-ss-content .c-ss-workspace :is(.cp-task-desc,#task-desc){white-space:pre-line;line-height:1.75}
+.c-ss-content .c-learning-group .c-learning-link{line-height:1.5}
