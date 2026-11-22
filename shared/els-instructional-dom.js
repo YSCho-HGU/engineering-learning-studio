@@ -67,6 +67,23 @@ const translations={
  "=0이고 같은 지점": "=0 and the same point",
  "는 Z-plane의 zero입니다. 본 실험의 입력 정현파는 모든 정수 n에서 존재하므로 정상상태 응답을 봅니다.": "is a zero in the z-plane. The sinusoidal input exists at every integer n, so we observe the steady-state response."
 };
+Object.assign(translations,{
+ "=1/(s+1.10), the pole is s=-1.10. 오른쪽 ROC이므로 t≥0의 인과적 감쇠 신호를 나타냅니다. The ROC determines time sidedness and convergence.": "=1/(s+1.10), the pole is s=-1.10. The right-sided ROC gives a causal decaying signal for t≥0. The ROC determines time sidedness and convergence.",
+ "CHECK YOUR UNDERSTANDING / 개념 확인 — Derive the transform using support → integration → convergence, not memorization.": "CHECK YOUR UNDERSTANDING — Derive the transform from support to integration to convergence, rather than memorizing it.",
+ "CHECK YOUR UNDERSTANDING / 개념 확인 — Use ROC to assign each partial-fraction term to its time direction.": "CHECK YOUR UNDERSTANDING — Use the ROC to determine the time direction of each partial-fraction term.",
+ "=(e^(−t)−e^(−4t))/3 for t≥0. 두 항의 시작값이 상쇄되어 x(0)=0이며 t<0에서는 0. The pole locations remain the same, but the ROC changes the time-domain signal. 허수축이 ROC에 포함되어 ordinary CTFT도 존재합니다.": "=(e^(−t)−e^(−4t))/3 for t≥0. The two initial terms cancel, so x(0)=0; the signal is zero for t<0. The poles are unchanged, but the ROC changes the time-domain signal. Because the ROC includes the imaginary axis, its ordinary CTFT also exists.",
+ "인과 시스템의 모든 활성 pole이 왼쪽 반평면에 있으므로 BIBO 안정. pole의 실수부가 감쇠/증가를 결정하며 zero는 잔여계수와 주파수 응답의 모양에 영향을 줍니다.": "The causal system is BIBO stable because all active poles lie in the open left half-plane. Pole real parts control decay or growth, while zeros affect residues and the frequency-response shape.",
+ "CHECK YOUR UNDERSTANDING / 개념 확인 — Pole real parts control decay; imaginary parts control oscillation.": "CHECK YOUR UNDERSTANDING — Pole real parts control decay; imaginary parts control oscillation.",
+ "during 4.00 seconds. Nearest bin k=17, f=4.250 Hz. ⚠ 비정수 주기, FFT bin과 불일치 → leakage.": "during 4.00 seconds. Nearest bin k=17, f=4.250 Hz. ⚠ A noninteger number of cycles does not align with an FFT bin, causing spectral leakage.",
+ "Ideal bandlimited reconstruction is theoretically possible. 중앙 t=0.037 s to 유한합 오차 ≈ 0.0004. Distinguish ideal infinite-sum conditions from finite numerical approximation.": "Ideal bandlimited reconstruction is theoretically possible. At the center t=0.037 s, the finite-sum error is approximately 0.0004. Distinguish ideal infinite-sum conditions from finite numerical approximation.",
+ ". Convergence restricts which complex z are allowed; this set is the ROC. 감쇠와 발산, 그리고 단위원의 포함 여부를 먼저 연결해 보세요.": ". Convergence restricts which complex z values are allowed; this set is the ROC. First connect decay, divergence, and whether the unit circle belongs to the ROC.",
+ "; the causal sequence is absolutely summable. 같은 대수식이라도 ROC가 필요합니다.": "; the causal sequence is absolutely summable. Even the same algebraic expression requires an ROC to specify the sequence.",
+ ". Its ROC is essential. 같은 대수식": ". Its ROC is essential. The same algebraic expression",
+ ". Moving the pole toward +1 makes the impulse-response tail longer and changes the unit-circle frequency response. Pole 위치는 시간적 기억과 주파수 선택성에 동시에 영향을 줍니다.": ". Moving the pole toward +1 makes the impulse-response tail longer and changes the unit-circle frequency response. Pole location influences both time-domain memory and frequency selectivity.",
+ ". For a sinusoidal input, averaging N delayed phasors may cancel exactly. 이때": ". For a sinusoidal input, averaging N delayed phasors may cancel exactly. In that case,",
+ "show how that series behaves as M grows. 우측수열과 좌측수열의 수렴 조건을 pole 및 ROC와 연결합니다.": "show how the series behaves as M grows. Relate the convergence conditions for right-sided and left-sided sequences to poles and the ROC.",
+ "term is an actual one-sample state delay. a controls both noise reduction and response delay. 실습에서는": "term is an actual one-sample state delay. Parameter a controls both noise reduction and response delay. In this lab,"
+});
 const originals=new WeakMap(),observed=new WeakMap(),korean=/[가-힣]/;
 let running=false;
 function localize(value,mode){
