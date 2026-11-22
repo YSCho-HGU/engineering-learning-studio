@@ -468,12 +468,14 @@ function renderAliasSummary(){
  const el=$("ss-al-alias-summary");if(!el)return;
  el.hidden=false;
  const t=state.T*state.pos/100,fi=freqAt(t),signed=foldedSigned(fi,state.fs);
- const aliased=fi>state.fs/2;
+ const nyquist=state.fs/2,atNyquist=Math.abs(fi-nyquist)<.0001;
+ const aliased=fi>nyquist&&!atNyquist;
  const crossings=nyquistCrossings();
  const times=crossings.length?crossings.map(t=>t.toFixed(2)+" s").join(", "):txt("none","없음",true);
- const heading=aliased?txt("ALIASING","에일리어싱",true):txt("No alias at t","선택 시각 무에일리어싱",true);
+ const heading=atNyquist?txt("AT NYQUIST · phase-sensitive boundary","나이퀴스트 경계 · 위상 주의",true):
+  aliased?txt("ALIASING","에일리어싱",true):txt("No alias at t","선택 시각 무에일리어싱",true);
  const direction=signed<-.001?txt("reverse phase","위상 반전",true):txt("forward phase","정방향 위상",true);
- el.dataset.aliased=String(aliased);
+ el.dataset.aliased=String(aliased);el.dataset.atNyquist=String(atNyquist);
  el.textContent=heading+"  ·  t="+t.toFixed(2)+" s  ·  "+
    "fᵢ="+fi.toFixed(1)+" Hz → fₐ="+signed.toFixed(1)+" Hz ("+direction+")  ·  "+
    "fₛ/2="+(state.fs/2).toFixed(1)+" Hz  ·  "+
