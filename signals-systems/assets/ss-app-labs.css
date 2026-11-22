@@ -193,3 +193,12 @@ button:disabled{opacity:.55;cursor:default}
  .ss-al-charts[data-kind=amfm] .ss-al-plot:not(:first-child) canvas,
  .ss-al-charts[data-kind=sampling] .ss-al-plot:not(:first-child) canvas{height:clamp(270px,36vh,420px)}
 }
+
+/* Six tabs would otherwise consume six vertical rows on phones. Keep graphs in view. */
+@media(max-width:760px){
+ .ss-al-tabs{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;padding-bottom:5px;scroll-snap-type:x proximity}
+ .ss-al-tabs a{flex:0 0 auto;white-space:nowrap;scroll-snap-align:start}
+}
+@media(max-width:520px){
+ .ss-al-tabs a{flex:0 0 auto;white-space:nowrap;font-size:12px}
+}
