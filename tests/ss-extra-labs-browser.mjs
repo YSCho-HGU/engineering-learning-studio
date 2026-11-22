@@ -7,6 +7,23 @@ await mkdir("tests/screenshots",{recursive:true});
 const almost=(x,y,tol=.2)=>Math.abs(Number(x)-y)<tol;
 for(const lab of ["beats","amfm","sampling"]){
  const page=await browser.newPage({viewport:{width:1366,height:768}});
+ if(lab==="sampling"){
+  await page.addInitScript(()=>{
+   window.__ssAudioBuffers=[];
+   if(typeof AudioBufferSourceNode==="undefined")return;
+   const original=AudioBufferSourceNode.prototype.start;
+   AudioBufferSourceNode.prototype.start=function(...args){
+    const d=this.buffer?.getChannelData(0);
+    if(d?.length){
+     let peak=0,energy=0,n=0;
+     const start=Math.min(d.length-1,Math.round(d.length*.10)),end=Math.min(d.length,start+4000);
+     for(let i=start;i<end;i++){peak=Math.max(peak,Math.abs(d[i]));energy+=d[i]*d[i];n++}
+     window.__ssAudioBuffers.push({peak,rms:Math.sqrt(energy/Math.max(1,n)),length:d.length});
+    }
+    return original.apply(this,args);
+   };
+  });
+ }
  const thrown=[];page.on("pageerror",e=>thrown.push(e.message));
  try{
   const res=await page.goto(root+"/signals-systems/applications-lab.html?lab="+lab,{waitUntil:"domcontentloaded",timeout:25000});
@@ -88,6 +105,8 @@ for(const lab of ["beats","amfm","sampling"]){
    const startProgress=Number(await page.locator("#ss-al-seek").inputValue());
    if(startProgress<20)throw Error("CT Web Audio time failed to advance");
    await page.locator("#ss-al-play-alias").click();await page.waitForTimeout(110);
+   const buffers=await page.evaluate(()=>window.__ssAudioBuffers||[]);
+   if(buffers.length<2||buffers.slice(-2).some(b=>b.peak<.10||b.rms<.05))throw Error("Source/alias Web Audio generated silent PCM: "+JSON.stringify(buffers));
    if(!(await page.locator("#ss-al-audio .ss-al-audio-status").innerText()).includes("Aliased guide"))throw Error("Alias audio switch failed");
    if(Number(await page.locator("#ss-al-seek").inputValue())<startProgress)throw Error("Alias switching lost playback position");
    await page.locator("#ss-al-pause").click();
