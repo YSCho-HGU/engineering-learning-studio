@@ -83,3 +83,6 @@ button:disabled{opacity:.55;cursor:default}
  .ss-al-graph-actions{width:100%;justify-content:flex-end}
  .ss-al-graph-actions button{flex:1 1 auto}
 }
+
+/* Mixed language: show English explanation followed by a natural Korean line. */
+.ss-al-intro p,.ss-al-guidance li,.ss-al-insight,.ss-al-plot-note{white-space:pre-line}
