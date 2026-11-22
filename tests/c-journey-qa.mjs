@@ -66,8 +66,10 @@ if(process.env.C_JOURNEY_BROWSER==='1'){
     check(response?.status()===200,kind+'/'+width+'/'+theme+': route serves HTTP 200');
     check(await page.evaluate(()=>[...document.styleSheets].some(x=>x.href?.includes('journey.css'))),kind+'/'+width+'/'+theme+': course CSS loaded');
     check(await page.evaluate(()=>getComputedStyle(document.body).fontSize!=='0px'),kind+'/'+width+'/'+theme+': body text computed style');
-    await page.locator('#theme').click();
-    if(theme==='light')await page.locator('#theme').click();
+    const themePicker=page.locator('#theme');
+    check(await themePicker.evaluate(el=>el.tagName==='SELECT'&&el.hasAttribute('data-els-theme-picker')),kind+'/'+width+'/'+theme+': shared theme picker');
+    await themePicker.selectOption(theme==='light'?'white-clean':'neutral-dark');
+    check(await page.evaluate(()=>document.documentElement.dataset.elsTheme)===(theme==='light'?'white-clean':'neutral-dark'),kind+'/'+width+'/'+theme+': explicit theme selection honored');
     check(await page.locator('#lesson-nav button').count()===8,kind+'/'+width+'/'+theme+': eight nav items');
     check(await page.locator('#lesson h2').count()===1,kind+'/'+width+'/'+theme+': initial lesson rendered');
     await page.locator('#lesson .question label').nth(1).click();
