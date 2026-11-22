@@ -27,7 +27,7 @@ for(const width of [390,768,1280]){
  if(!await page.locator("#m1-buffer-explorer").isVisible())failures.push(width+" M1 explorer absent");
  if(!await page.locator("#mini-overview").isVisible())failures.push(width+" M1 introduction hidden");
  await page.locator('#task-nav details[data-group="advanced"] summary').click();
- if(await page.locator("#task-nav button").count()!==7)failures.push(width+" P1–P6 + M1 not all available");
+ if(await page.locator("#task-nav button[data-task]").count()!==7)failures.push(width+" P1–P6 + M1 not all available");
  await page.locator("#task-nav button[data-task='2']").click();
  if(await page.locator("#core-io-explorer").isVisible()||await page.locator("#m1-buffer-explorer").isVisible())failures.push(width+" optional P3 should have no core explorer");
  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+3))failures.push(width+" practice horizontal overflow");
