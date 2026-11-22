@@ -21,6 +21,9 @@ for(const kind of ["pointer","structure"]){
  }
  const home=fs.readFileSync(base+kind+"/index.html","utf8");
  assert(home.includes('id="assessment-status"'),kind+" independent concept status");
+ assert(home.includes('shared/els-content-model.js')&&home.includes('els-language.js')&&home.includes('../language.js'),kind+" shared immutable language pipeline");
+ assert(home.includes('data-els-theme-picker')&&home.includes('id="theme"'),kind+" shared theme picker replaces legacy toggle");
+ assert(!home.includes('Toggle dark and light mode'),kind+" no duplicate legacy theme button");
  assert(home.includes('./practice/'),kind+" practice editor navigation");
  assert(home.includes(kind==="pointer"?"../structure/":"../file-io/"),kind+" next course link");
 }
@@ -47,6 +50,15 @@ if(process.env.C_JOURNEY_BROWSER==="1"){
    const errors=[];page.on("pageerror",e=>errors.push(String(e)));page.on("response",r=>{if(r.status()>=400)errors.push("HTTP "+r.status()+" "+r.url())});
    await page.goto("http://127.0.0.1:8876/"+base+kind+"/",{waitUntil:"domcontentloaded"});
    assert(await page.locator("#lesson-nav button").count()===8,kind+" 8 working steps");
+   assert(await page.locator('[data-els-theme-picker]').count()===1,kind+" exactly one theme picker");
+   assert(await page.locator('#c-shared-language select').count()===1,kind+" common language control");
+   await page.locator('#c-shared-language select').selectOption('en');
+   await page.waitForLoadState('domcontentloaded');
+   assert(await page.evaluate(()=>document.documentElement.dataset.elsLanguage)==='en',kind+" English mode retained");
+   assert(!/[가-힣]/.test(await page.locator('#hero-summary').innerText()),kind+" English hero translation");
+   await page.locator('#c-shared-language select').selectOption('mixed');
+   await page.waitForLoadState('domcontentloaded');
+   assert(await page.evaluate(()=>document.documentElement.dataset.elsLanguage)==='mixed',kind+" mixed mode retained");
    const conceptIndex=course[kind].lessons[0].quiz.correct;
    await page.locator("#lesson .question label").nth(conceptIndex).click();
    await page.locator("#lesson .question button").click();
