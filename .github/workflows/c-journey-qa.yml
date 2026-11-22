@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'c-programming/journey.*'
+      - 'c-programming/c-ss-shell.*'
       - 'c-programming/course-consistency.css'
       - 'c-programming/pointer/**'
       - 'c-programming/structure/**'
