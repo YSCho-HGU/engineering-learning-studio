@@ -15,6 +15,14 @@ const get=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fal
 let drafts=get(K,{}),evidence=get(E,{});
 const $=(s)=>document.querySelector(s);
 const txt=(tag,cls,host,value)=>{let n=document.createElement(tag);if(cls)n.className=cls;if(value!==undefined)n.textContent=value;host.append(n);return n};
+function richText(host,value){
+ host.replaceChildren();
+ for(const part of String(value??"").split(/(`[^`\n]+`)/g)){
+  if(!part)continue;
+  if(part[0]==="`"&&part.at(-1)==="`"&&part.length>2)txt("code","cp-inline-code",host,part.slice(1,-1));
+  else host.append(document.createTextNode(part));
+ }
+}
 const store=()=>{try{localStorage.setItem(K,JSON.stringify(drafts));localStorage.setItem(E,JSON.stringify(evidence))}catch(e){}};
 const rulebook={
 pointer:[
@@ -143,7 +151,7 @@ txt("summary","",more,"GCC 실행 방법 및 검증 절차");
 txt("p","",more,"① .c 파일을 다운로드하세요. ② gcc -std=c11 -Wall -Wextra -Wpedantic -Werror task.c -o task"+(d.slug==="standard-library"?" -lm":"")+" ③ 실행 후 참조 출력과 대조하세요. 데이터 파일이 필요한 과제는 같은 폴더에 준비하세요.");
 const navButtons=[];
 function show(i){
- selection=i;const task=d.practice[i];title.textContent=taskHeading(i);description.textContent=task.task;expected.textContent=task.expected;renderTaskGuide(i);
+ selection=i;const task=d.practice[i];title.textContent=taskHeading(i);richText(description,task.task);expected.textContent=task.expected;renderTaskGuide(i);
  editor.value=Object.prototype.hasOwnProperty.call(drafts,i)?drafts[i]:task.starter;verified.checked=!!evidence[i];
  status.textContent="정적 점검은 구문 누락을 알려주는 힌트이며 컴파일·실행 검증이 아닙니다.";
  navButtons.forEach((b,j)=>{b.classList.toggle("active",i===j);if(i===j)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
