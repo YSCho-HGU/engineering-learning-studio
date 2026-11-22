@@ -10,7 +10,7 @@ if(!LABS.includes(lab))return;
 const $=id=>document.getElementById(id),canvases=[1,2,3].map(n=>$("ss-al-canvas-"+n));
 const state=lab==="beats"?{f1:220,delta:4,ratio:1}:
  lab==="amfm"?{mode:"am",fc:440,fm:8,depth:.65,beta:2.5}:
- {kind:"chirp",fs:70,f0:8,f1:110,tone:38,T:2,pos:50,playing:false};
+ {kind:"chirp",fs:70,f0:8,f1:110,tone:38,T:2,pos:50,showFFT:"on",playing:false};
 const initial=JSON.parse(JSON.stringify(state));
 const duration=lab==="sampling"?state.T:2;
 const language=window.ELSLanguage;
@@ -59,7 +59,7 @@ let plotDirty=false,lastDraw=0,fftCache=null,playId=null,previousFrame=0,audioCt
 const audio={playing:false,offset:0,start:0,buffer:null,duration:duration,buttons:null,status:null};
 function palette(){
  const c=getComputedStyle(document.documentElement),v=n=>c.getPropertyValue(n).trim();
- return {ink:v("--els-ink")||"#e8e9e6",muted:v("--els-muted")||"#9ba4a1",line:v("--els-link")||"#87c5a5",border:v("--els-border")||"#666",bg:v("--els-surface")||"#171a19",alt:document.documentElement.dataset.theme==="light"?"#b66134":"#ffc08d"};
+ return {ink:v("--els-ink")||"#e8e9e6",muted:v("--els-muted")||"#9ba4a1",line:v("--els-link")||"#87c5a5",border:v("--els-border")||"#666",bg:v("--els-surface")||"#171a19",alt:document.documentElement.dataset.theme==="light"?"#b66134":"#ffc08d",peak:document.documentElement.dataset.theme==="light"?"#764aa5":"#bea5e7"};
 }
 function canvasContext(canvas){
  const rect=canvas.getBoundingClientRect(),w=Math.max(130,rect.width),h=Math.max(130,rect.height),dpr=Math.min(2,window.devicePixelRatio||1);
@@ -180,6 +180,7 @@ function renderControls(){
    range(h,{key:"f1",en:"Chirp end f₁",ko:"처프 끝 주파수 f₁",min:10,max:160,step:1,unit:" Hz"});
    range(h,{key:"T",en:"Chirp duration T",ko:"처프 길이 T",min:1,max:3,step:.25,digits:2,unit:" s"});
   }
+  select(h,{key:"showFFT",en:"Measured STFT peaks",ko:"표본의 STFT 피크",values:[["on","Show measured peaks","실측 피크 표시"],["off","Hide measured peaks","실측 피크 숨기기"]]});
   range(h,{key:"pos",en:"Observation time",ko:"관찰 시각",min:0,max:100,step:1,unit:"%",changed:()=>{scheduleDraw()}});
   const actions=dom("div","ss-al-control-buttons",null,h),play=dom("button",null,null,actions);
   play.type="button";play.id="ss-extra-animate";play.textContent=txt(state.playing?"Pause sweep":"Play sweep",state.playing?"움직임 일시 정지":"시간 변화 재생",true);
@@ -320,6 +321,32 @@ function plotSamples(C,B,tStart,tEnd,showConnect=false){
  }
  return pts;
 }
+// The measured points use a Hann-windowed FFT of ACTUAL x[n], not a
+// manually folded frequency curve. Finite windows smear fast chirp crossings.
+function sampledStftPeaks(){
+ const signature=[state.kind,state.fs,state.f0,state.f1,state.tone,state.T].join(":");
+ if(fftCache?.signature===signature)return fftCache.result;
+ const fs=state.fs,total=Math.floor(state.T*fs)+1;
+ const goal=Math.min(128,Math.max(16,Math.floor(fs*.50)));
+ let N=16;while(N*2<=goal&&N*2<=total)N*=2;
+ const count=36,pts=[];
+ for(let frame=0;frame<count;frame++){
+  const start=Math.max(0,Math.floor((total-N)*frame/(count-1)));
+  const re=new Float64Array(N),im=new Float64Array(N);
+  for(let i=0;i<N;i++)re[i]=continuousAt((start+i)/fs)*(.5-.5*Math.cos(2*Math.PI*i/(N-1)));
+  fftRadix(re,im);
+  let kmax=0,max=-1;
+  for(let k=0;k<=N/2;k++){
+   const a=Math.hypot(re[k],im[k]);
+   if(a>max){max=a;kmax=k}
+  }
+  const t=(start+(N-1)/2)/fs;
+  pts.push([t,kmax*fs/N]);
+ }
+ const result={points:pts,window:N,fs};
+ fftCache={signature,result};
+ return result;
+}
 function drawSampling(){
  const T=state.T,center=T*state.pos/100,span=Math.min(.24,T),begin=clamp(center-span/2,0,T-span),end=begin+span;
  let C=canvasContext(canvases[0]);
@@ -343,12 +370,19 @@ function drawSampling(){
   const B=axes(C,{xmin:0,xmax:T,ymin:0,ymax:fmax,xlabel:"t (s)",ylabel:"f (Hz)"}),original=[],fold=[],ny=[];
   for(let i=0;i<=750;i++){const t=T*i/750,f=freqAt(t);original.push([t,f]);fold.push([t,Math.abs(foldedSigned(f,state.fs))]);ny.push([t,state.fs/2])}
   line(C,B,original,C.pal.muted,1.7);line(C,B,fold,C.pal.line,2.4);line(C,B,ny,C.pal.alt,1.8,[6,5]);
-  legend(C,[["input fᵢ",C.pal.muted],["folded |fₐ|",C.pal.line],["Nyquist",C.pal.alt]]);
+  if(state.showFFT==="on"){
+   const measured=sampledStftPeaks();
+   for(const [t,f] of measured.points){
+    if(t<0||t>T)continue;
+    C.ctx.save();C.ctx.globalAlpha=.86;circle(C.ctx,B.x(t),B.y(f),C.pal.peak,2.7);C.ctx.restore();
+   }
+  }
+  legend(C,[["input fᵢ",C.pal.muted],["folded |fₐ|",C.pal.line],["Nyquist",C.pal.alt],["STFT peaks",C.pal.peak]]);
   marker(C,B,center,Math.abs(foldedSigned(freqAt(center),state.fs)),C.pal.alt);
  }
  $("ss-al-note-1").textContent=txt("Original continuous waveform (green) and exact samples taken at t=n/fₛ (orange). Dashed links are not interpolation.","연속시간 파형(녹색)과 t=n/fₛ에서 얻은 정확한 표본점(주황색)입니다. 점선 연결은 보간 복원이 아닙니다.");
  $("ss-al-note-2").textContent=txt("Sample stems against integer index n, not equally spaced points on a rescaled continuous waveform.","표본을 연속시간축이 아니라 정수 첨자 n에 대해 막대 형태로 나타냅니다.");
- $("ss-al-note-3").textContent=txt("The folded line is the local apparent frequency after sampling; a rising chirp can fold repeatedly at Nyquist boundaries.","접힌 곡선은 표본화 후의 국소 겉보기 주파수입니다. 증가하는 처프는 나이퀴스트 경계에서 여러 번 접힐 수 있습니다.");
+ $("ss-al-note-3").textContent=txt("Green: theoretical local folded frequency; purple dots: finite-window STFT peak of x[n] (approximate, possibly smeared). Nyquist crossings can repeat.","녹색은 이론적인 국소 접힌 주파수이며 보라색 점은 x[n]의 유한 윈도 STFT 피크(근사값·퍼짐 가능)입니다. 나이퀴스트 경계는 여러 번 통과할 수 있습니다.");
 }
 function audioPosition(){return audio.playing&&audioCtx?clamp(audioCtx.currentTime-audio.start,0,audio.duration):audio.offset}
 function updateTransport(){
