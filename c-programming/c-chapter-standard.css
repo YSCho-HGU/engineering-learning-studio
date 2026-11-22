@@ -1,0 +1,75 @@
+/* Shared C chapter presentation: Chapter 17 is the visual reference.
+   Applies to Chapter 15/16 data-driven lessons and Chapter 17 File I/O.
+   Explicit rem sizes avoid inherited heading variations between legacy stylesheets. */
+.c-course-journey .hero {
+  display:block;
+  margin:0 0 16px;
+  padding:30px clamp(20px,3vw,40px);
+  background:var(--els-surface-alt);
+  color:var(--els-ink);
+  border:1px solid var(--els-border);
+  border-radius:16px;
+}
+.c-course-journey .hero .over,
+.c-course-journey .hero .eyebrow,
+.els-design .course-header .eyebrow {
+  font-size:.78rem;
+  font-weight:800;
+  letter-spacing:.07em;
+  color:var(--els-link);
+}
+.c-course-journey .hero h1,
+.els-design .course-header h1 {
+  font-size:clamp(1.9rem,3vw,2.5rem);
+  line-height:1.2;
+  letter-spacing:-.025em;
+  margin:10px 0 12px;
+}
+.c-course-journey .hero p,
+.els-design .course-header p {
+  font-size:1rem;
+  line-height:1.75;
+  max-width:850px;
+  color:var(--els-muted);
+}
+.c-course-journey .layout {grid-template-columns:285px minmax(0,1fr);gap:24px}
+.c-course-journey .side,
+.els-design .sidebar {border-radius:16px;padding:15px}
+.c-course-journey .side>strong,
+.els-design .progress-line strong {font-size:.92rem;line-height:1.5}
+.c-course-journey .side nav button,
+.els-design .lesson-nav button {
+  font-size:.875rem;
+  line-height:1.5;
+  min-height:44px;
+  padding:10px 11px;
+  font-weight:500;
+  text-align:left;
+}
+.c-course-journey .side nav button .n,
+.els-design .lesson-nav .num {
+  font-size:.82rem;
+  font-weight:800;
+  flex:0 0 auto;
+}
+.c-course-journey .c-learning-group-title {font-size:.84rem;line-height:1.45}
+.c-course-journey .c-learning-link {font-size:.85rem;line-height:1.45}
+.els-design .lesson-nav .nav-title {font-size:.875rem;line-height:1.45}
+.els-design .lesson-nav small {font-size:.75rem;line-height:1.4}
+.c-course-journey .side nav button.active,
+.els-design .lesson-nav button.current {font-weight:750}
+.c-course-journey .stage h2,
+.els-design .stage h2 {
+  font-size:clamp(1.45rem,2.4vw,2rem);
+  line-height:1.35;
+}
+@media(max-width:900px) {
+  .c-course-journey .layout {grid-template-columns:1fr}
+  .c-course-journey .side {position:static;max-height:none}
+}
+@media(max-width:650px) {
+  .c-course-journey .hero {padding:22px 16px}
+  .c-course-journey .side nav {grid-template-columns:1fr}
+  .c-course-journey .side nav button,
+  .els-design .lesson-nav button {font-size:.875rem}
+}
