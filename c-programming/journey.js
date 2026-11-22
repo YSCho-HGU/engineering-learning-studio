@@ -70,12 +70,11 @@ function renderNav(){
  const meter=$("progress-bar").parentElement;
  if(meter){meter.setAttribute("aria-valuenow",String(count));meter.setAttribute("aria-valuemax",String(limit))}
 }
-function createCode(host,source,kind="reference"){
+function createCode(host,source){
  const wrap=element("div","c-code-example",host);
- const caption=kind==="starter"?ui("실습용 Starter Code · TODO를 직접 완성하세요","Starter code · Complete the TODO sections"):ui("전체 C11 예제 프로그램 · 출력 결과를 먼저 예측하세요","Complete C11 example · Predict its output before revealing the answer");
- element("p","c-code-caption",wrap,caption);
+ element("p","c-code-caption",wrap,ui("전체 C11 예제 · 실행 결과를 먼저 예측하세요","Complete C11 example · Predict the output before revealing it"));
  const pre=element("pre","code",wrap);
- pre.setAttribute("aria-label",kind==="starter"?"C11 starter code (incomplete)":"Complete C11 example");
+ pre.setAttribute("aria-label","Complete C11 example");
  pre.textContent=source;
  return pre;
 }
@@ -104,7 +103,7 @@ function renderQuiz(stage,l){
 }
 function updateAssessmentSummary(){
  const target=$("assessment-status");if(!target)return;
- target.textContent=hasOptional?ui("필수 활동 ","Core activity ")+completed.filter(i=>i<coreCount).length+"/"+coreCount+ui(" · 필수 개념 "," · Core concept ")+concepts.filter(i=>i<coreCount).length+"/"+coreCount+ui(" · 선택 심화 활동 "," · Optional activity ")+completed.filter(i=>i>=coreCount).length+"/"+(total-coreCount)+ui(" · GCC 직접 확인은 자기보고"," · GCC checks are self-reported"): "Activity Reviewed "+completed.length+"/"+total+" · Concept Check Passed "+concepts.length+"/"+total+" · Coding Practice: self-reported GCC checks only.";
+ target.textContent=hasOptional?"Concept "+concepts.filter(i=>i<coreCount).length+"/"+coreCount+ui(" · 선택 심화 활동 "," · Optional activity ")+completed.filter(i=>i>=coreCount).length+"/"+(total-coreCount):"Concept "+concepts.length+"/"+total;
 }
 function modelOutput(model,v){
  switch(model.kind){
@@ -313,40 +312,17 @@ function show(i){
  mark.addEventListener("click",()=>{if(!completed.includes(current)){completed.push(current);completed.sort((a,b)=>a-b);try{localStorage.setItem(key,JSON.stringify(completed))}catch(e){}}
  renderNav();updateAssessmentSummary();mark.textContent="Activity reviewed ✓";$("activity-note").textContent=ui("활동 확인 기록입니다. 실제 C 코딩 숙달을 인증하지 않습니다.","Activity reviewed. This is not evidence of C coding proficiency.")});
  const next=element("button","action",actions,"Next →");next.disabled=current===total-1;next.addEventListener("click",()=>show(current+1));
- $("current-title").textContent=l.title;
  $("activity-note").textContent=ui("학습 활동 표시이며, 퀴즈 정답이나 실제 C 컴파일 성공을 의미하지 않습니다.","This activity marker does not indicate a correct quiz answer or successful C compilation.");
 }
 function init(){
- $("site-title").textContent=D.title+" Learning Journey";
  $("hero-title").textContent=D.title+" Learning Journey";
  $("hero-summary").textContent=D.summary;
  $("hero-count").textContent=(hasOptional?coreCount+" Core + "+(total-coreCount)+" Optional · ":total+" Learning Steps · ")+D.book;
- const stepLabel=document.querySelector(".hero-aside small");if(stepLabel)stepLabel.textContent=total+" LEARNING STEPS";
  const heading=document.querySelector(".route-heading span");if(heading)heading.textContent=total+" Learning Steps / "+D.practice.length+" Coding Challenges";
- const intro=document.querySelector("#coding-practice h2");if(intro)intro.textContent="P1–P"+D.practice.length+" · Coding Challenges";
  const meter=$("progress-bar")?.parentElement;if(meter)meter.setAttribute("aria-valuemax",String(hasOptional?coreCount:total));
  $("course-number").textContent=D.book;
  $("phase-one").textContent=D.phases[0];$("phase-two").textContent=D.phases[1];$("phase-three").textContent=D.phases[2];
  const back=$("back-link");if(back)back.href="../";
- $("related-link").href=D.related; $("related-link").textContent=ui("연관 단원: ","Related: ")+D.relatedTitle+" →";
- $("practice").replaceChildren();
- D.practice.forEach((p,i)=>{
-  const article=element("article","",$("practice"));element("strong","",article,"P"+(i+1)+" · "+(hasOptional?(i<Number(D.practiceCoreCount??3)?ui("[필수] ","[Core] "):ui("[선택] ","[Optional] ")):"")+p.title);
-  element("p","",article,p.task);
-  const details=element("details","",article);element("summary","",details,"Starter code and test case");
-  createCode(details,p.starter,"starter");
-  const test=element("pre","code",details);test.textContent="Test input / expected output:\n"+p.expected;
-  const btn=element("button","action",details,"Copy starter code");
-  btn.addEventListener("click",()=>navigator.clipboard?.writeText(p.starter));
- });
- const themeToggle=$("theme");
- if(themeToggle && themeToggle.tagName==="BUTTON")themeToggle.addEventListener("click",()=>{
-  if(window.ELSTheme){
-   const next=window.ELSTheme.get()==="warm-neutral"?"neutral-dark":"warm-neutral";
-   window.ELSTheme.set(next);
-   themeToggle.setAttribute("aria-pressed",String(next!=="warm-neutral"));
-  }
- });
  const hashStep=()=>{const m=/^#step-(\d+)$/.exec(location.hash);return m?Math.max(0,Math.min(total-1,Number(m[1])-1)):0};
  renderNav();show(hashStep());updateAssessmentSummary();
  window.addEventListener("hashchange",()=>{if(/^#step-\d+$/.test(location.hash))show(hashStep())});
