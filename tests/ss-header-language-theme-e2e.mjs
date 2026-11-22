@@ -9,7 +9,7 @@ const expected=['White Clean','Warm Neutral','Warm Dark','Navy Dark','Neutral Da
 try{
  for(const width of [390,1280]){
   const ctx=await browser.newContext({viewport:{width,height:850}});
-  await ctx.addInitScript(()=>{localStorage.setItem('els-language','en');localStorage.setItem('els-theme-v2','neutral-dark')});
+  await ctx.addInitScript(()=>{if(!sessionStorage.getItem('ss-header-test-initialized')){localStorage.setItem('els-language','en');localStorage.setItem('els-theme-v2','neutral-dark');sessionStorage.setItem('ss-header-test-initialized','1')}});
   const page=await ctx.newPage();
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   let expectedTheme='neutral-dark';
