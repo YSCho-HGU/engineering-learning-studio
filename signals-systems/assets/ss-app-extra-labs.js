@@ -402,8 +402,9 @@ function drawAMFM(){
  $("ss-al-note-3").textContent=txt("Numerical one-sided FFT; amplitude is relative to the largest bin in the displayed band.","수치 계산한 단측 FFT입니다. 표시 대역의 최대 빈을 기준으로 상대 크기를 나타냅니다.");
 }
 function plotSamples(C,B,tStart,tEnd,showConnect=false){
- const first=Math.ceil(tStart*state.fs-1e-10),last=Math.floor(tEnd*state.fs+1e-10),pts=[];
- for(let n=Math.max(0,first);n<=Math.min(Math.floor(state.T*state.fs),last);n++){const t=n/state.fs,v=continuousAt(t);pts.push([t,v])}
+ const first=Math.max(0,Math.ceil(tStart*state.fs-1e-10)),last=Math.min(Math.floor(state.T*state.fs),Math.floor(tEnd*state.fs+1e-10)),pts=[];
+ const stride=Math.max(1,Math.ceil((last-first+1)/220));
+ for(let n=first;n<=last;n+=stride){const t=n/state.fs,v=continuousAt(t);pts.push([t,v])}
  if(showConnect&&pts.length>1)line(C,B,pts,C.pal.alt,1,[4,4]);
  for(const [t,v] of pts){
   C.ctx.strokeStyle=C.pal.alt;C.ctx.lineWidth=1.3;C.ctx.beginPath();C.ctx.moveTo(B.x(t),B.y(0));C.ctx.lineTo(B.x(t),B.y(v));C.ctx.stroke();circle(C.ctx,B.x(t),B.y(v),C.pal.alt,3.8);
@@ -474,8 +475,10 @@ function renderAliasSummary(){
    txt("crossings","교차 시각",true)+": "+times;
 }
 function drawSampling(){
- const T=state.T,center=T*state.pos/100,span=Math.min(Number(state.windowMs)/1000,T);
- const begin=clamp(center-span/2,0,T-span),end=begin+span;
+ const T=state.T,center=T*state.pos/100;
+ const localFrequency=Math.max(20,Math.abs(freqAt(center)));
+ const requestedSpan=state.windowMs==="auto"?clamp(12/localFrequency,.002,.48):Number(state.windowMs)/1000;
+ const span=Math.min(requestedSpan,T),begin=clamp(center-span/2,0,T-span),end=begin+span;
  renderAliasSummary();
  let C=canvasContext(canvases[0]);
  if(C){
@@ -490,6 +493,11 @@ function drawSampling(){
   line(C,B,original,C.pal.muted,1.3);
   if(guide.length)line(C,B,guide,C.pal.line,2.6,[7,4]);
   plotSamples(C,B,begin,end,false);
+  if(Math.max(freqAt(begin),freqAt(end))*span>140){
+   C.ctx.save();C.ctx.font="12px Arial";C.ctx.fillStyle=C.pal.alt;C.ctx.textAlign="left";
+   C.ctx.fillText(txt("Display may miss CT cycles: choose 2–10 ms","CT 주기 표시 부족: 2–10ms 선택",true),B.r.l+6,B.r.t+15);
+   C.ctx.restore();
+  }
   marker(C,B,center,continuousAt(center),C.pal.alt);
   outsideLegend(1,[
    [txt("Original CT x(t)","원래 CT x(t)",true),C.pal.muted],
@@ -510,13 +518,14 @@ function drawSampling(){
   ctx.strokeStyle=C.pal.muted;ctx.lineWidth=1;ctx.beginPath();
   ctx.moveTo(B.r.l,B.y(0));ctx.lineTo(B.r.right,B.y(0));ctx.stroke();
   const selectedN=Math.round(center*state.fs);
-  for(let n=n0;n<=n1;n++){
+  const stride=Math.max(1,Math.ceil((n1-n0+1)/180));
+  for(let n=n0;n<=n1;n+=stride){
    const v=continuousAt(n/state.fs),x=B.x(n);
    ctx.strokeStyle=C.pal.line;ctx.lineWidth=1.4;
    ctx.beginPath();ctx.moveTo(x,B.y(0));ctx.lineTo(x,B.y(v));ctx.stroke();
    circle(ctx,x,B.y(v),n===selectedN?C.pal.alt:C.pal.line,n===selectedN?5.1:3.2);
   }
-  outsideLegend(2,[[txt("Discrete samples at integer n","정수 n에서의 이산 표본",true),C.pal.line,"dot"]]);
+  outsideLegend(2,[[txt(stride>1?"Displayed every "+stride+"th sample":"Discrete samples at integer n",stride>1?stride+"개 간격 표본 표시":"정수 n에서의 이산 표본",true),C.pal.line,"dot"]]);
  }
  C=canvasContext(canvases[2]);
  if(C){
