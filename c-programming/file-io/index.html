@@ -19,13 +19,13 @@
 <aside class="sidebar" aria-label="학습 단계">
   <div class="progress-panel"><div class="progress-line"><strong>My Learning Activities</strong><output id="progress-text" aria-live="polite">0 / 7</output></div><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0" id="progress-meter"><span id="progress-fill"></span></div></div>
   <nav class="lesson-nav" id="lesson-nav">
-  <button data-nav="0" class="current"><span class="num">01</span><span><span class="nav-title">왜 파일이 필요한가?</span><small>Motivation & persistence</small></span><span class="done" aria-hidden="true"></span></button>
-  <button data-nav="1"><span class="num">02</span><span><span class="nav-title">Stream과 FILE *</span><small>Input / Output model</small></span><span class="done" aria-hidden="true"></span></button>
-  <button data-nav="2"><span class="num">03</span><span><span class="nav-title">파일 열기 모드 실험</span><small>fopen · r · w · a</small></span><span class="done" aria-hidden="true"></span></button>
-  <button data-nav="3"><span class="num">04</span><span><span class="nav-title">텍스트 읽기·쓰기</span><small>fprintf · fscanf · fgets</small></span><span class="done" aria-hidden="true"></span></button>
-  <button data-nav="4"><span class="num">05</span><span><span class="nav-title">EOF와 읽기 오류</span><small>fscanf · feof · ferror</small></span><span class="done" aria-hidden="true"></span></button>
-  <button data-nav="5"><span class="num">06</span><span><span class="nav-title">구조체 레코드 저장·복원</span><small>Serialize & load</small></span><span class="done" aria-hidden="true"></span></button>
-  <button data-nav="7"><span class="num">07</span><span><span class="nav-title">File I/O 종합 적용</span><small>Concept check · build</small></span><span class="done" aria-hidden="true"></span></button>
+  <button data-nav="0" class="current"><span class="num">01</span><span><span class="nav-title">파일에 저장하는 이유와 데이터 지속성</span><small>Motivation & persistence</small></span><span class="done" aria-hidden="true"></span></button>
+  <button data-nav="1"><span class="num">02</span><span><span class="nav-title">Stream과 FILE *: 입출력 모델</span><small>Input / Output model</small></span><span class="done" aria-hidden="true"></span></button>
+  <button data-nav="2"><span class="num">03</span><span><span class="nav-title">fopen()과 파일 모드 r · w · a</span><small>fopen · r · w · a</small></span><span class="done" aria-hidden="true"></span></button>
+  <button data-nav="3"><span class="num">04</span><span><span class="nav-title">텍스트 입출력 함수: fprintf() · fscanf() · fgets()</span><small>fprintf · fscanf · fgets</small></span><span class="done" aria-hidden="true"></span></button>
+  <button data-nav="4"><span class="num">05</span><span><span class="nav-title">EOF · 형식 불일치 · 읽기 오류</span><small>fscanf · feof · ferror</small></span><span class="done" aria-hidden="true"></span></button>
+  <button data-nav="5"><span class="num">06</span><span><span class="nav-title">구조체 레코드의 저장과 복원</span><small>Serialize & load</small></span><span class="done" aria-hidden="true"></span></button>
+  <button data-nav="7"><span class="num">07</span><span><span class="nav-title">File I/O 통합 처리와 오류 검증</span><small>Concept check · build</small></span><span class="done" aria-hidden="true"></span></button>
   <div class="optional-stage-divider">선택 심화 · 필수 진도에 포함되지 않음</div>
   <button data-nav="6" class="optional-stage-nav"><span class="num">+</span><span><span class="nav-title">센서 로그 분석</span><small>선택 심화 · Sensor lab</small></span><span class="done" aria-hidden="true"></span></button>
   </nav>
@@ -41,7 +41,7 @@
 <main id="lesson" tabindex="-1">
 <div class="lesson-top"><span id="step-label">STEP 01 / 07</span><span class="tag" id="step-status">학습 중</span></div>
 <section class="stage" data-stage="0">
-<div class="topic"><span class="stage-heading-number">STEP 01 · WHY FILES?</span><small class="stage-reference">§7.1</small></div><h2>왜 파일이 필요한가?</h2><p class="lead">메모리에 저장된 변수는 일반적으로 프로그램이 끝나면 사라집니다. 반면 파일에 기록한 정보는 다음 실행에서 다시 읽을 수 있습니다. 이것이 File I/O가 필요한 이유입니다.</p>
+<div class="topic"><span class="stage-heading-number">STEP 01 · WHY FILES?</span><small class="stage-reference">§7.1</small></div><h2>파일에 저장하는 이유와 데이터 지속성</h2><p class="lead">메모리에 저장된 변수는 일반적으로 프로그램이 끝나면 사라집니다. 반면 파일에 기록한 정보는 다음 실행에서 다시 읽을 수 있습니다. 이것이 File I/O가 필요한 이유입니다.</p>
 <section class="study-scope" aria-label="01단계의 필수 및 선택 학습">
   <div class="study-scope-core">
     <span class="study-scope-badge">필수 학습</span>
@@ -83,7 +83,7 @@ int main(void) {
 <div class="check" data-check="0"><div class="check-eyebrow">CHECK YOURSELF · 7.1</div><p class="question-context">score 변수를 메모리에 저장하고, 같은 값을 scores.txt에도 기록했습니다. 프로그램을 종료한 다음 다시 실행합니다.</p><h3>프로그램을 종료하고 다시 실행했을 때 일반적으로 남는 것은?</h3><label><input type="radio" name="q0" value="a"> 메모리 변수 <code>score</code>의 값만 남는다.</label><label><input type="radio" name="q0" value="b"> 저장된 파일 내용은 다음 실행에서도 읽을 수 있다.</label><label><input type="radio" name="q0" value="c"> 둘 다 반드시 자동 복원된다.</label><button class="check-btn" data-grade="0">답 확인 및 설명</button><div class="answer" id="answer-0" aria-live="polite"></div></div>
 </section>
 <section class="stage" data-stage="1" hidden>
-<div class="topic"><span class="stage-heading-number">STEP 02 · STREAM MODEL</span><small class="stage-reference">§7.2</small></div><h2>Stream과 FILE *</h2><p class="lead">이미 사용해 온 <code>scanf()</code>와 <code>printf()</code>도 Stream을 통해 데이터를 주고받습니다. 무엇을 읽고 어디에 쓸지만 달라질 뿐입니다.</p>
+<div class="topic"><span class="stage-heading-number">STEP 02 · STREAM MODEL</span><small class="stage-reference">§7.2</small></div><h2>Stream과 FILE *: 입출력 모델</h2><p class="lead">이미 사용해 온 <code>scanf()</code>와 <code>printf()</code>도 Stream을 통해 데이터를 주고받습니다. 무엇을 읽고 어디에 쓸지만 달라질 뿐입니다.</p>
 <section class="study-scope" aria-label="02단계의 필수 및 선택 학습">
   <div class="study-scope-core">
     <span class="study-scope-badge">필수 학습</span>
@@ -99,7 +99,7 @@ int main(void) {
 <div class="check" data-check="1"><div class="check-eyebrow">CHECK YOURSELF · 7.2</div><p class="question-context">FILE *fp;로 포인터 변수를 선언하고, fopen()이 성공하여 열린 파일 스트림을 이 포인터로 사용하려고 합니다.</p><h3><code>FILE *fp</code>가 의미하는 것은?</h3><label><input type="radio" name="q1" value="a"> 파일 이름을 저장하는 문자 배열</label><label><input type="radio" name="q1" value="b"> 열린 Stream을 다루기 위한 포인터</label><label><input type="radio" name="q1" value="c"> 파일의 데이터 크기를 저장하는 정수</label><button class="check-btn" data-grade="1">답 확인 및 설명</button><div class="answer" id="answer-1" aria-live="polite"></div></div>
 </section>
 <section class="stage" data-stage="2" hidden>
-<section class="lesson" id="m3" aria-labelledby="m3-title"><div class="eyebrow"><span class="stage-heading-number">STEP 03 · FILE MODES</span><small class="stage-reference">§7.3</small></div><h2 id="m3-title">파일 열기 모드 실험</h2><p class="caption">데이터가 남는가, 삭제되는가, 추가되는가? 파일이 없을 때 r 모드는 어떻게 동작하는가?</p>
+<section class="lesson" id="m3" aria-labelledby="m3-title"><div class="eyebrow"><span class="stage-heading-number">STEP 03 · FILE MODES</span><small class="stage-reference">§7.3</small></div><h2 id="m3-title">fopen()과 파일 모드 r · w · a</h2><p class="caption">데이터가 남는가, 삭제되는가, 추가되는가? 파일이 없을 때 r 모드는 어떻게 동작하는가?</p>
 <section class="study-scope" aria-label="03단계의 필수 및 선택 학습">
   <div class="study-scope-core">
     <span class="study-scope-badge">필수 학습</span>
@@ -141,7 +141,7 @@ int main(void) {
 </section>
 </section>
 <section class="stage" data-stage="3" hidden>
-<div class="topic"><span class="stage-heading-number">STEP 04 · TEXT I/O</span><small class="stage-reference">§7.4</small></div><h2>텍스트 읽기·쓰기</h2><p class="lead">숫자·문자열·한 줄·한 글자는 다르게 읽습니다. 중요한 것은 함수 이름 암기가 아니라 <strong>데이터 형식과 반환값</strong>을 구분하는 것입니다.</p>
+<div class="topic"><span class="stage-heading-number">STEP 04 · TEXT I/O</span><small class="stage-reference">§7.4</small></div><h2>텍스트 입출력 함수: fprintf() · fscanf() · fgets()</h2><p class="lead">숫자·문자열·한 줄·한 글자는 다르게 읽습니다. 중요한 것은 함수 이름 암기가 아니라 <strong>데이터 형식과 반환값</strong>을 구분하는 것입니다.</p>
 <section class="study-scope" aria-label="04단계의 필수 및 선택 학습">
   <div class="study-scope-core">
     <span class="study-scope-badge">필수 학습</span>
@@ -193,7 +193,7 @@ int main(void) {
 
 </section>
 <section class="stage" data-stage="4" hidden>
-<section class="lesson" id="m4" aria-labelledby="m4-title"><div class="eyebrow"><span class="stage-heading-number">STEP 05 · EOF & ERRORS</span><small class="stage-reference">§7.4.4</small></div><h2 id="m4-title">EOF와 읽기 오류</h2><p class="caption"><code>while (fscanf(fp, "%d", &amp;x) == 1)</code>은 무엇을 검사하는 조건인가요?</p>
+<section class="lesson" id="m4" aria-labelledby="m4-title"><div class="eyebrow"><span class="stage-heading-number">STEP 05 · EOF & ERRORS</span><small class="stage-reference">§7.4.4</small></div><h2 id="m4-title">EOF · 형식 불일치 · 읽기 오류</h2><p class="caption"><code>while (fscanf(fp, "%d", &amp;x) == 1)</code>은 무엇을 검사하는 조건인가요?</p>
 <section class="study-scope" aria-label="05단계의 필수 및 선택 학습">
   <div class="study-scope-core">
     <span class="study-scope-badge">필수 학습</span>
@@ -231,7 +231,7 @@ int main(void) {
 </section>
 </section>
 <section class="stage" data-stage="5" hidden>
-<div class="topic"><span class="stage-heading-number">STEP 06 · STRUCTURE RECORDS</span><small class="stage-reference">§7.5</small></div><h2>구조체 레코드 저장·복원</h2><p class="lead">Structure를 File I/O와 연결하려면 기록할 텍스트 형식을 결정해야 합니다. 저장할 때와 읽을 때 <strong>같은 멤버 순서</strong>를 사용하세요.</p>
+<div class="topic"><span class="stage-heading-number">STEP 06 · STRUCTURE RECORDS</span><small class="stage-reference">§7.5</small></div><h2>구조체 레코드의 저장과 복원</h2><p class="lead">Structure를 File I/O와 연결하려면 기록할 텍스트 형식을 결정해야 합니다. 저장할 때와 읽을 때 <strong>같은 멤버 순서</strong>를 사용하세요.</p>
 <section class="study-scope" aria-label="06단계의 필수 및 선택 학습">
   <div class="study-scope-core">
     <span class="study-scope-badge">필수 학습</span>
@@ -322,7 +322,7 @@ int main(void) {
 
 </section>
 <section class="stage" data-stage="6" hidden>
-<div class="topic"><span class="stage-heading-number">OPTIONAL · SENSOR LAB</span><small class="stage-reference">§7.5.3</small></div><h2>Sensor Log Analysis · 선택 심화</h2><p class="sensor-learning-flow"><strong>학습 순서</strong> · ① 파일의 시간·측정값 쌍 이해 → ② 평균과 경보를 먼저 예측 → ③ Simulate Run으로 비교 → ④ 첫 레코드의 <code>fscanf()</code> 흐름 관찰 → ⑤ EOF와 입력 오류 구분. Part B의 <code>fgets()</code>/<code>strtod()</code> 행 검증은 필요할 때만 펼쳐 봅니다.</p><section class="study-scope" aria-label="선택 심화 센서 학습">
+<div class="topic"><span class="stage-heading-number">OPTIONAL · SENSOR LAB</span><small class="stage-reference">§7.5.3</small></div><h2>센서 로그 읽기와 분석 · 선택 심화</h2><p class="sensor-learning-flow"><strong>학습 순서</strong> · ① 파일의 시간·측정값 쌍 이해 → ② 평균과 경보를 먼저 예측 → ③ Simulate Run으로 비교 → ④ 첫 레코드의 <code>fscanf()</code> 흐름 관찰 → ⑤ EOF와 입력 오류 구분. Part B의 <code>fgets()</code>/<code>strtod()</code> 행 검증은 필요할 때만 펼쳐 봅니다.</p><section class="study-scope" aria-label="선택 심화 센서 학습">
   <div class="study-scope-core">
     <span class="study-scope-badge">선택 심화</span>
     <div><strong>Sensor Log를 읽고 count, sum, 평균과 경보를 계산</strong><p><b>완료 기준</b> · sensor_log.txt의 값 하나를 바꾸고 먼저 예측한 후, 첫 측정값의 4개 C 문장을 추적해 설명하세요.</p></div>
@@ -505,7 +505,7 @@ int main(void) {
 <div class="check" data-check="6"><div class="check-eyebrow">OPTIONAL CHECK · SENSOR LAB</div><p class="question-context">센서 로그 한 행에는 시간과 측정값이라는 두 개의 double 값이 기록되어 있습니다. 두 변환이 모두 성공했다고 가정합니다.</p><h3><code>fscanf(fp, "%lf %lf", &amp;t, &amp;value)</code>가 두 값을 모두 읽은 경우의 반환값은?</h3><label><input type="radio" name="q6" value="a"> 0</label><label><input type="radio" name="q6" value="b"> 1</label><label><input type="radio" name="q6" value="c"> 2</label><button class="check-btn" data-grade="6">답 확인 및 설명</button><div class="answer" id="answer-6" aria-live="polite"></div></div>
 </section>
 <section class="stage" data-stage="7" hidden>
-<div class="topic"><span class="stage-heading-number">STEP 07 · FINAL REVIEW</span><small class="stage-reference">§7.7</small></div><h2>File I/O 종합 적용</h2><p class="lead">마지막 단계에서는 함수를 암기했는지보다, 상황에 맞는 모드와 조건을 선택하고 코드의 오류를 수정할 수 있는지 확인합니다.</p>
+<div class="topic"><span class="stage-heading-number">STEP 07 · FINAL REVIEW</span><small class="stage-reference">§7.7</small></div><h2>File I/O 통합 처리와 오류 검증</h2><p class="lead">마지막 단계에서는 함수를 암기했는지보다, 상황에 맞는 모드와 조건을 선택하고 코드의 오류를 수정할 수 있는지 확인합니다.</p>
 <section class="study-scope" aria-label="07단계 필수 학습">
   <div class="study-scope-core">
     <span class="study-scope-badge">필수 학습</span>
