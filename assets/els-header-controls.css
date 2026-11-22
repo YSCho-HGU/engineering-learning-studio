@@ -1,0 +1,7 @@
+/* Shared ELS header picker presentation — reused by Studio, C and S&S. */
+.els-header-language,.ss-common-header .ss-common-language{display:inline-flex!important;align-items:center!important;gap:6px!important;white-space:nowrap!important}
+.els-header-language-icon,.ss-common-header .ss-language-icon{display:inline-flex!important;align-items:center;justify-content:center;min-width:19px;font-size:16px;line-height:1}
+.els-header-language select,.els-header-theme select{box-sizing:border-box;min-height:34px!important;height:34px!important;padding:4px 9px!important;font-size:12px!important;border-radius:8px!important;border:1px solid var(--els-border,var(--border,#777))!important;background:var(--els-surface,var(--surface,#222))!important;color:var(--els-ink,var(--ink,#eee))!important}
+.els-header-theme>span[hidden],.els-header-language>span[hidden]{display:none!important}
+.els-header-language select:focus-visible,.els-header-theme select:focus-visible{outline:2px solid var(--els-accent,#50a7ac)!important;outline-offset:3px!important}
+@media(max-width:600px){.els-header-language,.els-header-theme{max-width:100%}.els-header-language select,.els-header-theme select{max-width:150px!important}}
