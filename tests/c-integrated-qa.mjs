@@ -164,6 +164,21 @@ if(process.env.C_JOURNEY_BROWSER==="1"){
    assert(errors.length===0,slug+" practice no JS errors "+errors.join(";"));
    await page.close();
   }
+  for(const [route,selector,count] of [
+   ["file-io/practice/","#task-nav button",7],
+   ["file-io/core-labs/",".side-nav a[data-lab-link]",3]
+  ]){
+   const page=await browser.newPage({viewport:{width:1280,height:850}});
+   const errors=[];page.on("pageerror",e=>errors.push(e.message));
+   await page.goto("http://127.0.0.1:8876/"+base+route,{waitUntil:"domcontentloaded"});
+   assert(await page.locator("body > .ss-common-header").count()===1,route+" SS-style header");
+   assert(await page.locator(".c-ss-shell > .c-ss-sidebar").count()===1,route+" course sidebar");
+   assert(await page.locator(selector).count()===count,route+" task sections preserved");
+   assert(await page.locator("[data-els-theme-picker] option").count()===5,route+" five themes");
+   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+8),route+" no overflow");
+   assert(errors.length===0,route+" no runtime errors "+errors.join(";"));
+   await page.close();
+  }
   browserStatus="RAN";
  }catch(e){assert(false,"Browser integration test failed: "+String(e))}
  finally{if(browser)await browser.close();if(server)server.kill()}
