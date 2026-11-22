@@ -84,6 +84,10 @@ Object.assign(translations,{
  "show how that series behaves as M grows. 우측수열과 좌측수열의 수렴 조건을 pole 및 ROC와 연결합니다.": "show how the series behaves as M grows. Relate the convergence conditions for right-sided and left-sided sequences to poles and the ROC.",
  "term is an actual one-sample state delay. a controls both noise reduction and response delay. 실습에서는": "term is an actual one-sample state delay. Parameter a controls both noise reduction and response delay. In this lab,"
 });
+Object.assign(translations,{
+ "Two-sided sequences add a right-sided contribution and a left-sided contribution. Each component has its own convergence region, so the result converges where the regions overlap. 합의 Z-transform에서 pole·zero와 실제 ROC를 구분합니다.": "Two-sided sequences add right-sided and left-sided contributions. Each component has its own convergence region, so their sum converges in the overlap. Distinguish the poles and zeros of the resulting Z-transform from its actual ROC.",
+ "Inverse Z-transform is an actual calculation: factor the denominator, determine the partial-fraction coefficients, and then use the given ROC to choose each term’s time direction. 두 pole a<b인 X(z)=1/[(1−az⁻¹)(1−bz⁻¹)]을 사용합니다. 주어진 2차 유리식의 역변환은 먼저 X(z)를 1차 분모를 가진 항들의 합으로 분해한 뒤, 각 1차항에 Z-transform pair와 ROC를 적용해 시간수열을 복원합니다. 계수는 암기할 필요가 없습니다. 1=A(1−bz⁻¹)+B(1−az⁻¹)로 통분하고 상수항과 z⁻¹항의 계수를 비교하여 A+B=1, bA+aB=0을 얻습니다. 이어서 B=1−A를 대입하면 (b−a)A=−a이므로 A=−a/(b−a), B=b/(b−a)입니다.": "Inverse Z-transform requires calculation rather than memorization. For X(z)=1/[(1−az⁻¹)(1−bz⁻¹)] with two poles a<b, factor the denominator and use partial fractions, then apply the appropriate Z-transform pair and ROC to each term. Multiply through by the common denominator: 1=A(1−bz⁻¹)+B(1−az⁻¹). Matching the constant and z⁻¹ coefficients gives A+B=1 and bA+aB=0. Substituting B=1−A gives (b−a)A=−a, hence A=−a/(b−a) and B=b/(b−a). Use the ROC to choose each contribution's time direction."
+});
 const originals=new WeakMap(),observed=new WeakMap(),korean=/[가-힣]/;
 let running=false;
 function localize(value,mode){
