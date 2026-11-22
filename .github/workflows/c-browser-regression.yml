@@ -1,0 +1,27 @@
+name: C Programming browser regression
+on:
+  push:
+    paths:
+      - 'c-programming/**'
+      - 'tests/c-browser-regression.mjs'
+      - '.github/workflows/c-browser-regression.yml'
+  workflow_dispatch:
+jobs:
+  chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright and Chromium
+        run: |
+          npm install --no-save @playwright/test
+          npx playwright install --with-deps chromium
+      - name: Start local site
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/els-c-server.log 2>&1 &
+          sleep 2
+      - name: Test 8 C chapters
+        run: node tests/c-browser-regression.mjs
