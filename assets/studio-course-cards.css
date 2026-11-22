@@ -2,36 +2,37 @@
  * Scoped to the landing page; does not alter C or S&S internal components.
  */
 :root{--studio-preview-grid:color-mix(in srgb,var(--els-border) 34%,transparent)}
-.studio-intro{border-radius:19px}
+.studio-intro{border-radius:17px}
+.studio-intro .intro-copy{max-width:920px}
 .course-section-head{margin-bottom:16px}
-.available-grid{gap:18px}
+.available-grid{gap:14px}
 .course-card--available{
- position:relative;overflow:hidden;min-height:440px;
- border-radius:17px;padding:25px;
+ position:relative;overflow:hidden;min-height:372px;
+ border-radius:15px;padding:19px 21px;
  box-shadow:0 2px 12px color-mix(in srgb,var(--els-page) 65%,transparent);
 }
 .course-card--available::before{
- content:"";position:absolute;top:0;left:25px;right:25px;height:2px;
+ content:"";position:absolute;top:0;left:21px;right:21px;height:2px;
  background:var(--els-link);opacity:.58;border-radius:3px;
 }
 .course-card--available:hover{
  box-shadow:0 10px 26px color-mix(in srgb,var(--els-page) 65%,transparent);
 }
-.course-card--available .card-head{margin-bottom:14px}
+.course-card--available .card-head{margin-bottom:8px}
 .course-card--available .card-symbol{
- width:44px;height:44px;border-radius:11px;font-size:19px;
+ width:40px;height:40px;border-radius:10px;font-size:18px;
  background:var(--els-surface-alt);color:var(--els-link)
 }
-.course-card--available h3{font-size:clamp(21px,2.1vw,24px);line-height:1.28;margin-bottom:5px}
-.course-card--available .card-korean{font-size:13px;margin:0 0 8px}
-.course-card--available>p{font-size:14px;line-height:1.68;margin:0 0 17px;min-height:46px;flex:0}
-.course-focus{font-size:11px;color:var(--els-link);font-weight:800;letter-spacing:.09em;
- text-transform:uppercase;margin:0 0 5px}
+.course-card--available h3{font-size:clamp(20px,2vw,23px);line-height:1.26;margin-bottom:3px}
+.course-card--available .card-korean{font-size:12.5px;margin:0 0 5px}
+.course-card--available>p{font-size:13.5px;line-height:1.56;margin:0 0 10px;min-height:0;flex:0}
+.course-focus{font-size:10.5px;color:var(--els-link);font-weight:800;letter-spacing:.08em;
+ text-transform:uppercase;margin:0 0 3px}
 .course-preview{
- display:flex;flex-direction:column;gap:11px;min-height:151px;
+ display:flex;flex-direction:column;gap:6px;min-height:112px;
  border:1px solid var(--els-border);border-radius:12px;
  background:color-mix(in srgb,var(--els-surface-alt) 80%,var(--els-surface) 20%);
- padding:15px 17px;margin:0 0 16px;
+ padding:10px 12px;margin:0 0 10px;
 }
 .course-preview-head{display:flex;justify-content:space-between;align-items:baseline;
  gap:8px;min-width:0}
@@ -43,7 +44,7 @@
 }
 .ss-diagram-cell{min-width:0}
 .ss-diagram-label{color:var(--els-muted);font-size:11px;line-height:1.45;margin-bottom:5px}
-.ss-diagram-svg{display:block;width:100%;height:61px;overflow:visible}
+.ss-diagram-svg{display:block;width:100%;height:53px;overflow:visible}
 .ss-diagram-svg .axis{stroke:var(--studio-preview-grid);stroke-width:1.1}
 .ss-diagram-svg .signal{fill:none;stroke:var(--els-link);stroke-width:2.4;
  stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
@@ -52,14 +53,14 @@
 .ss-diagram-system .system-path{display:flex;align-items:center;justify-content:center;gap:4px}
 .ss-diagram-system .flow-arrow{font-size:15px;color:var(--els-link);line-height:1}
 .ss-diagram-system .system-block{
- display:grid;place-items:center;min-width:50px;height:43px;padding:5px;
+ display:grid;place-items:center;min-width:46px;height:38px;padding:4px;
  border:1px solid var(--els-link);border-radius:9px;
  color:var(--els-ink);background:var(--els-surface);font-size:11px;font-weight:800;line-height:1.2
 }
 .ss-diagram-system .system-block{font-family:inherit}
 .ss-diagram-system .system-caption{font-size:10px;color:var(--els-muted);line-height:1.2}
-.c-code-diagram{display:grid;grid-template-columns:minmax(0,1fr) 104px;gap:12px;align-items:stretch;flex:1}
-.c-code-source{min-width:0;padding:10px 12px;border-radius:8px;
+.c-code-diagram{display:grid;grid-template-columns:minmax(0,1fr) 94px;gap:10px;align-items:stretch;flex:1}
+.c-code-source{min-width:0;padding:8px 10px;border-radius:8px;
  border:1px solid var(--els-border);background:var(--els-code-bg);color:var(--els-code-ink)}
 .c-code-source code{display:block;font:12px/1.65 Consolas,Menlo,Monaco,"Courier New",monospace;
  white-space:pre;overflow:hidden;text-overflow:ellipsis}
@@ -68,16 +69,20 @@
 .c-code-result .result-label{color:var(--els-muted);font-size:11px}
 .c-code-result .result-number{color:var(--els-link);font:850 32px/1.1 system-ui,sans-serif;
  font-variant-numeric:tabular-nums}
-.course-methods{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 18px}
+.course-methods{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin:0 0 10px}
 .course-method{
- display:inline-flex;align-items:center;gap:5px;min-height:27px;padding:4px 8px;
+ display:inline-flex;align-items:center;gap:4px;min-height:24px;padding:3px 7px;
  font-size:11px;line-height:1.3;color:var(--els-ink);
  border:1px solid var(--els-border);border-radius:7px;background:var(--els-surface-alt);
  font-weight:600
 }
 .course-method-number{font-variant-numeric:tabular-nums;color:var(--els-link);font-weight:800;font-size:10px}
-.course-card--available .card-action{margin-top:auto;padding-top:14px}
-.course-card--planned{opacity:.9}
+.course-card--available .card-action{margin-top:auto;padding-top:9px}
+.course-card--planned{opacity:.9;padding:17px 18px;border-radius:13px}
+.course-card--planned .card-head{margin-bottom:9px}
+.course-card--planned .card-symbol{width:36px;height:36px;font-size:16px}
+.course-card--planned h3{margin-bottom:5px}
+.course-card--planned .card-korean{margin-bottom:5px}
 .course-card--planned:hover{transform:none}
 @media(max-width:1100px){
  .ss-diagram{gap:7px}
@@ -86,11 +91,11 @@
 }
 @media(max-width:760px){
  .course-card--available{min-height:0}
- .ss-diagram-svg{height:68px}
+ .ss-diagram-svg{height:57px}
 }
 @media(max-width:400px){
- .course-card--available{padding:19px}
- .course-preview{padding:12px}
+ .course-card--available{padding:18px}
+ .course-preview{padding:10px}
  .ss-diagram{gap:5px}
  .ss-diagram-system .system-block{min-width:36px}
  .ss-diagram-system .system-path{gap:2px}
