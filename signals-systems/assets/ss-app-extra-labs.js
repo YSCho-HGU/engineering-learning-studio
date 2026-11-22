@@ -10,7 +10,7 @@ if(!LABS.includes(lab))return;
 const $=id=>document.getElementById(id),canvases=[1,2,3].map(n=>$("ss-al-canvas-"+n));
 const state=lab==="beats"?{f1:220,delta:4,ratio:1}:
  lab==="amfm"?{mode:"am",fc:440,fm:8,depth:.65,beta:2.5}:
- {kind:"chirp",fs:70,f0:8,f1:110,tone:38,T:2,pos:50,showFFT:"on",aliasGuide:"on",windowMs:240,playing:false};
+ {kind:"chirp",fs:4000,f0:300,f1:7300,tone:1500,T:2,pos:50,showFFT:"on",aliasGuide:"on",windowMs:"auto",playing:false};
 const initial=JSON.parse(JSON.stringify(state));
 const duration=lab==="sampling"?state.T:2;
 const language=window.ELSLanguage;
@@ -44,7 +44,7 @@ const metadata={
   subtitle:["Select a sine wave or a linear chirp. Specify sampling frequency fₛ to see the original CT waveform, the discrete sequence x[n], and local frequency folding.","정현파 또는 선형 처프를 선택하고 샘플링 주파수 fₛ를 지정합니다. 원래 CT 파형, DT 수열 x[n], 국소적인 주파수 접힘을 동시에 관찰합니다."],
   control:["Sampling experiment","표본화 실습 변수"],
   headings:[["Continuous-time input and sample instants","연속시간 입력과 표본화 시점"],["Discrete-time sequence x[n]","이산시간 수열 x[n]"],["Original frequency, Nyquist, and folded frequency","원래 주파수·나이퀴스트·접힌 주파수"]],
-  notes:[["In Sine mode, change fₛ across 2f₀. Notice that all samples agree with a lower-frequency alias when f₀ exceeds Nyquist.","정현파 모드에서 fₛ를 2f₀의 위아래로 조절해 나이퀴스트 경계와 낮은 주파수의 에일리어스를 관찰하세요."],["Switch to Linear Chirp: keep f₀=8 Hz and f₁=110 Hz, then vary fₛ. Locate each intersection with fₛ/2.","Linear Chirp로 전환하여 f₀=8Hz, f₁=110Hz를 유지한 채 fₛ를 바꾸고 fₛ/2와 만나는 시점을 찾으세요."],["Compare x(t), x[n], and the folded-frequency curve. Lower-frequency segments above Nyquist are aliases, not changes in the source chirp.","x(t)·x[n]·접힌 주파수 곡선을 비교하세요. 나이퀴스트를 넘어 낮아 보이는 주파수는 입력 신호가 바뀐 것이 아니라 에일리어싱입니다."],["Listen to Original CT and Alias Guide. In Sine mode at f₀=38 Hz and fₛ=56 Hz, compare audible 304 Hz and 144 Hz at ×8 pitch; the original signals still have frequencies 38 Hz and 18 Hz.","Original CT와 Alias Guide를 차례로 들으세요. 정현파 f₀=38Hz, fₛ=56Hz에서 ×8 청취 시 304Hz와 144Hz로 들리지만 원래 두 신호의 주파수는 38Hz와 18Hz입니다."]],
+  notes:[["In Sine mode, change fₛ across 2f₀. Notice that all samples agree with a lower-frequency alias when f₀ exceeds Nyquist.","정현파 모드에서 fₛ를 2f₀의 위아래로 조절해 나이퀴스트 경계와 낮은 주파수의 에일리어스를 관찰하세요."],["For Linear Chirp use f₀=300 Hz, f₁=7300 Hz, and vary fₛ up to 16000 Hz. Notice when the spectrum crosses Nyquist.","선형 처프 f₀=300Hz, f₁=7300Hz에서 fₛ를 최대 16000Hz까지 조정하며 나이퀴스트 경계를 통과하는 순간을 관찰하세요."],["Compare x(t), x[n], and the folded-frequency curve. Lower-frequency segments above Nyquist are aliases, not changes in the source chirp.","x(t)·x[n]·접힌 주파수 곡선을 비교하세요. 나이퀴스트를 넘어 낮아 보이는 주파수는 입력 신호가 바뀐 것이 아니라 에일리어싱입니다."],["Listen to original CT and alias at actual frequency. At f₀=1500 Hz and fₛ=2000 Hz, compare the 1500 Hz source and 500 Hz alias; they generate the same samples.","실제 주파수의 Original CT와 Alias Guide를 듣습니다. f₀=1500Hz, fₛ=2000Hz에서 입력 1500Hz와 에일리어스 500Hz는 동일한 표본을 만듭니다."]],
   insight:["Sampling uses x[n]=x(n/fₛ). For a pure tone the signed alias lies in [−fₛ/2,fₛ/2] and its magnitude is the displayed apparent frequency. For a chirp, folding fᵢ(t) modulo fₛ describes LOCAL apparent frequency; it does not imply an exact global aliased chirp or valid recovery without an anti-alias filter. Thin connectors between samples are only visual guides (not sinc reconstruction).","표본화는 x[n]=x(n/fₛ)입니다. 순음의 부호 있는 에일리어스 주파수는 [−fₛ/2,fₛ/2]에 있고 표시된 겉보기 주파수는 그 절댓값입니다. 처프의 fᵢ(t)를 fₛ 기준으로 접는 것은 국소적인 겉보기 주파수 설명이며, 전체 신호가 하나의 정확한 처프로 복원되거나 안티에일리어싱 필터 없이 복원이 가능하다는 뜻은 아닙니다. 표본점 사이의 얇은 연결선은 시각적 안내일 뿐 sinc 복원이 아닙니다."]
  }
 };
@@ -56,7 +56,7 @@ const dom=(tag,cls,text,parent)=>{
 const clear=node=>node.replaceChildren();
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 let plotDirty=false,lastDraw=0,fftCache=null,playId=null,previousFrame=0,audioCtx=null,source=null,transportId=null,requestId=0;
-const audio={playing:false,offset:0,start:0,buffer:null,duration:duration,buttons:null,status:null,signal:"ct",pitchScale:8};
+const audio={playing:false,offset:0,start:0,buffer:null,duration:duration,buttons:null,status:null,signal:"ct",error:""};
 function palette(){
  const c=getComputedStyle(document.documentElement),v=n=>c.getPropertyValue(n).trim();
  return {ink:v("--els-ink")||"#e8e9e6",muted:v("--els-muted")||"#9ba4a1",line:v("--els-link")||"#87c5a5",border:v("--els-border")||"#666",bg:v("--els-surface")||"#171a19",alt:document.documentElement.dataset.theme==="light"?"#b66134":"#ffc08d",peak:document.documentElement.dataset.theme==="light"?"#764aa5":"#bea5e7"};
@@ -152,7 +152,7 @@ function select(host,{key,en,ko,values}){
  input.value=state[key];input.addEventListener("change",()=>{
   state[key]=input.value;
   if(lab==="sampling"&&key==="kind"){
-   state.fs=state.kind==="sine"?56:70;state.pos=50;
+   state.fs=state.kind==="sine"?2000:4000;state.pos=50;state.windowMs="auto";
   }
   renderControls();
   if(lab==="sampling"&&["windowMs","aliasGuide","showFFT"].includes(key)){drawSoon();return}
@@ -217,31 +217,31 @@ function renderControls(){
   else range(h,{key:"beta",en:"FM modulation index β",ko:"FM 변조지수 β",min:0,max:8,step:.25,digits:2});
  }else{
   select(h,{key:"kind",en:"Signal model",ko:"신호 모델",values:[["sine","Sine · Fixed frequency","정현파 · 고정 주파수"],["chirp","Linear Chirp · Sweep","선형 처프 · 주파수 스윕"]]});
-  range(h,{key:"fs",en:"Sampling frequency fₛ",ko:"샘플링 주파수 fₛ",min:20,max:300,step:1,unit:" Hz"});
+  range(h,{key:"fs",en:"Sampling frequency fₛ",ko:"샘플링 주파수 fₛ",min:20,max:16000,step:1,unit:" Hz"});
   const row=dom("div","ss-extra-number-row",null,h);
   const l=dom("label",null,txt("Enter exact fₛ (Hz)","fₛ 수치 직접 입력 (Hz)",true),row);
-  const input=dom("input",null,null,row);input.type="number";input.id="ss-extra-fs-number";l.htmlFor=input.id;input.min="20";input.max="300";input.step="1";input.value=String(state.fs);
+  const input=dom("input",null,null,row);input.type="number";input.id="ss-extra-fs-number";l.htmlFor=input.id;input.min="20";input.max="16000";input.step="1";input.value=String(state.fs);
   const slider=$("ss-extra-fs");
   slider.addEventListener("input",()=>{input.value=String(state.fs);for(const b of h.querySelectorAll(".ss-al-preset"))b.setAttribute("aria-pressed",String(Number(b.dataset.fs)===state.fs))});
-  const apply=()=>{let n=Number(input.value);if(!Number.isFinite(n))return;state.fs=clamp(Math.round(n),20,300);input.value=state.fs;slider.value=state.fs;slider.parentElement.querySelector("output").textContent=state.fs+" Hz";renderControls();change()};
+  const apply=()=>{let n=Number(input.value);if(!Number.isFinite(n))return;state.fs=clamp(Math.round(n),20,16000);input.value=state.fs;slider.value=state.fs;slider.parentElement.querySelector("output").textContent=state.fs+" Hz";renderControls();change()};
   input.addEventListener("change",apply);input.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();apply()}});
-  if(state.kind==="sine")range(h,{key:"tone",en:"Input frequency f₀",ko:"입력 주파수 f₀",min:5,max:120,step:1,unit:" Hz"});
+  if(state.kind==="sine")range(h,{key:"tone",en:"Input frequency f₀",ko:"입력 주파수 f₀",min:20,max:8000,step:1,unit:" Hz"});
   else{
-   range(h,{key:"f0",en:"Chirp start f₀",ko:"처프 시작 주파수 f₀",min:2,max:100,step:1,unit:" Hz"});
-   range(h,{key:"f1",en:"Chirp end f₁",ko:"처프 끝 주파수 f₁",min:10,max:160,step:1,unit:" Hz"});
+   range(h,{key:"f0",en:"Chirp start f₀",ko:"처프 시작 주파수 f₀",min:20,max:8000,step:1,unit:" Hz"});
+   range(h,{key:"f1",en:"Chirp end f₁",ko:"처프 끝 주파수 f₁",min:20,max:8000,step:1,unit:" Hz"});
    range(h,{key:"T",en:"Chirp duration T",ko:"처프 길이 T",min:1,max:3,step:.25,digits:2,unit:" s"});
   }
   const presetRow=dom("div","ss-al-presets",null,h);
   const presets=state.kind==="sine"?
-   [[120,"No alias · 120 Hz","무에일리어싱 · 120Hz"],[56,"38 → 18 Hz alias","38 → 18Hz 에일리어싱"],[40,"38 → 2 Hz alias","38 → 2Hz 에일리어싱"]]:
-   [[260,"No alias · 260 Hz","전구간 무에일리어싱 · 260Hz"],[70,"Fold twice · 70 Hz","두 번 접힘 · 70Hz"],[50,"Strong alias · 50 Hz","강한 접힘 · 50Hz"]];
+   [[4000,"No alias · 4 kHz","무에일리어싱 · 4kHz"],[2000,"1500 → 500 Hz alias","1500 → 500Hz 에일리어싱"],[1200,"1500 → 300 Hz alias","1500 → 300Hz 에일리어싱"]]:
+   [[16000,"No alias · 16 kHz","전구간 무에일리어싱 · 16kHz"],[4000,"Fold twice · 4 kHz","두 번 접힘 · 4kHz"],[2500,"Multiple folds · 2.5 kHz","여러 번 접힘 · 2.5kHz"]];
   for(const [f,labelEn,labelKo] of presets){
    const preset=dom("button","ss-al-preset",txt(labelEn,labelKo,true),presetRow);
    preset.type="button";preset.dataset.fs=String(f);
    preset.setAttribute("aria-pressed",String(state.fs===f));
    preset.addEventListener("click",()=>{state.fs=f;renderControls();change()});
   }
-  select(h,{key:"windowMs",en:"Visible time span",ko:"표시 시간 범위",values:[["120","120 ms","120 ms"],["240","240 ms","240 ms"],["480","480 ms","480 ms"]]});
+  select(h,{key:"windowMs",en:"Visible time span",ko:"표시 시간 범위",values:[["auto","Auto · 12 cycles","자동 · 약 12주기"],["2","2 ms","2 ms"],["5","5 ms","5 ms"],["10","10 ms","10 ms"],["20","20 ms","20 ms"],["50","50 ms","50 ms"],["120","120 ms","120 ms"],["240","240 ms","240 ms"],["480","480 ms","480 ms"]]});
   select(h,{key:"aliasGuide",en:"Sample-consistent alias guide",ko:"표본 일치 에일리어스 안내선",values:[["on","Show alias guide","에일리어스 안내선 표시"],["off","Hide alias guide","안내선 숨기기"]]});
   select(h,{key:"showFFT",en:"Measured STFT peaks",ko:"표본의 STFT 피크",values:[["on","Show STFT peaks","STFT 피크 표시"],["off","Hide STFT peaks","STFT 피크 숨기기"]]});
   range(h,{key:"pos",en:"Observation time",ko:"관찰 시각",min:0,max:100,step:1,unit:"%",changed:()=>{
@@ -258,19 +258,9 @@ function renderControls(){
   });
  }
  if(lab==="sampling"){
-  const label=dom("label","ss-al-audio-mode-label",txt("Listening pitch","청취 음정",true),a);
-  const pitch=dom("select","ss-al-audio-pitch",null,a);
-  pitch.id="ss-al-pitch-scale";label.htmlFor=pitch.id;
-  for(const [factor,en,ko] of [[8,"×8 · Audible comparison","×8 · 듣기 쉬운 음정"],[1,"×1 · Actual frequencies","×1 · 실제 주파수"]]){
-   const option=dom("option",null,txt(en,ko,true),pitch);option.value=String(factor);
-  }
-  pitch.value=String(audio.pitchScale);
-  pitch.addEventListener("change",()=>{
-   audio.pitchScale=Number(pitch.value);stopAudio(true);audio.buffer=null;refreshAudio();
-  });
   dom("p","ss-al-audio-caution",txt(
-   "×8 is pitch sonification, not the physical frequency or a reconstructed signal.",
-   "×8은 청취용 음정 변환이며 실제 신호 주파수나 복원 결과가 아닙니다."
+   "Sound uses actual frequencies. Browser audio output uses the device sample rate (typically 44.1/48 kHz), not experiment fₛ.",
+   "소리는 실제 주파수로 재생합니다. 브라우저 오디오 출력은 실험 fₛ가 아니라 장치 샘플률(보통 44.1/48kHz)을 사용합니다."
   ),a);
  }
  {
@@ -597,18 +587,16 @@ function refreshAudio(){
  if(lab==="sampling"){
   const d=$("ss-al-audio-values");
   if(d){
-   const m=audio.pitchScale;
    if(state.kind==="sine"){
     const signed=foldedSigned(state.tone,state.fs),alias=Math.abs(signed);
     d.textContent=txt(
-     "CT "+state.tone+" Hz → listen "+(state.tone*m)+" Hz · Alias "+alias+" Hz → listen "+(alias*m).toFixed(0)+" Hz. They give identical x[n] at fₛ="+state.fs+" Hz.",
-     "CT "+state.tone+"Hz → 청취 "+(state.tone*m)+"Hz · 에일리어스 "+alias+"Hz → 청취 "+(alias*m).toFixed(0)+"Hz. fₛ="+state.fs+"Hz에서는 x[n]이 일치합니다."
+     "CT "+state.tone+" Hz → signed alias "+signed+" Hz (audible frequency "+alias+" Hz). Same x[n] at fₛ="+state.fs+" Hz.",
+     "CT "+state.tone+"Hz → 부호 있는 에일리어스 "+signed+"Hz (들리는 주파수 "+alias+"Hz). fₛ="+state.fs+"Hz에서 같은 x[n]을 만듭니다."
     );
    }else{
-    const maxAlias=state.fs/2;
     d.textContent=txt(
-     "CT chirp "+state.f0+"–"+state.f1+" Hz; listen at ×"+m+" pitch. The alias guide is a sample-consistent illustration, NOT unique reconstruction.",
-     "CT 처프 "+state.f0+"–"+state.f1+"Hz를 ×"+m+" 음정으로 듣습니다. 에일리어스 안내 파형은 표본에 일치하는 예시이며 유일한 복원 신호가 아닙니다."
+     "CT chirp "+state.f0+"–"+state.f1+" Hz at actual frequencies. Alias guide matches samples but is NOT a unique reconstruction.",
+     "CT 처프 "+state.f0+"–"+state.f1+"Hz를 실제 주파수로 듣습니다. 에일리어스 안내 파형은 표본과 일치하지만 유일한 복원 신호는 아닙니다."
     );
    }
   }
@@ -629,7 +617,7 @@ function refreshAudio(){
       (lab==="sampling"?(audio.signal==="ct"?"원래 CT":"에일리어스 안내 파형")+" · ":"")+"오디오 시간 동기화"):
   audio.offset>0&&audio.offset<audio.duration?
    txt("Paused · resume at current position","일시 정지 · 현재 위치에서 계속"):
-   txt("Listen at a low volume. ×8 is for pitch comparison.","낮은 음량으로 청취하세요. ×8은 음정 비교용입니다.");
+   txt("Press Play to start sound, at low volume.","재생 버튼을 누르고 낮은 음량으로 청취하세요.");
  updateTransport();
 }
 function closeSource(){
@@ -672,7 +660,7 @@ function fftAudioBuffer(){
  for(let i=0;i<n;i++){
   const t=i/sr,gain=Math.max(0,Math.min(1,t/fade,(audio.duration-t)/fade));
   const sample=lab==="sampling"?
-   (audio.signal==="ct"?Math.sin(audio.pitchScale*phaseAt(t)):Math.sin(audio.pitchScale*phaseFoldAngle(t))):
+   (audio.signal==="ct"?Math.sin(phaseAt(t)):Math.sin(phaseFoldAngle(t))):
    audioAt(t);
   data[i]=clamp(.22*gain*sample,-1,1);
  }
@@ -789,7 +777,7 @@ function init(){
  });
  $("ss-al-reset").addEventListener("click",()=>{
   stopAudio(true);if(playId!==null){cancelAnimationFrame(playId);playId=null}
-  Object.keys(initial).forEach(key=>state[key]=initial[key]);fftCache=null;audio.buffer=null;audio.offset=0;audio.duration=lab==="sampling"?state.T:2;audio.signal="ct";audio.pitchScale=8;
+  Object.keys(initial).forEach(key=>state[key]=initial[key]);fftCache=null;audio.buffer=null;audio.offset=0;audio.duration=lab==="sampling"?state.T:2;audio.signal="ct";audio.error="";
   previousFrame=0;displayNames();renderControls();drawSoon();
  });
  {
