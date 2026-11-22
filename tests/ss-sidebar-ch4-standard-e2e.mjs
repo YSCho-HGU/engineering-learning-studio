@@ -25,10 +25,7 @@ try{
    await page.goto(base+"chapter"+chapter+".html",{waitUntil:"domcontentloaded"});
    const sidebar=page.locator(".ss-layout-root > .ss-layout-sidebar");
    await sidebar.waitFor({state:"visible"});
-   const nav=sidebar.locator("nav").filter({has:page.locator("button")}).first();
-   await nav.locator("> button").first().waitFor({state:"visible",timeout:12000}).catch(async()=>{
-    await sidebar.locator("nav > button").first().waitFor({state:"visible",timeout:7000});
-   });
+   await sidebar.locator("nav > button").first().waitFor({state:"visible",timeout:12000});
    const items=sidebar.locator("nav > button");
    const count=await items.count();
    assert.ok(count>=4,"Ch "+chapter+": missing experiment items");
