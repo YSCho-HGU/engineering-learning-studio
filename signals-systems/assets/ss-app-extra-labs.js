@@ -140,7 +140,11 @@ function select(host,{key,en,ko,values}){
  const box=dom("div","ss-al-field",null,host),label=dom("label","ss-al-field-top",txt(en,ko,true),box),input=dom("select",null,null,box);
  input.id="ss-extra-"+key;label.htmlFor=input.id;
  for(const [value,textEn,textKo] of values){const op=dom("option",null,txt(textEn,textKo,true),input);op.value=value}
- input.value=state[key];input.addEventListener("change",()=>{state[key]=input.value;renderControls();change()});return input;
+ input.value=state[key];input.addEventListener("change",()=>{
+  state[key]=input.value;renderControls();
+  if(lab==="sampling"&&["windowMs","aliasGuide","showFFT"].includes(key)){drawSoon();return}
+  change();
+ });return input;
 }
 function displayNames(){
  const md=metadata[lab];$("ss-al-title").textContent=txt(...md.title,true);$("ss-al-subtitle").textContent=txt(...md.subtitle);
