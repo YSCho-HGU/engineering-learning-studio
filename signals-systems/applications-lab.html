@@ -52,8 +52,8 @@
  <div class="ss-al-workspace">
   <aside class="ss-al-controls" id="ss-al-controls" aria-label="Experiment controls">
    <div class="ss-al-controls-head"><h2 id="ss-al-controls-title">Experiment Controls</h2><p id="ss-al-controls-subtitle"></p></div>
-   <div id="ss-al-control-fields"></div>
    <div class="ss-al-audio" id="ss-al-audio"></div>
+   <div id="ss-al-control-fields"></div>
    <div class="ss-al-guidance" id="ss-al-guidance"></div>
   </aside>
   <section class="ss-al-results" id="ss-al-graphs" aria-label="Interactive visualizations">
@@ -62,8 +62,22 @@
     <div class="ss-al-graph-actions"><button type="button" id="ss-al-reset">Reset</button><button type="button" id="ss-al-focus-toolbar" aria-pressed="false">Focus on graphs</button><button type="button" id="ss-al-panel-toggle" aria-expanded="true" aria-controls="ss-al-controls">Hide controls</button></div>
    </div>
    <div class="ss-al-metrics" id="ss-al-metrics" aria-live="off"></div>
+   <div class="ss-al-transport" id="ss-al-transport" hidden>
+    <span class="ss-al-transport-label" id="ss-al-transport-label">Audio timeline</span>
+    <label class="ss-al-transport-track" for="ss-al-seek">
+      <input id="ss-al-seek" type="range" min="0" max="1000" step="1" value="0" aria-label="Audio playback position">
+    </label>
+    <output id="ss-al-transport-time" for="ss-al-seek">0:00 / 0:02</output>
+   </div>
    <div id="ss-al-charts" class="ss-al-charts">
-    <article class="ss-al-plot"><h2 id="ss-al-plot-title-1">Time waveform</h2><canvas id="ss-al-canvas-1" role="img" aria-label="Time waveform plot"></canvas><p class="ss-al-plot-note" id="ss-al-note-1"></p></article>
+    <article class="ss-al-plot ss-al-primary-plot">
+      <div class="ss-al-plot-heading"><h2 id="ss-al-plot-title-1">Time waveform</h2>
+       <div class="ss-al-camera-tools" id="ss-al-camera-tools" hidden>
+        <button type="button" id="ss-al-camera-reset" aria-label="Reset 3D camera">Reset view</button>
+        <span id="ss-al-camera-hint">Drag to rotate · Scroll to zoom</span>
+       </div>
+      </div>
+      <canvas id="ss-al-canvas-1" role="img" aria-label="Time waveform plot"></canvas><p class="ss-al-plot-note" id="ss-al-note-1"></p></article>
     <article class="ss-al-plot"><h2 id="ss-al-plot-title-2">Harmonic spectrum</h2><canvas id="ss-al-canvas-2" role="img" aria-label="Harmonic amplitude spectrum"></canvas><p class="ss-al-plot-note" id="ss-al-note-2"></p></article>
     <article class="ss-al-plot" id="ss-al-third" hidden><h2 id="ss-al-plot-title-3">Additional view</h2><canvas id="ss-al-canvas-3" role="img" aria-label="Additional signal plot"></canvas><p class="ss-al-plot-note" id="ss-al-note-3"></p></article>
    </div>
@@ -75,6 +89,7 @@
 <script src="../assets/els-theme-v2.js?v=6" defer></script>
 <script src="./assets/ss-common-header.js?v=applications2" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js" defer></script>
-<script src="./assets/ss-app-labs.js?v=2" defer></script>
+<script src="./assets/ss-app-helix3d.js?v=1" defer></script>
+<script src="./assets/ss-app-labs.js?v=3" defer></script>
 <script src="../assets/els-header-controls.js?v=1" defer></script>
 </body></html>
