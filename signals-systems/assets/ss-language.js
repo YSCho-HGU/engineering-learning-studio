@@ -199,7 +199,7 @@ function translateText(s){
  if(!korean.test(s))return s;
  const trim=s.trim();
  if(KO_ONLY[trim])return mode==="en"?s.replace(trim,KO_ONLY[trim]):mode==="mixed"?s.replace(trim,KO_ONLY[trim]+" / "+trim):s;
- const paired=/^([\s\S]*?[A-Za-z][\s\S]*?)\s+\/\s+([^\/]*[가-힣][\s\S]*)$/;
+ const paired=/^([\s\S]*?[A-Za-z][\s\S]*?)\s+(?:\/|·)\s+([가-힣][\s\S]*)$/;
  const m=trim.match(paired);
  if(!m)return s; // Never silently hide unpaired instructional Korean.
  const english=m[1].trim(),ko=m[2].trim(), leading=s.slice(0,s.indexOf(trim));
