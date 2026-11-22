@@ -22,26 +22,52 @@ try{const v=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(v))comp
 function safe(x){return String(x??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;")}
 function element(tag,cls,parent,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;parent.appendChild(n);return n}
 function renderNav(){
- $("lesson-nav").replaceChildren();
+ const nav=$("lesson-nav");
+ const previousOpen={};
+ nav.querySelectorAll("details.c-learning-group").forEach(group=>{previousOpen[group.dataset.group]=group.open});
+ nav.replaceChildren();
+ function group(id,ko,en,openDefault){
+  const d=element("details","c-learning-group",nav);
+  d.dataset.group=id;
+  d.open=Object.prototype.hasOwnProperty.call(previousOpen,id)?previousOpen[id]:openDefault;
+  const title=element("summary","c-learning-group-title",d,ui(ko,en));
+  title.setAttribute("aria-label",en);
+  const list=element("div","c-learning-group-items",d);
+  return list;
+ }
+ const core=group("core","Core Concepts · 필수 학습","Core Concepts",current<coreCount);
+ const optional=hasOptional?group("advanced","Advanced · 선택 심화","Advanced / Optional",current>=coreCount):null;
  D.lessons.forEach((l,i)=>{
-  if(hasOptional&&(i===0||i===coreCount)){
-   const group=element("div","dm-nav-group",$("lesson-nav"),i===0?ui("필수 학습 · CORE (01–","Core lessons (01–")+String(coreCount).padStart(2,"0")+")":ui("선택 심화 · OPTIONAL (","Optional extension (")+String(coreCount+1).padStart(2,"0")+"–"+String(total).padStart(2,"0")+")");
-   group.setAttribute("aria-label",i===0?"Core lessons":"Optional advanced lessons");
-  }
-  const b=element("button",(i===current?"active ":"")+(completed.includes(i)?"done":""),$("lesson-nav"));
-  b.type="button";b.dataset.lesson=i;b.setAttribute("aria-controls","lesson");if(i===current)b.setAttribute("aria-current","step");
+  const host=i<coreCount?core:optional;
+  const b=element("button",(i===current?"active ":"")+(completed.includes(i)?"done":""),host);
+  b.type="button";b.dataset.lesson=i;b.setAttribute("aria-controls","lesson");
+  if(i===current)b.setAttribute("aria-current","step");
   element("span","n",b,String(i+1).padStart(2,"0"));
   element("span","",b,l.title);
-  if(hasOptional)element("span","dm-level",b,i<coreCount?ui("필수","Core"):ui("선택","Optional"));
-  if(concepts.includes(i))element("span","concept-indicator",b,"✓ Concept");
+  if(concepts.includes(i))element("span","concept-indicator",b,"✓");
   b.addEventListener("click",()=>show(i));
  });
- if(hasOptional){
-  const coreA=completed.filter(i=>i<coreCount).length,coreC=concepts.filter(i=>i<coreCount).length;
-  $("progress-text").textContent=ui("필수 활동 ","Core activity ")+coreA+"/"+coreCount+" · Concept "+coreC+"/"+coreCount+ui(" · 선택 심화 "," · Optional ")+completed.filter(i=>i>=coreCount).length+"/"+(total-coreCount);
- }else $("progress-text").textContent=ui("학습 활동 ","Activity ")+completed.length+"/"+total+" · Concept "+concepts.length+"/"+total;
- $("progress-bar").style.width=(hasOptional?completed.filter(i=>i<coreCount).length/coreCount:completed.length/total)*100+"%";
- const meter=$("progress-bar").parentElement;if(meter){meter.setAttribute("aria-valuenow",String(hasOptional?completed.filter(i=>i<coreCount).length:completed.length));meter.setAttribute("aria-valuemax",String(hasOptional?coreCount:total));}
+ if(Array.isArray(D.guidedLabs)&&D.guidedLabs.length){
+  const labs=group("labs","Guided Labs · 따라하기 실습","Guided Labs",false);
+  D.guidedLabs.forEach((lab,i)=>{
+   const link=element("a","c-learning-link",labs,lab.label||"Lab "+(i+1));
+   link.href=lab.href;
+  });
+ }
+ if(Array.isArray(D.practice)&&D.practice.length){
+  const challenges=group("challenges","Coding Challenges · 직접 구현","Coding Challenges",false);
+  D.practice.forEach((task,i)=>{
+   const link=element("a","c-learning-link",challenges,"P"+(i+1)+" · "+task.title);
+   link.href="./practice/#p"+(i+1);
+   link.dataset.challenge=String(i+1);
+  });
+ }
+ const count=hasOptional?completed.filter(i=>i<coreCount).length:completed.length;
+ const limit=hasOptional?coreCount:total;
+ $("progress-text").textContent=count+" / "+limit+ui(" 완료"," completed");
+ $("progress-bar").style.width=(count/limit)*100+"%";
+ const meter=$("progress-bar").parentElement;
+ if(meter){meter.setAttribute("aria-valuenow",String(count));meter.setAttribute("aria-valuemax",String(limit))}
 }
 function createCode(host,source,kind="reference"){
  const wrap=element("div","c-code-example",host);
@@ -296,7 +322,7 @@ function init(){
  $("hero-count").textContent=(hasOptional?coreCount+" Core + "+(total-coreCount)+" Optional · ":total+" Learning Steps · ")+D.book;
  const stepLabel=document.querySelector(".hero-aside small");if(stepLabel)stepLabel.textContent=total+" LEARNING STEPS";
  const heading=document.querySelector(".route-heading span");if(heading)heading.textContent=total+" Learning Steps / "+D.practice.length+" Coding Practices";
- const intro=document.querySelector("#coding-practice h2");if(intro)intro.textContent="P1–P"+D.practice.length+" · Coding Practice";
+ const intro=document.querySelector("#coding-practice h2");if(intro)intro.textContent="P1–P"+D.practice.length+" · Coding Challenges";
  const meter=$("progress-bar")?.parentElement;if(meter)meter.setAttribute("aria-valuemax",String(hasOptional?coreCount:total));
  $("course-number").textContent=D.book;
  $("phase-one").textContent=D.phases[0];$("phase-two").textContent=D.phases[1];$("phase-three").textContent=D.phases[2];
@@ -320,7 +346,9 @@ function init(){
    themeToggle.setAttribute("aria-pressed",String(next!=="warm-neutral"));
   }
  });
- renderNav();show(0);updateAssessmentSummary();
+ const hashStep=()=>{const m=/^#step-(\d+)$/.exec(location.hash);return m?Math.max(0,Math.min(total-1,Number(m[1])-1)):0};
+ renderNav();show(hashStep());updateAssessmentSummary();
+ window.addEventListener("hashchange",()=>{if(/^#step-\d+$/.test(location.hash))show(hashStep())});
 }
 init();
 })();
