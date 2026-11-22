@@ -455,8 +455,11 @@ function drawSampling(){
  C=canvasContext(canvases[1]);
  if(C){
   const n0=Math.max(0,Math.ceil(begin*state.fs)),n1=Math.max(n0+1,Math.floor(end*state.fs));
+  const integerLabels=integerTicks(n0,n1,5);
+  canvases[1].dataset.integerTicks=integerLabels.join(",");
+  canvases[1].setAttribute("aria-label",txt("Discrete-time x[n], integer sample indices","정수 표본 첨자를 가진 이산시간 수열 x[n]",true)+" · n="+integerLabels.join(", "));
   const B=axes(C,{xmin:n0-.55,xmax:n1+.55,ymin:-1.2,ymax:1.2,
-   xlabel:"n",ylabel:"x[n]",xvalues:integerTicks(n0,n1,5),
+   xlabel:"n",ylabel:"x[n]",xvalues:integerLabels,
    xformat:n=>String(Math.round(n)),yvalues:[-1,0,1]});
   const ctx=C.ctx;
   ctx.strokeStyle=C.pal.muted;ctx.lineWidth=1;ctx.beginPath();
