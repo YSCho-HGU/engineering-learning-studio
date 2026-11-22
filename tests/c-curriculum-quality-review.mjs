@@ -72,21 +72,24 @@ if(arrays.lessons[3].quiz.explain.includes("음수")&&!arrays.lessons[3].model.c
  flag("EDU-131-NEG","P1","131","L4 Finding Maximum","Quizzes explain negative-only arrays but the interactive scenarios use positive-only values.","Add a scenario such as {-8,-3,-11}, compare max=a[0] with max=0, and ask for a prediction.");
 if(strings.lessons[3].model.cases.every(x=>x.includes("==0 → true")))
  flag("EDU-132-STRCMP","P1","132","L4 String Comparison","Every model case is an equal-string comparison; <0 and >0 outcomes are not visualized.","Include equal, less-than and greater-than comparisons; teach the sign rather than exact +/-1.");
-if(strings.lessons[5].concept.includes("fgets")&&!codeContains(strings,5,/\bfgets\s*\(/))
+if(strings.lessons[5].concept.includes("fgets")&&!codeContains(strings,5,/\bfgets\s*\(/)&&!/\bfgets\s*\(/.test(strings.lessons[5].extraExample?.code||""))
  flag("EDU-132-FGETS","P1","132","L6 Buffer Capacity / P5 Safe fgets","Concept names fgets and P5 requires reading stdin, but the worked program only prints sizeof and an initialized string.","Add a worked input example with fgets return check, newline handling and a safe short buffer; keep the deterministic sizeof example.");
 if(/Menu-Driven/i.test(functions.lessons[7].model.title)&&!/(scanf|fgets|switch|while|for)\s*\(/.test(functions.lessons[7].code))
  flag("EDU-141-NAMING","P2","141","L8 Composing Functions","Interactive model says Menu-Driven while the example explicitly demonstrates nested function calls, without menu input.","Rename model to Function Composition; if menu-driven CLI is desired, supply a separate relevant example.");
 const coreMemory=memory.lessons.slice(0,memory.coreCount||4);
 if(coreMemory.filter(l=>/출력|값이 출력/.test(l.quiz?.q||"")).length===coreMemory.length)
  flag("EDU-181-CONCEPT","P1","181","L1-L4 Core memory lessons","Every Core quiz asks for output prediction rather than verifying NULL handling, lifecycle or uninitialized-memory safety.","Keep output prediction in Predict and use Check Yourself for malloc failure, byte sizing, free, and alias safety.");
-if(catalog.chapters.some(x=>!x.published&&Number(x.id)<131))
- flag("EDU-PREREQUISITES","P2","course","Units 101-123 unpublished","Foundations (I/O, if, switch and loops) are not publicly navigable despite being needed by the first published Arrays unit.","Add a clear prerequisite checkpoint and link classroom material until the earlier units are released.");
+if(catalog.chapters.some(x=>!x.published&&Number(x.id)<131)){
+ const home=read("c-programming/index.html");
+ if(!home.includes('id="prerequisite-checkpoint"'))flag("EDU-PREREQUISITES","P2","course","Units 101-123 unpublished","The first published Arrays unit assumes earlier C fundamentals but offers no prerequisite checkpoint.","Add a concise checkpoint for input/output, decisions, loops and basic function calls.");
+ else flag("EDU-PREREQUISITES-PUBLICATION","P3","course","Earlier foundations not published","A prerequisite checkpoint is visible, but earlier foundation chapters are still unpublished in the portal.","Keep the checkpoint; publish those chapters when their materials are ready.");
+}
 if(bySlug["file-io"]?.optionalLessons===1){
  const html=read("c-programming/file-io/index.html");
  const start=html.indexOf('<section class="stage" data-stage="6"');
  const end=html.indexOf('<section class="stage" data-stage="7"',start);
- if(start>=0&&end>start&&end-start>12000)
-  flag("EDU-171-DENSITY","P2","171","Optional Sensor Log stage 6","Sensor Log optional section is substantially longer and more complex than adjacent core lessons.","Maintain optional separation; add a compact overview and offer details progressively.");
+ if(start>=0&&end>start&&end-start>12000&&!(html.slice(start,end).includes("sensor-learning-flow")&&html.slice(start,end).includes('<details class="sensor-reference-code"')&&html.slice(start,end).includes('<details class="sensor-advanced-optional"')))
+  flag("EDU-171-DENSITY","P2","171","Optional Sensor Log stage 6","The long sensor module needs a compact starting route and progressively revealed advanced content.","Keep the short learning-flow overview and collapse the reference source and advanced validation.");
 }
 const count=key=>result.units.reduce((n,x)=>n+Number(x[key]||0),0);
 result.summary={publishedUnits:units.length,plannedUnits:catalog.chapters.length,
