@@ -5,7 +5,7 @@ const $=id=>document.getElementById(id),tau=2*Math.PI;
 const L={
 title:["Frequency Resolution & Spectral Leakage","주파수 분해능과 스펙트럼 누설"],
 subtitle:["First change how long you observe a signal. Next move a tone between FFT bins. Finally add zeros without adding observations.","먼저 실제 관측 시간을 바꾸고, 다음에는 신호를 FFT Bin 사이로 이동해 봅니다. 마지막으로 새 표본 없이 0만 추가해 봅니다."],
-steps:[["1 · Interpret samples","1 · 표본 해석"],["2 · Resolution & leakage","2 · 분해능과 누설"],["3 · Windows & phase (next)","3 · 창 함수와 위상 (다음)"]],
+steps:[["1 · Sample-data FFT","1 · 표본 FFT"],["2 · Frequency resolution","2 · 주파수 분해능"],["3 · Leakage & windows","3 · 누설과 창 함수"],["4 · Zero padding","4 · 영 채우기"]],
 controls:["Experiment controls","실험 설정"],controlsNote:["Change one control at a time. The time graph and FFT spectrum update together.","한 번에 하나의 값을 바꾸면서 시간 파형과 FFT 스펙트럼을 함께 관찰하세요."],
 experiment:["Choose experiment","실험 선택"],fs:["Sampling rate fs","샘플링 주파수 fs"],n:["Observed samples N","관측 표본 수 N"],
 separation:["Two-tone separation","두 신호의 주파수 차이"],offset:["Fractional bin offset","정수 Bin에서 벗어난 정도"],
@@ -15,7 +15,7 @@ timeNote:["The horizontal axis is n (sample index), not seconds.","가로축은 
 spectrumNote:["The horizontal axis is frequency in Hz; the graph shows one-sided amplitude.","가로축은 Hz 단위 주파수이며 단측 진폭을 표시합니다."],
 theory:["3 · Read the equations","3 · 수식으로 해석"],eq1:["Observation and nominal bin spacing","관측 시간과 원래 Bin 간격"],eq2:["Padded grid spacing","영 채우기 후의 표시 격자"],
 theoryNote:["N is the number of acquired samples, M is the transform length after padding. With the same observation, denser bins are not automatically better physical resolution.","N은 실제 관측 표본 개수이고 M은 영 채우기를 적용한 변환 길이입니다. 관측 구간이 같다면 FFT 격자만 촘촘해져도 실제 분해능은 자동으로 높아지지 않습니다."],
-observation:["4 · Explain your observation","4 · 관찰 결과 해석"],back:["← Sample Data FFT","← 샘플 데이터 FFT"],next:["FFT learning topics →","FFT 전체 학습 목차 →"]
+observation:["4 · Explain your observation","4 · 관찰 결과 해석"],back:["← Sample Data FFT","← 샘플 데이터 FFT"],quizTitle:["5 · Check your understanding","5 · 이해도 확인"],quizButton:["Check answer","정답 확인"],quizRetry:["Choose another answer","다른 답을 선택해 보세요"],legend:["Solid = signal frequency; dashed = FFT bins","실선 = 실제 신호 주파수, 점선 = FFT Bin"],next:["FFT learning topics →","FFT 전체 학습 목차 →"]
 };
 const lang=()=>global.ELSLanguage?.get?.()||"mixed";
 const tr=([en,ko],short=false)=>lang()==="en"?en:lang()==="ko"?ko:en+(short?" · ":"\n")+ko;
@@ -45,7 +45,7 @@ function analyze({fs=256,N=64,separation=12,offset=.35,experiment="resolution",w
  const bins=spectrum.map((amplitude,k)=>({k,hz:k*fs/M,amplitude}));
  return {fs,N,M,df,grid:fs/M,duration:N/fs,experiment,window,padding,separation,offset,f1,f2,raw,samples,bins};
 }
-function draw(svg,points,{xmin=0,xmax,ymax,axisX,axisY,stems=false}){
+function draw(svg,points,{xmin=0,xmax,ymax,axisX,axisY,stems=false,markers=null}){
  const NS="http://www.w3.org/2000/svg",W=620,H=300,left=64,right=18,top=32,bottom=44,pw=W-left-right,ph=H-top-bottom;
  svg.replaceChildren();
  const minY=stems?Math.min(-.1,...points.map(p=>p.y)):-.04;
@@ -71,11 +71,28 @@ function draw(svg,points,{xmin=0,xmax,ymax,axisX,axisY,stems=false}){
   const path=points.filter(p=>p.x>=xmin&&p.x<=xmax).map((p,j)=>(j?"L":"M")+sx(p.x).toFixed(2)+","+sy(p.y).toFixed(2)).join(" ");
   add("path",{d:path},undefined,"curve");
  }
+ if(markers){
+  const nyq=xmax,step=markers.grid;
+  // Only nearby bins: every bin for very coarse grids would obscure the data.
+  const centers=markers.tones.filter(t=>t>0&&t<nyq);
+  const near=new Set();
+  for(const tone of centers){const k=Math.round(tone/step);for(let j=k-2;j<=k+2;j++){const value=j*step;if(value>=0&&value<=nyq)near.add(j)}}
+  for(const k of [...near].sort((a,b)=>a-b)){
+   const x=sx(k*step);
+   add("line",{x1:x,x2:x,y1:top,y2:H-bottom,stroke:"var(--els-muted)","stroke-width":1,"stroke-dasharray":"3 6",opacity:.7},undefined,"fft-bin-guide");
+  }
+  centers.forEach((tone,index)=>{
+   const x=sx(tone);
+   add("line",{x1:x,x2:x,y1:top,y2:H-bottom,stroke:index?"#e58d49":"#36b6a8","stroke-width":2.2,opacity:.95},undefined,"true-frequency-guide");
+   const edge=x>W-95?"end":x<left+80?"start":"middle";
+   add("text",{x,y:top+14+index*16,"text-anchor":edge,fill:index?"#e58d49":"#36b6a8","font-size":13,"font-weight":700},f(tone,2)+" Hz","true-frequency-label");
+  });
+ }
  add("text",{x:left,y:17},axisY,"title");
  add("text",{x:left+pw/2,y:H-7,"text-anchor":"middle"},axisX,"title");
 }
 function renderLabels(){
- const pairs=[["fft-r-title","title"],["fft-r-subtitle","subtitle"],["fft-r-controls-title","controls"],["fft-r-controls-note","controlsNote"],["fft-r-experiment-label","experiment"],["fft-r-fs-label","fs"],["fft-r-n-label","n"],["fft-r-separation-label","separation"],["fft-r-offset-label","offset"],["fft-r-window-label","window"],["fft-r-padding-label","padding"],["fft-r-time-title","time"],["fft-r-spectrum-title","spectrum"],["fft-r-time-note","timeNote"],["fft-r-spectrum-note","spectrumNote"],["fft-r-theory-title","theory"],["fft-r-eq1-label","eq1"],["fft-r-eq2-label","eq2"],["fft-r-theory-note","theoryNote"],["fft-r-observation-title","observation"],["fft-r-back","back"],["fft-r-next","next"]];
+ const pairs=[["fft-r-title","title"],["fft-r-subtitle","subtitle"],["fft-r-controls-title","controls"],["fft-r-controls-note","controlsNote"],["fft-r-experiment-label","experiment"],["fft-r-fs-label","fs"],["fft-r-n-label","n"],["fft-r-separation-label","separation"],["fft-r-offset-label","offset"],["fft-r-window-label","window"],["fft-r-padding-label","padding"],["fft-r-time-title","time"],["fft-r-spectrum-title","spectrum"],["fft-r-time-note","timeNote"],["fft-r-spectrum-note","spectrumNote"],["fft-r-theory-title","theory"],["fft-r-eq1-label","eq1"],["fft-r-eq2-label","eq2"],["fft-r-theory-note","theoryNote"],["fft-r-observation-title","observation"],["fft-r-back","back"],["fft-r-next","next"],["fft-r-quiz-title","quizTitle"],["fft-r-quiz-check","quizButton"],["fft-r-guide-legend","legend"]];
  for(const [id,key] of pairs)$(id).textContent=tr(L[key]);
  $("fft-r-steps").replaceChildren(...L.steps.map(s=>{const e=document.createElement("span");e.textContent=tr(s,true);return e}));
  $("fft-r-experiment").options[0].textContent=tr(["1 · Two nearby tones","1 · 인접한 두 정현파"],true);
@@ -101,7 +118,7 @@ function run(){
  ];
  $("fft-r-stats").replaceChildren(...vals.map(([label,val])=>{const box=document.createElement("div"),s=document.createElement("span"),b=document.createElement("strong");s.textContent=label;b.textContent=val;box.append(s,b);return box}));
  draw($("fft-r-time"),a.samples.map((y,x)=>({x,y})),{xmax:N-1,axisX:"n (sample index)",axisY:"x[n] · windowed",stems:true});
- draw($("fft-r-spectrum"),a.bins.map(p=>({x:p.hz,y:p.amplitude})),{xmax:fs/2,axisX:"f (Hz)",axisY:tr(["One-sided amplitude","단측 진폭"],true)});
+ draw($("fft-r-spectrum"),a.bins.map(p=>({x:p.hz,y:p.amplitude})),{xmax:fs/2,axisX:"f (Hz)",axisY:tr(["One-sided amplitude","단측 진폭"],true),markers:{grid:a.grid,tones:experiment==="resolution"?[a.f1,a.f2]:[a.f1]}});
  let lines=[];
  if(experiment==="resolution"){
   lines=[tr(["Two tones: "+f(a.f1,1)+" Hz and "+f(a.f2,1)+" Hz. Their separation is "+separation+" Hz; the observation-based bin spacing is "+f(a.df,2)+" Hz.","두 정현파: "+f(a.f1,1)+" Hz와 "+f(a.f2,1)+" Hz. 주파수 차이는 "+separation+" Hz이며 관측 길이 기준 Bin 간격은 "+f(a.df,2)+" Hz입니다."]),
@@ -114,8 +131,44 @@ function run(){
    tr(["Compare the denser spectrum grid against the unchanged observation time. Padding interpolates the sampled spectrum; it cannot separate tones that the original record does not resolve.","촘촘해진 주파수 격자와 변하지 않은 관측 시간을 비교하세요. 영 채우기는 스펙트럼을 더 촘촘히 표본화하지만 원래 기록으로 구별할 수 없는 두 신호를 새로 분리해 주지는 않습니다."])];
  }
  $("fft-r-observation").textContent=lines.join("\n\n");
+ renderQuestion(experiment);
  global.SSMathCore?.queue?.();
 }
+const questions={
+ resolution:{
+  q:["At fixed fs, doubling the actual number of observed samples N has what effect?","fs가 일정할 때 실제 관측 표본 수 N을 두 배로 늘리면 무엇이 변할까요?"],
+  choices:[["Observation time doubles and the original bin spacing halves.","관측 시간은 두 배, 원래 Bin 간격은 절반이 됩니다."],["The original bin spacing doubles.","원래 Bin 간격이 두 배가 됩니다."],["The sampling rate automatically doubles.","샘플링 주파수가 자동으로 두 배가 됩니다."]],
+  correct:0,why:["Because T=N/fs and Δf=fs/N. Closely spaced tones may become more distinguishable, but bin spacing alone does not guarantee resolution.","T=N/fs, Δf=fs/N이기 때문입니다. 인접 피크의 구별 가능성은 좋아질 수 있지만 Bin 간격만으로 분해능을 보장할 수는 없습니다."]},
+ leakage:{
+  q:["Why can a sinusoid spread across many FFT bins?","정현파 성분이 여러 FFT Bin으로 퍼져 보이는 이유는 무엇일까요?"],
+  choices:[["Its frequency need not lie exactly on a DFT bin, and the finite observation window creates leakage.","신호 주파수가 DFT Bin과 일치하지 않고 유한 관측 창의 영향으로 누설이 발생할 수 있습니다."],["The FFT always adds random noise.","FFT가 항상 랜덤 잡음을 추가하기 때문입니다."],["The sampling rate is unknown.","샘플링 주파수를 알 수 없기 때문입니다."]],
+  correct:0,why:["Compare offset 0 with 0.35, then Rectangular with Hann. Hann lowers distant sidelobes but widens the main lobe.","Offset 0과 0.35를 비교한 후 직사각 창과 Hann 창을 비교하세요. Hann은 먼 부엽을 낮추는 대신 주엽을 넓힙니다."]},
+ padding:{
+  q:["When only zero padding increases M, what changes?","Zero Padding으로 FFT 길이 M만 늘리면 무엇이 달라질까요?"],
+  choices:[["The observation duration doubles.","실제 관측 시간이 두 배로 늘어납니다."],["The FFT frequency grid becomes denser, but the recorded information and original fs/N remain unchanged.","FFT 주파수 격자만 촘촘해지고 기록 정보와 원래 fs/N은 변하지 않습니다."],["New measured samples are created.","새로 측정한 표본이 생성됩니다."]],
+  correct:1,why:["Zero padding uses the same N measured samples. The displayed grid step is fs/M, not a new physical resolving power.","측정 표본은 여전히 N개입니다. 표시 격자 간격은 fs/M이지만 실제 관측 정보가 늘어난 것은 아닙니다."]}
+};
+let quizChoice="",quizStage="";
+function renderQuestion(experiment){
+ const q=questions[experiment],changed=quizStage!==experiment;
+ if(changed){quizChoice="";quizStage=experiment}
+ $("fft-r-quiz-question").textContent=tr(q.q);
+ const select=$("fft-r-quiz-answers");
+ const old=changed?"":quizChoice;
+ select.replaceChildren();
+ const placeholder=document.createElement("option");placeholder.value="";placeholder.textContent=tr(["Select an answer","답을 선택하세요"],true);select.append(placeholder);
+ q.choices.forEach((label,index)=>{const opt=document.createElement("option");opt.value=String(index);opt.textContent=tr(label,true);select.append(opt)});
+ select.value=old;
+ const feedback=$("fft-r-quiz-feedback");feedback.textContent="";feedback.dataset.result="";
+}
+function checkQuestion(){
+ const q=questions[quizStage],value=$("fft-r-quiz-answers").value,feedback=$("fft-r-quiz-feedback");
+ if(value===""){feedback.textContent=tr(["Select an answer first.","먼저 답을 선택하세요."]);feedback.dataset.result="pending";return}
+ const correct=Number(value)===q.correct;
+ feedback.dataset.result=correct?"correct":"incorrect";
+ feedback.textContent=(correct?tr(["Correct.","정답입니다."]):tr(["Not yet. Review the graph, change a control and try again.","그래프와 조절값을 다시 관찰하고 재도전하세요."]))+"\n"+(correct?tr(q.why):"");
+}
+
 function init(){
  global.ELSLanguage?.bindSelect?.("#fft-r-language");
  ["fft-r-experiment","fft-r-fs","fft-r-n","fft-r-separation","fft-r-offset","fft-r-window","fft-r-padding"].forEach(id=>$(id).addEventListener(id==="fft-r-separation"||id==="fft-r-offset"?"input":"change",run));
@@ -124,6 +177,8 @@ function init(){
   if(exp==="padding"){$("fft-r-offset").value=".35";$("fft-r-n").value="64"}
   run();
  });
+ $("fft-r-quiz-answers").addEventListener("change",e=>{quizChoice=e.target.value;$("fft-r-quiz-feedback").textContent="";});
+ $("fft-r-quiz-check").addEventListener("click",checkQuestion);
  global.ELSLanguage?.subscribe?.(()=>{renderLabels();run()});
  renderLabels();run();
 }
