@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DFT vs FFT · Applications | Engineering Learning Studio</title>
 <link rel="stylesheet" href="../assets/els-theme-v2.css"><link rel="stylesheet" href="../assets/els-typography-standard.css"><link rel="stylesheet" href="./assets/ss-common-header.css"><link rel="stylesheet" href="./assets/ss-readable-themes.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js"></script>
 <style>
 :root{color-scheme:dark;--bg:#171c20;--panel:#232b31;--ink:#e7edf2;--sub:#b8c6d2;--edge:#475661;--accent:#78c6c5}
 *{box-sizing:border-box}body{font:16px/1.6 system-ui,"Malgun Gothic",sans-serif;margin:0;background:var(--bg);color:var(--ink)}
@@ -69,6 +71,9 @@ main{padding-top:12px}main>h1{font-size:clamp(1.45rem,2.3vw,1.85rem);margin:2px 
 .butterfly-table tbody tr:focus-visible{outline:3px solid var(--accent)}
 #butterfly-dft-compare{margin-top:12px}
 #butterfly-max-error{font-weight:800;color:var(--ink)}
+#butterfly-computation-formula{max-width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;white-space:nowrap;scrollbar-width:thin}
+#butterfly-computation-formula .katex-display{margin:5px 0;overflow-x:auto;overflow-y:hidden}
+#butterfly-computation-formula .katex{color:var(--ink);font-size:1.06em}
 @media(max-width:900px){.butterfly-inspection{grid-template-columns:1fr}.butterfly-input-row{grid-template-columns:1fr 1fr}.butterfly-input-row button{grid-column:1/-1}}
 @media(max-width:600px){.butterfly-input-row{grid-template-columns:1fr}.butterfly-stage-buttons{grid-template-columns:1fr 1fr}#butterfly-lab{padding:10px}.butterfly-input-row button{grid-column:auto}.butterfly-values{grid-template-columns:1fr 1.4fr}}
 </style><script src="../assets/els-language.js"></script><script src="./assets/ss-common-header.js"></script><script src="../assets/els-theme-v2.js"></script><link rel="stylesheet" href="./assets/ss-app-fft-path.css?v=20261123-contentqa">
@@ -176,7 +181,7 @@ main{padding-top:12px}main>h1{font-size:clamp(1.45rem,2.3vw,1.85rem);margin:2px 
  <div class="butterfly-inspection">
   <div class="butterfly-details">
    <h4 id="butterfly-detail-heading">Selected butterfly calculation</h4>
-   <div class="butterfly-equation">t = W<sub>L</sub><sup>r</sup> · v; &nbsp; y[a] = u + t; &nbsp; y[b] = u − t</div>
+   <div class="butterfly-equation" id="butterfly-computation-formula" role="math" aria-label="W sub L to power r equals e to negative j two pi r over L; t equals W times v; y a equals u plus t; y b equals u minus t">t = W<sub>L</sub><sup>r</sup> · v; &nbsp; y[a] = u + t; &nbsp; y[b] = u − t</div>
    <div id="butterfly-operation-detail" class="butterfly-values" aria-live="polite"></div>
    <button type="button" id="butterfly-next">Next stage →</button>
   </div>
@@ -514,6 +519,21 @@ function applyButterflyInput(){
  }
 }
 $("butterfly-apply").addEventListener("click",applyButterflyInput);
+function enhanceButterflyMath(){
+ if(!window.katex)return;
+ const node=$("butterfly-computation-formula");
+ if(!node||node.dataset.mathRendered==="yes")return;
+ try{
+  window.katex.render(String.raw`\\begin{aligned}
+  W_L^r &= e^{-j2\\pi r/L},\\qquad t = W_L^r v \\\\
+  y[a] &= u+t,\\qquad y[b] = u-t
+  \\end{aligned}`,node,{throwOnError:false,displayMode:true,output:"htmlAndMathml"});
+  node.dataset.mathRendered="yes";
+ }catch(error){console.warn("Optional KaTeX rendering unavailable:",error)}
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",enhanceButterflyMath,{once:true});
+else enhanceButterflyMath();
+
 
 function chartCosts(){
  const rows=$("cost-rows");rows.replaceChildren();
