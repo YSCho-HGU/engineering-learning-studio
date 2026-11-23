@@ -347,10 +347,10 @@ function chart({xmin,xmax,ymin,ymax,xlab='t (s)',ylab='Amplitude',curves=[],stem
  const xStep=niceStep(xmax-xmin,5),yStep=niceStep(ymax-ymin,4);
  // Nice, round tick positions align with samples; do not label fractional sample indices.
  for(let k=Math.ceil(xmin/xStep-1e-9),count=0;k<=Math.floor(xmax/xStep+1e-9)&&count<20;k++,count++){
-  const x=k*xStep; s+=`<line x1="${xx(x)}" y1="${T}" x2="${xx(x)}" y2="${H-B}" stroke="var(--ss-plot-grid,#c9d3db)"/><text x="${xx(x)}" y="${H-B+20}" font-size="15" fill="var(--els-muted,#455663)" text-anchor="middle">${fmt(x,Math.abs(xStep)<1?3:2)}</text>`;
+  const x=k*xStep; s+=`<line x1="${xx(x)}" y1="${T}" x2="${xx(x)}" y2="${H-B}" stroke="var(--ss-plot-grid,#c9d3db)"/><text x="${xx(x)}" y="${H-B+20}" class="ss-plot-tick" font-size="15" fill="var(--els-muted,#455663)" text-anchor="middle">${fmt(x,Math.abs(xStep)<1?3:2)}</text>`;
  }
  for(let k=Math.ceil(ymin/yStep-1e-9),count=0;k<=Math.floor(ymax/yStep+1e-9)&&count<16;k++,count++){
-  const y=k*yStep; s+=`<line x1="${L}" y1="${yy(y)}" x2="${W-R}" y2="${yy(y)}" stroke="var(--ss-plot-grid,#c9d3db)"/><text x="${L-9}" y="${yy(y)+4}" text-anchor="end" font-size="15" fill="var(--els-muted,#455663)">${fmt(y,Math.abs(yStep)<1?3:2)}</text>`;
+  const y=k*yStep; s+=`<line x1="${L}" y1="${yy(y)}" x2="${W-R}" y2="${yy(y)}" stroke="var(--ss-plot-grid,#c9d3db)"/><text x="${L-9}" y="${yy(y)+4}" text-anchor="end" class="ss-plot-tick" font-size="15" fill="var(--els-muted,#455663)">${fmt(y,Math.abs(yStep)<1?3:2)}</text>`;
  }
  if(ymin<=0&&ymax>=0)s+=`<line x1="${L}" y1="${yy(0)}" x2="${W-R}" y2="${yy(0)}" stroke="var(--ss-plot-axis,#455663)"/>`;
  if(xmin<=0&&xmax>=0)s+=`<line x1="${xx(0)}" y1="${T}" x2="${xx(0)}" y2="${H-B}" stroke="var(--ss-plot-axis,#455663)"/>`;
