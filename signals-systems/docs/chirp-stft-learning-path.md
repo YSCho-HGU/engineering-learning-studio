@@ -29,3 +29,23 @@
 `tests/ss-chirp-stft-browser.mjs` verifies FFT of a known pure tone, chirp ridge direction, exact frame duration/hop/bin spacing, zero-padding invariants, interactive frame controls, mission feedback, math, language/theme, narrow responsive rendering and Presentation Mode. The test is part of `ss-applications-browser.yml` and the new lab is included in the common Applications math audit.
 
 The workflow compares representative rendered pages and numerical invariants, not a certified STFT library at every parameter setting.
+
+## Extended exercises: frequency patterns and resolution comparison (2026-11-23)
+
+**Q2 — Three signal patterns.** The `Frequency pattern` control now selects:
+- Rising linear chirp: (f(t)=f_0+(f_1-f_0)t/T), with a continuous quadratic phase.
+- Falling linear chirp: (f(t)=f_1+(f_0-f_1)t/T), with a continuous quadratic phase.
+- Step-frequency signal: (f(t)=f_0) before (T/2) and (f(t)=f_1) from (T/2) onward. The signal phase is integrated **continuously** across the transition; the phase does not reset when the frequency jumps.
+
+The full FFT, selected-frame FFT and spectrogram are all computed from the newly generated samples, not a fixed image or shifted drawing. The equations and explanatory text are updated for the selected signal. Both frequency controls are relabeled to make their roles in the falling and step signals clear.
+
+**Q1 — Controlled time–frequency comparison.** A comparison section shows two actual STFT heatmaps with one shared magnitude-dB color reference. Both panels always start from the **same sampled signal**, with precisely one analysis variable family changed.
+
+| Experiment | Left | Right | Correct interpretation |
+|---|---|---|---|
+| Window duration | L=64, 75% overlap | L=256, 75% overlap | At 512Hz, 125ms / 8Hz vs 500ms / 2Hz original bin spacing |
+| Frame overlap | L=128, 0% overlap | L=128, 75% overlap | At 512Hz, H=128 vs H=32; both retain 250ms / 4Hz window and bin spacing |
+
+The student can compare visible sharpness of a sudden frequency transition and density of time samples, and inspect displayed window duration, bin spacing, hop and frame count. The overlap experiment must **not** be described as improving intrinsic frequency resolution. FFT zero-padding also remains separate from true acquisition-time resolution.
+
+The browser suite `tests/ss-chirp-stft-browser.mjs` now tests increasing/decreasing ridge direction, piecewise step transition and phase continuity, the exact short/long-window and overlap invariants, live controls and the three language modes.
