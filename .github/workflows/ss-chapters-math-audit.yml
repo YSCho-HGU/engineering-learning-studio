@@ -13,6 +13,8 @@ on:
       - 'signals-systems/assets/ss-presentation-mode.js'
       - 'signals-systems/assets/ss-presentation-mode.css'
       - 'signals-systems/assets/ss-plot-typography.css'
+      - 'signals-systems/assets/ss-canvas-typography.js'
+      - 'tests/ss-plot-typography-browser.mjs'
       - 'signals-systems/assets/ss-app-labs.js'
       - 'signals-systems/applications*.html'
       - 'tests/ss-responsive-unified-browser.mjs'
@@ -36,6 +38,8 @@ jobs:
         run: |
           node --check signals-systems/assets/ss-chapters-math-audit.js
           node --check signals-systems/assets/ss-presentation-mode.js
+          node --check signals-systems/assets/ss-canvas-typography.js
+          node --check tests/ss-plot-typography-browser.mjs
           node --check tests/ss-chapters-math-audit.mjs
           node --check tests/ss-chapters-full-qa.mjs
           node --check tests/ss-responsive-unified-browser.mjs
@@ -53,6 +57,8 @@ jobs:
         run: node tests/ss-chapters-full-qa.mjs
       - name: Responsive lecture tablet and phone QA
         run: node tests/ss-responsive-unified-browser.mjs
+      - name: Canvas and SVG typography precision audit
+        run: node tests/ss-plot-typography-browser.mjs
       - name: Upload detailed math audit
         uses: actions/upload-artifact@v4
         if: always()
@@ -63,4 +69,6 @@ jobs:
             qa/chapters-full-qa.json
             qa/ss-responsive-unified-results.json
             qa/responsive-screenshots/
+            qa/ss-plot-typography-audit.json
+            qa/plot-typography-screenshots/
           if-no-files-found: ignore
