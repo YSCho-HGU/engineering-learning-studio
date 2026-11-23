@@ -261,7 +261,7 @@ function localize(){
  "fft-upload-step3":["4 · Explain the spectrum","4 · 스펙트럼 해석"],
  "fft-upload-question":["Check · What does the frequency axis mean?","확인 · 주파수 축은 무엇을 뜻할까요?"],
  "fft-upload-answer":["Explain my FFT","FFT 해석 확인"],
- "fft-upload-prev-link":["← Chirp & STFT lab","← Chirp·STFT 실습"],
+ "fft-upload-prev-link":["← FFT resolution lab","← FFT 분해능 실습"],
  "fft-upload-home-link":["Part C · All topics","Part C · 전체 목록"]
  };
  for(const[id,[en,ko]]of Object.entries(labels)){const el=$(id);if(el)el.textContent=tr(en,ko)}
