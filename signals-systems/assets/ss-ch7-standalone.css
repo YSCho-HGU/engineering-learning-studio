@@ -64,3 +64,17 @@ html.ss7-native.ss7-standard[data-els-theme] .plot-card svg text{fill:var(--els-
 html.ss7-native.ss7-standard[data-els-theme] .plot-card .plot-title{
  background:var(--els-surface-alt)!important;color:var(--els-ink)!important;border-color:var(--els-border)!important
 }
+
+/* Mobile: the canonical sidebar grid must not leave only ~200px for Chapter 7
+   mathematical plots. Keep the navigator reachable above the lesson. */
+@media(max-width:700px){
+ html.ss7-native .ss7-shell{display:block!important;grid-template-columns:minmax(0,1fr)!important}
+ html.ss7-native .ss7-shell>.ss7-sidebar{
+  position:relative!important;top:0!important;width:100%!important;
+  height:auto!important;max-height:210px!important;overflow-y:auto!important
+ }
+ html.ss7-native .ss7-shell>.ss7-workspace{
+  display:block!important;min-width:0!important;width:100%!important;
+  margin-left:0!important;max-width:100%!important
+ }
+}
