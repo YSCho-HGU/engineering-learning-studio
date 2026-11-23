@@ -183,8 +183,8 @@ const labels={
  spectrum:["2 · FFT spectrum and bins","2 · FFT 스펙트럼과 Bin"],
  insightTitle:["3 · Read the FFT result","3 · FFT 결과 해석"],table:["4 · Check individual FFT bins","4 · FFT Bin 상세 확인"],
  tableNote:["For real input, display only nonnegative-frequency bins. One-sided amplitude = |X[k]|/N for DC and (even-N) Nyquist, or 2|X[k]|/N otherwise. Leakage can make peaks misleading.","실수 입력의 비음수 주파수 Bin만 표시합니다. 단측 진폭은 DC 및 짝수 N의 나이퀴스트에서 |X[k]|/N, 나머지에서 2|X[k]|/N입니다. 누설이 있으면 피크 해석에 주의해야 합니다."],
- next:["Next, after this foundation","기초 이해 후 다음 단계"],nextText:["When you can interpret a real sample array in both cases, move on to FFT resolution, leakage, windows, phase, STFT, and finally images/video.","표본 데이터의 두 해석을 충분히 이해한 뒤 주파수 분해능·누설·창 함수·위상·STFT·이미지·동영상으로 확장합니다."],
- nextLink:["See the full FFT curriculum →","FFT 전체 학습 목차 →"]
+ next:["Next, after this foundation","기초 이해 후 다음 단계"],nextText:["Now compare observation length, FFT bin spacing and leakage. In the next interactive lab, change N and fs, then test windows and zero padding.","이제 관측 길이·FFT Bin 간격·누설을 직접 비교합니다. 다음 실습에서 N과 fs를 변경하고 창 함수와 영 채우기를 실험하세요."],
+ nextLink:["Open Resolution & Leakage Lab →","분해능과 누설 실습 열기 →"]
 };
 let lastSamples=sampleArray("one"),lastResult=null;
 function localize(){
