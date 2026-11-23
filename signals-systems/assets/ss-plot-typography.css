@@ -1,0 +1,37 @@
+/* Shared chart and mathematics typography for Chapters 1–8 and Applications.
+   CSS-only: SVG coordinates and canvas signal calculations stay untouched. */
+:root{
+ --ss-plot-title-size:15px;
+ --ss-plot-axis-size:13px;
+ --ss-plot-tick-size:12px;
+ --ss-plot-legend-size:13px;
+ --ss-plot-inline-math:1.06em;
+ --ss-plot-display-math:clamp(17px,1.45vw,21px);
+}
+html main :is(.plot-title,.ss-al-plot h2,.ss-fft-graph-card h2,.ss-fft-r-graph-card h2,.figure-title,.plot-card .plot-title){
+ font-size:var(--ss-plot-title-size)!important;line-height:1.4!important;font-weight:750!important
+}
+html main :is(.ss-al-legend,.legend,.ss7-legend,.ss8-legend,.ss-fft-legend,.axis-key,.ss-al-plot-note){
+ font-size:var(--ss-plot-legend-size);line-height:1.55;color:var(--els-ink)
+}
+html main svg :is(.tick,.tick-label,.axis-tick,.ss-plot-tick){
+ font-size:var(--ss-plot-tick-size)
+}
+html main svg :is(.plot-label,.title,.axis-label,.ss-plot-label){
+ font-size:var(--ss-plot-axis-size)
+}
+html main :is(.ss-fft-equation,.ss-fft-r-theory [data-ss-math],.ss7-key-equation,.ss8-key-equation,.ss6-theory-equation,.formula .math){
+ font-size:var(--ss-plot-display-math);line-height:1.55
+}
+html main :is(.ss-fft-equation,.ss-fft-r-theory,.formula,.deriv-math) .katex-display{
+ max-width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin
+}
+@media(min-width:1600px){
+ :root{--ss-plot-title-size:17px;--ss-plot-axis-size:14px;--ss-plot-tick-size:13px;--ss-plot-legend-size:14px;--ss-plot-display-math:21px}
+}
+@media(max-width:860px){
+ :root{--ss-plot-title-size:15px;--ss-plot-axis-size:12px;--ss-plot-tick-size:11px;--ss-plot-legend-size:12px;--ss-plot-display-math:18px}
+}
+@media(max-width:600px){
+ :root{--ss-plot-title-size:14px;--ss-plot-axis-size:12px;--ss-plot-tick-size:11px;--ss-plot-legend-size:12px;--ss-plot-display-math:17px}
+}
