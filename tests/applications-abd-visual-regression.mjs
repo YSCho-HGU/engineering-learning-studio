@@ -18,7 +18,7 @@ async function inspectHub(part,view){
  const result=await p.evaluate(part=>{
   const main=document.querySelector(".ss-app-container"),section=document.querySelector("#part-"+part);
   const row=section.querySelector(part==="a"?".ss-app-abd-lab-row":".ss-app-abd-planned-summary");
-  const title=row.querySelector(".ss-app-lesson-title"),card=row.closest(".ss-app-abd-planned")||row,s=getComputedStyle(card);
+  const title=row.querySelector(".ss-app-lesson-title"),card=row.closest(".ss-app-abd-planned")||row,s=getComputedStyle(card),topicList=section.querySelector("#topics-"+part),collection=topicList.firstElementChild;
   return{
    header:!!document.querySelector("header.ss-common-header"),
    heading:getComputedStyle(title).fontSize,
@@ -26,11 +26,14 @@ async function inspectHub(part,view){
    padding:s.paddingTop,
    overflow:document.documentElement.scrollWidth-innerWidth,
    rowWidth:row.getBoundingClientRect().width,
-   panelWidth:main.getBoundingClientRect().width
+   panelWidth:main.getBoundingClientRect().width,
+   topicGridWidth:topicList.getBoundingClientRect().width,
+   collectionWidth:collection.getBoundingClientRect().width
   };
  },part);
  assert.ok(result.header,"Standard header lost on "+part);
  assert.ok(result.rowWidth>150,"Card collapsed "+part);
+ assert.ok(result.collectionWidth>=result.topicGridWidth*.94,"Module collection unexpectedly half width "+part+" "+JSON.stringify(result));
  assert.ok(parseFloat(result.radius)>=10,"Card radius differs "+part);
  assert.ok(parseFloat(result.heading)>=(view==="mobile"?15:16),"Card heading too small "+part);
  assert.ok(result.overflow<=3,"Document overflow "+part+" "+JSON.stringify(result));
