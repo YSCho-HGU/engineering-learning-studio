@@ -678,6 +678,93 @@ function renderPaddingComparison(N,fs){
 for(const [id,tone] of [["padding-offbin",129],["padding-coherent",128]]){
  $(id).addEventListener("click",()=>{$("signal").value="one";$("tone").value=String(tone);run(false)});
 }
+// Stage 04: prominent spectral peaks and conditional physical interpretation.
+let physicsPeaks=[],physicsFs=0,physicsN=0;
+function renderPhysics(){
+ const pick=$("physics-peak"),selected=physicsPeaks.find(p=>String(p.k)===pick.value);
+ const count=Number($("events-per-rev").value),known=physicsFs>0,valid=!!selected&&Number.isFinite(count)&&count>0;
+ const frequency=selected?(known?selected.k*physicsFs/physicsN:selected.k/physicsN):0;
+ $("physics-hz").textContent=selected?(known?frequency.toFixed(2)+" Hz":frequency.toFixed(5)+" cycles/sample"):"—";
+ $("physics-period").textContent=valid&&known?(1000/frequency).toFixed(3)+" ms":"—";
+ $("physics-rpm").textContent=valid&&known?(60*frequency/count).toFixed(2)+" RPM":"—";
+ if(!selected){
+  $("physics-harmonics").textContent="";
+  $("physics-note").textContent=L("Choose a detected peak to interpret it.","해석할 주파수 피크를 선택하세요.");
+  return;
+ }
+ if(!known){
+  $("physics-harmonics").textContent="";
+  $("physics-note").textContent=L("Sample rate unknown. Only cycles/sample is available; period in seconds and RPM cannot be inferred.","샘플링 주파수를 알 수 없어 cycles/sample만 확인할 수 있습니다. 초 단위 주기와 RPM은 추정할 수 없습니다.");
+  return;
+ }
+ if(!valid){
+  $("physics-harmonics").textContent="";
+  $("physics-note").textContent=L("Enter a positive number of events per revolution.","회전당 이벤트 수를 0보다 크게 입력하세요.");
+  return;
+ }
+ const harmonics=physicsPeaks.filter(p=>p.k!==selected.k).map(p=>({k:p.k,ratio:p.k/selected.k}))
+  .filter(p=>p.ratio>=1.75&&Math.abs(p.ratio-Math.round(p.ratio))<=Math.max(.1,1.5/selected.k));
+ $("physics-harmonics").textContent=harmonics.length?
+  L("Possible integer-multiple harmonics: ","정수배 고조파 후보: ")+harmonics.map(p=>Math.round(p.ratio)+"× ("+(p.k*physicsFs/physicsN).toFixed(2)+" Hz)").join(", "):
+  L("No clear integer-multiple harmonics among the selected peaks.","선택된 피크들 사이에 뚜렷한 정수배 고조파 후보는 없습니다.");
+ $("physics-note").textContent=L("T = 1/f; RPM = 60f / events per revolution. This is a conditional speed estimate, not a measured shaft speed. A sensor peak may instead come from a gear tooth, blade passage, resonant mode, or interference; verify machine geometry.","T=1/f, RPM=60f/회전당 이벤트 수입니다. 이 값은 conditional speed estimate(조건부 속도 추정)로 축 회전수 실측값이 아닙니다. 센서 피크는 기어·블레이드 통과·공진·간섭에서 생길 수도 있으므로 기계 구조를 확인해야 합니다.");
+}
+function updatePhysics(peaks,fs,N){
+ const menu=$("physics-peak"),previous=menu.value;
+ physicsPeaks=peaks.slice();physicsFs=fs;physicsN=N;
+ menu.replaceChildren();
+ for(const p of peaks){
+  const option=document.createElement("option");
+  option.value=String(p.k);
+  option.textContent=fs>0?(p.k*fs/N).toFixed(2)+" Hz":(p.k/N).toFixed(5)+" cycles/sample";
+  menu.append(option);
+ }
+ if(peaks.some(p=>String(p.k)===previous))menu.value=previous;
+ renderPhysics();
+}
+$("physics-peak").addEventListener("change",renderPhysics);
+$("events-per-rev").addEventListener("input",renderPhysics);
+function describePeaks(amp,fs,N,fromUpload){
+ const results=$("peak-results");
+ results.replaceChildren();
+ $("peak-heading").textContent=L("Detected frequency components","검출된 주요 주파수 성분");
+ const unit=fs>0?"Hz":"cycles/sample",delta=fs>0?fs/N:1/N;
+ const max=amp.slice(1).reduce((m,x)=>Math.max(m,x),0);
+ if(!Number.isFinite(max)||max<=1e-10){
+  updatePhysics([],fs,N);
+  $("peak-explanation").textContent=L("No significant non-DC frequency peak found.","DC를 제외한 유의미한 주파수 피크를 찾지 못했습니다.");
+  $("peak-caution").textContent=L("A constant or silent record has no meaningful dominant tone.","상수 신호나 무음 데이터에서는 우세 주파수를 의미 있게 판단할 수 없습니다.");
+  return;
+ }
+ const candidates=[];
+ for(let k=1;k<amp.length;k++){
+  const left=k===1?0:amp[k-1],right=k===amp.length-1?0:amp[k+1];
+  if(amp[k]>=max*.08&&amp[k]>=left&&amp[k]>=right)candidates.push({k,amp:amp[k]});
+ }
+ candidates.sort((a,b)=>b.amp-a.amp);
+ const peaks=[];
+ for(const p of candidates){if(peaks.every(q=>Math.abs(q.k-p.k)>=2))peaks.push(p);if(peaks.length===5)break}
+ peaks.sort((a,b)=>b.amp-a.amp);
+ updatePhysics(peaks,fs,N);
+ const source=fromUpload&&upload?.kind==="audio"?"audio":fromUpload?"sensor":"synthetic";
+ $("peak-explanation").textContent=source==="audio"?
+  L("For audio: spectral peaks may indicate tones or harmonics, but the highest peak is not always the fundamental pitch.","오디오에서는 피크가 음높이나 고조파 후보일 수 있지만 가장 큰 피크가 항상 기본주파수는 아닙니다."):
+  source==="sensor"?L("For sensor measurements: peaks represent observed periodic components; mechanical causes require independent evidence.","센서 피크는 관측된 주기 성분입니다. 물리적 원인을 판단하려면 추가 근거가 필요합니다."):
+  L("Controlled synthetic signal: identify its strongest frequency bins.","합성 예제에서 가장 강한 주파수 bin을 찾아보세요.");
+ const table=document.createElement("table");table.className="butterfly-table";table.setAttribute("aria-label",L("Detected spectral peaks","검출된 스펙트럼 피크"));
+ const head=document.createElement("thead"),body=document.createElement("tbody"),tr=document.createElement("tr");
+ [L("Bin","Bin"),L("Frequency","주파수"),L("Amplitude","진폭"),L("Relative","상대 크기")].forEach(v=>{const th=document.createElement("th");th.textContent=v;tr.append(th)});head.append(tr);
+ for(const p of peaks){
+  const row=document.createElement("tr");
+  [String(p.k),(p.k*delta).toFixed(fs>0?2:5)+" "+unit,p.amp.toFixed(5),(100*p.amp/max).toFixed(1)+"%"].forEach(v=>{
+   const cell=document.createElement("td");cell.textContent=v;row.append(cell);
+  });body.append(row);
+ }
+ table.append(head,body);results.append(table);
+ $("peak-caution").textContent=fs>0?
+  L("Frequency resolution scale: Δf=fₛ/N="+delta.toPrecision(4)+" Hz. Finite duration, leakage and noise limit peak precision. The maximum peak alone does not establish a fundamental frequency or machine RPM.","주파수 간격 Δf=fₛ/N="+delta.toPrecision(4)+" Hz입니다. 관측 시간·누설·잡음에 따라 피크 정확도가 달라지며 최대 피크만으로 기본주파수나 RPM을 단정할 수 없습니다."):
+  L("Sample rate unknown: values are in cycles/sample, not Hz. Absolute frequency, seconds and RPM cannot be inferred.","샘플링 주파수를 알 수 없으므로 Hz 대신 cycles/sample로 표시합니다. 실제 주파수·초·RPM은 계산할 수 없습니다.");
+}
 function run(show=true){const N=Number($("size").value);let fs=Number($("fs").value);if(!Number.isFinite(fs)||fs<=0)fs=1024;let x;if($("signal").value==="upload"&&upload){const start=Math.max(0,Math.floor(Number($("offset").value)||0));x=new Float64Array(N);x.set(upload.samples.subarray(start,Math.min(upload.samples.length,start+N)));fs=Number($("fs").value)>0?Number($("fs").value):upload.fs||0;if(start+N>upload.samples.length){$("status").textContent=L("Not enough remaining samples for the chosen N.","선택한 N만큼의 샘플이 남아 있지 않습니다.");return;}if(start>=upload.samples.length){$("status").textContent="Start sample exceeds the record length.";return}}else{x=synthetic(N,fs);}
 const mean=x.reduce((a,b)=>a+b,0)/N;const x0=Float64Array.from(x,v=>v-mean);const fast=benchmark(radix2,x0,5);let slow=null;if(N<=2048)slow=benchmark(direct,x0,N<=512?3:1);
 let error=0;if(slow){for(let i=0;i<N;i++)error=Math.max(error,Math.hypot(slow.result.re[i]-fast.result.re[i],slow.result.im[i]-fast.result.im[i]));}
