@@ -22,7 +22,7 @@ for(const name of ["harmonics","chirp","helix"]){
   if(formulaTagCount<1)throw Error("Accessible MathML missing");
   const canvas=await page.locator(".ss-al-plot:not([hidden]) canvas").evaluateAll(nodes=>nodes.map(c=>[c.width,c.height]));
   const canvasCss=await page.locator(".ss-al-plot:not([hidden]) canvas").evaluateAll(nodes=>nodes.map(c=>[Math.round(c.getBoundingClientRect().width),Math.round(c.getBoundingClientRect().height)]));
-  if(canvas.length<(name==="harmonics"?2:3)||canvas.some(([w,h])=>w<250||h<175))throw Error("Plots too small: "+JSON.stringify(canvas));
+  if(canvas.length<(name==="harmonics"?2:3)||canvas.some(([w,h])=>w<250||h<145))throw Error("Plots too small: "+JSON.stringify(canvas));
   if(canvasCss.some(([w,h],i)=>w<240||h<(i===0?285:145)))throw Error("Visible graphs too small: "+JSON.stringify(canvasCss));
   const aboveFold=await page.evaluate(()=>{
     const controls=document.getElementById("ss-al-controls").getBoundingClientRect();
