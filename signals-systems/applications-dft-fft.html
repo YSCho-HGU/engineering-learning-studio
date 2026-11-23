@@ -524,10 +524,10 @@ function enhanceButterflyMath(){
  const node=$("butterfly-computation-formula");
  if(!node||node.dataset.mathRendered==="yes")return;
  try{
-  window.katex.render(String.raw`\\begin{aligned}
-  W_L^r &= e^{-j2\\pi r/L},\\qquad t = W_L^r v \\\\
-  y[a] &= u+t,\\qquad y[b] = u-t
-  \\end{aligned}`,node,{throwOnError:false,displayMode:true,output:"htmlAndMathml"});
+  window.katex.render(String.raw`\begin{aligned}
+  W_L^r &= e^{-j2\pi r/L},\qquad t = W_L^r v \\
+  y[a] &= u+t,\qquad y[b] = u-t
+  \end{aligned}`,node,{throwOnError:false,displayMode:true,output:"htmlAndMathml"});
   node.dataset.mathRendered="yes";
  }catch(error){console.warn("Optional KaTeX rendering unavailable:",error)}
 }
