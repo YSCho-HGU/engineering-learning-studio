@@ -73,3 +73,11 @@ The second interactive lab is `signals-systems/applications-fft-resolution.html`
 - `.github/workflows/ss-applications-browser.yml`: integration test runner
 
 Actual GHz/Hz and image/video examples must not be presented as measured data unless backed by known acquisition metadata.
+
+## Interactive frequency guides and formative assessment (2026-11-23)
+
+The resolution/leakage spectrum overlays **solid physical tone-frequency markers** (one for a single tone, two for the nearby-tone experiment) and **dashed nearby DFT-bin markers**. Guides correspond to the currently selected transform length M; after zero padding, the displayed grid is fs/M while actual observation-based nominal spacing remains fs/N. Marker labels carry Hz units.
+
+Two formative questions appear in the first sample-data FFT lesson: unknown-fs interpretation and the known-fs bin-to-Hz mapping. The follow-up lesson has one question per experiment (resolution, leakage, padding). Students choose answers explicitly; feedback indicates correctness and provides a causal explanation for correct responses, without auto-revealing the correct answer after an incorrect attempt. Language modes remain synchronized with the Studio language controller. No scores or user data are persisted.
+
+Regression test `tests/ss-fft-foundations-browser.mjs` now asserts graph guide counts and all five concept checks in addition to numerical FFT behavior, theme, language and viewport checks. Actual browser execution is still required to claim end-to-end passing status.
