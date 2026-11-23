@@ -19,6 +19,8 @@ on:
       - 'tests/ss-applications-browser.mjs'
       - '.github/workflows/ss-applications-browser.yml'
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   browser:
     runs-on: ubuntu-latest
@@ -34,6 +36,7 @@ jobs:
           node --check signals-systems/assets/ss-applications-hub.js
           node --check signals-systems/assets/ss-applications-math.js
           node --check signals-systems/assets/ss-app-fft-foundations.js
+          node --check signals-systems/assets/ss-app-fft-resolution.js
           node --check tests/ss-fft-foundations-browser.mjs
           node --check signals-systems/assets/ss-app-extra-labs.js
           node --check tests/ss-extra-labs-browser.mjs
@@ -50,8 +53,35 @@ jobs:
         run: node tests/ss-applications-browser.mjs
       - name: Check Beats, AM/FM and Sampling aliasing labs
         run: node tests/ss-extra-labs-browser.mjs
-      - name: Check first FFT lab, math rendering, Hz interpretation and responsive layout
+      - name: Check FFT labs, graph missions, KaTeX and responsive layout
+        id: fft
         run: node tests/ss-fft-foundations-browser.mjs
+      - name: Publish machine-readable FFT browser QA status
+        if: always()
+        env:
+          FFT_OUTCOME: ${{ steps.fft.outcome }}
+        run: |
+          mkdir -p qa
+          python3 - <<'PY'
+          import json,os,datetime
+          result={
+            "source_sha":os.environ["GITHUB_SHA"],
+            "workflow":"ss-applications-browser",
+            "tested_at":datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "fft_browser_outcome":os.environ["FFT_OUTCOME"],
+            "viewport_widths":[1366,390],
+            "coverage":["FFT arithmetic","graph missions","KaTeX","language modes","five themes","responsive overflow"]
+          }
+          with open("qa/fft-browser-last-run.json","w") as f:
+            json.dump(result,f,indent=2)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add qa/fft-browser-last-run.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(qa): publish FFT browser test status [skip ci]"
+            git push origin HEAD:main || echo "QA status push unavailable"
+          fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
