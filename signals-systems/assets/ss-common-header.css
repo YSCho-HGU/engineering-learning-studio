@@ -193,3 +193,24 @@ html .ss-i18n-mixed-paragraph{white-space:pre-line!important;line-height:1.65!im
 /* Data-model language views: English-first explanatory paragraphs remain legible. */
 html[data-els-language="mixed"] .ss-layout-main :is(p,.desc,.notice,.insight,.smallnote,.guide-check,.step p,.answer,.ss5-flow-label){white-space:pre-line}
 
+
+/* Mobile chapter chooser must remain within the viewport, independent of
+   variable-width chapter labels or the parent heading alignment. */
+@media(max-width:700px){
+  html .ss-common-header .ss-common-menu .ss-common-links{
+    position:fixed!important;
+    top:52px!important;
+    left:12px!important;
+    right:12px!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:calc(100vw - 24px)!important;
+    box-sizing:border-box!important;
+    overflow-x:hidden!important;
+  }
+  html .ss-common-header .ss-common-menu .ss-common-links a{
+    max-width:100%!important;
+    box-sizing:border-box!important;
+    overflow-wrap:anywhere!important;
+  }
+}
