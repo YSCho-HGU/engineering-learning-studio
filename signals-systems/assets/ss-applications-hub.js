@@ -94,7 +94,7 @@ function renderTopics(){
    const concept=node("span","ss-app-topic-label",x.concept);
    body.append(concept);
    const q=node("p",null,i18n("Question: "+x.questionEn,"핵심 질문: "+x.questionKo));body.append(q);
-   body.append(node("p",null,i18n("Planned exploration: "+x.observeEn,"예정 실습: "+x.observeKo)));
+   body.append(node("p",null,i18n((x.lab?"Try in the lab: ":"Planned exploration: ")+x.observeEn,(x.lab?"실습에서 확인: ":"예정 실습: ")+x.observeKo)));
    const prereq=node("div","ss-app-topic-labs",i18n("Related chapters","연결되는 Chapter",true)+": ");
    x.ch.forEach(n=>{
     const link=node("a",null,"Ch "+n);
