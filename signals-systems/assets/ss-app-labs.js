@@ -266,7 +266,7 @@ function chartBox(C,{xMin,xMax,yMin,yMax,xLabel,yLabel,xTicks=4,yTicks=4}){
  rect.w=Math.max(30,rect.r-rect.l);rect.h=Math.max(30,rect.b-rect.t);
  const px=x=>rect.l+rect.w*(x-xMin)/(xMax-xMin);
  const py=y=>rect.b-rect.h*(y-yMin)/(yMax-yMin);
- c.lineWidth=1;c.font="11px Arial, sans-serif";
+ c.lineWidth=1;c.font="12px Arial, sans-serif";
  for(let i=0;i<=xTicks;i++){
   const x=xMin+(xMax-xMin)*i/xTicks,X=px(x);
   c.beginPath();c.moveTo(X,rect.t);c.lineTo(X,rect.b);c.strokeStyle=pal.border;c.globalAlpha=.24;c.stroke();c.globalAlpha=1;
@@ -278,7 +278,7 @@ function chartBox(C,{xMin,xMax,yMin,yMax,xLabel,yLabel,xTicks=4,yTicks=4}){
   c.fillStyle=pal.muted;c.textAlign="right";c.fillText(formatTick(y),rect.l-6,Y+4);
  }
  c.strokeStyle=pal.muted;c.globalAlpha=.65;c.strokeRect(rect.l,rect.t,rect.w,rect.h);c.globalAlpha=1;
- c.font="12px Arial, sans-serif";c.fillStyle=pal.ink;
+ c.font="13px Arial, sans-serif";c.fillStyle=pal.ink;
  c.textAlign="center";c.fillText(xLabel,rect.l+rect.w/2,h-6);
  c.save();c.translate(15,rect.t+rect.h/2);c.rotate(-Math.PI/2);c.fillText(yLabel,0,0);c.restore();
  return{rect,px,py};
