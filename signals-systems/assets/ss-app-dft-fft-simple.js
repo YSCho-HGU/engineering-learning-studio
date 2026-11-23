@@ -249,9 +249,9 @@ function renderSpeed(){
 function renderSpeedChart(){chartSpeed()}
 function formula(){
  const formulas=[
-  ["same-formula",String.raw`X[k]=\\sum_{n=0}^{N-1}x[n]e^{-j2\\pi kn/N}`],
-  ["butterfly-formula",String.raw`t=W_L^r v,\\qquad y[a]=u+t,\\quad y[b]=u-t`],
-  ["speed-formula",String.raw`\\mathcal O(N^2)\\quad\\text{vs.}\\quad\\mathcal O(N\\log_2 N)`]
+  ["same-formula",String.raw`X[k]=\sum_{n=0}^{N-1}x[n]e^{-j2\pi kn/N}`],
+  ["butterfly-formula",String.raw`t=W_L^r v,\qquad y[a]=u+t,\quad y[b]=u-t`],
+  ["speed-formula",String.raw`\mathcal O(N^2)\quad\text{vs.}\quad\mathcal O(N\log_2 N)`]
  ];
  if(!window.katex)return;
  for(const [id,tex] of formulas){
