@@ -5,7 +5,6 @@ const $=id=>document.getElementById(id),tau=2*Math.PI;
 const L={
 title:["Frequency Resolution & Spectral Leakage","주파수 분해능과 스펙트럼 누설"],
 subtitle:["First change how long you observe a signal. Next move a tone between FFT bins. Finally add zeros without adding observations.","먼저 실제 관측 시간을 바꾸고, 다음에는 신호를 FFT Bin 사이로 이동해 봅니다. 마지막으로 새 표본 없이 0만 추가해 봅니다."],
-steps:[["1 · Sample-data FFT","1 · 표본 FFT"],["2 · Frequency resolution","2 · 주파수 분해능"],["3 · Leakage & windows","3 · 누설과 창 함수"],["4 · Zero padding","4 · 영 채우기"]],
 controls:["Experiment controls","실험 설정"],controlsNote:["Change one control at a time. The time graph and FFT spectrum update together.","한 번에 하나의 값을 바꾸면서 시간 파형과 FFT 스펙트럼을 함께 관찰하세요."],
 experiment:["Choose experiment","실험 선택"],fs:["Sampling rate fs","샘플링 주파수 fs"],n:["Observed samples N","관측 표본 수 N"],
 separation:["Two-tone separation","두 신호의 주파수 차이"],offset:["Fractional bin offset","정수 Bin에서 벗어난 정도"],
@@ -114,9 +113,8 @@ function draw(svg,points,{xmin=0,xmax,ymax,axisX,axisY,stems=false,markers=null}
  add("text",{x:left+pw/2,y:H-7,"text-anchor":"middle"},axisX,"title");
 }
 function renderLabels(){
- const pairs=[["fft-r-title","title"],["fft-r-subtitle","subtitle"],["fft-r-controls-title","controls"],["fft-r-controls-note","controlsNote"],["fft-r-experiment-label","experiment"],["fft-r-fs-label","fs"],["fft-r-n-label","n"],["fft-r-separation-label","separation"],["fft-r-offset-label","offset"],["fft-r-window-label","window"],["fft-r-padding-label","padding"],["fft-r-time-title","time"],["fft-r-spectrum-title","spectrum"],["fft-r-time-note","timeNote"],["fft-r-spectrum-note","spectrumNote"],["fft-r-theory-title","theory"],["fft-r-eq1-label","eq1"],["fft-r-eq2-label","eq2"],["fft-r-theory-note","theoryNote"],["fft-r-observation-title","observation"],["fft-r-back","back"],["fft-r-next","next"],["fft-r-quiz-title","quizTitle"],["fft-r-quiz-check","quizButton"],["fft-r-guide-legend","legend"]];
+ const pairs=[["fft-r-title","title"],["fft-r-subtitle","subtitle"],["fft-r-controls-title","controls"],["fft-r-controls-note","controlsNote"],["fft-r-experiment-label","experiment"],["fft-r-fs-label","fs"],["fft-r-n-label","n"],["fft-r-separation-label","separation"],["fft-r-offset-label","offset"],["fft-r-window-label","window"],["fft-r-padding-label","padding"],["fft-r-time-title","time"],["fft-r-spectrum-title","spectrum"],["fft-r-time-note","timeNote"],["fft-r-spectrum-note","spectrumNote"],["fft-r-theory-title","theory"],["fft-r-eq1-label","eq1"],["fft-r-eq2-label","eq2"],["fft-r-theory-note","theoryNote"],["fft-r-observation-title","observation"],["fft-r-quiz-title","quizTitle"],["fft-r-quiz-check","quizButton"],["fft-r-guide-legend","legend"]];
  for(const [id,key] of pairs)$(id).textContent=tr(L[key]);
- $("fft-r-steps").replaceChildren(...L.steps.map(s=>{const e=document.createElement("span");e.textContent=tr(s,true);return e}));
  $("fft-r-experiment").options[0].textContent=tr(["1 · Two nearby tones","1 · 인접한 두 정현파"],true);
  $("fft-r-experiment").options[1].textContent=tr(["2 · Off-bin tone","2 · Bin 사이 정현파"],true);
  $("fft-r-experiment").options[2].textContent=tr(["3 · Zero padding","3 · 영 채우기"],true);
