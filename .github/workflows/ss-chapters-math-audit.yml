@@ -6,6 +6,8 @@ on:
       - 'signals-systems/assets/ss-chapters-math-audit.js'
       - 'signals-systems/assets/ss-math-core.js'
       - 'signals-systems/assets/ss-common-header.css'
+      - 'signals-systems/assets/ss-foundations-standard.css'
+      - 'signals-systems/assets/ss-formula-standard.css'
       - 'signals-systems/assets/ss-ch*-math.js'
       - 'signals-systems/assets/ss-ch*-prose-math.js'
       - 'signals-systems/assets/ss-foundations-standard.js'
