@@ -186,7 +186,15 @@ try{
  await page.locator("#butterfly-input").fill("0 1 2 3 4 5 6 7");
  await page.locator("#butterfly-apply").click();
  assert.ok(await page.locator("#butterfly-input-error").isHidden(),"Valid custom data should clear input error");
- console.log("PASS 8-point FFT complex butterfly stages, twiddles, direct DFT proof and custom input");
+ await page.setViewportSize({width:390,height:844});
+ const mobileState=await page.evaluate(()=>{
+  const scroller=document.querySelector(".butterfly-svg-scroller");
+  return{documentWidth:document.documentElement.scrollWidth,viewportWidth:window.innerWidth,scrollerScrollWidth:scroller.scrollWidth,scrollerClientWidth:scroller.clientWidth};
+ });
+ assert.ok(mobileState.documentWidth<=mobileState.viewportWidth+3,"FFT butterfly causes document-level mobile overflow");
+ assert.ok(mobileState.scrollerScrollWidth>mobileState.scrollerClientWidth,"Detailed butterfly diagram should scroll within its panel on mobile");
+ await page.setViewportSize({width:1366,height:900});
+  console.log("PASS 8-point FFT complex butterfly stages, twiddles, direct DFT proof and custom input");
   console.log("PASS DFT and FFT comparison chart renders");
 
 
