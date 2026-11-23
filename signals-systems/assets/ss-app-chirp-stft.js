@@ -231,7 +231,7 @@ function stats(a){
 }
 function resetFeedback(){
  missionChecked=false;$("stft-mission-feedback").dataset.result="pending";
- $("stft-mission-feedback").textContent=tr("Make a rising chirp and move the analysis window to the last quarter of the signal.","주파수가 증가하는 처프를 만들고 분석 Window를 신호의 마지막 1/4 구간으로 이동하세요.");
+ $("stft-mission-feedback").textContent=tr("Choose a frequency pattern and move the analysis window into the final quarter. Inspect the local FFT peak.","주파수 변화 유형을 선택하고 Window를 신호의 마지막 1/4 구간으로 옮겨 국소 FFT 피크를 확인하세요.");
 }
 function redraw(){
  if(!analysis)return;
@@ -247,6 +247,7 @@ function redraw(){
  drawSpectrum("stft-global-plot",a.globalFft,a.fs,a.N,Math.max(...a.globalFft));
  drawSpectrum("stft-local-plot",a.frames[frame],a.fs,a.M,Math.max(...a.frames[frame]),a.instantaneousFrequency(a.centers[frame]));
  drawMap(a,frame);
+ updatePatternText();
  renderComparison();
  $("stft-local-help").textContent=tr(
   "Current window center "+fmt(a.centers[frame],3)+" s · Instantaneous frequency ≈ "+fmt(a.instantaneousFrequency(a.centers[frame]),1)+" Hz · measured local peak "+fmt(a.peaks[frame],1)+" Hz",
@@ -268,17 +269,39 @@ function setFrame(next){
  frame=clamp(Math.round(next),0,analysis.frameCount-1);redraw();
  if(missionChecked)resetFeedback();
 }
+function updatePatternText(){
+ const shape=$("stft-shape").value;
+ const label=$("stft-eq1-label");
+ const model=$("stft-insight-title");
+ const tex={"rising":"f(t)=f_0+\\frac{f_1-f_0}{T}t","falling":"f(t)=f_1+\\frac{f_0-f_1}{T}t","step":"f(t)=\\begin{cases}f_0,&0\\le t<T/2\\\\f_1,&T/2\\le t\\le T\\end{cases}"};
+ const equation=document.querySelector("#stft-main [data-ss-math][data-ss-math-display='block']");
+ if(equation&&equation.dataset.ssMath!==tex[shape]){
+  equation.dataset.ssMath=tex[shape];
+  global.SSMathCore?.queue?.();
+ }
+ $("stft-time-title").textContent=tr("1 · Observe the time signal","1 · 시간 신호 관찰");
+ $("stft-time-help").textContent=shape==="step"?
+  tr("The frequency changes abruptly at T/2, but the signal phase stays continuous. The shaded region shows the selected window.","T/2에서 주파수가 갑자기 바뀌지만 신호 위상은 연속입니다. 음영은 현재 분석 구간입니다."):
+  shape==="falling"?
+  tr("A falling chirp has increasingly wider oscillation spacing. The selected window is shaded.","하강 처프는 시간이 갈수록 진동 간격이 넓어집니다. 음영은 현재 분석 창입니다."):
+  tr("A rising chirp has increasingly narrower oscillation spacing. The selected window is shaded.","상승 처프는 시간이 갈수록 진동 간격이 좁아집니다. 음영은 현재 분석 창입니다.");
+}
+
 function localization(){
  document.documentElement.lang=lang()==="ko"?"ko":"en";
  const items={
  "stft-title":["Chirp, STFT, and Spectrogram","처프·STFT·스펙트로그램"],
- "stft-intro":["Discover why the FFT of an entire signal loses time information. Move a short-time window, compare its FFT, and build the spectrogram.","전체 신호의 FFT가 시간 정보를 알려주지 못하는 이유를 발견하세요. 짧은 분석 창을 이동하고 각 FFT를 비교하면서 Spectrogram을 만듭니다."],
+ "stft-intro":["Compare rising, falling, and step-frequency signals: the full FFT gives spectral content, while moving-window FFT and Spectrogram show when frequencies occur.","상승·하강·계단형 주파수 신호를 비교하세요. 전체 FFT는 주파수 성분을 보여주지만, 이동 Window FFT와 Spectrogram은 언제 발생했는지를 보여줍니다."],
  "stft-step-1":["1 · Chirp","1 · 처프"],
  "stft-step-2":["2 · Global FFT","2 · 전체 FFT"],
  "stft-step-3":["3 · Moving FFT","3 · 이동 FFT"],
  "stft-step-4":["4 · Spectrogram","4 · 스펙트로그램"],
  "stft-controls-title":["Change · Signal and analysis","Change · 신호와 분석 설정"],
  "stft-controls-help":["Adjust chirp frequency, observation duration, and the STFT window. Then move the selected frame.","처프 주파수·관측 시간·STFT 창을 조절한 뒤 현재 분석 구간을 이동하세요."],
+ "stft-shape-label":["Frequency pattern","주파수 변화 유형"],
+ "stft-contrast-title":["Compare · Time–Frequency Resolution","비교 · 시간–주파수 해상도"],
+ "stft-contrast-help":["Two computed STFTs of the same signal, shown with one shared magnitude-dB color scale.","동일한 신호에 대해 계산한 두 STFT 결과를 공통 Magnitude dB 색상 척도로 비교합니다."],
+ "stft-compare-label":["Compare experiment","비교 실험"],
  "stft-fs-label":["Sampling rate fs","샘플링 주파수 fs"],
  "stft-duration-label":["Signal duration T","신호 길이 T"],
  "stft-start-label":["Start frequency f0","시작 주파수 f0"],
@@ -299,31 +322,40 @@ function localization(){
  "stft-map-title":["4 · STFT Spectrogram","4 · STFT Spectrogram"],
  "stft-map-help":["Each vertical slice is an FFT of one window. Follow the bright ridge through time.","각 세로 단면은 하나의 Window FFT 결과입니다. 밝은 능선이 시간에 따라 어떻게 변하는지 확인하세요."],
  "stft-insight-title":["Explain · Connecting the four views","설명 · 네 그림의 관계"],
- "stft-eq1-label":["Linear chirp instantaneous frequency","선형 처프 순간주파수"],
+ "stft-eq1-label":["Instantaneous frequency model","순간주파수 모델"],
  "stft-eq2-label":["Short-time Fourier transform (M-point FFT)","단시간 푸리에 변환 (M점 FFT)"],
  "stft-eq3-label":["Time window, original frequency bin spacing, hop","창 시간 길이·원래 주파수 격자·이동 간격"],
  "stft-eq4-label":["Power spectrogram (relative display uses magnitude dB)","Power Spectrogram (화면에는 상대 Magnitude dB 사용)"],
  "stft-insight-body":["The full FFT collapses time. STFT repeats FFT on short windows. Smaller L improves localization in time but broadens frequency features; a smaller hop displays more slices, not a longer observation. Zero padding changes the display grid, not the window duration.","전체 FFT는 시간 위치를 구분하지 못합니다. STFT는 짧은 창마다 FFT를 반복합니다. 짧은 L은 시간 위치를 잘 보여주지만 주파수 특징은 넓어집니다. Hop을 줄이면 시간축의 표시 간격만 촘촘해집니다. Zero Padding은 표시 격자를 바꾸지만 창의 시간 길이는 바꾸지 않습니다."],
  "stft-mission-title":["Check · Graph experiment mission","확인 · 그래프 실험 미션"],
- "stft-mission-prompt":["Make a rising chirp (f1 > f0), then move the window into the final quarter. Compare the local FFT peak with the theoretical instantaneous frequency.","상승 처프(f1 > f0)를 만든 다음 Window를 마지막 1/4 구간으로 이동하세요. FFT 피크와 이론 순간주파수를 비교하세요."],
+ "stft-mission-prompt":["Choose a rising, falling, or step-frequency signal; move the window into the last quarter and compare the local FFT peak with the theoretical frequency.","상승·하강·계단형 주파수 신호를 선택하고 Window를 마지막 1/4 구간으로 옮겨 국소 FFT 피크와 이론 주파수를 비교하세요."],
  "stft-mission-check":["Check my experiment","실험 목표 확인"],
  "stft-prev-link":["← Frequency resolution lab","← 주파수 분해능 실습"],
  "stft-catalog-link":["Part C · Learning map","Part C · 학습 목록"]
  };
  for(const [id,[en,ko]] of Object.entries(items)){const el=$(id);if(el)el.textContent=tr(en,ko,id.startsWith("stft-step")||id.endsWith("-link"))}
+ for(const [id,entries] of Object.entries({
+  "stft-shape":[["Rising chirp","상승 처프"],["Falling chirp","하강 처프"],["Sudden frequency step","계단형 주파수 변화"]],
+  "stft-compare-kind":[["Short vs long window","짧은 창 vs 긴 창"],["0% vs 75% overlap","Overlap 0% vs 75%"]]
+ })){
+  [...$(id).options].forEach((opt,i)=>{opt.textContent=tr(...entries[i],true)});
+ }
+ updatePatternText();
+ comparisonCacheKey="";
+
  if(analysis)redraw();
  if(!missionChecked)resetFeedback();
 }
 function mission(){
  if(!analysis)return;
  const a=analysis,t=a.centers[frame],theory=a.instantaneousFrequency(t),error=Math.abs(a.peaks[frame]-theory);
- const ok=a.f1>a.f0&&t>=a.duration*.75&&error<=Math.max(a.binSpacing*2,8);
+ const ok=t>=a.duration*.75&&error<=Math.max(a.binSpacing*2,8);
  const el=$("stft-mission-feedback");missionChecked=true;el.dataset.result=ok?"correct":"incorrect";
  el.textContent=ok?tr(
   "Goal achieved. Window center "+fmt(t,2)+" s · predicted "+fmt(theory,1)+" Hz · measured "+fmt(a.peaks[frame],1)+" Hz. Compare the broad full-record FFT with this localized peak.",
   "목표 달성! 중심 시간 "+fmt(t,2)+"초 · 이론 "+fmt(theory,1)+" Hz · 측정 "+fmt(a.peaks[frame],1)+" Hz. 전체 FFT와 국소 피크를 비교하세요."
- ):tr("Not yet. Ensure the chirp increases, move the window near the end, and compare local FFT and theory.",
- "아직 목표에 도달하지 않았습니다. 상승 처프와 마지막 구간을 선택하고 국소 FFT와 이론값을 비교하세요.");
+ ):tr("Not yet. Move the window near the end, and compare its local FFT peak with the theoretical frequency.",
+ "아직 목표에 도달하지 않았습니다. 마지막 구간을 선택하고 국소 FFT 피크와 이론 주파수를 비교하세요.");
 }
 function init(){
  modes?.bindSelect?.("#stft-language");
@@ -355,6 +387,6 @@ function init(){
  compute();localization();
  global.SSMathCore?.renderNow?.();
 }
-global.SSChirpSTFT=Object.freeze({fft,fftMagnitudes,analyze});
+global.SSChirpSTFT=Object.freeze({fft,fftMagnitudes,analyze,compareAnalyses,frequencyAt,signalPhase});
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
 })(window);
