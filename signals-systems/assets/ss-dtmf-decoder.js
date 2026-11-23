@@ -44,7 +44,7 @@ function axes(w,h,{xMax,yMin,yMax,xTitle,yTitle}){
   parts.push('<text class="ss-dtmf-tick" x="'+x+'" y="'+(h-16)+'" text-anchor="middle">'+(i*xMax/4).toFixed(xMax>=10?0:2)+'</text>');
   parts.push('<text class="ss-dtmf-tick" x="'+(l-7)+'" y="'+(y+4)+'" text-anchor="end">'+(yMax+(yMin-yMax)*i/4).toFixed(yMax<2?2:1)+'</text>');
  }
- parts.push('<path class="ss-dtmf-axis" d="M'+l+' '+t+'V'+(t+H)+'H'+(l+W)+'"/>');
+ parts.push('<path class="ss-dtmf-axis" fill="none" d="M'+l+' '+t+'V'+(t+H)+'H'+(l+W)+'"/>');
  parts.push('<text class="ss-dtmf-axis-title" x="'+(l+W/2)+'" y="'+(h-1)+'" text-anchor="middle">'+xTitle+'</text>');
  parts.push('<text class="ss-dtmf-axis-title" transform="rotate(-90 13 '+(t+H/2)+')" x="13" y="'+(t+H/2)+'" text-anchor="middle">'+yTitle+'</text>');
  return{l,t,W,H,html:parts.join("")};
