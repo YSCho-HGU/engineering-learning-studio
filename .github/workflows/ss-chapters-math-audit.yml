@@ -8,6 +8,7 @@ on:
       - 'signals-systems/assets/ss-common-header.css'
       - 'signals-systems/assets/ss-foundations-standard.css'
       - 'signals-systems/assets/ss-formula-standard.css'
+      - 'signals-systems/assets/ss-ch7-standalone.css'
       - 'signals-systems/assets/ss-ch*-math.js'
       - 'signals-systems/assets/ss-ch*-prose-math.js'
       - 'signals-systems/assets/ss-foundations-standard.js'
