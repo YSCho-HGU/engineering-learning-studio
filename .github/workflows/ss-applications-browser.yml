@@ -18,6 +18,7 @@ on:
       - 'tests/ss-chirp-stft-browser.mjs'
       - 'tests/ss-fft-upload-browser.mjs'
       - 'signals-systems/assets/ss-fft-upload.js'
+      - 'signals-systems/assets/ss-fft-harmonics.js'
       - 'signals-systems/assets/ss-fft-upload.css'
       - 'signals-systems/assets/ss-app-extra-labs.js'
       - 'tests/ss-extra-labs-browser.mjs'
@@ -45,6 +46,7 @@ jobs:
           node --check signals-systems/assets/ss-app-fft-resolution.js
           node --check signals-systems/assets/ss-app-chirp-stft.js
           node --check tests/ss-chirp-stft-browser.mjs
+          node --check signals-systems/assets/ss-fft-harmonics.js
           node --check signals-systems/assets/ss-fft-upload.js
           node --check tests/ss-fft-upload-browser.mjs
           node --check tests/ss-fft-foundations-browser.mjs
