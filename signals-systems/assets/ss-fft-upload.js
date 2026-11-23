@@ -78,6 +78,7 @@ function parseCSV(text,{maxSamples=300000,valueColumn=null}={}){
  const names=header?first.map(x=>x.toLowerCase()):first.map((_,i)=>"column"+i);
  const timeIndex=names.findIndex(x=>/^(t|time|time_s|time_sec|time_seconds|timestamp|timestamp_s|timestamp_ms|time_ms)$/i.test(x));
  const timeUnit=timeIndex<0?1:/_ms$/i.test(names[timeIndex])?.001:1;
+ const ambiguousTimeUnit=timeIndex>=0&&names[timeIndex]==="timestamp";
  let valueIndex=names.findIndex((x,i)=>i!==timeIndex&&/^(value|signal|amplitude|accel|acceleration|temperature|pressure|sensor|reading|x|y|z|ecg|voltage|current)$/i.test(x));
  if(valueIndex<0)valueIndex=first.length>=2&&timeIndex===0?1:timeIndex<0?0:Math.min(first.length-1,timeIndex+1);
  if(valueColumn!==null){const selected=names.indexOf(String(valueColumn).toLowerCase());if(selected<0||selected===timeIndex)throw Error("Invalid sensor column");valueIndex=selected;}
@@ -93,8 +94,8 @@ function parseCSV(text,{maxSamples=300000,valueColumn=null}={}){
   }
  }
  if(!values.length)throw Error("CSV has no numeric samples");
- let fs=null,reason="unknown";
- if(times.length>=3&&times.every(Number.isFinite)){
+ let fs=null,reason=ambiguousTimeUnit?"ambiguous-time-unit":"unknown";
+ if(!ambiguousTimeUnit&&times.length>=3&&times.every(Number.isFinite)){
   const diffs=[];
   for(let i=1;i<times.length;i++){const dt=times[i]-times[i-1];if(dt<=0){diffs.length=0;break}diffs.push(dt)}
   if(diffs.length){
@@ -202,7 +203,7 @@ function useCsvColumn(){
  const data=parseCSV(csvText,{valueColumn:chosen});
  loadSource({samples:data.samples,fs:data.fs,name:csvFileName,kind:"sensor",
   metadata:(data.timeColumn?"time="+data.timeColumn+", ":"")+"value="+data.valueColumn+
-  (data.rejected?" · skipped "+data.rejected:"")+(data.reason==="nonuniform-time"?" · irregular time: fs unknown":"")});
+  (data.rejected?" · skipped "+data.rejected:"")+(data.reason==="nonuniform-time"?" · irregular time: fs unknown":data.reason==="ambiguous-time-unit"?" · timestamp unit unspecified: fs unknown":"")});
 }
 async function ingest(file){
  if(!file)return;
