@@ -18,7 +18,7 @@ const pairs=[
 const roots=".ss-app-intro,.ss-app-toc,.ss-app-main,.ss-al-root,.ss-fft-root";
 const skip="code,pre,kbd,samp,textarea,script,style,select,option,svg,math,.katex,[data-ss-math],[data-latex],[contenteditable=true]";
 const quoted=pairs.map(x=>x[0].replace(/[-/\\^$*+?.()|[\]{}]/g,"\\$&"));
-const re=new RegExp(quoted.join("|"),"g");
+const re=new RegExp(/\\\((.+?)\\\)|\\\[([\s\S]+?)\\\]/.source+"|"+quoted.join("|"),"g");
 const map=new Map(pairs);
 let processed=0;
 function enhance(root=document){
@@ -40,10 +40,11 @@ function enhance(root=document){
    while((match=re.exec(src))!==null){
     if(match.index>last)fragment.append(document.createTextNode(src.slice(last,match.index)));
     const token=match[0],el=document.createElement("span");
-    el.className="ss-app-inline-math";
-    el.dataset.ssMath=map.get(token);
-    el.dataset.ssMathDisplay="inline";
-    el.dataset.ssMathFallback=token;
+    const authored=match[1]||match[2]||map.get(token);
+    el.className=match[2]?"ss-app-display-math":"ss-app-inline-math";
+    el.dataset.ssMath=authored;
+    el.dataset.ssMathDisplay=match[2]?"block":"inline";
+    el.dataset.ssMathFallback=match[1]||match[2]||token;
     el.textContent=token;
     fragment.append(el);processed++;
     last=match.index+token.length;
