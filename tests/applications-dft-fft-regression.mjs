@@ -3,12 +3,14 @@
  * Default file:// mode needs no local web server.
  */
 import { chromium } from "playwright";
-import { readFile } from "node:fs/promises";
+import { readFile, mkdir } from "node:fs/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import path from "node:path";
 import assert from "node:assert/strict";
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..");
+const artifacts=path.join(root,"artifacts","fft-browser-qa");
+await mkdir(artifacts,{recursive:true});
 const browser=await chromium.launch({headless:true});
 const errors=[];
 function expectContains(text,part,label){assert.ok(text.includes(part),label+": "+text);}
@@ -331,8 +333,46 @@ try{
 
 
  console.log("PASS desktop/mobile learning layout and contextual upload controls");
- console.log("PASS no uncaught page errors");
+ // Capture browser evidence for theme, language, formula, and viewport QA.
+ await page.setViewportSize({width:1366,height:900});
+ await page.locator("#dft-language").selectOption("en");
+ await page.locator('[data-step="2"]').click();
+ await page.locator('[data-butterfly-stage="3"]').click();
+ const stageHeading=await page.locator("#butterfly-heading").innerText();
+ assert.ok(!/[가-힣]/.test(stageHeading),"English mode shows Korean inside butterfly heading");
+ assert.ok(await page.locator(".butterfly-equation").isVisible(),"Butterfly complex formula is not visible");
+ const formula=await page.locator(".butterfly-equation").innerText();
+ expectContains(formula,"y[a]","Butterfly upper output equation");
+ expectContains(formula,"y[b]","Butterfly lower output equation");
+ const svgFit=await page.locator("#butterfly-diagram").evaluate(svg=>{
+  const width=svg.viewBox.baseVal.width;
+  const bounds=[...svg.querySelectorAll("text")].map(el=>{const r=el.getBBox();return {x:r.x,width:r.width}});
+  return{width,overruns:bounds.filter(b=>b.x<-2||b.x+b.width>width+2).length};
+ });
+ assert.equal(svgFit.overruns,0,"SVG butterfly text leaves the viewBox");
+ await page.locator("#dft-theme").selectOption("neutral-dark");
+ await page.locator("#butterfly-lab").screenshot({path:path.join(artifacts,"butterfly-desktop-neutral-dark.png")});
+ await page.locator("#dft-theme").selectOption("white-clean");
+ await page.locator("#butterfly-lab").screenshot({path:path.join(artifacts,"butterfly-desktop-white-clean.png")});
+ await page.locator("#dft-language").selectOption("ko");
+ expectContains(await page.locator("#butterfly-heading").innerText(),"8점 FFT","Korean butterfly localization");
+ await page.locator("#butterfly-lab").screenshot({path:path.join(artifacts,"butterfly-desktop-korean.png")});
+ await page.setViewportSize({width:390,height:844});
+ await page.locator("#dft-theme").selectOption("neutral-dark");
+ const mobileOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
+ assert.ok(mobileOverflow<=3,"Butterfly layout causes horizontal page scrolling: "+mobileOverflow+"px");
+ const scroller=page.locator(".butterfly-svg-scroller");
+ assert.ok(await scroller.evaluate(el=>el.scrollWidth>el.clientWidth),"Butterfly on narrow viewport must scroll in its own region");
+ await page.locator("#butterfly-lab").screenshot({path:path.join(artifacts,"butterfly-mobile-neutral-dark.png")});
+ await page.locator("#dft-language").selectOption("en");
+ await page.setViewportSize({width:1366,height:900});
+ console.log("PASS visual-regression screenshots: 2 themes, EN/KR and mobile scroll");
+  console.log("PASS no uncaught page errors");
  console.log("ALL DFT/FFT REGRESSION CHECKS PASSED");
+}catch(error){
+ try{if(page&&!page.isClosed())await page.screenshot({path:path.join(artifacts,"failure-state.png"),fullPage:true,timeout:10000});}
+ catch(screenshotError){console.error("Failure screenshot unavailable:",screenshotError.message);}
+ throw error;
 }finally{
  await page?.close();
  await browser.close();
