@@ -66,7 +66,7 @@ function drawSpectrum(){
   out+='<line class="ss-dtmf-peakmark" x1="'+x+'" x2="'+x+'" y1="'+g.t+'" y2="'+(g.t+g.H)+'"/>';
   out+='<text class="ss-dtmf-peaktext" x="'+Math.min(760,x+5)+'" y="'+(g.t+offset)+'">'+name+' '+p.frequency.toFixed(1)+' Hz</text>';
  }
- $("dtmf-spectrum").innerHTML=out;$("dtmf-spectrum").hidden=false;$("dtmf-spectrum-placeholder").hidden=true;
+ $("dtmf-spectrum").innerHTML=out;$("dtmf-spectrum").removeAttribute("hidden");$("dtmf-spectrum-placeholder").hidden=true;
  $("dtmf-peaks").hidden=false;
  $("dtmf-peaks").innerHTML=[["Low group",a.low],["High group",a.high]].map(([n,p])=>'<div class="ss-dtmf-peak"><small>'+n+'</small><strong>'+p.frequency.toFixed(1)+' Hz</strong><small>k='+p.bin+' · bin '+p.center.toFixed(1)+' Hz</small></div>').join("");
  $("dtmf-bin-note").textContent=tr("FFT bin spacing "+a.delta.toFixed(2)+" Hz · sub-bin peak interpolation","FFT Bin 간격 "+a.delta.toFixed(2)+" Hz · 피크 Bin 사이 보간");
@@ -91,7 +91,7 @@ function progress(){
 function resetView(){
  st.result=null;st.guess=null;st.solved=false;
  $("dtmf-current-guess").textContent="—";$("dtmf-check").disabled=true;$("dtmf-fft").disabled=false;$("dtmf-play").disabled=false;$("dtmf-next").hidden=true;
- $("dtmf-spectrum").hidden=true;$("dtmf-spectrum").replaceChildren();$("dtmf-peaks").hidden=true;$("dtmf-peaks").replaceChildren();$("dtmf-spectrum-placeholder").hidden=false;
+ $("dtmf-spectrum").setAttribute("hidden","");$("dtmf-spectrum").replaceChildren();$("dtmf-peaks").hidden=true;$("dtmf-peaks").replaceChildren();$("dtmf-spectrum-placeholder").hidden=false;
  $("dtmf-spectrum-placeholder").textContent=tr("FFT hidden · Listen and run FFT.","FFT 숨김 · 소리를 듣고 FFT를 실행하세요.");
  $("dtmf-bin-note").textContent="";$("dtmf-feedback").textContent="";delete $("dtmf-feedback").dataset.result;
  keypad();drawMap();drawWave();progress();
@@ -158,7 +158,7 @@ function init(){
  W.ELSLanguage?.bindSelect?.("#dtmf-language");
  $("dtmf-mode").addEventListener("change",newMystery);$("dtmf-new").addEventListener("click",newMystery);$("dtmf-play").addEventListener("click",play);
  $("dtmf-fft").addEventListener("click",()=>{st.result=analyze(synth(current()),{N:Number($("dtmf-fft-n").value),window:$("dtmf-window").value,offset:Number($("dtmf-start").value)/100});drawSpectrum();$("dtmf-check").disabled=!st.guess});
- for(const id of ["dtmf-fft-n","dtmf-window","dtmf-start"])$(id).addEventListener("input",()=>{drawWave();st.result=null;$("dtmf-check").disabled=true;$("dtmf-spectrum").hidden=true;$("dtmf-peaks").hidden=true;$("dtmf-spectrum-placeholder").hidden=false});
+ for(const id of ["dtmf-fft-n","dtmf-window","dtmf-start"])$(id).addEventListener("input",()=>{drawWave();st.result=null;$("dtmf-check").disabled=true;$("dtmf-spectrum").setAttribute("hidden","");$("dtmf-peaks").hidden=true;$("dtmf-spectrum-placeholder").hidden=false});
  $("dtmf-check").addEventListener("click",check);$("dtmf-next").addEventListener("click",next);
  W.ELSLanguage?.subscribe?.(localize);newMystery();localize();W.SSMathCore?.renderNow?.();
 }
