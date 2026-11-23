@@ -56,7 +56,7 @@ try{
  const proof=(await page.locator("#butterfly-proof-error").innerText()).match(/([\d.]+e[+-]?\d+)/i);
  assert.ok(proof&&Number(proof[1])<1e-9,"Numerical verification failed");
  await page.locator("#butterfly-preset").selectOption("impulse");
- assert.ok((await page.locator("#butterfly-proof-rows tr").first().innerText()).includes("1.000"));
+ assert.ok((await page.locator("#butterfly-proof-rows tr").first().textContent()).includes("1.000"));
  await page.locator("#butterfly-input").fill("1 2 3");
  await page.locator("#butterfly-apply").click();
  assert.ok(await page.locator("#butterfly-error").isVisible(),"Invalid input not rejected");
