@@ -103,6 +103,15 @@ try{
    // Follow-up FFT lesson: acquisition duration, leakage, windows and padding.
    await page.goto(base+"/signals-systems/applications-fft-resolution.html",{waitUntil:"domcontentloaded"});
    await page.locator("#fft-r-spectrum path.curve").waitFor();
+   await page.waitForFunction(()=>window.SSMathCore?.report?.total>=2);
+   const resolutionMath=await page.evaluate(()=>window.SSMathCore?.auditVisible?.());
+   check(resolutionMath?.total>=2&&resolutionMath.errors===0&&resolutionMath.missing===0,"Resolution math initialization failed "+JSON.stringify(resolutionMath));
+   if(await page.evaluate(()=>!!window.katex?.render)){
+     await page.waitForFunction(()=>window.SSMathCore?.auditVisible?.().rendered===window.SSMathCore?.auditVisible?.().total);
+     check(await page.locator(".ss-fft-r-theory .katex").count()===2,"Resolution KaTeX formulas not rendered");
+   }
+   check(await page.locator("#fft-r-challenge-title").isVisible(),"Graph-driven challenge invisible");
+
    const v=await page.evaluate(()=>{
      const a=window.SSFFTResolution;
      const short=a.analyze({N:64,fs:256,experiment:"resolution"});
@@ -147,7 +156,7 @@ try{
    await page.locator("#fft-r-quiz-check").click();
    check(await page.locator("#fft-r-quiz-feedback").getAttribute("data-result")==="correct","Zero-padding concept check failed");
    check((await page.locator("#fft-r-stats").innerText()).includes("1 Hz"),"Padding grid metric failed");
-   for(const theme of ["white-clean","neutral-dark"]){
+   for(const theme of ["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark"]){
      await page.locator('[data-els-theme-picker]').selectOption(theme);
      check(await page.locator("html").getAttribute("data-els-theme")===theme,"Resolution theme broken");
    }
@@ -156,6 +165,15 @@ try{
      const title=await page.locator("#fft-r-title").innerText();
      check(lang==="en"?!/[가-힣]/.test(title):/[가-힣]/.test(title),"Resolution language failed");
    }
+   const visual=await page.evaluate(()=>{
+     const graph=document.querySelector("#fft-r-spectrum").getBoundingClientRect();
+     const controls=document.querySelector(".ss-fft-r-controls").getBoundingClientRect();
+     const formulas=[...document.querySelectorAll(".ss-fft-r-theory [data-ss-math]")].map(e=>({
+       width:e.getBoundingClientRect().width,scroll:e.scrollWidth,client:e.clientWidth
+     }));
+     return {graphWidth:graph.width,controlWidth:controls.width,formulas};
+   });
+   check(visual.graphWidth>200&&visual.controlWidth>200,"FFT graph/controls collapsed "+JSON.stringify(visual));
    check((await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth))<=6,"Resolution lab horizontal overflow");
    await page.screenshot({path:"tests/screenshots/fft-resolution-"+width+".png",fullPage:true});
    await page.goto(base+"/signals-systems/applications-fft-lab.html",{waitUntil:"domcontentloaded"});
