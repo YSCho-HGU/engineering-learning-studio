@@ -1,12 +1,14 @@
 /** Browser QA for the simplified Part C list and its 7 one-line module navigations. */
 import { chromium } from "playwright";
 import assert from "node:assert/strict";
+import { mkdir } from "node:fs/promises";
 import {fileURLToPath,pathToFileURL} from "node:url";
 import path from "node:path";
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..");
 const files=["applications-fft-lab.html","applications-fft-resolution.html","applications-dft-fft.html",
  "applications-fft-dtmf.html","applications-fft-sound-fingerprint.html","applications-fft-upload.html","applications-chirp-stft.html"];
 const dest=f=>path.join(root,"signals-systems",f);
+const screenshots=path.join(root,"artifacts","fft-browser-qa");await mkdir(screenshots,{recursive:true});
 const browser=await chromium.launch({headless:true});
 const page=await browser.newPage({viewport:{width:1280,height:840}});
 try{
@@ -23,10 +25,12 @@ try{
  assert.equal(await page.locator("#topics-c .ss-app-lesson-row .ss-app-lesson-arrow").count(),7);
  const future=await page.locator("#topics-c .ss-app-future summary").innerText();assert.ok(future.includes("4"));
  assert.equal(await page.locator("#ss-presentation-toggle").count(),0);
+ await page.screenshot({path:path.join(screenshots,"fft-part-c-desktop.png"),fullPage:true});
  assert.ok(await page.locator("header.ss-common-header").isVisible(),"Common header missing on Part C");
  await page.setViewportSize({width:390,height:844});
  const width=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
  assert.ok(width<=3,"Part C mobile horizontal overflow: "+width);
+ await page.screenshot({path:path.join(screenshots,"fft-part-c-mobile.png"),fullPage:true});
  console.log("PASS Part C: 6 direct labs, 1 optional, 4 future topics and standard header");
  for(let index=0;index<files.length;index++){
   await page.goto(pathToFileURL(dest(files[index])).href);
