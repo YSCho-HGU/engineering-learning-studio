@@ -202,6 +202,7 @@ function checkQuestion(){
 }
 
 function init(){
+ global.SSMathCore?.install?.();
  global.ELSLanguage?.bindSelect?.("#fft-r-language");
  ["fft-r-experiment","fft-r-fs","fft-r-n","fft-r-separation","fft-r-offset","fft-r-window","fft-r-padding"].forEach(id=>$(id).addEventListener(id==="fft-r-separation"||id==="fft-r-offset"?"input":"change",run));
  $("fft-r-experiment").addEventListener("change",()=>{
