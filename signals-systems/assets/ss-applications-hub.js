@@ -101,6 +101,7 @@ function renderTopics(){
    }
    const heading=node("h3",null,mode()==="ko"?x.ko:x.en);
    summary.append(heading);
+   if(part==="c")summary.append(node("span","ss-app-topic-availability",x.lab?i18n("INTERACTIVE LAB","실습 제공",true):i18n("PLANNED","개발 예정",true)));
    const kindKo={"Sound & periodicity":"소리와 주기성","Time-varying frequency":"시간가변 주파수","Complex signals":"복소 신호","Sound & superposition":"소리와 중첩","Communication signals":"통신 신호","Sampling":"표본화","Circuits":"회로","Digital filtering":"디지털 필터링","Audio systems":"오디오 시스템","Frequency-selective systems":"주파수 선택 시스템","Dynamics":"동적 시스템","Spatial systems":"공간 시스템","FFT Foundations":"FFT 기초","Audio & Time-frequency":"오디오와 시간-주파수","Audio & Sensors":"오디오와 센서","Image Processing":"영상 처리","Video Processing":"동영상 처리","FFT Engineering":"FFT 공학 응용","Audio":"오디오","Sensors & IoT":"센서와 IoT","Radar & Sonar":"레이더와 소나","Biomedical":"바이오메디컬","Image & Vision":"이미지와 비전","Communications":"통신"};
    const label=node("span","ss-app-topic-label",i18n(x.kind,kindKo[x.kind]||x.kind,true));
    summary.append(label);details.append(summary);
