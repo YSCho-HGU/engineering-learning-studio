@@ -22,3 +22,4 @@ The bin spacing is (f_s/N) when (f_s) is known, and (1/N) cycles/sample otherwis
 
 ## QA
 `tests/ss-fft-upload-browser.mjs` verifies known-tone bin/frequency/amplitude, a two-harmonic spectrum, inference of (f_s) from CSV time stamps, unknown-(f_s) normalization, changing selected intervals, selecting different IoT channels, local WAV upload and spectrum, EN/KO/Mixed, five themes, math rendering, and 1366px/390px overflow. This is part of the Applications GitHub Actions workflow.
+\nThe displayed DFT equation explicitly shows the default subtraction of the selected window mean before windowing. Peaks are amplitude-normalized by the sum of the analysis-window weights.\n
