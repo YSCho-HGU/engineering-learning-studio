@@ -109,7 +109,7 @@ function drawTime(a,frame){
  const svg=$("stft-time-plot"),p=graphBase(900,225,{left:58,right:16,top:16,bottom:37}),b=p.top+p.H;
  const x=n=>p.left+n/(a.N-1)*p.W,y=v=>p.top+p.H/2-v*(p.H/2-8);
  const start=a.starts[frame],end=start+a.L-1;
- let markup=axes(p,{xMax:a.duration,yMin:-1,yMax:1,labelX:"Time (s)",labelY:"x(t)"});
+ let markup=axes(p,{xMax:a.duration,yMin:-1,yMax:1,labelX:"Time (s)",labelY:"x[n] (sampled)"});
  markup+='<rect class="ss-stft-window-region" x="'+x(start)+'" y="'+p.top+'" width="'+Math.max(1,x(end)-x(start))+'" height="'+p.H+'"/>';
  markup+='<path class="ss-stft-trace" d="'+linePath(a.samples,x(0),p.top+p.H/2,p.W/(a.N-1),p.H/2-8,Math.max(1,Math.floor(a.N/1600)))+'"/>';
  markup+='<line class="ss-stft-window-edge" x1="'+x(start)+'" y1="'+p.top+'" x2="'+x(start)+'" y2="'+b+'"/>';
