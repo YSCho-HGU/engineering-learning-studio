@@ -20,10 +20,11 @@ const topics={
   {en:"Image Blur as 2D Convolution",ko:"2차원 컨벌루션과 이미지 흐림",kind:"Spatial systems",concept:"2D kernel · Spatial filtering",questionEn:"How does a local averaging kernel soften sharp image details?",questionKo:"국소 평균 필터가 왜 이미지의 선명한 경계를 흐리게 만드는가?",observeEn:"Image kernel size, original/blurred output, and edge behavior.",observeKo:"필터 커널 크기·원본과 흐림 결과·에지 변화",ch:[2,4]}
  ],
  c:[
-  {en:"DFT vs FFT",ko:"DFT와 FFT의 관계",kind:"FFT Foundations",concept:"DFT · FFT algorithm · Computational cost",questionEn:"Why is FFT faster without changing the DFT it computes?",questionKo:"FFT는 같은 DFT 결과를 계산하면서 왜 더 빠른가?",observeEn:"N-point DFT result, butterfly steps, and operation-count comparison.",observeKo:"N점 DFT 결과·버터플라이 단계·연산량 비교",ch:[3,6]},
+  {lab:"fft-foundations",href:"./applications-fft-lab.html",en:"Start Here · FFT from Sample Data",ko:"여기서 시작 · 샘플 데이터 FFT 분석",kind:"FFT Foundations",concept:"x[n] · X[k] · N · k/N · fₛ",questionEn:"Given samples alone, what can we learn from the FFT? What changes when fs is provided?",questionKo:"샘플 데이터만으로 FFT에서 무엇을 알 수 있으며 fs가 주어지면 해석이 어떻게 달라지는가?",observeEn:"Paste or select numeric samples, compute FFT bins, inspect normalized frequencies without fs, then add fs to interpret Hz.",observeKo:"숫자 표본 입력·FFT Bin 계산·fs가 없을 때의 정규화 주파수·fs를 알 때의 Hz 해석",ch:[6,7]},
   {en:"Frequency Bins and Resolution",ko:"주파수 격자와 분해능",kind:"FFT Foundations",concept:"Sampling rate · N · Bin spacing",questionEn:"How do sampling rate, record length, and N affect the FFT frequency grid?",questionKo:"샘플링 주파수·관측 길이·N은 FFT 주파수 격자에 어떻게 영향을 주는가?",observeEn:"Frequency axis in Hz, bin spacing, and observation-time effects.",observeKo:"Hz 주파수 축·격자 간격·관측 시간의 영향",ch:[6,7]},
-  {en:"Spectral Leakage and Windows",ko:"스펙트럼 누설과 윈도 함수",kind:"FFT Foundations",concept:"Observation window · Leakage · Tapering",questionEn:"Why does a tone spread across many bins when the observation window is not coherent?",questionKo:"관측 구간에 정수 주기가 들어 있지 않을 때 에너지가 여러 격자로 퍼지는 이유는?",observeEn:"Rectangular/Hann windows, amplitude spectra, and the main-lobe/side-lobe tradeoff.",observeKo:"직사각·Hann 창·진폭 스펙트럼·주엽과 부엽의 상충 관계",ch:[4,6]},
+  {en:"DFT vs FFT",ko:"DFT와 FFT의 관계",kind:"FFT Foundations",concept:"DFT · FFT algorithm · Computational cost",questionEn:"Why is FFT faster without changing the DFT it computes?",questionKo:"FFT는 같은 DFT 결과를 계산하면서 왜 더 빠른가?",observeEn:"N-point DFT result, butterfly steps, and operation-count comparison.",observeKo:"N점 DFT 결과·버터플라이 단계·연산량 비교",ch:[3,6]},
   {en:"Magnitude, Phase, and Reconstruction",ko:"크기·위상·복원",kind:"FFT Foundations",concept:"Complex spectrum · IFFT · Phase",questionEn:"Why is phase necessary to reconstruct the original signal?",questionKo:"원래 신호를 복원하려면 위상이 왜 필요한가?",observeEn:"Magnitude and phase spectra, phase changes, and IFFT reconstruction.",observeKo:"크기·위상 스펙트럼·위상 변화·IFFT 복원",ch:[3,4,6]},
+  {en:"Spectral Leakage and Windows",ko:"스펙트럼 누설과 윈도 함수",kind:"FFT Foundations",concept:"Observation window · Leakage · Tapering",questionEn:"Why does a tone spread across many bins when the observation window is not coherent?",questionKo:"관측 구간에 정수 주기가 들어 있지 않을 때 에너지가 여러 격자로 퍼지는 이유는?",observeEn:"Rectangular/Hann windows, amplitude spectra, and the main-lobe/side-lobe tradeoff.",observeKo:"직사각·Hann 창·진폭 스펙트럼·주엽과 부엽의 상충 관계",ch:[4,6]},
   {en:"Zero Padding and Spectral Detail",ko:"영 채우기와 스펙트럼 표시",kind:"FFT Foundations",concept:"Zero padding · Interpolation · Resolution",questionEn:"Why does zero padding add FFT samples without automatically improving true resolving power?",questionKo:"0을 추가하면 FFT 격자는 촘촘해지지만 실제 분해능은 왜 자동 향상되지 않는가?",observeEn:"Fixed observation versus padded FFT length and nearby tones.",observeKo:"관측 길이 고정·패딩 후 FFT 점 수·인접 주파수 성분",ch:[6,7]},
   {en:"Chirp, STFT, and Spectrogram",ko:"처프·STFT·스펙트로그램",kind:"Audio & Time-frequency",concept:"STFT · Time-frequency tradeoff",questionEn:"Why does one full-record FFT lose the timing of a moving frequency?",questionKo:"전체 구간 FFT 하나로는 주파수가 변한 시점을 왜 알 수 없는가?",observeEn:"Window length, overlapping frames, chirp curve, and spectrogram.",observeKo:"윈도 길이·겹치는 구간·처프 주파수 곡선·스펙트로그램",ch:[4,6,7]},
   {en:"FFT for Audio and Harmonics",ko:"오디오 및 조화파의 FFT 분석",kind:"Audio & Sensors",concept:"Harmonic spectrum · Timbre · Spectral filtering",questionEn:"Which spectral components distinguish a pure tone from a richer sound?",questionKo:"순음과 복합음의 차이를 보여주는 스펙트럼 성분은?",observeEn:"Waveform and FFT of a synthesized tone, harmonic gain, and sound comparison.",observeKo:"합성 소리의 파형과 FFT·조화파 크기·청각 비교",ch:[3,4,6]},
@@ -67,6 +68,15 @@ function renderTopics(){
   for(let i=0;i<data.length;i++){
    const x=data[i];
    const details=node("details","ss-app-topic");
+   if(part==="c"){
+    details.dataset.learningStep=String(i+1);
+    const phase=i===0?i18n("START HERE · FIRST PRACTICAL","여기에서 시작 · 첫 실습",true):
+      i<=2?i18n("FOUNDATIONS","핵심 기초",true):
+      i<=5?i18n("SPECTRUM INTERPRETATION","스펙트럼 해석",true):
+      i18n("REAL-WORLD APPLICATION","실제 응용",true);
+    const stage=node("span","ss-app-topic-stage",phase);
+    details.append(stage);
+   }
    if(part==="c")details.dataset.area="fft";
    const summary=node("summary");
    const heading=node("h3",null,mode()==="ko"?x.ko:x.en);
@@ -79,7 +89,7 @@ function renderTopics(){
    body.append(node("span","ss-app-status",x.lab?i18n("Interactive lab available","인터랙티브 실습 제공",true):i18n("Planned module","개발 예정",true)));
    if(x.lab){
     const run=node("a","ss-app-open-lab",i18n("Open Interactive Lab →","실습 열기 →",true));
-    run.href="./applications-lab.html?lab="+x.lab;
+    run.href=x.href||"./applications-lab.html?lab="+x.lab;
     body.append(run);
    }
    const concept=node("span","ss-app-topic-label",x.concept);
