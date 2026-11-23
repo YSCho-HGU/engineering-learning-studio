@@ -56,20 +56,18 @@ for(let chapter=1;chapter<=8;chapter++){
     if(snapshot.mainLength<100)issues.push({chapter,section:i+1,language,reason:"empty-content",length:snapshot.mainLength});
     if(snapshot.overflow>8)issues.push({chapter,section:i+1,language,reason:"horizontal-overflow",px:snapshot.overflow});
    }
-  }
-  // Theme consistency at the first lesson; do not multiply 5 themes by every lesson.
-  await page.locator(navSelector[chapter]).first().evaluate(el=>el.click());
-  const themeSelect=page.locator("[data-els-theme-picker],select[aria-label='Theme']").first();
-  for(const theme of themes){
-    if(await themeSelect.count()){await themeSelect.selectOption(theme);await page.waitForTimeout(70)}
+   const themeSelect=page.locator("[data-els-theme-picker],select[aria-label='Theme']").first();
+   for(const theme of themes){
+    if(await themeSelect.count()){await themeSelect.selectOption(theme);await page.waitForTimeout(40)}
     const state=await page.evaluate(()=>({
       applied:document.documentElement.dataset.elsTheme,
       overflow:Math.max(0,document.documentElement.scrollWidth-innerWidth),
       math:window.SSChaptersMathAudit.audit().passed
     }));
-    record(1,"mixed",theme,"theme",state);
+    record(i+1,"mixed",theme,"theme",state);
     if(state.applied!==theme||!state.math||state.overflow>8)
-      issues.push({chapter,theme,reason:"theme",state});
+      issues.push({chapter,section:i+1,theme,reason:"theme",state});
+   }
   }
   // Mobile: verify first and last section with usable plot area and no horizontal scrolling.
   await page.setViewportSize({width:390,height:844});
