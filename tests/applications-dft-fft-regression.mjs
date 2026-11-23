@@ -40,6 +40,8 @@ try{
  assert.equal(await start.getAttribute("href"),"./applications-dft-fft.html","Applications card link");
  await start.click();
  assert.ok(page.url().endsWith("/applications-dft-fft.html"),"Card did not open integrated FFT lab");
+ assert.equal(await page.locator(".dft-learning-route").count(),0,"Duplicate FFT navigation should be removed");
+ assert.equal(await page.locator("#ss-fft-path").count(),1,"Exactly one shared FFT route must remain");
  console.log("PASS Applications Part C card is active and navigates to DFT vs FFT");
  await page.locator("#peak-analysis").count();
  assert.ok(await page.locator("#guide-title").isVisible(),"Guided mission hidden");
@@ -78,6 +80,7 @@ try{
  assert.ok(await page.locator("#upload").isVisible(),"Upload section hidden");
  const csv=await readFile(path.join(root,"signals-systems/tests/fixtures/dft-fft-vibration-64-160hz.csv"));
  await page.locator("#file").setInputFiles({name:"vibration.csv",mimeType:"text/csv",buffer:csv});
+ await page.waitForFunction(()=>document.querySelector("#file-info")?.textContent?.startsWith("vibration.csv")&&document.querySelector("#signal")?.value==="upload");
  await page.locator("#size").selectOption("512");
  await page.locator("#run").click();
  let result=await page.locator("#peak-results").innerText();
@@ -85,6 +88,7 @@ try{
  expectContains(result,"160.00 Hz","Sensor peak 160 Hz");
  expectContains(await page.locator("#file-info").innerText(),"1024","CSV timestamp sampling rate");
  console.log("PASS CSV sensor peaks 64 Hz + 160 Hz and auto sample rate");
+ assert.ok(await page.locator("#sensor-physics").isVisible(),"Sensor records must retain physical interpretation controls");
  await page.locator("#physics-peak").selectOption("32"); // 64 Hz at N=512, fs=1024
  await page.locator("#events-per-rev").fill("1");
  expectContains(await page.locator("#physics-hz").innerText(),"64.00 Hz","Physical frequency");
@@ -106,6 +110,7 @@ try{
 
  const single=Array.from({length:512},(_,i)=>Math.sin(2*Math.PI*32*i/512).toFixed(8)).join("\n");
  await page.locator("#file").setInputFiles({name:"unknown-rate.txt",mimeType:"text/plain",buffer:Buffer.from(single)});
+ await page.waitForFunction(()=>document.querySelector("#file-info")?.textContent?.startsWith("unknown-rate.txt")&&document.querySelector("#signal")?.value==="upload");
  await page.locator("#run").click();
  expectContains(await page.locator("#peak-results").innerText(),"cycles/sample","Unknown sample rate unit");
  expectContains(await page.locator("#peak-caution").innerText(),"Sample rate unknown","Unknown sampling rate caveat");
@@ -115,13 +120,15 @@ try{
  console.log("PASS unknown sampling rate never invents Hz");
 
  await page.locator("#file").setInputFiles({name:"two-notes.wav",mimeType:"audio/wav",buffer:makeWav()});
+ await page.waitForFunction(()=>document.querySelector("#file-info")?.textContent?.startsWith("two-notes.wav")&&document.querySelector("#signal")?.value==="upload");
  await page.locator("#size").selectOption("1024");
  await page.locator("#run").click();
  result=await page.locator("#peak-results").innerText();
  expectContains(result,"250.00 Hz","Audio 250 Hz");
  // 750 Hz bin may be smaller, but should be selected as a second local peak.
  expectContains(result,"750.00 Hz","Audio 750 Hz");
- expectContains(result,"For audio","Audio-specific physical interpretation");
+ expectContains(await page.locator("#peak-explanation").innerText(),"For audio","Audio-specific physical interpretation");
+ assert.ok(await page.locator("#sensor-physics").isHidden(),"Audio must not display conditional shaft RPM controls");
  console.log("PASS WAV decoder and two audio peaks");
 
  await page.locator("#size").selectOption("2048");
@@ -189,6 +196,9 @@ try{
  await page.locator("#butterfly-apply").click();
  assert.ok(await page.locator("#butterfly-input-error").isHidden(),"Valid custom data should clear input error");
  await page.setViewportSize({width:390,height:844});
+ await page.locator('[data-butterfly-stage="3"]').click();
+ const selectedStageScroll=await page.locator(".butterfly-svg-scroller").evaluate(el=>({left:el.scrollLeft,max:el.scrollWidth-el.clientWidth}));
+ assert.ok(selectedStageScroll.left>=selectedStageScroll.max*.84,"Mobile butterfly should scroll to selected stage, "+JSON.stringify(selectedStageScroll));
  const mobileState=await page.evaluate(()=>{
   const scroller=document.querySelector(".butterfly-svg-scroller");
   return{documentWidth:document.documentElement.scrollWidth,viewportWidth:window.innerWidth,scrollerScrollWidth:scroller.scrollWidth,scrollerClientWidth:scroller.clientWidth};
@@ -221,6 +231,7 @@ try{
  // Stage-specific display contract: suppress irrelevant graphs and data in every mission.
  await page.setViewportSize({width:1366,height:900});
  await page.locator('[data-step="0"]').click();
+ await page.locator('[data-intro-part="0"]').click();
  assert.ok(await page.locator("#intro").isVisible(),"Stage 1 DFT concept absent");
  assert.ok(await page.locator("#time-graph-panel").isVisible(),"Stage 1 time-domain plot absent");
  assert.ok(await page.locator("#spectrum-graph-panel").isVisible(),"Stage 1 spectrum absent");
@@ -243,7 +254,7 @@ try{
  assert.ok(await page.locator("#spectrum-graph-panel").isVisible(),"Stage 4 spectrum plot absent");
  assert.ok(await page.locator("#control-fs").isVisible(),"Stage 4 needs sampling-rate correction");
  assert.ok(await page.locator("#peak-analysis").isVisible(),"Stage 4 peak analysis absent");
- assert.ok(await page.locator("#sensor-physics").isVisible(),"Stage 4 physical interpretation absent");
+ assert.ok(await page.locator("#sensor-physics").isHidden(),"Audio session should not display irrelevant shaft RPM controls");
  assert.ok(await page.locator("#compare").isHidden(),"Stage 4 numerical comparison should be hidden");
  console.log("PASS focused content visibility across all four stages");
  // Stage 1: N, fs and bin-index/Hz mapping must stay mathematically consistent.
@@ -340,7 +351,11 @@ try{
  await page.locator('[data-butterfly-stage="3"]').click();
  const stageHeading=await page.locator("#butterfly-heading").innerText();
  assert.ok(!/[가-힣]/.test(stageHeading),"English mode shows Korean inside butterfly heading");
- assert.ok(await page.locator(".butterfly-equation").isVisible(),"Butterfly complex formula is not visible");
+ assert.ok(await page.locator("#butterfly-computation-formula").isVisible(),"Butterfly complex formula is not visible");
+ assert.ok(await page.locator("#butterfly-scroll-hint").isVisible(),"Mobile scroll guidance missing");
+ const mathCheck=await page.locator("#butterfly-computation-formula").evaluate(el=>({rendered:!!el.querySelector(".katex"),fallback:!!el.querySelector("sup"),error:!!el.querySelector(".katex-error")}));
+ assert.ok(!mathCheck.error,"KaTeX reported a formula rendering error");
+ assert.ok(mathCheck.rendered||mathCheck.fallback,"Butterfly formula lacks both rendered math and HTML fallback");
  const formula=await page.locator(".butterfly-equation").innerText();
  expectContains(formula,"y[a]","Butterfly upper output equation");
  expectContains(formula,"y[b]","Butterfly lower output equation");
