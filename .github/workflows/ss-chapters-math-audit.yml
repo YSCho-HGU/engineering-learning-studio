@@ -10,6 +10,10 @@ on:
       - 'signals-systems/assets/ss-formula-standard.css'
       - 'signals-systems/assets/ss-ch7-standalone.css'
       - 'signals-systems/assets/ss-responsive-unified.css'
+      - 'signals-systems/assets/ss-presentation-mode.js'
+      - 'signals-systems/assets/ss-presentation-mode.css'
+      - 'signals-systems/assets/ss-plot-typography.css'
+      - 'signals-systems/assets/ss-app-labs.js'
       - 'signals-systems/applications*.html'
       - 'tests/ss-responsive-unified-browser.mjs'
       - 'signals-systems/assets/ss-ch*-math.js'
@@ -31,6 +35,7 @@ jobs:
       - name: Verify auditor syntax
         run: |
           node --check signals-systems/assets/ss-chapters-math-audit.js
+          node --check signals-systems/assets/ss-presentation-mode.js
           node --check tests/ss-chapters-math-audit.mjs
           node --check tests/ss-chapters-full-qa.mjs
           node --check tests/ss-responsive-unified-browser.mjs
