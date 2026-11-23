@@ -1,0 +1,50 @@
+/* Shared responsive policy for Signals & Systems Chapters 1-8 and Applications.
+ * Authoritative scope: layout and readability only. Do NOT change SVG drawing
+ * units, transform math, simulation controls or dynamic interaction code.
+ * Keep Change (2) / Observe (3) side by side when sufficient width exists.
+ */
+:root{--ss-responsive-gap:12px;--ss-responsive-reading:16px}
+html body{max-width:100%;min-width:0}
+html .ss-layout-main,html .ss-layout-root>main,html main,
+html .ss-app-main,html .ss-al-root,html .ss-fft-root,html .ss-fft-r-wrap{
+ min-width:0;box-sizing:border-box
+}
+html main :is(.ss-standard-workspace,.ss7-stage-pair,.ss5-lab,.ss6-control-plot-workspace,.ss-fft-workspace,.ss-fft-r-layout,.ss-al-workspace){min-width:0}
+html main :is(.ss-standard-workspace,.ss7-stage-pair,.ss6-control-plot-workspace,.ss-fft-workspace,.ss-fft-r-layout) > *{min-width:0}
+html main :is(.ss-standard-observe,.ss7-stage-observe,.ss-fft-graphs,.ss-fft-r-results,.ss-al-results){min-width:0}
+html main :is(.ss-standard-observe,.ss7-stage-observe,.ss-fft-graphs,.ss-fft-r-results,.ss-al-results) :is(canvas,svg){max-width:100%}
+html main :is(.ss-standard-followup,.ss7-stage-explain,.ss5-followup,.ss6-interpretation){min-width:0;grid-column:1/-1}
+html main :is(.ss-fft-equation,.ss7-key-equation,.ss8-key-equation,.ss6-theory-equation,.deriv-math,[data-ss-math-display="block"]){
+ max-width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin
+}
+@media(min-width:1600px){
+ :root{--ss-responsive-gap:16px;--ss-responsive-reading:17px}
+ html main :is(.ss-standard-workspace,.ss7-stage-pair,.ss6-control-plot-workspace){column-gap:16px}
+ html main :is(.ss-fft-workspace,.ss-fft-r-layout){column-gap:16px}
+ html .ss-fft-graphs,html .ss-fft-r-graphs{grid-template-columns:repeat(2,minmax(0,1fr))}
+ html main :is(.ss-standard-instruction,.ss7-predict-prompt,.ss-al-guidance){font-size:var(--ss-responsive-reading)}
+}
+/* Tablet: preserve the side-by-side experiment only when each panel can
+   remain usable, otherwise stack without clipping the plot or controls. */
+@media(min-width:861px) and (max-width:1199px){
+ html .ss-standard-workspace{grid-template-columns:minmax(235px,.37fr) minmax(0,.63fr)}
+ html .ss-fft-workspace,html .ss-fft-r-layout{grid-template-columns:minmax(240px,280px) minmax(0,1fr)}
+}
+@media(max-width:860px){
+ html .ss-standard-workspace{grid-template-columns:minmax(0,1fr)!important}
+ html .ss-fft-workspace,html .ss-fft-r-layout{grid-template-columns:minmax(0,1fr)!important}
+ html .ss-fft-controls,html .ss-fft-r-controls{position:static!important;top:auto!important;max-height:none!important;overflow:visible!important}
+ html .ss-fft-graphs,html .ss-fft-r-graphs,html .ss-app-topic-grid{grid-template-columns:minmax(0,1fr)}
+ html main :is(.ss5-followup,.ss-standard-followup,.ss7-stage-explain){grid-column:1/-1!important}
+}
+@media(max-width:600px){
+ :root{--ss-responsive-gap:10px}
+ html main :is(.ss-standard-stage,.ss-standard-followup,.ss-app-part,.ss-fft-card,.ss-fft-r-card){min-width:0}
+ html main :is(.ss-standard-workspace,.ss-fft-workspace,.ss-fft-r-layout,.ss-fft-r-graphs){gap:10px}
+ html .ss-common-header :is(select,button,summary){max-width:100%}
+ html .ss-fft-r-stat,html .ss-fft-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+ html main :is(.ss-fft-equation,.ss7-key-equation,.ss8-key-equation,.formula .math){overflow-x:auto}
+}
+@media(prefers-reduced-motion:reduce){
+ html main *{scroll-behavior:auto}
+}
