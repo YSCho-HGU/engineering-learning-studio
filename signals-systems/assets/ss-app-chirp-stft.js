@@ -41,13 +41,26 @@ function fftMagnitudes(samples,windowKind="rect",size=samples.length){
   amplitudes[k]=Math.hypot(re[k],im[k])*(k===0||k===size/2?1:2)/gain;
  return amplitudes;
 }
-function analyze({fs=512,duration=2,f0=20,f1=180,L=128,overlap=75,window="hann",padding=1}={}){
+function frequencyAt(t,{duration,f0,f1,shape="rising"}){
+ const u=clamp(t/duration,0,1);
+ if(shape==="falling")return f1+(f0-f1)*u;
+ if(shape==="step")return t<duration/2?f0:f1;
+ return f0+(f1-f0)*u;
+}
+function signalPhase(t,{duration,f0,f1,shape="rising"}){
+ if(shape==="step")return t<=duration/2?f0*t:f0*duration/2+f1*(t-duration/2);
+ if(shape==="falling")return f1*t+(f0-f1)*t*t/(2*duration);
+ return f0*t+(f1-f0)*t*t/(2*duration);
+}
+function analyze({fs=512,duration=2,f0=20,f1=180,L=128,overlap=75,window="hann",padding=1,shape="rising"}={}){
  fs=Number(fs);duration=Number(duration);f0=Number(f0);f1=Number(f1);
  L=Number(L);overlap=Number(overlap);padding=Number(padding);
+ if(!["rising","falling","step"].includes(shape))throw Error("Unsupported frequency pattern");
  const N=Math.round(fs*duration),M=L*padding,H=Math.max(1,Math.round(L*(1-overlap/100)));
- if(fs<=0||N<L||N>8192||f0<0||f1<0||Math.max(f0,f1)>=fs/2)throw Error("Invalid chirp range or sampling rate");
+ if(fs<=0||duration<=0||N<L||N>8192||f0<0||f1<0||Math.max(f0,f1)>=fs/2||overlap<0||overlap>=100)throw Error("Invalid chirp range or sampling rate");
+ const params={duration,f0,f1,shape};
  const samples=Float64Array.from({length:N},(_,n)=>{
-  const t=n/fs;return Math.sin(TWO_PI*(f0*t+(f1-f0)*t*t/(2*duration)));
+  const t=n/fs;return Math.sin(TWO_PI*signalPhase(t,params));
  });
  const globalFft=fftMagnitudes(samples,"rect",N);
  const starts=[];
@@ -60,9 +73,9 @@ function analyze({fs=512,duration=2,f0=20,f1=180,L=128,overlap=75,window="hann",
  });
  let max=0;for(const row of frames)for(const value of row)if(value>max)max=value;
  const decibels=frames.map(row=>Float64Array.from(row,value=>clamp(20*Math.log10(Math.max(value,1e-12)/Math.max(max,1e-12)),-60,0)));
- return {fs,duration,N,L,M,H,overlap,window,f0,f1,samples,globalFft,starts,frames,centers,peaks,decibels,
+ return {fs,duration,N,L,M,H,overlap,window,f0,f1,shape,samples,globalFft,starts,frames,centers,peaks,decibels,
   windowTime:L/fs,hopTime:H/fs,binSpacing:fs/L,displaySpacing:fs/M,frameCount:frames.length,
-  instantaneousFrequency:t=>f0+(f1-f0)*clamp(t,0,duration)/duration};
+  instantaneousFrequency:t=>frequencyAt(t,params)};
 }
 const colors=[[19,43,85],[36,107,153],[54,182,174],[244,210,107],[241,122,71]];
 function palette(db){
@@ -137,9 +150,9 @@ function drawMap(a,frame){
  markup+=axes(p,{xMax:a.duration,yMax:a.fs/2,labelX:"Time (s)",labelY:"Frequency (Hz)"});
  svg.innerHTML=markup;
 }
-const original={fs:512,duration:2,f0:20,f1:180,L:128,overlap:75,window:"hann",padding:1};
+const original={fs:512,duration:2,f0:20,f1:180,L:128,overlap:75,window:"hann",padding:1,shape:"rising"};
 let analysis=null,frame=0,missionChecked=false;
-function input(){return{fs:+$("stft-fs").value,duration:+$("stft-duration").value,f0:+$("stft-start").value,f1:+$("stft-end").value,L:+$("stft-window").value,overlap:+$("stft-overlap").value,window:$("stft-window-type").value,padding:+$("stft-fft-factor").value};}
+function input(){return{fs:+$("stft-fs").value,duration:+$("stft-duration").value,f0:+$("stft-start").value,f1:+$("stft-end").value,L:+$("stft-window").value,overlap:+$("stft-overlap").value,window:$("stft-window-type").value,padding:+$("stft-fft-factor").value,shape:$("stft-shape").value};}
 function updateRange(){
  const v=input(),limit=v.fs/2-5;
  $("stft-start").max=String(Math.min(100,limit));
@@ -253,14 +266,14 @@ function mission(){
 }
 function init(){
  modes?.bindSelect?.("#stft-language");
- const fields=["stft-fs","stft-duration","stft-start","stft-end","stft-window","stft-overlap","stft-window-type","stft-fft-factor"];
+ const fields=["stft-shape","stft-fs","stft-duration","stft-start","stft-end","stft-window","stft-overlap","stft-window-type","stft-fft-factor"];
  for(const id of fields)$(id).addEventListener("input",()=>{frame=0;compute()});
  $("stft-frame").addEventListener("input",e=>setFrame(Number(e.target.value)));
  $("stft-prev").addEventListener("click",()=>setFrame(frame-1));
  $("stft-next").addEventListener("click",()=>setFrame(frame+1));
  $("stft-reset").addEventListener("click",()=>{
   for(const [key,value]of Object.entries(original)){
-   const id={f0:"stft-start",f1:"stft-end",L:"stft-window",window:"stft-window-type",padding:"stft-fft-factor"}[key]||"stft-"+key;
+   const id={f0:"stft-start",f1:"stft-end",L:"stft-window",window:"stft-window-type",padding:"stft-fft-factor",shape:"stft-shape"}[key]||"stft-"+key;
    $(id).value=String(value);
   }
   frame=0;compute();
