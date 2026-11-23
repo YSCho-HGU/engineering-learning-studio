@@ -20,19 +20,17 @@ const topics={
   {en:"Image Blur as 2D Convolution",ko:"2차원 컨벌루션과 이미지 흐림",kind:"Spatial systems",concept:"2D kernel · Spatial filtering",questionEn:"How does a local averaging kernel soften sharp image details?",questionKo:"국소 평균 필터가 왜 이미지의 선명한 경계를 흐리게 만드는가?",observeEn:"Image kernel size, original/blurred output, and edge behavior.",observeKo:"필터 커널 크기·원본과 흐림 결과·에지 변화",ch:[2,4]}
  ],
  c:[
-  {lab:"fft-foundations",href:"./applications-fft-lab.html",en:"Start Here · FFT from Sample Data",ko:"여기서 시작 · 샘플 데이터 FFT 분석",kind:"FFT Foundations",concept:"x[n] · X[k] · N · k/N · fₛ",questionEn:"Given samples alone, what can we learn from the FFT? What changes when fs is provided?",questionKo:"샘플 데이터만으로 FFT에서 무엇을 알 수 있으며 fs가 주어지면 해석이 어떻게 달라지는가?",observeEn:"Paste or select numeric samples, compute FFT bins, inspect normalized frequencies without fs, then add fs to interpret Hz.",observeKo:"숫자 표본 입력·FFT Bin 계산·fs가 없을 때의 정규화 주파수·fs를 알 때의 Hz 해석",ch:[6,7]},
-  {lab:"fft-resolution",href:"./applications-fft-resolution.html",en:"Frequency Bins and Resolution",ko:"주파수 격자와 분해능",kind:"FFT Foundations",concept:"Sampling rate · N · Bin spacing",questionEn:"How do sampling rate, record length, and N affect the FFT frequency grid?",questionKo:"샘플링 주파수·관측 길이·N은 FFT 주파수 격자에 어떻게 영향을 주는가?",observeEn:"Interactive comparisons of N, fs, nearby tones, off-bin leakage, Rectangular/Hann windows and zero padding.",observeKo:"N·fs·인접 주파수·Bin 사이 누설·직사각/Hann 창·영 채우기 비교",ch:[6,7]},
-  {lab:"dft-fft",href:"./applications-dft-fft.html",en:"DFT vs FFT · Same Spectrum, Faster Algorithm",ko:"DFT와 FFT · 동일한 결과, 빠른 알고리즘",kind:"FFT Foundations",concept:"N-point DFT · Radix-2 butterfly · O(N²) vs O(N log₂N)",questionEn:"Why can FFT compute exactly the same DFT using dramatically less work?",questionKo:"FFT는 동일한 DFT 결과를 훨씬 적은 연산으로 계산할 수 있는 이유가 무엇일까요?",observeEn:"Inspect 8-point butterflies, verify identical DFT/FFT results, compare speed, and explore zero-padding plus real audio/sensor data.",observeKo:"8점 버터플라이·DFT/FFT 결과 일치·계산 속도를 확인하고 Zero-padding 및 실제 음성·센서 데이터를 분석합니다.",ch:[3,6,7]},
-  {en:"Magnitude, Phase, and Reconstruction",ko:"크기·위상·복원",kind:"FFT Foundations",concept:"Complex spectrum · IFFT · Phase",questionEn:"Why is phase necessary to reconstruct the original signal?",questionKo:"원래 신호를 복원하려면 위상이 왜 필요한가?",observeEn:"Magnitude and phase spectra, phase changes, and IFFT reconstruction.",observeKo:"크기·위상 스펙트럼·위상 변화·IFFT 복원",ch:[3,4,6]},
-  {en:"Spectral Leakage and Windows",ko:"스펙트럼 누설과 윈도 함수",kind:"FFT Foundations",concept:"Observation window · Leakage · Tapering",questionEn:"Why does a tone spread across many bins when the observation window is not coherent?",questionKo:"관측 구간에 정수 주기가 들어 있지 않을 때 에너지가 여러 격자로 퍼지는 이유는?",observeEn:"Rectangular/Hann windows, amplitude spectra, and the main-lobe/side-lobe tradeoff.",observeKo:"직사각·Hann 창·진폭 스펙트럼·주엽과 부엽의 상충 관계",ch:[4,6]},
-  {en:"Zero Padding and Spectral Detail",ko:"영 채우기와 스펙트럼 표시",kind:"FFT Foundations",concept:"Zero padding · Interpolation · Resolution",questionEn:"Why does zero padding add FFT samples without automatically improving true resolving power?",questionKo:"0을 추가하면 FFT 격자는 촘촘해지지만 실제 분해능은 왜 자동 향상되지 않는가?",observeEn:"Fixed observation versus padded FFT length and nearby tones.",observeKo:"관측 길이 고정·패딩 후 FFT 점 수·인접 주파수 성분",ch:[6,7]},
-  {lab:"chirp-stft",href:"./applications-chirp-stft.html",en:"Chirp, STFT, and Spectrogram",ko:"처프·STFT·스펙트로그램",kind:"Audio & Time-frequency",concept:"STFT · Time-frequency tradeoff",questionEn:"Why does one full-record FFT lose the timing of a moving frequency?",questionKo:"전체 구간 FFT 하나로는 주파수가 변한 시점을 왜 알 수 없는가?",observeEn:"Window length, overlapping frames, chirp curve, and spectrogram.",observeKo:"윈도 길이·겹치는 구간·처프 주파수 곡선·스펙트로그램",ch:[4,6,7]},
-  {lab:"dtmf-decoder",href:"./applications-fft-dtmf.html",en:"DTMF Mystery Decoder · Discover Hidden Numbers with FFT",ko:"DTMF 비밀 숫자 해독 · FFT로 숨겨진 정보 찾기",kind:"FFT Discovery · Decode",concept:"Two-tone signals · FFT peaks · DTMF standard · Mystery challenge",questionEn:"Can you decode a hidden telephone key from its two FFT frequency peaks?",questionKo:"두 개의 FFT 주파수 피크만으로 비밀 전화번호를 알아낼 수 있을까?",observeEn:"Listen before seeing the spectrum; perform FFT, locate low/high peaks, decode a secret key, then solve a three-key sequence.",observeKo:"먼저 소리를 듣고 FFT로 저주파·고주파 피크를 찾아 비밀 숫자와 세 자리 연속 숫자를 해독",ch:[3,4,6,7]},
-  {lab:"sound-fingerprint",href:"./applications-fft-sound-fingerprint.html",en:"Sound Fingerprint · Piano, Guitar and Voice FFT",ko:"소리의 주파수 지문 · 피아노·기타·목소리 FFT",kind:"FFT Discovery · Discover",concept:"Same fundamental · Harmonic spectrum · Timbre · Listening",questionEn:"Why do a piano, guitar, and voice sound different at the same pitch?",questionKo:"같은 음높이로 소리를 내도 피아노·기타·목소리가 다르게 들리는 이유는?",observeEn:"Listen to hidden A/B/C sounds, compare their actual FFT and ten harmonic amplitudes, then reveal their identities. Optionally analyze real uploaded recordings.",observeKo:"정체를 숨긴 A·B·C 소리를 듣고 FFT·고조파 진폭을 비교한 다음 정체 공개. 실제 녹음 파일도 선택 분석 가능",ch:[3,4,6,7]},
-  {lab:"fft-upload",href:"./applications-fft-upload.html",en:"FFT of Real Audio, Music & Sensor Data",ko:"실제 음성·음악·센서 데이터 FFT",kind:"Audio & Sensors",concept:"File upload · FFT · Spectral peaks · Sampling rate",questionEn:"What does an uploaded recording or sensor trace reveal in the frequency domain?",questionKo:"실제 음성·음악·센서 데이터의 FFT로 어떤 주파수 성분을 알아낼 수 있을까?",observeEn:"Upload local audio or CSV, select a sample segment, compute amplitude FFT, identify peaks and interpret normalized frequency versus Hz.",observeKo:"로컬 오디오·CSV 업로드, 표본 구간 선택, FFT 크기 및 피크 분석, 정규화 주파수와 Hz 비교",ch:[3,4,6,7]},
-  {en:"2D FFT of Images",ko:"이미지의 2D FFT",kind:"Image Processing",concept:"Spatial frequency · 2D FFT · IFFT",questionEn:"How do stripe spacing and direction appear as peaks in the 2D spectrum?",questionKo:"줄무늬의 간격과 방향이 2D 스펙트럼 피크에 어떻게 나타나는가?",observeEn:"Image upload, spectrum, low/high-pass masks, and reconstructed image.",observeKo:"이미지 업로드·스펙트럼·저역/고역 필터 마스크·복원 이미지",ch:[2,4,6]},
-  {en:"Video Temporal FFT and Flicker",ko:"동영상 시간 FFT와 깜빡임",kind:"Video Processing",concept:"Temporal sampling · FFT · Aliasing",questionEn:"How can periodic brightness changes in a video reveal flicker or vibration?",questionKo:"영상 밝기의 주기적 변화로 어떻게 깜빡임과 진동을 찾을 수 있는가?",observeEn:"Pixel/region brightness through time, temporal FFT, and frame-rate effects.",observeKo:"픽셀·영역의 시간에 따른 밝기·시간 FFT·프레임률 영향",ch:[6,7]},
-  {en:"FFT-Based Convolution",ko:"FFT 기반 컨벌루션",kind:"FFT Engineering",concept:"Convolution theorem · Padding · Circular effects",questionEn:"When does multiplying two FFT spectra reproduce linear convolution?",questionKo:"두 FFT를 곱했을 때 어떤 조건에서 선형 컨벌루션 결과와 같아지는가?",observeEn:"Direct convolution versus FFT/IFFT and the padding required to avoid wrap-around.",observeKo:"직접 컨벌루션과 FFT/IFFT·순환 겹침을 방지하는 패딩",ch:[2,4,6]}
+  {phase:"foundation",routeIndex:1,lab:"fft-foundations",href:"./applications-fft-lab.html",en:"Start Here · FFT from Sample Data",ko:"여기서 시작 · 샘플 데이터 FFT 분석",kind:"FFT Foundations",concept:"x[n] · X[k] · N · k/N · fₛ",questionEn:"Given samples alone, what can we learn from the FFT? What changes when fs is provided?",questionKo:"샘플 데이터만으로 FFT에서 무엇을 알 수 있으며 fs가 주어지면 해석이 어떻게 달라지는가?",observeEn:"Paste or select numeric samples, compute FFT bins, inspect normalized frequencies without fs, then add fs to interpret Hz.",observeKo:"숫자 표본 입력·FFT Bin 계산·fs가 없을 때의 정규화 주파수·fs를 알 때의 Hz 해석",ch:[6,7]},
+  {phase:"foundation",routeIndex:2,lab:"fft-resolution",href:"./applications-fft-resolution.html",en:"Frequency Bins and Resolution",ko:"주파수 격자와 분해능",kind:"FFT Foundations",concept:"Sampling rate · N · Bin spacing · Leakage · Windowing · Zero-padding",questionEn:"How do sampling rate, record length, and N affect the FFT frequency grid?",questionKo:"샘플링 주파수·관측 길이·N은 FFT 주파수 격자에 어떻게 영향을 주는가?",observeEn:"Interactive comparisons of N, fs, nearby tones, off-bin leakage, Rectangular/Hann windows and zero padding.",observeKo:"N·fs·인접 주파수·Bin 사이 누설·직사각/Hann 창·영 채우기 비교",ch:[6,7]},
+  {phase:"foundation",routeIndex:3,lab:"dft-fft",href:"./applications-dft-fft.html",en:"DFT vs FFT · Same Spectrum, Faster Algorithm",ko:"DFT와 FFT · 동일한 결과, 빠른 알고리즘",kind:"FFT Foundations",concept:"N-point DFT · Radix-2 butterfly · O(N²) vs O(N log₂N)",questionEn:"Why can FFT compute exactly the same DFT using dramatically less work?",questionKo:"FFT는 동일한 DFT 결과를 훨씬 적은 연산으로 계산할 수 있는 이유가 무엇일까요?",observeEn:"Inspect 8-point butterflies, verify identical DFT/FFT results, compare speed, and explore zero-padding plus real audio/sensor data.",observeKo:"8점 버터플라이·DFT/FFT 결과 일치·계산 속도를 확인하고 Zero-padding 및 실제 음성·센서 데이터를 분석합니다.",ch:[3,6,7]},
+  {phase:"discovery",routeIndex:4,lab:"dtmf-decoder",href:"./applications-fft-dtmf.html",en:"DTMF Mystery Decoder · Discover Hidden Numbers with FFT",ko:"DTMF 비밀 숫자 해독 · FFT로 숨겨진 정보 찾기",kind:"FFT Discovery · Decode",concept:"Two-tone signals · FFT peaks · DTMF standard · Mystery challenge",questionEn:"Can you decode a hidden telephone key from its two FFT frequency peaks?",questionKo:"두 개의 FFT 주파수 피크만으로 비밀 전화번호를 알아낼 수 있을까?",observeEn:"Listen before seeing the spectrum; perform FFT, locate low/high peaks, decode a secret key, then solve a three-key sequence.",observeKo:"먼저 소리를 듣고 FFT로 저주파·고주파 피크를 찾아 비밀 숫자와 세 자리 연속 숫자를 해독",ch:[3,4,6,7]},
+  {phase:"discovery",routeIndex:5,lab:"sound-fingerprint",href:"./applications-fft-sound-fingerprint.html",en:"Sound Fingerprint · Piano, Guitar and Voice FFT",ko:"소리의 주파수 지문 · 피아노·기타·목소리 FFT",kind:"FFT Discovery · Discover",concept:"Same fundamental · Harmonic spectrum · Timbre · Listening",questionEn:"Why do a piano, guitar, and voice sound different at the same pitch?",questionKo:"같은 음높이로 소리를 내도 피아노·기타·목소리가 다르게 들리는 이유는?",observeEn:"Listen to hidden A/B/C sounds, compare their actual FFT and ten harmonic amplitudes, then reveal their identities. Optionally analyze real uploaded recordings.",observeKo:"정체를 숨긴 A·B·C 소리를 듣고 FFT·고조파 진폭을 비교한 다음 정체 공개. 실제 녹음 파일도 선택 분석 가능",ch:[3,4,6,7]},
+  {phase:"discovery",routeIndex:6,lab:"fft-upload",href:"./applications-fft-upload.html",en:"FFT of Real Audio, Music & Sensor Data",ko:"실제 음성·음악·센서 데이터 FFT",kind:"Audio & Sensors",concept:"File upload · FFT · Spectral peaks · Sampling rate",questionEn:"What does an uploaded recording or sensor trace reveal in the frequency domain?",questionKo:"실제 음성·음악·센서 데이터의 FFT로 어떤 주파수 성분을 알아낼 수 있을까?",observeEn:"Upload local audio or CSV, select a sample segment, compute amplitude FFT, identify peaks and interpret normalized frequency versus Hz.",observeKo:"로컬 오디오·CSV 업로드, 표본 구간 선택, FFT 크기 및 피크 분석, 정규화 주파수와 Hz 비교",ch:[3,4,6,7]},
+  {phase:"extension",routeIndex:7,optional:true,lab:"chirp-stft",href:"./applications-chirp-stft.html",en:"Chirp, STFT, and Spectrogram",ko:"처프·STFT·스펙트로그램",kind:"Audio & Time-frequency",concept:"STFT · Time-frequency tradeoff",questionEn:"Why does one full-record FFT lose the timing of a moving frequency?",questionKo:"전체 구간 FFT 하나로는 주파수가 변한 시점을 왜 알 수 없는가?",observeEn:"Window length, overlapping frames, chirp curve, and spectrogram.",observeKo:"윈도 길이·겹치는 구간·처프 주파수 곡선·스펙트로그램",ch:[4,6,7]},
+  {phase:"planned",en:"Magnitude, Phase, and Reconstruction",ko:"크기·위상·복원",kind:"FFT Foundations",concept:"Complex spectrum · IFFT · Phase",questionEn:"Why is phase necessary to reconstruct the original signal?",questionKo:"원래 신호를 복원하려면 위상이 왜 필요한가?",observeEn:"Magnitude and phase spectra, phase changes, and IFFT reconstruction.",observeKo:"크기·위상 스펙트럼·위상 변화·IFFT 복원",ch:[3,4,6]},
+  {phase:"planned",en:"FFT-Based Convolution",ko:"FFT 기반 컨벌루션",kind:"FFT Engineering",concept:"Convolution theorem · Padding · Circular effects",questionEn:"When does multiplying two FFT spectra reproduce linear convolution?",questionKo:"두 FFT를 곱했을 때 어떤 조건에서 선형 컨벌루션 결과와 같아지는가?",observeEn:"Direct convolution versus FFT/IFFT and the padding required to avoid wrap-around.",observeKo:"직접 컨벌루션과 FFT/IFFT·순환 겹침을 방지하는 패딩",ch:[2,4,6]}
+  {phase:"planned",en:"2D FFT of Images",ko:"이미지의 2D FFT",kind:"Image Processing",concept:"Spatial frequency · 2D FFT · IFFT",questionEn:"How do stripe spacing and direction appear as peaks in the 2D spectrum?",questionKo:"줄무늬의 간격과 방향이 2D 스펙트럼 피크에 어떻게 나타나는가?",observeEn:"Image upload, spectrum, low/high-pass masks, and reconstructed image.",observeKo:"이미지 업로드·스펙트럼·저역/고역 필터 마스크·복원 이미지",ch:[2,4,6]},
+  {phase:"planned",en:"Video Temporal FFT and Flicker",ko:"동영상 시간 FFT와 깜빡임",kind:"Video Processing",concept:"Temporal sampling · FFT · Aliasing",questionEn:"How can periodic brightness changes in a video reveal flicker or vibration?",questionKo:"영상 밝기의 주기적 변화로 어떻게 깜빡임과 진동을 찾을 수 있는가?",observeEn:"Pixel/region brightness through time, temporal FFT, and frame-rate effects.",observeKo:"픽셀·영역의 시간에 따른 밝기·시간 FFT·프레임률 영향",ch:[6,7]},
  ],
  d:[
   {en:"Audio Equalizer and Speech Filtering",ko:"오디오 이퀄라이저와 음성 필터",kind:"Audio",concept:"Signal spectrum · H(f) · Filtering",questionEn:"What happens to both the waveform and sound when frequency bands are attenuated?",questionKo:"특정 주파수 대역을 감쇠시키면 파형과 소리는 어떻게 달라지는가?",observeEn:"Input/filtered audio, gain curve, waveform, spectrum, and listening comparison.",observeKo:"입력·필터된 소리·이득 곡선·파형·스펙트럼·청각 비교",ch:[2,3,4,6]},
@@ -61,31 +59,52 @@ function localizeStatic(){
  document.documentElement.lang=mode()==="ko"?"ko":"en";
  document.title=i18n("Applications · Signals & Systems","응용 · 신호및시스템",true)+" | Engineering Learning Studio";
 }
+const fftPhases={
+ foundation:{titleEn:"01 · FFT Foundations",titleKo:"01 · FFT 핵심 기초",descEn:"Start with samples; read the frequency grid; then verify why FFT evaluates the same DFT faster.",descKo:"샘플에서 출발해 주파수 격자를 해석하고 FFT가 같은 DFT를 빠르게 계산하는 이유를 확인합니다."},
+ discovery:{titleEn:"02 · FFT Discovery Labs",titleKo:"02 · FFT 발견 실습",descEn:"Decode tones, recognize harmonic fingerprints and finally analyze your own sound or sensor measurements.",descKo:"두 주파수로 숫자를 해독하고 음색의 고조파를 비교한 뒤 실제 음성·센서 데이터를 분석합니다."},
+ extension:{titleEn:"03 · Optional Extension",titleKo:"03 · 선택 확장",descEn:"Explore when a single FFT is insufficient for a frequency that changes over time.",descKo:"시간에 따라 변하는 주파수를 분석할 때 전체 FFT 하나만으로는 부족한 이유를 탐구합니다."},
+ planned:{titleEn:"04 · Future Modules",titleKo:"04 · 개발 예정 모듈",descEn:"These topics have no standalone interactive lab yet. They do not interrupt the seven available lessons.",descKo:"아직 독립 실습이 없는 주제입니다. 실행 가능한 7개 실습의 연속 학습을 방해하지 않도록 분리했습니다."}
+};
 function renderTopics(){
  sections.forEach(part=>{
   const host=document.getElementById("topics-"+part),data=topics[part];
   if(!host)return;
   host.replaceChildren();
   document.getElementById("part-"+part+"-count").textContent=data.length+" "+i18n("topics","주제",true);
+  let phaseHost=host,previousPhase="";
   for(let i=0;i<data.length;i++){
    const x=data[i];
+   if(part==="c"&&x.phase!==previousPhase){
+    previousPhase=x.phase;
+    const meta=fftPhases[x.phase],group=node("section","ss-app-phase");
+    group.dataset.fftPhase=x.phase;
+    const heading=node("div","ss-app-phase-head");
+    const title=node("h3",null,i18n(meta.titleEn,meta.titleKo,true));
+    const desc=node("p",null,i18n(meta.descEn,meta.descKo));
+    heading.append(title,desc);group.append(heading);
+    phaseHost=node("div","ss-app-topic-grid ss-app-phase-grid");
+    group.append(phaseHost);host.append(group);
+   }
    const details=node("details","ss-app-topic");
    if(part==="c")details.dataset.area="fft";
    const summary=node("summary");
    if(part==="c"){
-    details.dataset.learningStep=String(i+1);
-    const phase=i===0?i18n("START HERE · FIRST PRACTICAL","여기에서 시작 · 첫 실습",true):
-      i<=2?i18n("FOUNDATIONS","핵심 기초",true):
-      i<=5?i18n("SPECTRUM INTERPRETATION","스펙트럼 해석",true):
-      i18n("REAL-WORLD APPLICATION","실제 응용",true);
-    summary.append(node("span","ss-app-topic-stage",phase));
+    if(x.routeIndex)details.dataset.learningStep=String(x.routeIndex);
+    const stepNo=x.routeIndex?String(x.routeIndex).padStart(2,"0")+" / 07 · ":"";
+    const phase=x.phase==="foundation"?(x.routeIndex===1?"START HERE":"FOUNDATIONS"):
+      x.phase==="discovery"?"FFT DISCOVERY":
+      x.phase==="extension"?"OPTIONAL · TIME-FREQUENCY":"FUTURE MODULE";
+    const phaseKo=x.phase==="foundation"?(x.routeIndex===1?"여기서 시작":"FFT 기초"):
+      x.phase==="discovery"?"FFT 발견 실습":
+      x.phase==="extension"?"선택 · 시간-주파수":"추후 개발";
+    summary.append(node("span","ss-app-topic-stage",stepNo+i18n(phase,phaseKo,true)));
    }
    const heading=node("h3",null,mode()==="ko"?x.ko:x.en);
    summary.append(heading);
    const kindKo={"Sound & periodicity":"소리와 주기성","Time-varying frequency":"시간가변 주파수","Complex signals":"복소 신호","Sound & superposition":"소리와 중첩","Communication signals":"통신 신호","Sampling":"표본화","Circuits":"회로","Digital filtering":"디지털 필터링","Audio systems":"오디오 시스템","Frequency-selective systems":"주파수 선택 시스템","Dynamics":"동적 시스템","Spatial systems":"공간 시스템","FFT Foundations":"FFT 기초","Audio & Time-frequency":"오디오와 시간-주파수","Audio & Sensors":"오디오와 센서","Image Processing":"영상 처리","Video Processing":"동영상 처리","FFT Engineering":"FFT 공학 응용","Audio":"오디오","Sensors & IoT":"센서와 IoT","Radar & Sonar":"레이더와 소나","Biomedical":"바이오메디컬","Image & Vision":"이미지와 비전","Communications":"통신"};
    const label=node("span","ss-app-topic-label",i18n(x.kind,kindKo[x.kind]||x.kind,true));
    summary.append(label);details.append(summary);
-   if(x.lab){details.classList.add("ss-app-topic-ready");details.open=true;}
+   if(x.lab){details.classList.add("ss-app-topic-ready");details.open=part!=="c"||x.routeIndex===1;}
    const body=node("div","ss-app-topic-details");
    body.append(node("span","ss-app-status",x.lab?i18n("Interactive lab available","인터랙티브 실습 제공",true):i18n("Planned module","개발 예정",true)));
    if(x.lab){
@@ -103,7 +122,7 @@ function renderTopics(){
     link.href="./chapter"+n+".html";link.title="Open Chapter "+n;prereq.append(link);
    });body.append(prereq);
    details.append(body);
-   host.append(details);
+   phaseHost.append(details);
   }
  });
 }
