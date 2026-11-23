@@ -72,6 +72,30 @@ jobs:
         run: node tests/applications-dft-fft-regression.mjs
       - name: Validate FFT learning progression and navigation
         run: node tests/applications-fft-path-regression.mjs
+      - name: Preserve FFT browser source snapshot for offline visual diagnosis
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fft-browser-source-snapshot
+          path: |
+            signals-systems/applications.html
+            signals-systems/applications-dft-fft.html
+            signals-systems/assets/ss-app-fft-butterfly-core.js
+            signals-systems/assets/ss-app-fft-path.js
+            signals-systems/assets/ss-app-fft-path.css
+            signals-systems/assets/ss-common-header.js
+            signals-systems/assets/ss-common-header.css
+            signals-systems/assets/ss-readable-themes.css
+            signals-systems/assets/ss-applications-hub.js
+            signals-systems/assets/ss-applications-hub.css
+            signals-systems/tests/fixtures/dft-fft-vibration-64-160hz.csv
+            assets/els-language.js
+            assets/els-theme-v2.js
+            assets/els-theme-v2.css
+            assets/els-typography-standard.css
+            tests/applications-dft-fft-regression.mjs
+          if-no-files-found: error
+          retention-days: 7
       - name: Attach Chromium screenshots and failure evidence
         if: always()
         uses: actions/upload-artifact@v4
