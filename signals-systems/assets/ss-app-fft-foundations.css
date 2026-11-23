@@ -13,13 +13,13 @@ a{color:var(--els-link)}
 .ss-fft-nav>*:hover{border-color:var(--els-link)}
 .ss-fft-root{padding:0 clamp(12px,1.7vw,26px) 36px}
 .ss-fft-intro{display:flex;align-items:start;justify-content:space-between;gap:12px;margin:12px 0 11px;padding:16px 21px;border:1px solid var(--els-border);background:var(--els-surface);border-radius:13px}
-.ss-fft-eyebrow{font-size:11px;font-weight:850;letter-spacing:.08em}
+
 .ss-fft-intro h1{font-size:clamp(23px,2.3vw,32px);line-height:1.25;margin:4px 0 7px}
 .ss-fft-intro p{max-width:930px;margin:0;color:var(--els-muted);font-size:14px;white-space:pre-line;line-height:1.5}
-.ss-fft-return{font-size:12px;font-weight:750;border:1px solid var(--els-border);border-radius:8px;padding:7px 11px;background:var(--els-surface-alt);white-space:nowrap;text-decoration:none}
-.ss-fft-roadmap{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:12px}
-.ss-fft-stage{display:flex;align-items:center;gap:9px;border:1px solid var(--els-border);background:var(--els-surface-alt);padding:10px 12px;border-radius:9px;font-size:12px;font-weight:700;min-width:0}
-.ss-fft-stage-num{display:grid;place-items:center;width:27px;height:27px;flex:0 0 27px;border-radius:7px;border:1px solid var(--els-link);color:var(--els-link);font-weight:850}
+
+
+
+
 .ss-fft-workspace{display:grid;grid-template-columns:clamp(245px,20vw,320px) minmax(0,1fr);gap:12px;align-items:start}
 .ss-fft-controls,.ss-fft-card{border:1px solid var(--els-border);background:var(--els-surface);border-radius:13px;min-width:0}
 .ss-fft-controls{position:sticky;top:61px;max-height:calc(100dvh - 72px);overflow-y:auto;padding:16px}
@@ -72,11 +72,11 @@ a{color:var(--els-link)}
 #fft-table th:first-child,#fft-table td:first-child{text-align:left}
 #fft-table th{background:var(--els-surface-alt);color:var(--els-muted);position:sticky;top:0;z-index:1}
 #fft-table tr[data-peak=true]{background:var(--els-info-bg,var(--els-surface-alt));font-weight:750}
-.ss-fft-next{border-left:3px solid var(--els-link)}
-.ss-fft-next a{font-size:13px;font-weight:800}
+
+
 @media(max-width:1100px){.ss-fft-workspace{grid-template-columns:250px minmax(0,1fr)}.ss-fft-math-grid{grid-template-columns:1fr}}
 @media(max-width:860px){.ss-fft-workspace{grid-template-columns:1fr}.ss-fft-controls{position:static;max-height:none}.ss-fft-graphs{grid-template-columns:1fr 1fr}}
-@media(max-width:690px){.ss-fft-root{padding:0 10px 25px}.ss-fft-intro{flex-wrap:wrap;padding:14px}.ss-fft-roadmap{grid-template-columns:repeat(2,minmax(0,1fr))}.ss-fft-graphs{grid-template-columns:1fr}.ss-fft-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.ss-fft-svg{min-height:210px}.ss-fft-math-grid{grid-template-columns:1fr}}
+@media(max-width:690px){.ss-fft-root{padding:0 10px 25px}.ss-fft-intro{flex-wrap:wrap;padding:14px}.ss-fft-graphs{grid-template-columns:1fr}.ss-fft-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.ss-fft-svg{min-height:210px}.ss-fft-math-grid{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
 /* 2026-11-23: Keep controls in view while prioritizing the two plots. */

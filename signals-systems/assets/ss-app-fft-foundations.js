@@ -171,8 +171,6 @@ function insight(result){
 const labels={
  title:["FFT from Sample Data","샘플 데이터로 시작하는 FFT"],
  subtitle:["Start with a list of samples. Find the strongest frequency bins, then discover what changes—and what does not—when sampling rate is known.","샘플 배열에서 출발하여 주요 주파수 Bin을 찾고, 샘플링 주파수 유무에 따라 해석 가능한 정보를 구분합니다."],
- back:["← All Part C topics","← Part C 전체 주제"],
- roadmap:[["Read samples","표본 확인"],["Compute FFT","FFT 수행"],["Interpret bins","Bin 해석"],["Add sampling rate","샘플링 주파수 적용"]],
  controls:["Input samples","입력 표본 데이터"],note:["Choose a sample set or paste numeric samples. One column, separated by spaces, commas, or line breaks.","예제 데이터를 선택하거나 숫자 표본을 붙여넣습니다. 공백·쉼표·줄바꿈으로 구분합니다."],
  preset:["Example dataset","예제 데이터"],samples:["Sample values x[n]","표본값 x[n]"],format:["Enter 8–128 real values. For power-of-two N, a radix-2 FFT is used; otherwise, a direct DFT returns the same coefficients.","실수 표본 8~128개를 입력합니다. N이 2의 거듭제곱이면 radix-2 FFT, 아니면 동일한 계수를 구하는 직접 DFT를 사용합니다."],
  known:["Sampling rate fₛ is known","샘플링 주파수 fₛ를 알고 있습니다"],fs:["Sampling rate fₛ (Hz)","샘플링 주파수 fₛ (Hz)"],
@@ -183,8 +181,6 @@ const labels={
  spectrum:["2 · FFT spectrum and bins","2 · FFT 스펙트럼과 Bin"],
  insightTitle:["3 · Read the FFT result","3 · FFT 결과 해석"],table:["4 · Check individual FFT bins","4 · FFT Bin 상세 확인"],
  tableNote:["For real input, display only nonnegative-frequency bins. One-sided amplitude = |X[k]|/N for DC and (even-N) Nyquist, or 2|X[k]|/N otherwise. Leakage can make peaks misleading.","실수 입력의 비음수 주파수 Bin만 표시합니다. 단측 진폭은 DC 및 짝수 N의 나이퀴스트에서 |X[k]|/N, 나머지에서 2|X[k]|/N입니다. 누설이 있으면 피크 해석에 주의해야 합니다."],
- next:["Next, after this foundation","기초 이해 후 다음 단계"],nextText:["Now compare observation length, FFT bin spacing and leakage. In the next interactive lab, change N and fs, then test windows and zero padding.","이제 관측 길이·FFT Bin 간격·누설을 직접 비교합니다. 다음 실습에서 N과 fs를 변경하고 창 함수와 영 채우기를 실험하세요."],
- nextLink:["Open Resolution & Leakage Lab →","분해능과 누설 실습 열기 →"]
 };
 const practiceTasks={
  bins:{
@@ -259,16 +255,9 @@ function gradeCheckpoint(){
 
 let lastSamples=sampleArray("one"),lastResult=null;
 function localize(){
- for(const [id,key] of [["fft-title","title"],["fft-subtitle","subtitle"],["fft-back","back"],["fft-controls-title","controls"],["fft-controls-note","note"],["fft-preset-label","preset"],["fft-samples-label","samples"],["fft-format","format"],["fft-known-label","known"],["fft-fs-label","fs"],["fft-run","run"],["fft-reset","reset"],["fft-theory-title","theory"],["fft-theory-desc","theoryDesc"],["fft-equation-1-label","equation1"],["fft-equation-2-label","equation2"],["fft-time-title","time"],["fft-time-note","timeNote"],["fft-spectrum-title","spectrum"],["fft-insight-title","insightTitle"],["fft-table-title","table"],["fft-table-note","tableNote"],["fft-next-title","next"],["fft-next-desc","nextText"],["fft-next-link","nextLink"]]){
+ for(const [id,key] of [["fft-title","title"],["fft-subtitle","subtitle"],["fft-controls-title","controls"],["fft-controls-note","note"],["fft-preset-label","preset"],["fft-samples-label","samples"],["fft-format","format"],["fft-known-label","known"],["fft-fs-label","fs"],["fft-run","run"],["fft-reset","reset"],["fft-theory-title","theory"],["fft-theory-desc","theoryDesc"],["fft-equation-1-label","equation1"],["fft-equation-2-label","equation2"],["fft-time-title","time"],["fft-time-note","timeNote"],["fft-spectrum-title","spectrum"],["fft-insight-title","insightTitle"],["fft-table-title","table"],["fft-table-note","tableNote"],]){
   $(id).textContent=i(...labels[key]);
  }
- const steps=$("fft-roadmap");
- steps.replaceChildren(...labels.roadmap.map((pair,n)=>{
-  const el=document.createElement("div");el.className="ss-fft-stage";
-  const number=document.createElement("span");number.className="ss-fft-stage-num";number.textContent=String(n+1).padStart(2,"0");
-  const title=document.createElement("span");title.textContent=i(...pair,true);
-  el.append(number,title);return el;
- }));
  document.documentElement.lang=language()==="ko"?"ko":"en";
  renderCheckpoint();renderPractice();
 }

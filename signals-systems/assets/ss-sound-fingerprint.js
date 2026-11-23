@@ -199,8 +199,6 @@ function localize(){
  const labels={
  "finger-title":["Sound Fingerprint · Why Does the Same Note Sound Different?","Sound Fingerprint · 같은 음높이인데 왜 다르게 들릴까요?"],
  "finger-intro":["Listen to three hidden sounds at the same reference pitch. Use an actual FFT to discover their different harmonic fingerprints. Begin with clearly labelled synthetic models, or upload real recordings to test the idea.","같은 기준 음높이를 가진 세 소리를 듣고 FFT로 고조파 분포를 비교하세요. 학습용 합성 모델로 시작하거나 실제 녹음 파일을 올려 검증할 수 있습니다."],
- "finger-link1":["1 · Listen & Predict","1 · 듣고 예측"],"finger-link2":["2 · Observe FFT","2 · FFT 관찰"],
- "finger-link3":["3 · Reveal & Compare","3 · 비교와 발견"],"finger-link4":["4 · Explain","4 · 설명"],
  "finger-controls-title":["Experiment Controls","실험 설정"],
  "finger-note-label":["Reference fundamental f₀","기준 기본주파수 f₀"],
  "finger-length-label":["FFT observation N","FFT 관측 표본 수 N"],
@@ -228,9 +226,6 @@ function localize(){
  "finger-question":["Question: Two sounds have the same fundamental. Which property can still make them sound different?","문제: 두 소리의 기본주파수가 같아도 다르게 들릴 수 있는 이유는 무엇일까요?"],
  "finger-quiz-label":["Choose the best explanation","가장 적절한 설명"],
  "finger-quiz-check":["Check Explanation","설명 확인"],
- "finger-prior":["← DTMF Mystery Decoder","← DTMF 비밀 숫자 해독"],
- "finger-next":["Real Data FFT →","실제 데이터 FFT →"],
- "finger-catalog":["Part C · All Topics","Part C · 전체 목록"]
  };
  for(const [id,[en,ko]]of Object.entries(labels))$(id).textContent=tr(en,ko);
  for(const letter of LETTERS)$("finger-play-"+letter.toLowerCase()).textContent=tr("▶ Listen "+letter,"▶ "+letter+" 듣기");

@@ -1,19 +1,53 @@
-/* One-line FFT module bar; no progress dots or duplicate learning panels. */
-.ss-fft-path{box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 18px;
- margin:0 0 14px;padding:10px 13px;max-width:100%;border:1px solid var(--els-border,var(--edge,#5b6361));
- border-radius:10px;background:var(--els-surface,var(--panel,#232827));color:var(--els-ink,var(--ink,#e8efed));
- font:14px/1.4 Arial,"Malgun Gothic",sans-serif}
-.ss-fft-path *{box-sizing:border-box}
-.ss-fft-path-current{font-size:14px;font-weight:750}
-.ss-fft-path-actions{display:flex;align-items:center;gap:6px;margin-left:auto}
-.ss-fft-path-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:35px;padding:5px 12px;
- border:1px solid var(--els-border,var(--edge,#5b6361));border-radius:7px;color:var(--els-link,var(--accent,#6dcac4));
- text-decoration:none;background:var(--els-surface-alt,var(--bg,#1e2422));font-weight:650;font-size:12px;white-space:nowrap}
-.ss-fft-path-actions a:hover{border-color:var(--els-link,var(--accent,#6dcac4));text-decoration:none}
-.ss-fft-path-actions a:focus-visible{outline:3px solid var(--els-focus,#f0cd78);outline-offset:2px}
-.ss-fft-path-placeholder{width:0}
-@media(max-width:650px){
- .ss-fft-path{padding:9px 10px;gap:7px}
- .ss-fft-path-actions{width:100%;margin-left:0;display:grid;grid-template-columns:1fr 1fr 1fr}
- .ss-fft-path-actions a{padding:7px 5px;white-space:normal;text-align:center}
+/* FFT Applications shared navigation: module picker + previous/next; standard header remains untouched. */
+.ss-fft-path,.ss-fft-path *{box-sizing:border-box}
+.ss-fft-path{
+ position:relative;z-index:40;display:flex;align-items:center;gap:10px;justify-content:space-between;
+ min-width:0;max-width:100%;margin:0 0 10px;padding:7px 10px;
+ border:1px solid var(--els-border,var(--edge,#5b6361));border-radius:10px;
+ background:var(--els-surface,var(--panel,#232827));color:var(--els-ink,var(--ink,#e8efed));
+ font:14px/1.4 Arial,"Malgun Gothic",sans-serif;
+}
+.ss-fft-path-picker{position:relative;flex:1 1 auto;min-width:0;max-width:690px}
+.ss-fft-path-summary{display:flex;align-items:center;gap:7px;cursor:pointer;list-style:none;max-width:100%;
+ padding:3px 9px;border-radius:7px;min-height:39px}
+.ss-fft-path-summary::-webkit-details-marker{display:none}
+.ss-fft-path-summary:hover,.ss-fft-path-picker[open]>.ss-fft-path-summary{background:var(--els-surface-alt,var(--bg,#1e2422))}
+.ss-fft-path-selector-label{display:flex;flex-direction:column;gap:1px;min-width:0}
+.ss-fft-path-meta{font-size:10px;line-height:1.25;letter-spacing:.035em;color:var(--els-muted,var(--sub,#bdc6c1));font-weight:650}
+.ss-fft-path-current{font-size:14px;line-height:1.4;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ss-fft-path-dropdown-arrow{font-size:19px;line-height:1;flex:none;color:var(--els-link,var(--accent,#6dcac4));transition:transform .12s ease}
+.ss-fft-path-picker[open] .ss-fft-path-dropdown-arrow{transform:rotate(180deg)}
+.ss-fft-path-menu{position:absolute;left:0;top:calc(100% + 7px);width:min(550px,calc(100vw - 26px));max-height:min(68dvh,560px);overflow-y:auto;
+ padding:9px;border-radius:10px;border:1px solid var(--els-border,var(--edge,#5b6361));
+ background:var(--els-surface,var(--panel,#232827));box-shadow:0 12px 36px rgba(0,0,0,.25);z-index:200}
+.ss-fft-path-menu-heading{margin:6px 7px 9px;font-size:11px;color:var(--els-muted,var(--sub,#bdc6c1));font-weight:750;text-transform:uppercase;letter-spacing:.05em}
+.ss-fft-path-menu-optional{border-top:1px solid var(--els-border,var(--edge,#5b6361));padding-top:11px;margin-top:10px}
+.ss-fft-path-option{display:grid;grid-template-columns:27px minmax(0,1fr) 18px;gap:9px;align-items:center;min-height:40px;
+ padding:7px 9px;border-radius:7px;text-decoration:none!important;color:var(--els-ink,var(--ink,#e8efed))!important;font-size:13px}
+.ss-fft-path-option:hover,.ss-fft-path-option:focus-visible{background:var(--els-surface-alt,var(--bg,#1e2422))}
+.ss-fft-path-option[aria-current="page"]{background:var(--els-info-bg,var(--els-surface-alt,#253431));font-weight:750}
+.ss-fft-path-number{font-size:12px;color:var(--els-muted,var(--sub,#bdc6c1));font-variant-numeric:tabular-nums}
+.ss-fft-path-check{font-size:16px;color:var(--els-link,var(--accent,#6dcac4));text-align:center}
+.ss-fft-path-all{display:block;margin:8px 5px 4px;padding:10px 9px;border-top:1px solid var(--els-border,var(--edge,#5b6361));
+ color:var(--els-link,var(--accent,#6dcac4));font-size:12px;font-weight:750;text-decoration:none}
+.ss-fft-path-actions{display:flex;align-items:center;flex:none;gap:7px}
+.ss-fft-path-actions a,.ss-fft-path-disabled{display:inline-flex;align-items:center;justify-content:center;min-height:36px;
+ padding:6px 11px;border:1px solid var(--els-border,var(--edge,#5b6361));border-radius:7px;font-size:12px;font-weight:650;text-decoration:none;white-space:nowrap}
+.ss-fft-path-actions a{background:var(--els-surface-alt,var(--bg,#1e2422));color:var(--els-link,var(--accent,#6dcac4))}
+.ss-fft-path-actions a:hover{border-color:var(--els-link,var(--accent,#6dcac4))}
+.ss-fft-path-disabled{color:var(--els-muted,var(--sub,#bdc6c1));opacity:.45;cursor:default}
+.ss-fft-path :is(a,summary):focus-visible{outline:3px solid var(--els-focus,#f0cd78);outline-offset:2px}
+@media(max-width:700px){
+ .ss-fft-path{padding:6px;gap:4px}
+ .ss-fft-path-picker{min-width:0}
+ .ss-fft-path-summary{padding:5px 5px;min-height:40px}
+ .ss-fft-path-current{font-size:12px}
+ .ss-fft-path-meta{font-size:9px}
+ .ss-fft-path-actions{gap:4px}
+ .ss-fft-path-actions a,.ss-fft-path-disabled{padding:6px 7px;font-size:11px}
+ .ss-fft-path-menu{max-height:min(70dvh,540px)}
+}
+@media(max-width:390px){
+ .ss-fft-path-actions a,.ss-fft-path-disabled{padding:6px 5px;font-size:10px}
+ .ss-fft-path-summary{padding-left:2px}
 }
