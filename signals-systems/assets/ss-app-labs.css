@@ -266,3 +266,13 @@ button:disabled{opacity:.55;cursor:default}
 .ss-al-audio[data-kind="sampling"] .ss-al-audio-status{
  min-height:18px;line-height:1.5;overflow-wrap:anywhere;
 }
+
+/* Sampling workflow: place both plots directly after concise metrics.
+   The detailed alias explanation remains present immediately below the graphs,
+   rather than consuming the above-the-fold plotting workspace. */
+.ss-al-results:has(.ss-al-charts[data-kind="sampling"]) .ss-al-results-bar{order:0}
+.ss-al-results:has(.ss-al-charts[data-kind="sampling"]) .ss-al-metrics{order:1}
+.ss-al-results:has(.ss-al-charts[data-kind="sampling"]) #ss-al-transport{order:2}
+.ss-al-results:has(.ss-al-charts[data-kind="sampling"]) .ss-al-charts{order:3}
+.ss-al-results:has(.ss-al-charts[data-kind="sampling"]) #ss-al-alias-summary{order:4}
+.ss-al-results:has(.ss-al-charts[data-kind="sampling"]) .ss-al-insight{order:5}
