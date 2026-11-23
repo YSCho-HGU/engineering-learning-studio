@@ -9,6 +9,9 @@ on:
       - 'signals-systems/assets/ss-foundations-standard.css'
       - 'signals-systems/assets/ss-formula-standard.css'
       - 'signals-systems/assets/ss-ch7-standalone.css'
+      - 'signals-systems/assets/ss-responsive-unified.css'
+      - 'signals-systems/applications*.html'
+      - 'tests/ss-responsive-unified-browser.mjs'
       - 'signals-systems/assets/ss-ch*-math.js'
       - 'signals-systems/assets/ss-ch*-prose-math.js'
       - 'signals-systems/assets/ss-foundations-standard.js'
@@ -19,7 +22,7 @@ on:
 jobs:
   chapters-math:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -30,6 +33,7 @@ jobs:
           node --check signals-systems/assets/ss-chapters-math-audit.js
           node --check tests/ss-chapters-math-audit.mjs
           node --check tests/ss-chapters-full-qa.mjs
+          node --check tests/ss-responsive-unified-browser.mjs
       - name: Install Chromium
         run: |
           npm install --no-save @playwright/test
@@ -42,6 +46,8 @@ jobs:
         run: node tests/ss-chapters-math-audit.mjs
       - name: Full section navigation, math, graph, language and theme QA
         run: node tests/ss-chapters-full-qa.mjs
+      - name: Responsive lecture tablet and phone QA
+        run: node tests/ss-responsive-unified-browser.mjs
       - name: Upload detailed math audit
         uses: actions/upload-artifact@v4
         if: always()
@@ -50,4 +56,6 @@ jobs:
           path: |
             qa/chapters-math-audit.json
             qa/chapters-full-qa.json
+            qa/ss-responsive-unified-results.json
+            qa/responsive-screenshots/
           if-no-files-found: ignore
