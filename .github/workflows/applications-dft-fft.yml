@@ -1,0 +1,34 @@
+name: Applications DFT FFT integration QA
+on:
+  push:
+    paths:
+      - 'signals-systems/applications-dft-fft.html'
+      - 'signals-systems/applications.html'
+      - 'signals-systems/assets/ss-applications-hub.js'
+      - 'signals-systems/tests/fixtures/dft-fft-vibration-64-160hz.csv'
+      - 'tests/applications-dft-fft-regression.mjs'
+      - '.github/workflows/applications-dft-fft.yml'
+  pull_request:
+    paths:
+      - 'signals-systems/applications-dft-fft.html'
+      - 'signals-systems/applications.html'
+      - 'signals-systems/assets/ss-applications-hub.js'
+      - 'signals-systems/tests/fixtures/dft-fft-vibration-64-160hz.csv'
+      - 'tests/applications-dft-fft-regression.mjs'
+      - '.github/workflows/applications-dft-fft.yml'
+  workflow_dispatch:
+jobs:
+  browser-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright
+        run: npm install --no-save --no-audit --no-fund playwright@1.56.1
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+      - name: Run integrated DFT FFT regression
+        run: node tests/applications-dft-fft-regression.mjs
