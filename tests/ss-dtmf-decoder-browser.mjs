@@ -37,7 +37,7 @@ for(const width of [1366,390]){
   assert(before!==(await page.locator("#dtmf-wave").innerHTML()),"Window slider failed");
   await page.locator("#dtmf-fft-n").selectOption("512");
   await page.locator("#dtmf-fft").click();
-  assert(await page.locator("#dtmf-spectrum").isVisible(),"FFT spectrum missing");
+  assert(await page.locator("#dtmf-spectrum").isVisible(),"FFT spectrum missing "+JSON.stringify(await page.evaluate(()=>({hidden:document.querySelector("#dtmf-spectrum").hidden,html:document.querySelector("#dtmf-spectrum").innerHTML.slice(0,100),result:!!window.SSDTMF.result,css:getComputedStyle(document.querySelector("#dtmf-spectrum")).display,errors:null})))+" JS errors="+jsErrors.join("; "));
   assert(await page.locator("#dtmf-peaks .ss-dtmf-peak").count()===2,"Two frequency peaks missing");
   let correct=await page.evaluate(()=>window.SSDTMF.result.decoded);
   const incorrect=correct==="1"?"2":"1";
