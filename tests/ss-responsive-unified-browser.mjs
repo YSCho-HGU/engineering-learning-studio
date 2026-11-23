@@ -5,7 +5,7 @@ const base=process.env.SS_TEST_BASE||"http://127.0.0.1:8765";
 const sizes=[{name:"lecture",width:1920,height:1080},{name:"desktop",width:1366,height:850},{name:"tablet",width:768,height:1024},{name:"mobile",width:390,height:844}];
 const chapters=[1,2,3,4,5,6,7,8];
 const navs={1:"#nav [data-exp]",2:"[data-nav]",3:"[data-nav]",4:"[data-nav]",5:"#tabs [data-lab]",6:"[data-nav]",7:"#ss7-lesson-nav button",8:"#nav [data-exp]"};
-const appRoutes=["applications.html",...["harmonics","chirp","helix","beats","amfm","sampling"].map(x=>"applications-lab.html?lab="+x),"applications-fft-lab.html","applications-fft-resolution.html"];
+const appRoutes=["applications.html",...["harmonics","chirp","helix","beats","amfm","sampling"].map(x=>"applications-lab.html?lab="+x),"applications-fft-lab.html","applications-fft-resolution.html","applications-chirp-stft.html"];
 const reports=[],issues=[];
 await mkdir("qa/responsive-screenshots",{recursive:true});
 function check(data,label){
