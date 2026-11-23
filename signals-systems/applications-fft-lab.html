@@ -14,6 +14,15 @@
 <link rel="stylesheet" href="./assets/ss-formula-standard.css?v=3">
 <link rel="stylesheet" href="./assets/ss-app-fft-foundations.css?v=3">
 <link rel="stylesheet" href="./assets/ss-applications-math.css?v=2">
+<style>
+.ss-fft-checkpoint{display:grid;gap:8px}
+.ss-fft-checkpoint .ss-fft-field{max-width:760px;margin:0}
+.ss-fft-checkpoint select,.ss-fft-checkpoint button{font:inherit;padding:9px 12px;border:1px solid var(--els-border);border-radius:8px;background:var(--els-surface-alt);color:var(--els-ink)}
+.ss-fft-checkpoint button{cursor:pointer;justify-self:start;font-weight:700}
+#fft-checkpoint-feedback{white-space:pre-line}
+#fft-checkpoint-feedback[data-result="correct"]{border-left:3px solid var(--els-link);padding-left:10px}
+#fft-checkpoint-feedback[data-result="incorrect"]{border-left:3px solid var(--els-accent,var(--els-link));padding-left:10px}
+</style>
 </head>
 <body>
 <a class="ss-fft-skip" href="#fft-graphs">Skip to FFT graphs</a>
@@ -88,6 +97,14 @@
     <div class="ss-fft-compare" id="fft-compare"></div>
    </section>
    <section class="ss-fft-card" aria-labelledby="fft-table-title"><h2 id="fft-table-title"></h2><p id="fft-table-note" class="ss-fft-muted"></p><div class="ss-fft-table-scroll"><table id="fft-table"><thead></thead><tbody></tbody></table></div></section>
+   <section class="ss-fft-card ss-fft-checkpoint" aria-labelledby="fft-checkpoint-title">
+    <h2 id="fft-checkpoint-title"></h2>
+    <p id="fft-checkpoint-question"></p>
+    <label class="ss-fft-field" for="fft-checkpoint-answer"><span id="fft-checkpoint-label"></span>
+     <select id="fft-checkpoint-answer"></select></label>
+    <button type="button" id="fft-checkpoint-check"></button>
+    <p id="fft-checkpoint-feedback" role="status" aria-live="polite"></p>
+   </section>
    <section class="ss-fft-card ss-fft-next" aria-labelledby="fft-next-title"><h2 id="fft-next-title"></h2><p id="fft-next-desc"></p><a id="fft-next-link" href="./applications-fft-resolution.html"></a></section>
   </div>
  </section>
@@ -98,6 +115,6 @@
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js" defer></script>
 <script src="./assets/ss-math-core.js?v=1" defer></script>
 <script src="./assets/ss-applications-math.js?v=4" defer></script>
-<script src="./assets/ss-app-fft-foundations.js?v=3" defer></script>
+<script src="./assets/ss-app-fft-foundations.js?v=4" defer></script>
 <script src="../assets/els-header-controls.js?v=1" defer></script>
 </body></html>
