@@ -66,7 +66,11 @@ try{
  await page.locator("#run").click();
  const discrepancy=Number(await page.locator("#error").innerText());
  assert.ok(Number.isFinite(discrepancy)&&discrepancy<1e-7,"Direct DFT differs from FFT: "+discrepancy);
- console.log("PASS direct DFT = FFT, max complex error",discrepancy);
+ assert.ok(await page.locator("#dft-fft-knowledge-check").isVisible(),"DFT-versus-FFT knowledge check missing");
+ await page.locator("#dft-fft-check-choice").selectOption("1");
+ await page.locator("#dft-fft-check-button").click();
+ expectContains(await page.locator("#dft-fft-check-feedback").innerText(),"Correct.","Stage 2 concept check");
+  console.log("PASS direct DFT = FFT, max complex error",discrepancy);
 
  await page.locator('[data-step="3"]').click();
  assert.ok(await page.locator("#upload").isVisible(),"Upload section hidden");
@@ -144,7 +148,11 @@ try{
   let changed=0;for(let i=3;i<data.length;i+=4)if(data[i])changed++;return changed;
  });
  assert.ok(chartPixels>500,"Complexity chart is empty");
- const butterfly=page.locator("#butterfly-diagram");
+ assert.ok(await page.locator("#dft-fft-knowledge-check").isVisible(),"FFT complexity check missing");
+ await page.locator("#dft-fft-check-choice").selectOption("0");
+ await page.locator("#dft-fft-check-button").click();
+ expectContains(await page.locator("#dft-fft-check-feedback").innerText(),"Correct.","Stage 3 complexity concept check");
+  const butterfly=page.locator("#butterfly-diagram");
  assert.ok(await butterfly.isVisible(),"Eight-point FFT butterfly diagram hidden");
  const butterflyEdges=await butterfly.locator(".butterfly-cross").count();
  assert.equal(butterflyEdges,24,"Expected 8 butterfly cross connections in each of 3 stages");
