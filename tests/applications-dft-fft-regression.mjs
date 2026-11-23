@@ -28,7 +28,16 @@ let page;
 try{
  page=await browser.newPage();
  page.on("pageerror",error=>errors.push(error.message));
- await page.goto(pathToFileURL(path.join(root,"signals-systems/applications-dft-fft.html")).href);
+ await page.goto(pathToFileURL(path.join(root,"signals-systems/applications.html")).href+"#part-c");
+ const card=page.locator('[data-area="fft"][data-learning-step="3"]');
+ await card.waitFor({state:"visible"});
+ assert.ok(await card.evaluate(el=>el.classList.contains("ss-app-topic-ready")),"DFT vs FFT card remains Planned");
+ expectContains(await card.locator(".ss-app-status").innerText(),"Interactive lab available","Available-status label");
+ const start=card.locator("a.ss-app-open-lab");
+ assert.equal(await start.getAttribute("href"),"./applications-dft-fft.html","Applications card link");
+ await start.click();
+ assert.ok(page.url().endsWith("/applications-dft-fft.html"),"Card did not open integrated FFT lab");
+ console.log("PASS Applications Part C card is active and navigates to DFT vs FFT");
  await page.locator("#peak-analysis").count();
  assert.ok(await page.locator("#guide-title").isVisible(),"Guided mission hidden");
  const lessonOrder=await page.evaluate(()=>{
@@ -133,7 +142,12 @@ try{
   let changed=0;for(let i=3;i<data.length;i+=4)if(data[i])changed++;return changed;
  });
  assert.ok(chartPixels>500,"Complexity chart is empty");
- console.log("PASS DFT and FFT comparison chart renders");
+ const butterfly=page.locator("#butterfly-diagram");
+ assert.ok(await butterfly.isVisible(),"Eight-point FFT butterfly diagram hidden");
+ const butterflyEdges=await butterfly.locator(".butterfly-cross").count();
+ assert.equal(butterflyEdges,24,"Expected 8 butterfly cross connections in each of 3 stages");
+ expectContains(await page.locator("#butterfly-note").innerText(),"intermediate","Butterfly explanation");
+  console.log("PASS DFT and FFT comparison chart renders");
 
 
  assert.deepEqual(errors,[],"Browser uncaught errors");
@@ -215,7 +229,11 @@ try{
  console.log("PASS Stage 1 bin index / Hz mapping, N, fs, leakage and aliasing");
  await page.locator('[data-step="0"]').click();
  await page.locator('[data-intro-part="2"]').click();
- await page.locator("#axis-reset").click();
+ await page.locator("#size").selectOption("512");
+ await page.locator("#fs").fill("1024");
+ await page.locator("#tone").fill("128");
+ await page.locator("#signal").selectOption("one");
+ await page.locator("#run").click();
  assert.ok(await page.locator("#padding-comparison").isVisible(),"Zero-padding comparison not visible in stage 1");
  expectContains(await page.locator("#padding-long-stats").innerText(),"1.0000 s","2N observation duration");
  expectContains(await page.locator("#padding-zero-stats").innerText(),"0.5000 s","Zero-padded duration remains N/fs");
@@ -253,7 +271,9 @@ try{
   let visible=0;for(let i=3;i<rgba.length;i+=4)if(rgba[i]>0)visible++;return visible;
  });
  assert.ok(overlayPixels>300,"Zero-padding overlay graph is blank");
+ await page.locator('[data-intro-part="2"]').click();
  await page.locator("#padding-offbin").click();
+ await page.locator('[data-intro-part="3"]').click();
  const offbinText=await page.locator("#padding-overlay-result").innerText();
  assert.ok(/\d+(?:\.\d+)?e[+-]\d+/i.test(offbinText),"Off-bin overlay did not recalculate");
  await page.locator("#intro-finish").click();
