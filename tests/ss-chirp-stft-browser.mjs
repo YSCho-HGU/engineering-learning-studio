@@ -38,7 +38,7 @@ try{
    check(calculations.last>calculations.first+100,"Chirp spectrogram does not rise in frequency");
    check(near(calculations.paddedGrid,2)&&calculations.sameWindow&&calculations.sameFrames&&calculations.sameSamples,"Padding modified observation instead of grid");
    check(await page.locator("#stft-time-plot path.ss-stft-trace").count()===1,"Waveform missing");
-   check((await page.locator("#stft-time-plot").innerText()).includes("-1.0"),"Waveform negative-amplitude axis is missing");
+   check((await page.locator("#stft-time-plot").textContent()).includes("-1.0"),"Waveform negative-amplitude axis is missing");
    check(await page.locator("#stft-local-plot path.ss-stft-trace").count()===1,"Local FFT missing");
    check(await page.locator("#stft-spectrogram rect[fill^='rgb']").count()>100,"Spectrogram cells missing");
    const before=await page.locator("#stft-frame-value").innerText();
