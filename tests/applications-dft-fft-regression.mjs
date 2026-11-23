@@ -78,6 +78,7 @@ try{
  assert.ok(await page.locator("#upload").isVisible(),"Upload section hidden");
  const csv=await readFile(path.join(root,"signals-systems/tests/fixtures/dft-fft-vibration-64-160hz.csv"));
  await page.locator("#file").setInputFiles({name:"vibration.csv",mimeType:"text/csv",buffer:csv});
+ await page.waitForFunction(()=>document.querySelector("#file-info")?.textContent?.startsWith("vibration.csv")&&document.querySelector("#signal")?.value==="upload");
  await page.locator("#size").selectOption("512");
  await page.locator("#run").click();
  let result=await page.locator("#peak-results").innerText();
@@ -106,6 +107,7 @@ try{
 
  const single=Array.from({length:512},(_,i)=>Math.sin(2*Math.PI*32*i/512).toFixed(8)).join("\n");
  await page.locator("#file").setInputFiles({name:"unknown-rate.txt",mimeType:"text/plain",buffer:Buffer.from(single)});
+ await page.waitForFunction(()=>document.querySelector("#file-info")?.textContent?.startsWith("unknown-rate.txt")&&document.querySelector("#signal")?.value==="upload");
  await page.locator("#run").click();
  expectContains(await page.locator("#peak-results").innerText(),"cycles/sample","Unknown sample rate unit");
  expectContains(await page.locator("#peak-caution").innerText(),"Sample rate unknown","Unknown sampling rate caveat");
@@ -115,6 +117,7 @@ try{
  console.log("PASS unknown sampling rate never invents Hz");
 
  await page.locator("#file").setInputFiles({name:"two-notes.wav",mimeType:"audio/wav",buffer:makeWav()});
+ await page.waitForFunction(()=>document.querySelector("#file-info")?.textContent?.startsWith("two-notes.wav")&&document.querySelector("#signal")?.value==="upload");
  await page.locator("#size").selectOption("1024");
  await page.locator("#run").click();
  result=await page.locator("#peak-results").innerText();
