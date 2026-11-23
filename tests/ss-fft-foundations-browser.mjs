@@ -14,7 +14,7 @@ try{
    await page.goto(base+"/signals-systems/applications.html#part-c",{waitUntil:"domcontentloaded"});
    await page.locator("#topics-c .ss-app-topic").first().waitFor();
    const cards=page.locator("#topics-c .ss-app-topic");
-   check(await cards.count()===12,"Part C must have 12 ordered learning topics");
+   check(await cards.count()===13,"Part C must have 13 ordered learning topics");
    const first=cards.first();
    check((await first.innerText()).includes("FFT from Sample Data"),"Beginner FFT is not first");
    check(await first.locator('a[href="./applications-fft-lab.html"]').count()===1,"New live FFT lab link missing");
