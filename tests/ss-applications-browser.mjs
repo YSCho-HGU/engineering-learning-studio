@@ -60,7 +60,7 @@ for(const name of ["harmonics","chirp","helix"]){
     await page.mouse.up();await page.waitForTimeout(80);
     const rotated=await view.evaluate(c=>c.toDataURL());
     if(rotated===original)throw Error("3D orbit did not rotate");
-    await page.mouse.wheel(0,-150);await page.waitForTimeout(80);
+    await view.dispatchEvent("wheel",{deltaY:-150,deltaMode:0,bubbles:true,cancelable:true});await page.waitForTimeout(120);
     const zoomed=await view.evaluate(c=>c.toDataURL());
     if(zoomed===rotated)throw Error("3D wheel zoom did not change view");
     await page.locator("#ss-al-camera-reset").click();
