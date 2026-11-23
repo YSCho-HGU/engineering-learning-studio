@@ -57,7 +57,8 @@ try{
   await page.goto(pathToFileURL(path.join(root,"signals-systems",lesson.file)).href,{waitUntil:"domcontentloaded"});
   await page.locator("#ss-fft-path").waitFor({state:"visible"});
   check(await page.locator("#ss-fft-path").count()===1,lesson.slug+": should have exactly one shared learning path");
-  check((await page.locator("#ss-fft-path .ss-fft-path-current").innerText()).startsWith(String(lesson.step).padStart(2,"0")),lesson.slug+": wrong route number");
+  check(await page.locator("#ss-fft-path .ss-fft-path-option[aria-current='page']").count()===1,lesson.slug+": wrong selected module");
+  check((await page.locator("#ss-fft-path .ss-fft-path-option[aria-current='page'] .ss-fft-path-number").innerText())===String(lesson.step).padStart(2,"0"),lesson.slug+": wrong route number");
   check(await page.locator("#ss-presentation-toggle").count()===0,lesson.slug+": Presentation mode must be removed");
   check(await page.locator("header.ss-common-header").isVisible(),lesson.slug+": standard header missing");
   check(await page.locator("#"+lesson.title).isVisible(),lesson.slug+": heading not visible");
