@@ -12,6 +12,8 @@ on:
       - 'signals-systems/assets/ss-math-core.js'
       - 'signals-systems/assets/ss-app-fft-foundations.js'
       - 'signals-systems/assets/ss-app-fft-foundations.css'
+      - 'signals-systems/assets/ss-fft-lab-standard.css'
+      - 'tests/ss-applications-math-audit.mjs'
       - 'tests/ss-fft-foundations-browser.mjs'
       - 'signals-systems/assets/ss-app-extra-labs.js'
       - 'tests/ss-extra-labs-browser.mjs'
@@ -41,6 +43,7 @@ jobs:
           node --check signals-systems/assets/ss-app-extra-labs.js
           node --check tests/ss-extra-labs-browser.mjs
           node --check tests/ss-applications-browser.mjs
+          node --check tests/ss-applications-math-audit.mjs
       - name: Install Playwright Chromium
         run: |
           npm install --no-save @playwright/test
@@ -50,16 +53,29 @@ jobs:
           python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/ss-applications-server.log 2>&1 &
           sleep 2
       - name: Check original Harmonics, Chirp and Helix labs
+        id: primary
+        continue-on-error: true
         run: node tests/ss-applications-browser.mjs
       - name: Check Beats, AM/FM and Sampling aliasing labs
+        id: extra
+        continue-on-error: true
         run: node tests/ss-extra-labs-browser.mjs
       - name: Check FFT labs, graph missions, KaTeX and responsive layout
         id: fft
+        continue-on-error: true
         run: node tests/ss-fft-foundations-browser.mjs
+      - name: Check mathematical notation across all Applications and language modes
+        id: math
+        continue-on-error: true
+        run: node tests/ss-applications-math-audit.mjs
       - name: Publish machine-readable FFT browser QA status
         if: always()
         env:
           FFT_OUTCOME: ${{ steps.fft.outcome }}
+          FFT_RESULT: ${{ steps.fft.conclusion }}
+          PRIMARY_RESULT: ${{ steps.primary.outcome }}
+          EXTRA_RESULT: ${{ steps.extra.outcome }}
+          MATH_RESULT: ${{ steps.math.outcome }}
         run: |
           mkdir -p qa
           python3 - <<'PY'
@@ -68,7 +84,10 @@ jobs:
             "source_sha":os.environ["GITHUB_SHA"],
             "workflow":"ss-applications-browser",
             "tested_at":datetime.datetime.now(datetime.timezone.utc).isoformat(),
-            "fft_browser_outcome":os.environ["FFT_OUTCOME"],
+            "fft_browser_outcome":os.environ["FFT_RESULT"],
+            "original_labs_outcome":os.environ["PRIMARY_RESULT"],
+            "additional_labs_outcome":os.environ["EXTRA_RESULT"],
+            "applications_math_outcome":os.environ["MATH_RESULT"],
             "viewport_widths":[1366,390],
             "coverage":["FFT arithmetic","graph missions","KaTeX","language modes","five themes","responsive overflow"]
           }
@@ -86,5 +105,17 @@ jobs:
         if: always()
         with:
           name: ss-part-a-visual-snapshots
-          path: tests/screenshots/
+          path: |
+            tests/screenshots/
+            qa/applications-math-audit.json
           if-no-files-found: ignore
+      - name: Enforce combined browser QA result
+        if: always()
+        env:
+          PRIMARY: ${{ steps.primary.outcome }}
+          EXTRA: ${{ steps.extra.outcome }}
+          FFT: ${{ steps.fft.outcome }}
+          MATH: ${{ steps.math.outcome }}
+        run: |
+          echo "original=$PRIMARY extra=$EXTRA fft=$FFT math=$MATH"
+          test "$PRIMARY" = success && test "$EXTRA" = success && test "$FFT" = success && test "$MATH" = success
