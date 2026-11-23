@@ -1,11 +1,12 @@
 {
-  "source_sha": "346fa0fe9a9858e9d534e5ff38d2fb5b5d3ac97a",
+  "source_sha": "f4bbc6577051aee62145ef6516eef5e50cf0b9a1",
   "workflow": "ss-applications-browser",
-  "tested_at": "2026-11-23T08:09:59.555981+00:00",
+  "tested_at": "2026-11-23T09:21:31.508841+00:00",
   "fft_browser_outcome": "success",
   "original_labs_outcome": "success",
   "additional_labs_outcome": "success",
   "applications_math_outcome": "success",
+  "chirp_stft_outcome": "success",
   "viewport_widths": [
     1366,
     390
