@@ -56,7 +56,7 @@ function analyze(samples,{N=1024,position=0,fs=null,window="hann",removeMean=tru
    binSpacing:fs===null?1/N:fs/N,nyquist:fs===null?.5:fs/2,
    duration:fs===null?null:N/fs};
 }
-function parseCSV(text,{maxSamples=300000}={}){
+function parseCSV(text,{maxSamples=300000,valueColumn=null}={}){
  const lines=String(text).replace(/^\uFEFF/,"").split(/\r?\n/).map(x=>x.trim()).filter(x=>x&&!x.startsWith("#"));
  if(!lines.length)throw Error("Empty CSV");
  const delimiter=lines.slice(0,5).some(x=>x.includes("\t"))?"\t":lines.slice(0,5).some(x=>x.includes(";"))?";":",";
@@ -67,6 +67,7 @@ function parseCSV(text,{maxSamples=300000}={}){
  const timeUnit=timeIndex<0?1:/_ms$/i.test(names[timeIndex])?.001:1;
  let valueIndex=names.findIndex((x,i)=>i!==timeIndex&&/^(value|signal|amplitude|accel|acceleration|temperature|pressure|sensor|reading|x|y|z|ecg|voltage|current)$/i.test(x));
  if(valueIndex<0)valueIndex=first.length>=2&&timeIndex===0?1:timeIndex<0?0:Math.min(first.length-1,timeIndex+1);
+ if(valueColumn!==null){const selected=names.indexOf(String(valueColumn).toLowerCase());if(selected<0||selected===timeIndex)throw Error("Invalid sensor column");valueIndex=selected;}
  const values=[],times=[];
  let rejected=0;
  for(let i=header?1:0;i<lines.length&&values.length<maxSamples;i++){
@@ -91,7 +92,7 @@ function parseCSV(text,{maxSamples=300000}={}){
   }
  }
  return {samples:Float64Array.from(values),fs,timeColumn:timeIndex>=0?names[timeIndex]:null,
-  valueColumn:names[valueIndex],rejected,reason,truncated:values.length>=maxSamples};
+  columns:names.filter((_,i)=>i!==timeIndex),valueColumn:names[valueIndex],rejected,reason,truncated:values.length>=maxSamples};
 }
 function axes(w,h,{xMax,yMin,yMax,xLabel,yLabel}){
  const left=57,right=15,top=16,bottom=38,W=w-left-right,H=h-top-bottom,parts=[];
@@ -131,7 +132,7 @@ function draw(a,samples){
  const peakX=p.left+a.peakBin/(a.spectrum.length-1)*p.W;
  spec.innerHTML=p.markup+'<path class="ss-fft-upload-line" d="'+path.join(" ")+'"/><circle cx="'+fmt(peakX,2)+'" cy="'+fmt(p.top+p.H-a.peakAmplitude/(max*1.08)*p.H,2)+'" r="4.3" fill="var(--els-link)"/>';
 }
-let source=null,analysis=null,manualRate=null;
+let source=null,analysis=null,csvText=null,csvFileName="";
 function currentRate(){
  const v=$("fft-upload-fs").value.trim();
  if(v==="")return source?.fs??null;
@@ -180,16 +181,28 @@ function loadSource({samples,fs=null,name="",kind="sensor",metadata=""}){
  $("fft-upload-n").value=options.some(x=>x.value==="1024")?"1024":options.at(-1).value;
  $("fft-upload-location").value="0";refresh();
 }
+function useCsvColumn(){
+ if(!csvText)return;
+ const chosen=$("fft-upload-column").value;
+ const data=parseCSV(csvText,{valueColumn:chosen});
+ loadSource({samples:data.samples,fs:data.fs,name:csvFileName,kind:"sensor",
+  metadata:(data.timeColumn?"time="+data.timeColumn+", ":"")+"value="+data.valueColumn+
+  (data.rejected?" · skipped "+data.rejected:"")+(data.reason==="nonuniform-time"?" · irregular time: fs unknown":"")});
+}
 async function ingest(file){
  if(!file)return;
  if(file.size>25*1024*1024)throw Error("Maximum file size is 25 MB");
  const suffix=file.name.toLowerCase();
  if(/\.(csv|txt)$/.test(suffix)||file.type==="text/csv"||file.type==="text/plain"){
-  const data=parseCSV(await file.text());
-  loadSource({samples:data.samples,fs:data.fs,name:file.name,kind:"sensor",
-   metadata:(data.timeColumn?"time="+data.timeColumn+", ":"")+"value="+data.valueColumn+
-    (data.rejected?" · skipped "+data.rejected:"")+(data.reason==="nonuniform-time"?" · irregular time: fs unknown":"")});
+  csvText=await file.text();csvFileName=file.name;
+  const data=parseCSV(csvText);
+  const dropdown=$("fft-upload-column");
+  dropdown.replaceChildren(...data.columns.map(name=>{const option=document.createElement("option");option.value=name;option.textContent=name;return option}));
+  dropdown.value=data.valueColumn;
+  $("fft-upload-column-row").hidden=data.columns.length<=1;
+  useCsvColumn();
  }else{
+  csvText=null;csvFileName="";$("fft-upload-column-row").hidden=true;
   const bytes=await file.arrayBuffer();
   const ctx=new (global.AudioContext||global.webkitAudioContext)();
   try{
@@ -205,6 +218,7 @@ async function ingest(file){
  }
 }
 function demo(){
+ csvText=null;csvFileName="";$("fft-upload-column-row").hidden=true;
  const fs=512,N=4096;
  const samples=Float64Array.from({length:N},(_,n)=>.7*Math.sin(PI2*32*n/fs)+.24*Math.sin(PI2*96*n/fs)+.03*Math.sin(PI2*5*n*n/(fs*N)));
  loadSource({samples,fs,name:tr("Built-in music / sensor example","내장 음향·센서 예제"),kind:"demo"});
@@ -217,6 +231,7 @@ function localize(){
  "fft-upload-file-label":["Audio or sensor file","오디오 또는 센서 파일"],
  "fft-upload-file-help":["Audio: WAV, MP3, OGG and browser-supported codecs. Sensor: CSV/TXT with one value column or time,value columns. Maximum 25 MB. Local only.","오디오: WAV·MP3·OGG 등 브라우저 지원 코덱. 센서: 값 한 열 또는 time,value CSV/TXT. 최대 25 MB. 브라우저에서만 처리."],
  "fft-upload-demo":["Load example signal","예제 신호 사용"],
+ "fft-upload-column-label":["Sensor value column","센서 데이터 열 선택"],
  "fft-upload-fs-label":["Sampling rate fs (Hz) · blank = auto, 0 = unknown","샘플링 주파수 fs (Hz) · 공란=자동, 0=모름"],
  "fft-upload-fs-help":["Audio files provide fs. CSV can infer fs from a uniform time column; otherwise enter it manually, or use 0 for unknown.","오디오에는 fs가 기록됩니다. CSV의 일정한 시간 열로 fs를 추정할 수 있으며, 없으면 직접 입력하거나 0으로 설정하세요."],
  "fft-upload-n-label":["FFT observation length N","FFT 관측 표본 수 N"],
@@ -244,6 +259,7 @@ function init(){
   catch(error){$("fft-upload-status").textContent=tr("Cannot open file: ","파일을 열 수 없습니다: ")+String(error.message)}
  });
  $("fft-upload-demo").addEventListener("click",demo);
+ $("fft-upload-column").addEventListener("change",useCsvColumn);
  for(const id of ["fft-upload-fs","fft-upload-n","fft-upload-window","fft-upload-location"]){
   $(id).addEventListener("input",refresh);$(id).addEventListener("change",refresh);
  }
