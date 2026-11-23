@@ -79,6 +79,54 @@ try{
    const audio=await page.evaluate(()=>({peak:window.SSRealFFT.analysis.peakFreq,fs:window.SSRealFFT.analysis.fs,kind:document.querySelector("#fft-upload-meta").textContent}));
    assert(Math.abs(audio.peak-440)<audio.fs/1024*2,"Audio FFT peak mismatch "+JSON.stringify(audio));
    assert(audio.kind.includes("speech.wav"),"Audio file metadata absent");
+   const harmonicNumerics=await page.evaluate(()=>{
+     const api=window.SSRealFFT,h=window.SSFFTHarmonics;
+     const fs=4096,N=4096,f0=64;
+     function synth(orderList,amps){
+       return Float64Array.from({length:N},(_,n)=>orderList.reduce((sum,order,j)=>sum+
+         amps[j]*Math.sin(2*Math.PI*order*f0*n/fs),0));
+     }
+     const normal=h.analyzeHarmonics(api.analyze(synth([1,2,3,4],[1,.5,.3,.2]),{N,fs,window:"rect"}));
+     const weak=h.analyzeHarmonics(api.analyze(synth([1,2,3,4],[.1,1,.7,.3]),{N,fs,window:"rect"}));
+     const missing=h.analyzeHarmonics(api.analyze(synth([2,3,4,5],[1,.7,.4,.2]),{N,fs,window:"rect"}));
+     const single=h.analyzeHarmonics(api.analyze(synth([1],[1]),{N,fs,window:"rect"}));
+     const unrelated=h.analyzeHarmonics(api.analyze(synth([1,1.75],[1,.7]),{N,fs,window:"rect"}));
+     const unknown=h.analyzeHarmonics(api.analyze(synth([2,3,4,5],[1,.7,.4,.2]),{N,fs:null,window:"rect"}));
+     return {
+       normal:[normal.candidate?.frequency,normal.status,normal.candidate?.matches.length],
+       weak:[weak.candidate?.frequency,weak.status,weak.dominantPeak?.frequency],
+       missing:[missing.candidate?.frequency,missing.status,missing.candidate?.hasFundamental,missing.candidate?.matches.length],
+       single:single.status,unrelated:unrelated.status,
+       unknown:[unknown.candidate?.frequency,unknown.unit]
+     };
+   });
+   assert(near(harmonicNumerics.normal[0],64,1e-5)&&harmonicNumerics.normal[1]==="pattern"&&harmonicNumerics.normal[2]>=4,
+      "Harmonic series f0 incorrect "+JSON.stringify(harmonicNumerics));
+   assert(near(harmonicNumerics.weak[0],64,1e-5)&&near(harmonicNumerics.weak[2],128,1e-5),
+      "Strongest harmonic confused with fundamental "+JSON.stringify(harmonicNumerics));
+   assert(near(harmonicNumerics.missing[0],64,1e-5)&&harmonicNumerics.missing[1]==="pattern"&&
+      harmonicNumerics.missing[2]===false&&harmonicNumerics.missing[3]>=3,
+      "Missing fundamental inference incorrect "+JSON.stringify(harmonicNumerics));
+   assert(harmonicNumerics.single==="insufficient"&&harmonicNumerics.unrelated!=="pattern",
+      "Single/unrelated tones overclaimed as definite harmonics");
+   assert(near(harmonicNumerics.unknown[0],64/4096,1e-9)&&harmonicNumerics.unknown[1]==="cycles/sample",
+      "Unknown fs harmonic estimate invented an Hz scale");
+   await page.locator("#fft-upload-harmonic-demo").click();
+   await page.waitForFunction(()=>document.querySelectorAll("#fft-upload-harmonic-table .ss-fft-harmonic-row").length>=4);
+   const lesson=await page.evaluate(()=>({
+     fundamental:window.SSFFTHarmonics.analyzeHarmonics(window.SSRealFFT.analysis).candidate?.frequency,
+     strongest:window.SSRealFFT.analysis.peakFreq,
+     markerCount:document.querySelectorAll("#fft-upload-spectrum .ss-fft-harmonic-marker").length,
+     f0Count:document.querySelectorAll("#fft-upload-spectrum .ss-fft-harmonic-f0").length
+   }));
+   assert(near(lesson.fundamental,128,4)&&near(lesson.strongest,256,4)&&lesson.markerCount>=2&&lesson.f0Count===1,
+     "Weak-fundamental live demo incorrectly rendered "+JSON.stringify(lesson));
+   await page.locator("#fft-upload-harmonic-mode").selectOption("manual");
+   await page.locator("#fft-upload-manual-f0").fill("128");
+   assert((await page.locator("#fft-upload-harmonic-result").innerText()).includes("128"),
+      "Manual f0 hypothesis not applied");
+   await page.locator("#fft-upload-harmonic-mode").selectOption("auto");
+   assert(await page.locator("#fft-upload-manual-row").isHidden(),"Manual input did not hide");
    for(const language of ["en","ko","mixed"]){
     await page.locator("#fft-upload-language").selectOption(language);
     const label=await page.locator("#fft-upload-title").innerText();
