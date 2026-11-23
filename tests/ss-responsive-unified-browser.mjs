@@ -17,7 +17,10 @@ async function measure(page){
  return page.evaluate(()=>{
   const main=document.querySelector("main"),rect=main?.getBoundingClientRect();
   const graphNodes=[...(main?.querySelectorAll("canvas,svg")||[])].filter(el=>{
-   const b=el.getBoundingClientRect();return b.width>25&&b.height>20&&getComputedStyle(el).visibility!=="hidden";
+   const b=el.getBoundingClientRect();
+   const semantic=el.tagName==="CANVAS"||el.matches("svg[role=img],svg[aria-label]");
+   const largePlot=b.width>=120&&b.height>=75;
+   return (semantic||largePlot)&&b.width>25&&b.height>20&&getComputedStyle(el).visibility!=="hidden";
   });
   const invalidGraphs=graphNodes.filter(el=>{const b=el.getBoundingClientRect();return b.width<80||b.height<55}).map(el=>({tag:el.tagName,id:el.id}));
   const excess=Math.max(0,document.documentElement.scrollWidth-innerWidth);
