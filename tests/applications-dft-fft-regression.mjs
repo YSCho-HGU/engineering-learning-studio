@@ -340,7 +340,11 @@ try{
  await page.locator('[data-butterfly-stage="3"]').click();
  const stageHeading=await page.locator("#butterfly-heading").innerText();
  assert.ok(!/[가-힣]/.test(stageHeading),"English mode shows Korean inside butterfly heading");
- assert.ok(await page.locator(".butterfly-equation").isVisible(),"Butterfly complex formula is not visible");
+ assert.ok(await page.locator("#butterfly-computation-formula").isVisible(),"Butterfly complex formula is not visible");
+ assert.ok(await page.locator("#butterfly-scroll-hint").isVisible(),"Mobile scroll guidance missing");
+ const mathCheck=await page.locator("#butterfly-computation-formula").evaluate(el=>({rendered:!!el.querySelector(".katex"),fallback:!!el.querySelector("sup"),error:!!el.querySelector(".katex-error")}));
+ assert.ok(!mathCheck.error,"KaTeX reported a formula rendering error");
+ assert.ok(mathCheck.rendered||mathCheck.fallback,"Butterfly formula lacks both rendered math and HTML fallback");
  const formula=await page.locator(".butterfly-equation").innerText();
  expectContains(formula,"y[a]","Butterfly upper output equation");
  expectContains(formula,"y[b]","Butterfly lower output equation");
