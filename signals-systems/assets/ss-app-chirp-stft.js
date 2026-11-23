@@ -150,6 +150,66 @@ function drawMap(a,frame){
  markup+=axes(p,{xMax:a.duration,yMax:a.fs/2,labelX:"Time (s)",labelY:"Frequency (Hz)"});
  svg.innerHTML=markup;
 }
+
+/* Fair experiment: same sampled signal and same dB reference in both panels.
+ * The two STFT calculations differ ONLY in the property under study. */
+let comparisonCacheKey="",comparisonCache=null;
+function compareAnalyses(opts,kind="window"){
+ const common={...opts};
+ delete common.samples;
+ if(kind==="overlap"){
+  return [analyze({...common,L:128,overlap:0}),analyze({...common,L:128,overlap:75})];
+ }
+ return [analyze({...common,L:64,overlap:75}),analyze({...common,L:256,overlap:75})];
+}
+function comparisonSvg(el,a,sharedMaximum){
+ const p=graphBase(450,246,{left:53,right:12,top:13,bottom:33});
+ const x=t=>p.left+clamp(t/a.duration,0,1)*p.W;
+ const y=frequency=>p.top+p.H-clamp(frequency/(a.fs/2),0,1)*p.H;
+ const chunks=[];
+ chunks.push('<rect x="'+p.left+'" y="'+p.top+'" width="'+p.W+'" height="'+p.H+'" fill="#132b55"/>');
+ for(let i=0;i<a.frames.length;i++){
+  const center=a.centers[i],start=x(Math.max(0,center-a.hopTime/2));
+  const end=x(Math.min(a.duration,center+a.hopTime/2));
+  const width=Math.max(.6,end-start+.12),row=a.frames[i];
+  for(let k=0;k<row.length;k++){
+   const value=row[k],db=clamp(20*Math.log10(Math.max(value,1e-12)/Math.max(sharedMaximum,1e-12)),-60,0);
+   const lo=Math.max(0,(k-.5)*a.fs/a.M),hi=Math.min(a.fs/2,(k+.5)*a.fs/a.M);
+   chunks.push('<rect x="'+fmt(start,2)+'" y="'+fmt(y(hi),2)+'" width="'+fmt(width,2)+'" height="'+fmt(Math.max(.65,y(lo)-y(hi)+.1),2)+'" fill="'+palette(db)+'"/>');
+  }
+ }
+ chunks.push(axes(p,{xMax:a.duration,yMax:a.fs/2,labelX:"Time (s)",labelY:"Frequency (Hz)"}));
+ el.innerHTML=chunks.join("");
+}
+function comparisonStats(a){
+ return tr("L = "+a.L+" · "+fmt(a.windowTime*1000,1)+" ms · bin "+fmt(a.binSpacing,2)+" Hz · H = "+a.H+" · "+a.frameCount+" frames",
+ "L = "+a.L+" · "+fmt(a.windowTime*1000,1)+" ms · Bin "+fmt(a.binSpacing,2)+" Hz · H = "+a.H+" · "+a.frameCount+"구간",true);
+}
+function renderComparison(){
+ if(!analysis)return;
+ const kind=$("stft-compare-kind").value;
+ const params=input(),key=JSON.stringify(params)+":"+kind+":"+lang();
+ if(key===comparisonCacheKey)return;
+ comparisonCacheKey=key;
+ const pair=compareAnalyses(params,kind);
+ comparisonCache=pair;
+ let maximum=1e-12;
+ for(const a of pair)for(const row of a.frames)for(const val of row)if(val>maximum)maximum=val;
+ for(let i=0;i<2;i++){
+  const label=i?"b":"a",a=pair[i];
+  $("stft-compare-"+label+"-title").textContent=kind==="window"?
+   (i?tr("Long window · L = 256","긴 Window · L = 256",true):tr("Short window · L = 64","짧은 Window · L = 64",true)):
+   (i?tr("Dense time steps · 75% overlap","촘촘한 시간 간격 · Overlap 75%",true):tr("Nonoverlapping · 0%","겹치지 않는 구간 · 0%",true));
+  $("stft-compare-"+label+"-stats").textContent=comparisonStats(a);
+  comparisonSvg($("stft-compare-"+label),a,maximum);
+ }
+ $("stft-compare-insight").textContent=kind==="window"?
+  tr("Same samples and shared color scale: 64 samples give a 125 ms window and 8 Hz original bins; 256 samples give 500 ms and 2 Hz. A longer window improves spectral discrimination but smears rapid time changes. The different frame counts also follow from a 75% overlap.",
+  "동일한 표본과 공통 색상 척도: L=64일 때 창 길이 125ms·원래 Bin 간격 8Hz, L=256일 때 500ms·2Hz입니다. 긴 창은 주파수를 더 잘 구분하지만 빠른 변화의 시간 위치가 퍼집니다. 구간 수도 두 창 모두 75% Overlap을 적용한 결과입니다."):
+  tr("Both analyses have L=128, so each observes 250 ms with 4 Hz original bin spacing. Changing overlap from 0% to 75% changes hop from 128 to 32 samples and gives denser time samples; it does NOT improve the intrinsic frequency resolution. Both panels use one common magnitude dB color scale.",
+  "두 분석 모두 L=128이므로 관측 시간은 250ms, 원래 Bin 간격은 4Hz로 동일합니다. Overlap을 0%에서 75%로 바꾸면 Hop은 128에서 32표본이 되어 시간축의 STFT 결과가 촘촘해지지만 고유 주파수 분해능은 향상되지 않습니다. 두 패널은 공통 Magnitude dB 색상 척도를 사용합니다.");
+}
+
 const original={fs:512,duration:2,f0:20,f1:180,L:128,overlap:75,window:"hann",padding:1,shape:"rising"};
 let analysis=null,frame=0,missionChecked=false;
 function input(){return{fs:+$("stft-fs").value,duration:+$("stft-duration").value,f0:+$("stft-start").value,f1:+$("stft-end").value,L:+$("stft-window").value,overlap:+$("stft-overlap").value,window:$("stft-window-type").value,padding:+$("stft-fft-factor").value,shape:$("stft-shape").value};}
@@ -187,6 +247,7 @@ function redraw(){
  drawSpectrum("stft-global-plot",a.globalFft,a.fs,a.N,Math.max(...a.globalFft));
  drawSpectrum("stft-local-plot",a.frames[frame],a.fs,a.M,Math.max(...a.frames[frame]),a.instantaneousFrequency(a.centers[frame]));
  drawMap(a,frame);
+ renderComparison();
  $("stft-local-help").textContent=tr(
   "Current window center "+fmt(a.centers[frame],3)+" s · Instantaneous frequency ≈ "+fmt(a.instantaneousFrequency(a.centers[frame]),1)+" Hz · measured local peak "+fmt(a.peaks[frame],1)+" Hz",
   "현재 창의 중심 "+fmt(a.centers[frame],3)+"초 · 순간주파수 ≈ "+fmt(a.instantaneousFrequency(a.centers[frame]),1)+" Hz · 측정된 피크 "+fmt(a.peaks[frame],1)+" Hz"
@@ -271,6 +332,7 @@ function init(){
  $("stft-frame").addEventListener("input",e=>setFrame(Number(e.target.value)));
  $("stft-prev").addEventListener("click",()=>setFrame(frame-1));
  $("stft-next").addEventListener("click",()=>setFrame(frame+1));
+ $("stft-compare-kind").addEventListener("change",()=>{comparisonCacheKey="";renderComparison()});
  $("stft-reset").addEventListener("click",()=>{
   for(const [key,value]of Object.entries(original)){
    const id={f0:"stft-start",f1:"stft-end",L:"stft-window",window:"stft-window-type",padding:"stft-fft-factor",shape:"stft-shape"}[key]||"stft-"+key;
