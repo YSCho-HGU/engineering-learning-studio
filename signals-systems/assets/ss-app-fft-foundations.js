@@ -77,7 +77,7 @@ function analyze(samples,fs=null){
 function graph(svg,data,style,known){
  const NS="http://www.w3.org/2000/svg";
  svg.replaceChildren();
- const w=620,h=300,l=57,r=22,t=20,b=50,plotW=w-l-r,plotH=h-t-b;
+ const w=620,h=300,l=65,r=24,t=31,b=51,plotW=w-l-r,plotH=h-t-b;
  const vmin=style==="time"?Math.min(0,...data.map(p=>p.y)):0;
  const vmax=style==="time"?Math.max(0,...data.map(p=>p.y)):Math.max(1e-9,...data.map(p=>p.y));
  const lo=style==="time"?Math.min(-.15,vmin*1.13):0;
@@ -99,16 +99,16 @@ function graph(svg,data,style,known){
  const zero=sy(0);
  add("line",{x1:l,y1:zero,x2:w-r,y2:zero},null,"axis");
  add("line",{x1:l,y1:t,x2:l,y2:h-b},null,"axis");
- const stride=style==="time"?Math.max(1,Math.ceil((data.length-1)/8)):Math.max(1,Math.ceil((data.length-1)/7));
+ const stride=style==="time"?Math.max(1,Math.ceil((data.length-1)/7)):Math.max(1,Math.ceil((data.length-1)/6));
  for(let j=0;j<data.length;j++){
   const p=data[j],x=sx(p.x),y=sy(p.y);
   add("line",{x1:x,y1:zero,x2:x,y2:y},null,p.peak?"peak-stem":"stem");
   add("circle",{cx:x,cy:y,r:p.peak?4.8:3.2},null,"sample-dot");
-  if(j%stride===0||j===data.length-1)add("text",{x,y:h-b+17,"text-anchor":"middle"},style==="time"?String(j):known?fmt(p.x,0):String(p.k),"tick-label");
+  if(j%stride===0||j===data.length-1){const edge=j===0?"start":j===data.length-1?"end":"middle";add("text",{x,y:h-b+17,"text-anchor":edge},style==="time"?String(j):known?fmt(p.x,p.x<10?2:0):String(p.k),"tick-label");}
  }
  add("text",{x:l+plotW/2,y:h-6,"text-anchor":"middle"},style==="time"?"n (sample index)":known?"f (Hz)":"k (FFT bin index)","plot-label");
  const axis=style==="time"?"x[n]":i("One-sided amplitude","단측 진폭",true);
- add("text",{x:14,y:12},axis,"plot-label");
+ add("text",{x:l,y:17},axis,"plot-label");
 }
 function containerMetric(label,value){
  const box=document.createElement("div");box.className="ss-fft-metric";
