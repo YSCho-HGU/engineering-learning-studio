@@ -36,6 +36,19 @@ for(const view of sizes){
    if(!resp?.ok())throw Error("HTTP "+resp?.status());
    const nav=page.locator(navs[chapter]);await nav.first().waitFor({timeout:10000});
    const count=await nav.count();
+   const mode=page.locator("#ss-presentation-toggle");
+   if(await mode.count()!==1)issues.push({chapter,view:view.name,reason:"Presentation control missing"});
+   if(view.width===1920&&await mode.count()){
+    await mode.click();
+    const active=await page.evaluate(()=>document.documentElement.dataset.ssPresentation==="on");
+    const clicked=await mode.getAttribute("aria-pressed");
+    if(!active||clicked!=="true")issues.push({chapter,reason:"Presentation mode failed to activate"});
+    check(await measure(page),"Presentation Ch"+chapter+" "+view.name);
+    await page.keyboard.press("Escape");
+    if(await page.evaluate(()=>document.documentElement.dataset.ssPresentation==="on"))
+       issues.push({chapter,reason:"Presentation mode Escape failed"});
+   }
+
    const indices=view.width<=768?Array.from({length:count},(_,i)=>i):[0,count-1];
    for(const index of indices){
     await nav.nth(index).evaluate(el=>el.click());
@@ -50,6 +63,16 @@ for(const view of sizes){
    if(!resp?.ok())throw Error("HTTP "+resp?.status());
    await page.waitForTimeout(100);
    const label=route.replace(/[^a-z0-9]+/gi,"-");
+   const mode=page.locator("#ss-presentation-toggle");
+   if(await mode.count()!==1)issues.push({route,view:view.name,reason:"Presentation control missing"});
+   if(view.width===1920&&await mode.count()){
+     await mode.click();
+     if(await mode.getAttribute("aria-pressed")!=="true")issues.push({route,reason:"Presentation mode not enabled"});
+     check(await measure(page),"Presentation Applications "+route+" "+view.name);
+     await page.keyboard.press("Escape");
+     if(await mode.getAttribute("aria-pressed")!=="false")issues.push({route,reason:"Presentation mode not restored"});
+   }
+
    check(await measure(page),"Applications "+route+" "+view.name);
    if(["applications-fft-lab.html","applications-fft-resolution.html","applications-lab.html?lab=sampling"].includes(route)&&view.width!==1366)
     await page.screenshot({path:"qa/responsive-screenshots/"+label+"-"+view.name+".png",fullPage:false});
