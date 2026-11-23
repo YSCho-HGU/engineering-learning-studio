@@ -77,39 +77,25 @@ button,select{font:inherit}
 }
 .ss-app-topic-details a.ss-app-open-lab:hover{background:var(--els-info-bg);text-decoration:none}
 
-/* FFT learning progression starts with a working sample-data lab. */
-.ss-app-topic[data-area="fft"] .ss-app-topic-stage{
- display:block;margin-bottom:6px;
- font-size:10px;font-weight:800;letter-spacing:.075em;
- color:var(--els-link);line-height:1.4;
-}
-.ss-app-topic[data-area="fft"][data-learning-step="1"]{
- border-color:var(--els-link);
- box-shadow:inset 3px 0 var(--els-link);
-}
-.ss-app-topic[data-area="fft"][data-learning-step="1"]>summary{
- background:color-mix(in srgb,var(--els-info-bg,var(--els-surface-alt)) 40%,var(--els-surface-alt));
-}
-.ss-app-topic[data-area="fft"]:not(.ss-app-topic-ready){
- background:color-mix(in srgb,var(--els-surface-alt) 65%,var(--els-page) 35%);
-}
-.ss-app-topic-details .ss-app-inline-math .katex{font-size:1.07em}
-
-/* Part C FFT pathway: phase structure and clearly distinguished available modules. */
-#topics-c{align-items:start}
-.ss-app-phase{grid-column:1/-1;min-width:0;display:grid;gap:10px}
-.ss-app-phase:not(:first-child){border-top:1px solid var(--els-border);padding-top:15px;margin-top:6px}
-.ss-app-phase-head{padding:2px 4px 4px;border-left:3px solid var(--els-link);padding-left:12px}
-.ss-app-phase-head h3{font-size:17px;line-height:1.35;margin:0 0 3px;font-weight:800;color:var(--els-ink)}
-.ss-app-phase-head p{font-size:13px;line-height:1.5;margin:0;color:var(--els-muted);max-width:860px;white-space:pre-line}
-.ss-app-phase-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-.ss-app-topic-availability{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.035em;border:1px solid var(--els-link);color:var(--els-link);border-radius:999px;padding:1px 7px;margin:8px 0 0}
-.ss-app-topic[data-area="fft"]:not(.ss-app-topic-ready) .ss-app-topic-availability{border-color:var(--els-border);color:var(--els-muted)}
-.ss-app-topic[data-area="fft"]>summary{min-height:91px}
-.ss-app-fft-route{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:11px 14px;margin:0 0 15px;border:1px solid var(--els-border);border-radius:11px;background:var(--els-surface-alt)}
-.ss-app-fft-route>div{flex:1 1 390px}
-.ss-app-fft-route strong{display:block;font-size:14px}
-.ss-app-fft-route p{font-size:13px;margin:3px 0;color:var(--els-muted);line-height:1.55}
-.ss-app-fft-route>a{color:var(--els-link);background:var(--els-surface);border:1px solid var(--els-link);border-radius:9px;min-height:39px;display:inline-flex;align-items:center;padding:7px 13px;font-weight:800;font-size:13px;white-space:nowrap}
-.ss-app-fft-route>a:hover{text-decoration:none;background:var(--els-info-bg)}
-@media(max-width:670px){.ss-app-phase-grid{grid-template-columns:1fr}.ss-app-fft-route>a{width:100%;justify-content:center}}
+/* Part C: simple module-first lesson list (A/B/D preserve their original cards). */
+#topics-c{display:grid;grid-template-columns:1fr;gap:14px}
+.ss-app-lesson-group{display:grid;gap:7px;min-width:0}
+.ss-app-lesson-group-title{font-size:16px;font-weight:750;line-height:1.4;margin:0;color:var(--els-ink)}
+.ss-app-lesson-list{display:grid;gap:7px;min-width:0}
+.ss-app-lesson-row{display:grid;grid-template-columns:40px minmax(0,1fr) 22px;align-items:center;gap:12px;
+ min-height:70px;padding:10px 13px;border:1px solid var(--els-border);border-radius:10px;background:var(--els-surface-alt);
+ color:var(--els-ink);text-decoration:none}
+.ss-app-lesson-row:hover{background:var(--els-surface);border-color:var(--els-link);text-decoration:none}
+.ss-app-lesson-row:focus-visible{outline:3px solid var(--els-focus,#e5cb73);outline-offset:2px}
+.ss-app-lesson-number{display:grid;place-items:center;width:38px;height:37px;border-radius:7px;background:var(--els-surface);
+ color:var(--els-link);font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}
+.ss-app-lesson-copy{display:grid;gap:3px;min-width:0}
+.ss-app-lesson-title{font-size:15px;line-height:1.4;font-weight:750;overflow-wrap:anywhere}
+.ss-app-lesson-desc{font-size:12px;line-height:1.45;color:var(--els-muted);overflow-wrap:anywhere}
+.ss-app-lesson-arrow{font-size:25px;color:var(--els-link);text-align:right;line-height:1}
+.ss-app-lesson-group[data-fft-phase="extension"]{padding-top:12px;border-top:1px solid var(--els-border)}
+.ss-app-future{margin-top:4px;padding:10px 13px;border:1px solid var(--els-border);border-radius:9px;background:var(--els-surface-alt);font-size:13px}
+.ss-app-future summary{cursor:pointer;font-weight:700;color:var(--els-muted)}
+.ss-app-future-list{margin:8px 0 0;padding-left:20px;color:var(--els-muted);line-height:1.8}
+@media(min-width:980px){#topics-c .ss-app-lesson-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:670px){.ss-app-lesson-row{grid-template-columns:34px minmax(0,1fr) 18px;gap:9px;padding:9px;min-height:64px}.ss-app-lesson-number{width:32px;height:33px}}
