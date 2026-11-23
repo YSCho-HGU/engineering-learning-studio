@@ -28,6 +28,10 @@ main.ss-al-root{
 .ss-app-container :is(#part-a,#part-b,#part-d){
  border-radius:var(--app-ui-radius);
 }
+/* New single collection fills the original two-column topic-grid wrapper. */
+#topics-a,#topics-b,#topics-d{
+ grid-template-columns:minmax(0,1fr);
+}
 .ss-app-container :is(#part-a,#part-b,#part-d) :is(.ss-app-lesson-row,.ss-app-abd-planned){
  border:1px solid var(--els-border);
  border-radius:var(--app-ui-radius);
