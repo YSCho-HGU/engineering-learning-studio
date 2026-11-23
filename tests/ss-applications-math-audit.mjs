@@ -57,7 +57,7 @@ for(const route of cases){
    const dynamic=await page.evaluate(async()=>{
      const root=document.querySelector("main"),probe=document.createElement("p");
      probe.id="ss-math-future-probe";
-     probe.textContent=String.raw`Future lab: \\(\\frac{1}{2}\\) and Δf.`;
+     probe.textContent=String.raw`Future lab: \(\frac{1}{2}\) and Δf.`;
      root.append(probe);
      window.SSMathCore?.renderNow?.();
      await Promise.resolve();
