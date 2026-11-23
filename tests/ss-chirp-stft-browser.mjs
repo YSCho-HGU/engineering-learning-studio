@@ -98,7 +98,7 @@ try{
    for(const language of ["en","ko","mixed"]){
     await page.locator("#stft-language").selectOption(language);
     const title=await page.locator("#stft-title").innerText();
-    const compareLabel=await page.locator("#stft-compare-title").innerText();
+    const compareLabel=await page.locator("#stft-contrast-title").innerText();
     check(language==="en"?!/[가-힣]/.test(compareLabel):/[가-힣]/.test(compareLabel),"Comparison language failed "+language);
     check(language==="en"?!/[가-힣]/.test(title):/[가-힣]/.test(title),"Language failed "+language);
    }
