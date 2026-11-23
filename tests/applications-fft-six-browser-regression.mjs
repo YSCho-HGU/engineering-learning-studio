@@ -107,6 +107,8 @@ try{
    await svgNonblank(page,"dtmf-spectrum");
    const traceFill=await page.locator("#dtmf-spectrum path.ss-dtmf-trace").evaluate(el=>getComputedStyle(el).fill);
    check(traceFill==="none","dtmf: spectrum line must be unfilled, got "+traceFill);
+   const axisFill=await page.locator("#dtmf-spectrum path.ss-dtmf-axis").evaluate(el=>getComputedStyle(el).fill);
+   check(axisFill==="none","dtmf: chart axis must not fill triangle, got "+axisFill);
    check((await page.locator("#dtmf-peaks").innerText()).includes("Hz"),"dtmf: no two frequency peaks");
    const digit=await page.evaluate(()=>window.SSDTMF.result?.decoded);
    check(typeof digit==="string"&&digit.length===1,"dtmf: no valid decoded key");
