@@ -147,7 +147,7 @@ function localize(){
  "dtmf-explain-title":["4 · Why Did FFT Work?","4 · FFT가 답을 찾은 이유"],
  "dtmf-explain":["DTMF combines two sinusoids. The time waveform mixes them; FFT separates the two frequencies. Increasing N reduces bin spacing fs/N. A sequence of keys must be divided into segments before decoding its order.","DTMF는 두 정현파의 합입니다. 시간 파형에는 두 성분이 섞여 있지만 FFT는 각 주파수를 보여줍니다. N을 늘리면 Bin 간격 fs/N이 작아집니다. 여러 숫자의 순서를 알려면 신호를 구간별로 나누어 분석해야 합니다."],
  "dtmf-challenge-conclusion":["Reflection · What did FFT reveal that the waveform did not?","성찰 · 시간 파형에 비해 FFT에서 어떤 정보를 발견했나요?"],
- "dtmf-prior":["← Frequency Resolution Lab","← 주파수 분해능 실습"],"dtmf-catalog":["Part C · All Topics","Part C · 전체 목록"]
+ "dtmf-prior":["← DFT vs FFT","← DFT와 FFT"],"dtmf-catalog":["Part C · All Topics","Part C · 전체 목록"]
  };
  for(const [id,[en,ko]] of Object.entries(labels))$(id).textContent=tr(en,ko);
  [...$("dtmf-mode").options].forEach((o,i)=>o.textContent=i===0?tr("One hidden key","비밀 숫자 1개"):tr("Three hidden keys","비밀 숫자 3개"));
