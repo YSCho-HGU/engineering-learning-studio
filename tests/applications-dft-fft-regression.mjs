@@ -40,6 +40,8 @@ try{
  assert.equal(await start.getAttribute("href"),"./applications-dft-fft.html","Applications card link");
  await start.click();
  assert.ok(page.url().endsWith("/applications-dft-fft.html"),"Card did not open integrated FFT lab");
+ assert.equal(await page.locator(".dft-learning-route").count(),0,"Duplicate FFT navigation should be removed");
+ assert.equal(await page.locator("#ss-fft-path").count(),1,"Exactly one shared FFT route must remain");
  console.log("PASS Applications Part C card is active and navigates to DFT vs FFT");
  await page.locator("#peak-analysis").count();
  assert.ok(await page.locator("#guide-title").isVisible(),"Guided mission hidden");
@@ -86,6 +88,7 @@ try{
  expectContains(result,"160.00 Hz","Sensor peak 160 Hz");
  expectContains(await page.locator("#file-info").innerText(),"1024","CSV timestamp sampling rate");
  console.log("PASS CSV sensor peaks 64 Hz + 160 Hz and auto sample rate");
+ assert.ok(await page.locator("#sensor-physics").isVisible(),"Sensor records must retain physical interpretation controls");
  await page.locator("#physics-peak").selectOption("32"); // 64 Hz at N=512, fs=1024
  await page.locator("#events-per-rev").fill("1");
  expectContains(await page.locator("#physics-hz").innerText(),"64.00 Hz","Physical frequency");
@@ -125,6 +128,7 @@ try{
  // 750 Hz bin may be smaller, but should be selected as a second local peak.
  expectContains(result,"750.00 Hz","Audio 750 Hz");
  expectContains(result,"For audio","Audio-specific physical interpretation");
+ assert.ok(await page.locator("#sensor-physics").isHidden(),"Audio must not display conditional shaft RPM controls");
  console.log("PASS WAV decoder and two audio peaks");
 
  await page.locator("#size").selectOption("2048");
