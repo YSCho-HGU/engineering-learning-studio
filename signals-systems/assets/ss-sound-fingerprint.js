@@ -13,7 +13,7 @@ const profiles={
 };
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),fmt=(n,d=1)=>Number(n).toFixed(d);
 const mode=()=>W.ELSLanguage?.get?.()||"mixed",tr=(en,ko)=>mode()==="en"?en:mode()==="ko"?ko:en+"\n"+ko;
-let order=["guitar","voice","piano"],selected=0,revealed=false,recordings={},audio=null,analyzed=null,attempts=0;
+let order=["guitar","voice","piano"],selected=0,revealed=false,recordings={},audio=null,analyzed=null,attempts=0,studentPrediction=null;
 const reverse=()=>order[selected],name=type=>tr(type==="piano"?"Piano-like":type==="guitar"?"Guitar-like":"Voice-like",type==="piano"?"피아노 유사":type==="guitar"?"기타 유사":"목소리 유사");
 function synth(type,{f0=220}={}){
  if(!profiles[type])throw Error("Unsupported model");
@@ -118,11 +118,11 @@ function render(){
 }
 function smallBars(type){
  const a=currentAnalysis(type),max=Math.max(...a.partials.map(x=>x.amplitude),1e-12);
- const g=graphicBase(390,175,{xMax:10,yMax:100,yMin:0,xLabel:"Harmonic order h",yLabel:"Share (%)"});
+ const g=graphicBase(390,175,{xMax:10,yMax:50,yMin:0,xLabel:"Harmonic order h",yLabel:"Share (%)"});
  const W=g.W/11;
  let out=g.html;
  for(const p of a.partials){
-  const x=g.l+p.h/11*g.W-W*.3,h=g.H*p.share/100;
+  const x=g.l+p.h/11*g.W-W*.3,h=g.H*Math.min(50,p.share)/50;
   out+='<rect class="ss-finger-bar" x="'+fmt(x,2)+'" y="'+fmt(g.t+g.H-h,2)+'" width="'+fmt(W*.6,2)+'" height="'+fmt(h,2)+'"/>';
  }
  return'<svg viewBox="0 0 390 175" role="img" aria-label="Harmonic amplitude fingerprint">'+out+'</svg>';
@@ -154,19 +154,21 @@ async function play(type){
 function evaluateGuess(){
  const val=$("finger-guess").value;
  if(!val){$("finger-guess-feedback").textContent=tr("Choose an instrument/voice hypothesis first.","먼저 악기 또는 목소리 후보를 선택하세요.");return}
- attempts++;
- const right=val===reverse();
- $("finger-guess-feedback").textContent=right?
- tr("Good listening hypothesis. Reveal the FFT fingerprints to test your explanation.","청각적 예측이 맞았습니다. FFT 특징을 공개해 근거를 확인하세요."):
- tr("Not quite. Compare the three sounds again; FFT may reveal the hidden differences.","다른 소리입니다. 세 소리를 다시 비교하고 FFT로 차이를 찾아보세요.");
- $("finger-guess-feedback").dataset.result=right?"correct":"wrong";
+ attempts++;studentPrediction={type:val,source:reverse(),letter:LETTERS[selected]};
+ $("finger-reveal-btn").disabled=false;
+ $("finger-guess-feedback").textContent=tr("Prediction saved. Observe the FFT, then reveal to check.","예측을 저장했습니다. FFT를 관찰한 뒤 정체를 공개해 확인하세요.");
 }
 function reveal(){
+ if(!studentPrediction)return;
  revealed=true;$("finger-reveal-content").hidden=false;$("finger-reveal-btn").disabled=true;
  renderCompare();
+ const correct=studentPrediction.type===studentPrediction.source;
+ $("finger-guess-feedback").textContent=(correct?tr("Correct! ","정답! "):tr("Discovery: ","발견! "))+
+ studentPrediction.letter+" = "+name(studentPrediction.source)+". "+tr("Compare the harmonic fingerprints to explain the difference.","고조파 분포를 비교하고 이유를 설명해 보세요.");
+ $("finger-guess-feedback").dataset.result=correct?"correct":"wrong";
 }
 function reset(){
- revealed=false;selected=0;attempts=0;$("finger-reveal-content").hidden=true;$("finger-reveal-btn").disabled=false;
+ revealed=false;selected=0;attempts=0;studentPrediction=null;$("finger-reveal-content").hidden=true;$("finger-reveal-btn").disabled=true;
  $("finger-guess").value="";$("finger-quiz").value="";$("finger-guess-feedback").textContent="";$("finger-quiz-feedback").textContent="";
  render();
 }
