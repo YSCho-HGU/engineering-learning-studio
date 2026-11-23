@@ -335,7 +335,7 @@ function localization(){
  "stft-mission-title":["Check · Graph experiment mission","확인 · 그래프 실험 미션"],
  "stft-mission-prompt":["Choose a rising, falling, or step-frequency signal; move the window into the last quarter and compare the local FFT peak with the theoretical frequency.","상승·하강·계단형 주파수 신호를 선택하고 Window를 마지막 1/4 구간으로 옮겨 국소 FFT 피크와 이론 주파수를 비교하세요."],
  "stft-mission-check":["Check my experiment","실험 목표 확인"],
- "stft-prev-link":["← Frequency resolution lab","← 주파수 분해능 실습"],
+ "stft-prev-link":["← Real Audio & Sensor FFT","← 실제 음성·센서 FFT"],
  "stft-catalog-link":["Part C · Learning map","Part C · 학습 목록"]
  };
  for(const [id,[en,ko]] of Object.entries(items)){const el=$(id);if(el)el.textContent=tr(en,ko,id.startsWith("stft-step")||id.endsWith("-link"))}
