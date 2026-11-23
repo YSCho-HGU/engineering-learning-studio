@@ -175,3 +175,20 @@ html.ss7-native .ss7-stage-observe .ss7-prose-math{
 html.ss8-native :is(#intro,#insight,#reading,#check-q,#check-a,#ss8-predict-question,.step p) .ss8-prose-math .katex{
  font-size:1em!important;
 }
+
+/* Mobile mathematical expressions stay readable through local horizontal scrolling,
+   without forcing the whole document wider than its viewport. */
+@media(max-width:700px){
+ :is(html.ss5-native,html.ss6-compact-workspace,html.ss7-native,html.ss8-native) main :is(p,li,.formula,.math,.deriv-math,.ss7-key-equation,.ss8-key-equation):has(.katex){
+   box-sizing:border-box;
+   min-width:0;
+   max-width:100%;
+   overflow-x:auto;
+   overflow-y:hidden;
+   scrollbar-width:thin;
+ }
+ :is(html.ss5-native,html.ss6-compact-workspace,html.ss7-native,html.ss8-native) main :is(.card,.step,.deriv-step,.ss7-card,.ss8-card,.ss-found-explain,.ss-found-observe){
+   min-width:0;
+   max-width:100%;
+ }
+}
