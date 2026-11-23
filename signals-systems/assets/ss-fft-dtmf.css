@@ -22,7 +22,9 @@
 .ss-dtmf-content [hidden]{display:none!important}
 .ss-dtmf-placeholder{min-height:140px;display:grid;place-items:center;border:1px dashed var(--els-border);border-radius:9px;color:var(--els-muted);text-align:center;padding:15px;font-size:13px}
 .ss-dtmf-grid{stroke:var(--els-border);stroke-width:1}.ss-dtmf-axis{stroke:var(--els-ink);stroke-width:1.1}.ss-dtmf-tick{fill:var(--els-muted);font:12px Arial,sans-serif}.ss-dtmf-axis-title{fill:var(--els-ink);font:700 13px Arial,sans-serif}
-.ss-dtmf-trace{stroke:var(--els-link);stroke-width:1.7;fill:none;stroke-linejoin:round}.ss-dtmf-region{fill:var(--els-link);opacity:.18}.ss-dtmf-peakmark{stroke:var(--els-link);stroke-width:1.8;stroke-dasharray:5 4}.ss-dtmf-peaktext{fill:var(--els-ink);font:700 12px Arial,sans-serif}
+.ss-dtmf-trace{stroke:var(--els-link);stroke-width:1.7;fill:none;stroke-linejoin:round}
+/* A spectral line is an open stroke. Never paint the implicit area under it. */
+#dtmf-spectrum path.ss-dtmf-trace,#dtmf-wave path.ss-dtmf-trace{fill:none!important;stroke:var(--els-link);}.ss-dtmf-region{fill:var(--els-link);opacity:.18}.ss-dtmf-peakmark{stroke:var(--els-link);stroke-width:1.8;stroke-dasharray:5 4}.ss-dtmf-peaktext{fill:var(--els-ink);font:700 12px Arial,sans-serif}
 .ss-dtmf-peaks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:7px}.ss-dtmf-peak{background:var(--els-surface-alt);border:1px solid var(--els-border);border-radius:8px;padding:9px}.ss-dtmf-peak strong{display:block;font-size:19px;color:var(--els-ink)}.ss-dtmf-peak small{color:var(--els-muted)}
 .ss-dtmf-frequency-map{display:grid;grid-template-columns:minmax(70px,.9fr) repeat(3,minmax(50px,1fr));gap:4px;margin:10px 0}
 .ss-dtmf-map-cell{padding:7px 4px;text-align:center;border:1px solid var(--els-border);border-radius:5px;font-size:12px;background:var(--els-surface-alt);min-width:0}
