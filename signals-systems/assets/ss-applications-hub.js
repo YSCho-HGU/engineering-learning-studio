@@ -59,71 +59,77 @@ function localizeStatic(){
  document.documentElement.lang=mode()==="ko"?"ko":"en";
  document.title=i18n("Applications · Signals & Systems","응용 · 신호및시스템",true)+" | Engineering Learning Studio";
 }
-const fftPhases={
- foundation:{titleEn:"01 · FFT Foundations",titleKo:"01 · FFT 핵심 기초",descEn:"Start with samples; read the frequency grid; then verify why FFT evaluates the same DFT faster.",descKo:"샘플에서 출발해 주파수 격자를 해석하고 FFT가 같은 DFT를 빠르게 계산하는 이유를 확인합니다."},
- discovery:{titleEn:"02 · FFT Discovery Labs",titleKo:"02 · FFT 발견 실습",descEn:"Decode tones, recognize harmonic fingerprints and finally analyze your own sound or sensor measurements.",descKo:"두 주파수로 숫자를 해독하고 음색의 고조파를 비교한 뒤 실제 음성·센서 데이터를 분석합니다."},
- extension:{titleEn:"03 · Optional Extension",titleKo:"03 · 선택 확장",descEn:"Explore when a single FFT is insufficient for a frequency that changes over time.",descKo:"시간에 따라 변하는 주파수를 분석할 때 전체 FFT 하나만으로는 부족한 이유를 탐구합니다."},
- planned:{titleEn:"04 · Future Modules",titleKo:"04 · 개발 예정 모듈",descEn:"These topics have no standalone interactive lab yet. They do not interrupt the seven available lessons.",descKo:"아직 독립 실습이 없는 주제입니다. 실행 가능한 7개 실습의 연속 학습을 방해하지 않도록 분리했습니다."}
+/* Part C: direct-access lesson rows. Detailed questions stay inside each lab. */
+const fftCompact={
+ 1:["FFT from Sample Data","샘플 데이터 FFT","Find frequencies in samples","표본에서 주파수 성분 찾기"],
+ 2:["Frequency Bins & Resolution","주파수 Bin과 분해능","Hz · leakage · windows · zero-padding","Hz·누설·창 함수·Zero-padding"],
+ 3:["DFT vs FFT","DFT와 FFT","Same result · butterfly · speed","동일한 결과·버터플라이·속도"],
+ 4:["DTMF Decoder","DTMF 해독","Decode a hidden telephone key","FFT로 전화번호 해독"],
+ 5:["Sound Fingerprint","소리의 주파수 지문","Recognize sounds from harmonics","고조파로 소리 구별하기"],
+ 6:["Real Audio & Sensor FFT","실제 음성·센서 FFT","Analyze a recording or sensor signal","실제 음성·센서 데이터 분석"],
+ 7:["Chirp & STFT","Chirp·STFT","See when frequency changes","주파수가 변하는 시점 확인"]
 };
+const partCTitles={
+ foundation:["FFT Fundamentals","FFT 핵심 기초"],
+ discovery:["FFT Discovery","FFT 발견 실습"],
+ extension:["Optional Extension","선택 확장"]
+};
+function renderFFTCompact(host,data){
+ const category=(type)=>{
+  const group=node("section","ss-app-lesson-group");
+  group.dataset.fftPhase=type;
+  const title=node("h3","ss-app-lesson-group-title",i18n(...partCTitles[type],true));
+  group.append(title);
+  const items=node("div","ss-app-lesson-list");
+  for(const x of data.filter(y=>y.phase===type)){
+   const n=x.routeIndex,names=fftCompact[n];
+   const a=node("a","ss-app-lesson-row");
+   a.dataset.learningStep=String(n);
+   a.href=x.href;
+   a.setAttribute("aria-label",i18n("Open lesson "+n+": "+names[0],"실습 "+n+" 열기: "+names[1],true));
+   a.append(node("span","ss-app-lesson-number",String(n).padStart(2,"0")));
+   const heading=node("span","ss-app-lesson-copy");
+   heading.append(node("strong","ss-app-lesson-title",i18n(names[0],names[1],true)));
+   heading.append(node("span","ss-app-lesson-desc",i18n(names[2],names[3],true)));
+   a.append(heading,node("span","ss-app-lesson-arrow","›"));
+   items.append(a);
+  }
+  group.append(items);return group;
+ };
+ host.append(category("foundation"),category("discovery"),category("extension"));
+ const future=data.filter(x=>x.phase==="planned"),box=node("details","ss-app-future");
+ const summary=node("summary",null,i18n("Future Modules","개발 예정 모듈",true)+" · "+future.length);
+ box.append(summary);
+ const futureList=node("ul","ss-app-future-list");
+ for(const x of future){const li=node("li",null,i18n(x.en,x.ko,true));futureList.append(li);}
+ box.append(futureList);host.append(box);
+}
 function renderTopics(){
  sections.forEach(part=>{
   const host=document.getElementById("topics-"+part),data=topics[part];
   if(!host)return;
   host.replaceChildren();
+  if(part==="c"){
+   document.getElementById("part-c-count").textContent=i18n("6 core labs + 1 optional","핵심 6개 + 선택 1개",true);
+   renderFFTCompact(host,data);return;
+  }
   document.getElementById("part-"+part+"-count").textContent=data.length+" "+i18n("topics","주제",true);
-  let phaseHost=host,previousPhase="";
-  for(let i=0;i<data.length;i++){
-   const x=data[i];
-   if(part==="c"&&x.phase!==previousPhase){
-    previousPhase=x.phase;
-    const meta=fftPhases[x.phase],group=node("section","ss-app-phase");
-    group.dataset.fftPhase=x.phase;
-    const heading=node("div","ss-app-phase-head");
-    const title=node("h3",null,i18n(meta.titleEn,meta.titleKo,true));
-    const desc=node("p",null,i18n(meta.descEn,meta.descKo));
-    heading.append(title,desc);group.append(heading);
-    phaseHost=node("div","ss-app-topic-grid ss-app-phase-grid");
-    group.append(phaseHost);host.append(group);
-   }
-   const details=node("details","ss-app-topic");
-   if(part==="c")details.dataset.area="fft";
-   const summary=node("summary");
-   if(part==="c"){
-    if(x.routeIndex)details.dataset.learningStep=String(x.routeIndex);
-    const stepNo=x.routeIndex?String(x.routeIndex).padStart(2,"0")+" / 07 · ":"";
-    const phase=x.phase==="foundation"?(x.routeIndex===1?"START HERE":"FOUNDATIONS"):
-      x.phase==="discovery"?"FFT DISCOVERY":
-      x.phase==="extension"?"OPTIONAL · TIME-FREQUENCY":"FUTURE MODULE";
-    const phaseKo=x.phase==="foundation"?(x.routeIndex===1?"여기서 시작":"FFT 기초"):
-      x.phase==="discovery"?"FFT 발견 실습":
-      x.phase==="extension"?"선택 · 시간-주파수":"추후 개발";
-    summary.append(node("span","ss-app-topic-stage",stepNo+i18n(phase,phaseKo,true)));
-   }
-   const heading=node("h3",null,mode()==="ko"?x.ko:x.en);
-   summary.append(heading);
-   if(part==="c")summary.append(node("span","ss-app-topic-availability",x.lab?i18n("INTERACTIVE LAB","실습 제공",true):i18n("PLANNED","개발 예정",true)));
-   const kindKo={"Sound & periodicity":"소리와 주기성","Time-varying frequency":"시간가변 주파수","Complex signals":"복소 신호","Sound & superposition":"소리와 중첩","Communication signals":"통신 신호","Sampling":"표본화","Circuits":"회로","Digital filtering":"디지털 필터링","Audio systems":"오디오 시스템","Frequency-selective systems":"주파수 선택 시스템","Dynamics":"동적 시스템","Spatial systems":"공간 시스템","FFT Foundations":"FFT 기초","Audio & Time-frequency":"오디오와 시간-주파수","Audio & Sensors":"오디오와 센서","Image Processing":"영상 처리","Video Processing":"동영상 처리","FFT Engineering":"FFT 공학 응용","Audio":"오디오","Sensors & IoT":"센서와 IoT","Radar & Sonar":"레이더와 소나","Biomedical":"바이오메디컬","Image & Vision":"이미지와 비전","Communications":"통신"};
-   const label=node("span","ss-app-topic-label",i18n(x.kind,kindKo[x.kind]||x.kind,true));
-   summary.append(label);details.append(summary);
-   if(x.lab){details.classList.add("ss-app-topic-ready");details.open=part!=="c"||x.routeIndex===1;}
+  for(const x of data){
+   const details=node("details","ss-app-topic"),summary=node("summary");
+   summary.append(node("h3",null,mode()==="ko"?x.ko:x.en));
+   const kindKo={"Sound & periodicity":"소리와 주기성","Time-varying frequency":"시간가변 주파수","Complex signals":"복소 신호","Sound & superposition":"소리와 중첩","Communication signals":"통신 신호","Sampling":"표본화","Circuits":"회로","Digital filtering":"디지털 필터링","Audio systems":"오디오 시스템","Frequency-selective systems":"주파수 선택 시스템","Dynamics":"동적 시스템","Spatial systems":"공간 시스템","Audio":"오디오","Sensors & IoT":"센서와 IoT","Radar & Sonar":"레이더와 소나","Biomedical":"바이오메디컬","Image & Vision":"이미지와 비전","Communications":"통신"};
+   summary.append(node("span","ss-app-topic-label",i18n(x.kind,kindKo[x.kind]||x.kind,true)));
+   details.append(summary);
+   if(x.lab){details.classList.add("ss-app-topic-ready");details.open=true;}
    const body=node("div","ss-app-topic-details");
    body.append(node("span","ss-app-status",x.lab?i18n("Interactive lab available","인터랙티브 실습 제공",true):i18n("Planned module","개발 예정",true)));
-   if(x.lab){
-    const run=node("a","ss-app-open-lab",i18n("Open Interactive Lab →","실습 열기 →",true));
-    run.href=x.href||"./applications-lab.html?lab="+x.lab;
-    body.append(run);
-   }
-   const concept=node("span","ss-app-topic-label",x.concept);
-   body.append(concept);
-   const q=node("p",null,i18n("Question: "+x.questionEn,"핵심 질문: "+x.questionKo));body.append(q);
+   if(x.lab){const link=node("a","ss-app-open-lab",i18n("Open Interactive Lab →","실습 열기 →",true));link.href=x.href||"./applications-lab.html?lab="+x.lab;body.append(link);}
+   body.append(node("span","ss-app-topic-label",x.concept));
+   body.append(node("p",null,i18n("Question: "+x.questionEn,"핵심 질문: "+x.questionKo)));
    body.append(node("p",null,i18n((x.lab?"Try in the lab: ":"Planned exploration: ")+x.observeEn,(x.lab?"실습에서 확인: ":"예정 실습: ")+x.observeKo)));
    const prereq=node("div","ss-app-topic-labs",i18n("Related chapters","연결되는 Chapter",true)+": ");
-   x.ch.forEach(n=>{
-    const link=node("a",null,"Ch "+n);
-    link.href="./chapter"+n+".html";link.title="Open Chapter "+n;prereq.append(link);
-   });body.append(prereq);
-   details.append(body);
-   phaseHost.append(details);
+   for(const n of x.ch){const link=node("a",null,"Ch "+n);link.href="./chapter"+n+".html";link.title="Open Chapter "+n;prereq.append(link);}
+   body.append(prereq);details.append(body);host.append(details);
   }
  });
 }
