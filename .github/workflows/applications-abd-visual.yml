@@ -1,0 +1,57 @@
+name: Applications A B D visual and lab QA
+on:
+  push:
+    paths:
+      - 'signals-systems/applications.html'
+      - 'signals-systems/applications-lab.html'
+      - 'signals-systems/assets/ss-applications-hub.js'
+      - 'signals-systems/assets/ss-applications-hub.css'
+      - 'signals-systems/assets/ss-app-labs.js'
+      - 'signals-systems/assets/ss-app-extra-labs.js'
+      - 'signals-systems/assets/ss-app-labs.css'
+      - 'signals-systems/assets/ss-app-abd-visual-standard.css'
+      - 'tests/applications-abd-visual-regression.mjs'
+      - '.github/workflows/applications-abd-visual.yml'
+  pull_request:
+    paths:
+      - 'signals-systems/applications.html'
+      - 'signals-systems/applications-lab.html'
+      - 'signals-systems/assets/ss-applications-hub.js'
+      - 'signals-systems/assets/ss-applications-hub.css'
+      - 'signals-systems/assets/ss-app-labs.js'
+      - 'signals-systems/assets/ss-app-extra-labs.js'
+      - 'signals-systems/assets/ss-app-labs.css'
+      - 'signals-systems/assets/ss-app-abd-visual-standard.css'
+      - 'tests/applications-abd-visual-regression.mjs'
+      - '.github/workflows/applications-abd-visual.yml'
+  workflow_dispatch:
+concurrency:
+  group: applications-abd-visual-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  chromium-visual:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Korean screenshot fonts
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y fonts-noto-cjk
+      - name: Install browser test tooling
+        run: |
+          npm install --no-save --no-audit --no-fund playwright@1.56.1
+          npx playwright install chromium
+      - name: Test Part A labs and B D curriculum views in Chromium
+        run: node tests/applications-abd-visual-regression.mjs
+      - name: Archive theme and mobile screenshot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: applications-abd-visual-screenshots
+          path: artifacts/applications-abd-visual-qa/*
+          retention-days: 14
+          if-no-files-found: warn
