@@ -73,7 +73,8 @@ function fitInside(node,chartBox,minFont=11){
  if(!node.isConnected||chartBox.width<50||chartBox.height<50)return;
  const side=node.dataset.ssAxis;
  const maxExtent=side==='y'?chartBox.height-16:chartBox.width-16;
- const base=side==='y'?16:16;
+ const configured=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ss-plot-axis-size'));
+ const base=Number.isFinite(configured)?Math.max(12,Math.min(19,configured)):16;
  node.style.fontSize=base+'px';
  let b=node.getBoundingClientRect();
  let loops=0;
