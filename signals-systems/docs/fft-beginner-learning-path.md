@@ -81,3 +81,20 @@ The resolution/leakage spectrum overlays **solid physical tone-frequency markers
 Two formative questions appear in the first sample-data FFT lesson: unknown-fs interpretation and the known-fs bin-to-Hz mapping. The follow-up lesson has one question per experiment (resolution, leakage, padding). Students choose answers explicitly; feedback indicates correctness and provides a causal explanation for correct responses, without auto-revealing the correct answer after an incorrect attempt. Language modes remain synchronized with the Studio language controller. No scores or user data are persisted.
 
 Regression test `tests/ss-fft-foundations-browser.mjs` now asserts graph guide counts and all five concept checks in addition to numerical FFT behavior, theme, language and viewport checks. Actual browser execution is still required to claim end-to-end passing status.
+
+## Interactive graph missions and Chapter-5 visual QA — 2026-11-23
+
+### Graph-driven missions (added)
+- **Sample Data FFT**: create two peaks at bins k=3/k=7 with fs unknown; then make the first coherent tone map to 1500 Hz with N=16 and fs=8000 Hz.
+- **Frequency resolution**: set fs=256 Hz, N>=128, tone separation 4 Hz, and verify original Δf<=2 Hz. This is an observation-length challenge, not a claim of guaranteed physical two-tone separability.
+- **Spectral leakage**: set fs=256 Hz, N=64, 0.35-bin offset and Hann window; compare true-tone marker and FFT-bin guides, and observe lobe shape.
+- **Zero padding**: set fs=256 Hz, N=64, 4× padding; confirm T=250 ms and original Δf=4 Hz while the visual grid step becomes 1 Hz.
+
+Each mission requires explicit "verify" interaction, reports current measured values, and provides differentiated success/failure feedback. The five preexisting conceptual multiple-choice checks remain separate. Mission completion is not persisted or treated as a grade.
+
+### Common design and regression QA
+- Both FFT pages now include `ss-four-step-standard.css` and the shared `ss-fft-lab-standard.css`, following Chapter 5/6 component spacing, step chips, typographic scale, formula scrolling, themed borders/backgrounds, accessible controls and responsive graphs.
+- Graph reference markers remain solid for known signal frequencies and dashed for nearby FFT bins.
+- The test `tests/ss-fft-foundations-browser.mjs` checks the two foundation missions, three follow-up missions, all preexisting quiz answers, numeric ground truth, language/theme modes, responsive widths and math.
+- JavaScript parsing and pure numerical evaluation passed: bin k=3 at 1500 Hz with amplitude 1, two-tone bins 3/7, nominal bin spacing 4→2 Hz when N doubles at fs=256 Hz, zero-padding display grid 1 Hz with unchanged 4 Hz nominal spacing and 250 ms observation.
+- Chromium execution and screenshot-based visual QA remain **not verified** in the current runtime; passing syntax and numerical tests must not be represented as browser QA.
