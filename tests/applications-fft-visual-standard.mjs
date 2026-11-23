@@ -16,6 +16,15 @@ const modules=[
  ["applications-fft-upload.html",".ss-fft-upload-panel","#fft-upload-wave",".ss-fft-upload-formulas>div",null],
  ["applications-chirp-stft.html",".ss-stft-card","#stft-time-plot",".ss-stft-formulas>div",".ss-stft-pair"]
 ];
+const chartHeadings={
+ "applications-fft-lab.html":".ss-fft-graph-card h2",
+ "applications-fft-resolution.html":".ss-fft-r-graphs h2",
+ "applications-dft-fft.html":".dft-plot-card h3",
+ "applications-fft-dtmf.html":"#dtmf-wave-title",
+ "applications-fft-sound-fingerprint.html":"#finger-wave-title",
+ "applications-fft-upload.html":"#fft-upload-step1",
+ "applications-chirp-stft.html":"#stft-time-title"
+};
 const cssNumber=s=>parseFloat(s)||0;
 const browser=await chromium.launch({headless:true});
 const p=await browser.newPage({viewport:{width:1366,height:850},deviceScaleFactor:1});
@@ -23,7 +32,7 @@ const allErrors=[];p.on("pageerror",e=>allErrors.push(e.message));
 try{
  const measurements=[];
  for(let idx=0;idx<modules.length;idx++){
-  const [file,cardSelector,plotSelector,mathSelector,pairSelector]=modules[idx],slug=file.replace(/\.html$/,"");
+  const [file,cardSelector,plotSelector,mathSelector,pairSelector]=modules[idx],slug=file.replace(/\.html$/,""),titleSelector=chartHeadings[file];
   await p.setViewportSize({width:1366,height:850});
   await p.goto(pathToFileURL(path.join(root,"signals-systems",file)).href,{waitUntil:"domcontentloaded"});
   await p.locator("#ss-fft-path").waitFor({state:"visible"});
@@ -38,18 +47,19 @@ try{
   assert.ok(await selects.count()>0,slug+": missing interactive controls");
   const select=selects.first();
   const check=async(phone)=>{
-    const measure=await p.evaluate(({cardSelector,plotSelector,mathSelector})=>{
+    const measure=await p.evaluate(({cardSelector,plotSelector,mathSelector,titleSelector})=>{
       const root=document.querySelector("main");
       const style=getComputedStyle(root),card=document.querySelector(cardSelector),
        graph=document.querySelector(plotSelector),math=document.querySelector(mathSelector);
       const first=root.querySelector("select"),heading=card.querySelector("h2");
       const box=graph?.getBoundingClientRect();
-      const c=getComputedStyle(card);
+      const c=getComputedStyle(card);const title=document.querySelector(titleSelector);
       return{
        padding:c.paddingTop,
        cardRadius:c.borderTopLeftRadius,
        controlHeight:first?getComputedStyle(first).minHeight:"0",
        headingSize:heading?getComputedStyle(heading).fontSize:"",
+       plotTitleSize:title?getComputedStyle(title).fontSize:"",
        svgWidth:box?.width??0,svgHeight:box?.height??0,
        mathSize:math?getComputedStyle(math).fontSize:"",
        mathOverflow:math?getComputedStyle(math).overflowX:"",
@@ -61,10 +71,11 @@ try{
        viewport:window.innerWidth,
        mathWidth:math?.getBoundingClientRect().width??0
       };
-    },{cardSelector,plotSelector,mathSelector});
+    },{cardSelector,plotSelector,mathSelector,titleSelector});
     const expectedPadding=phone?12:14;
     assert.equal(cssNumber(measure.padding),expectedPadding,slug+": card padding "+JSON.stringify(measure));
     assert.ok(cssNumber(measure.cardRadius)>=10,slug+": inconsistent card rounding");
+    assert.equal(cssNumber(measure.plotTitleSize),phone?15:16,slug+": plot title hierarchy differs "+JSON.stringify(measure));
     assert.ok(cssNumber(measure.controlHeight)>=40,slug+": control too small");
     assert.ok(measure.svgWidth>120&&measure.svgHeight>40,slug+": graph not visible or collapsed");
     assert.ok(measure.mathWidth>0,slug+": mathematical container has no layout");
