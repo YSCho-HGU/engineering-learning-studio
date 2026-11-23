@@ -23,3 +23,16 @@ The bin spacing is (f_s/N) when (f_s) is known, and (1/N) cycles/sample otherwis
 ## QA
 `tests/ss-fft-upload-browser.mjs` verifies known-tone bin/frequency/amplitude, a two-harmonic spectrum, inference of (f_s) from CSV time stamps, unknown-(f_s) normalization, changing selected intervals, selecting different IoT channels, local WAV upload and spectrum, EN/KO/Mixed, five themes, math rendering, and 1366px/390px overflow. This is part of the Applications GitHub Actions workflow.
 \nThe displayed DFT equation explicitly shows the default subtraction of the selected window mean before windowing. Peaks are amplitude-normalized by the sum of the analysis-window weights.\n
+## Fundamental frequency and harmonics extension
+
+The **Fundamental vs Harmonics** panel explores why the strongest FFT peak does not necessarily equal the fundamental frequency. It operates on the *single selected N-sample FFT segment*, not a global music transcription or an STFT.
+
+- A candidate (f_0) is selected by matching spectral local maxima to frequencies (h f_0) for integer harmonic orders (h=1,ldots,8), with allowances for finite FFT bin spacing. The algorithm examines candidates implied by the strongest observed local peaks and favors lower, reasonably consecutive harmonic orders. It deliberately labels every result a **candidate**, not a measured ground-truth pitch.
+- With three or more reasonably consistent harmonic orders, the display can report a supported pattern. Two matching peaks are **tentative** and an isolated peak does not establish a harmonic fundamental. Weak or missing first harmonic can still give a supported hypothesis from (2f_0,3f_0,4f_0,ldots).
+- Students can switch between an automatic hypothesis and a manually chosen (f_0), inspect predicted vs observed frequencies and relative amplitudes, and see vertical (f_0,2f_0,ldots) markers on the spectrum.
+- The built-in **strongest peak ≠ f₀** demonstration combines a weak 128 Hz fundamental and stronger 256, 384, 512 and 640 Hz harmonics. Its strongest bin is 256 Hz but the harmonic-series candidate is 128 Hz.
+- The entire analysis is in Hz only when sampling frequency is known; when (f_s) is unavailable, all candidate frequencies are expressed as cycles/sample.
+
+**Interpretation limits:** this is an introductory FFT harmonic-pattern detector, **not** a robust pitch tracker. Polyphonic music, instruments with inharmonic partials, percussion, noisy speech, transient/unvoiced segments, short windows, and octave ambiguity can cause uncertain or misleading candidates. Longer stable voiced segments and sufficient FFT resolution improve interpretability. No semantic speech recognition or music classification is performed.
+
+The existing browser QA now checks a strong fundamental, an overtone louder than the fundamental, a missing fundamental, single tone, unrelated tones, normalized-frequency results, a live demonstration, manual candidate selection, and harmonic overlay markers.
