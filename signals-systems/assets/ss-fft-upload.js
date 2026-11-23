@@ -207,13 +207,13 @@ async function ingest(file){
   const ctx=new (global.AudioContext||global.webkitAudioContext)();
   try{
    const buffer=await ctx.decodeAudioData(bytes.slice(0));
-   const max=300000,samples=new Float64Array(Math.min(buffer.length,max));
+   const max=3000000,samples=new Float64Array(Math.min(buffer.length,max));
    const channels=buffer.numberOfChannels;
    for(let c=0;c<channels;c++){
     const values=buffer.getChannelData(c);
     for(let i=0;i<samples.length;i++)samples[i]+=values[i]/channels;
    }
-   loadSource({samples,fs:buffer.sampleRate,name:file.name,kind:"audio",metadata:channels+" "+tr("channel(s)","채널")+(buffer.length>max?" · first 300000 samples":"")});
+   loadSource({samples,fs:buffer.sampleRate,name:file.name,kind:"audio",metadata:channels+" "+tr("channel(s)","채널")+(buffer.length>max?" · first 3000000 samples":"")});
   }finally{await ctx.close()}
  }
 }
