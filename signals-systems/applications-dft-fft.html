@@ -49,6 +49,7 @@ main{padding-top:12px}main>h1{font-size:clamp(1.45rem,2.3vw,1.85rem);margin:2px 
 #butterfly-diagram .butterfly-line{stroke:var(--edge);stroke-width:1.35;fill:none}
 #butterfly-diagram .butterfly-cross{stroke:var(--accent);stroke-width:1.55;fill:none;opacity:.57}
 #butterfly-diagram .butterfly-selected{stroke:var(--accent);stroke-width:4.2;opacity:1}
+#butterfly-diagram .butterfly-future{stroke:var(--edge);stroke-width:1;opacity:.19;fill:none}
 #butterfly-diagram .butterfly-node{fill:var(--accent)}
 #butterfly-diagram .butterfly-active-node{fill:var(--accent);stroke:var(--ink);stroke-width:1.9}
 .butterfly-operation-buttons{display:flex;flex-wrap:wrap;gap:7px;margin:11px 0}
@@ -470,7 +471,7 @@ function drawButterfly(){
   for(const [idx,op] of trace.operations[st].entries()){
    const selected=st===stage&&idx===butterflyOperation;
    for(const [from,to,cross] of [[op.a,op.a,false],[op.b,op.b,false],[op.a,op.b,true],[op.b,op.a,true]]){
-    add("line",{x1:xs[st-1],y1:ys[from],x2:xs[st],y2:ys[to],class:(selected?"butterfly-selected":cross?"butterfly-cross":"butterfly-line")});
+    add("line",{x1:xs[st-1],y1:ys[from],x2:xs[st],y2:ys[to],class:(selected?"butterfly-selected":st>stage?"butterfly-future":cross?"butterfly-cross":"butterfly-line")});
    }
   }
  }
@@ -478,8 +479,10 @@ function drawButterfly(){
   const selected=st===stage&&(stage===0||trace.operations[st][butterflyOperation]&&[trace.operations[st][butterflyOperation].a,trace.operations[st][butterflyOperation].b].includes(row));
   add("circle",{cx:xs[st],cy:ys[row],r:selected?5.6:3.2,class:selected?"butterfly-active-node":"butterfly-node"});
   if(st===0)add("text",{x:12,y:ys[row]+4,class:"butterfly-muted"},"x["+trace.order[row]+"]");
-  const value=fmt(trace.stages[st][row],2);
-  add("text",{x:xs[st]+10,y:ys[row]+4,class:"butterfly-value"},st===3?"X["+row+"]="+value:value);
+  if(st<=stage){
+   const value=fmt(trace.stages[st][row],2);
+   add("text",{x:xs[st]+10,y:ys[row]+4,class:"butterfly-value"},st===3?"X["+row+"]="+value:value);
+  }
  }
 }
 $("butterfly-stage-buttons").querySelectorAll("button").forEach(button=>button.addEventListener("click",()=>{
