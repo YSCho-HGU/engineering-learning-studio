@@ -1,831 +1,144 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DFT vs FFT · Applications | Engineering Learning Studio</title>
-<link rel="stylesheet" href="../assets/els-theme-v2.css"><link rel="stylesheet" href="../assets/els-typography-standard.css"><link rel="stylesheet" href="./assets/ss-common-header.css"><link rel="stylesheet" href="./assets/ss-readable-themes.css">
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DFT vs FFT · Engineering Learning Studio</title>
+<meta name="description" content="Interactive DFT vs FFT learning: identical complex spectrum, 8-point butterfly, and computational speed.">
+<script>(function(){var valid=["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark"],v="neutral-dark";try{var saved=localStorage.getItem("els-theme-v2");if(valid.includes(saved))v=saved;}catch(e){}document.documentElement.dataset.elsTheme=v;document.documentElement.dataset.theme=["white-clean","warm-neutral"].includes(v)?"light":"dark";document.documentElement.style.colorScheme=["white-clean","warm-neutral"].includes(v)?"only light":"dark";})();</script>
+<link rel="stylesheet" href="../assets/els-theme-v2.css">
+<link rel="stylesheet" href="../assets/els-typography-standard.css">
+<link rel="stylesheet" href="./assets/ss-common-header.css">
+<link rel="stylesheet" href="./assets/ss-app-fft-path.css?v=20261123-simple">
+<link rel="stylesheet" href="./assets/ss-app-dft-fft-simple.css?v=20261123-simple">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css">
+<script defer src="../assets/els-language.js"></script>
+<script defer src="../assets/els-theme-v2.js"></script>
+<script defer src="./assets/ss-common-header.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js"></script>
-<style>
-:root{color-scheme:dark;--bg:#171c20;--panel:#232b31;--ink:#e7edf2;--sub:#b8c6d2;--edge:#475661;--accent:#78c6c5}
-*{box-sizing:border-box}body{font:16px/1.6 system-ui,"Malgun Gothic",sans-serif;margin:0;background:var(--bg);color:var(--ink)}
-html[data-els-theme="white-clean"]{--bg:#fff;--panel:#f4f7fa;--ink:#193247;--sub:#425e72;--edge:#c7d5de;--accent:#086b77;color-scheme:light}
-html[data-els-theme="warm-neutral"]{--bg:#f3eee7;--panel:#fffaf1;--ink:#312f2b;--sub:#57534e;--edge:#cfc4b3;--accent:#087b79;color-scheme:light}
-html[data-els-theme="navy-dark"]{--bg:#112333;--panel:#1c3545;--ink:#eef7fc;--sub:#c2d2dd;--edge:#466377;--accent:#81d6d6}
-html[data-els-theme="warm-dark"]{--bg:#26231f;--panel:#342f29;--ink:#f2e9da;--sub:#d6c8b5;--edge:#61564a;--accent:#b2dfba}
-header{border-bottom:1px solid var(--edge)}
-header a{color:var(--accent);font-weight:700}main{max-width:1440px;margin:auto;padding:18px 22px 60px}.dft-learning-route{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 9px}.dft-learning-route a{border:1px solid var(--edge);padding:5px 9px;border-radius:8px;font-size:.83rem;color:var(--accent);text-decoration:none}.dft-learning-route a:hover,.dft-learning-route a:focus-visible{background:var(--panel)}.dft-learning-route #dft-next{margin-left:auto}@media(max-width:700px){.dft-learning-route{display:grid;grid-template-columns:1fr 1fr}.dft-learning-route #dft-next{grid-column:1/-1;margin-left:0}}h1{font-size:clamp(1.6rem,3vw,2.1rem);margin:3px 0}h2{font-size:1.22rem;margin:0 0 9px}h3{font-size:1.04rem;margin:0 0 9px}p{margin:8px 0;color:var(--sub)}.eyebrow{font-weight:750;letter-spacing:.08em;color:var(--accent);font-size:.8rem}
-.steps{display:flex;gap:9px;flex-wrap:wrap;margin:21px 0}.learning-guide{border-left:4px solid var(--accent);background:var(--panel);border-radius:12px;padding:15px;margin:14px 0}.learning-guide p{margin:6px 0}.guide-columns{display:grid;grid-template-columns:1fr 1fr;gap:16px}.guide-kicker{color:var(--accent);font-size:.84rem;font-weight:750}.guide-buttons{display:flex;justify-content:space-between;gap:12px;margin-top:12px}#guide-feedback{padding:10px;border-radius:8px;background:var(--bg)}@media(max-width:750px){.guide-columns{grid-template-columns:1fr}}.steps button{flex:1;min-width:155px;text-align:left}.intro-path{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:0 0 9px}.intro-path button{min-width:0;min-height:38px;padding:6px 8px;text-align:center;font-size:.87rem}.intro-path button[aria-current="step"]{border:2px solid var(--accent);font-weight:800}.intro-path-lead{margin:3px 0 8px;font-size:.91rem;color:var(--sub)}.intro-wrap-up{border:1px solid var(--edge);border-radius:10px;padding:12px 14px;margin-top:10px;background:var(--panel)}.intro-wrap-up h3{margin-bottom:7px}.intro-wrap-up p{margin:7px 0}.intro-wrap-up #intro-finish{margin-top:8px;font-weight:750}@media(max-width:750px){.intro-path{grid-template-columns:repeat(2,minmax(0,1fr))}.intro-path button{font-size:.82rem}}.stage-focus{font-size:.88rem;margin:2px 0 7px;color:var(--sub)}#signal-graphs.spectrum-only{grid-template-columns:minmax(0,1fr)}#compare .metrics.metrics-one{grid-template-columns:minmax(0,1fr)}#compare .metrics.metrics-two{grid-template-columns:repeat(2,minmax(0,1fr))}@media(max-width:750px){#compare .metrics.metrics-two{grid-template-columns:1fr}}
-button,select,input{font:inherit}button,select,input[type=file],input[type=number]{background:var(--panel);border:1px solid var(--edge);border-radius:9px;color:var(--ink);padding:9px 12px}
-button{cursor:pointer}button[aria-current=step]{border:2px solid var(--accent);color:var(--ink);font-weight:800}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-section.card,.box{border:1px solid var(--edge);border-radius:14px;background:var(--panel);padding:17px;margin:11px 0}.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.controls{display:flex;gap:14px;align-items:end;flex-wrap:wrap;margin:13px 0}.controls label{display:flex;flex-direction:column;gap:4px;min-width:105px;font-weight:650}.controls label input[type=range]{width:175px;accent-color:var(--accent)}
-canvas{display:block;width:100%;height:205px;border-radius:10px;background:var(--bg);border:1px solid var(--edge)}.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.metric{background:var(--bg);padding:11px;border-radius:9px;border:1px solid var(--edge)}.metric strong{display:block;font-size:1.35rem;overflow-wrap:anywhere}.metric span{font-size:.83rem;color:var(--sub)}.note{font-size:.9rem}output{font-weight:750;color:var(--accent)}.formula{font-family:"Cambria Math",Georgia,serif;font-size:1.18rem;color:var(--ink)}[hidden]{display:none!important}.question{border-left:3px solid var(--accent);padding:8px 12px;margin-top:15px}.small{font-size:.82rem}#status{min-height:26px}table{border-collapse:collapse;width:100%;font-size:.91rem}th,td{border-bottom:1px solid var(--edge);padding:7px;text-align:right}th:first-child,td:first-child{text-align:left}
-@media(max-width:750px){.two,.metrics{grid-template-columns:1fr}canvas{height:180px}}
+<script defer src="./assets/ss-app-dft-fft-core.js?v=1"></script>
+<script defer src="./assets/ss-app-fft-butterfly-core.js?v=20261123-numeric"></script>
+<script defer src="./assets/ss-app-fft-path.js?v=20261123-simple"></script>
+<script defer src="./assets/ss-app-dft-fft-simple.js?v=1"></script>
+</head>
+<body>
+<a class="dft-skip" href="#dft-main">Skip to FFT experiment</a>
+<header class="ss-common-header" aria-label="Engineering Learning Studio navigation">
+ <a class="ss-common-home" href="../">← Studio</a>
+ <details class="ss-common-menu"><summary class="ss-common-title">Signals &amp; Systems · Applications <span aria-hidden="true">⌄</span></summary><nav class="ss-common-links" aria-label="Choose chapter"></nav></details>
+ <div class="ss-common-actions">
+  <label class="ss-common-language" for="dft-language"><span class="ss-language-icon" aria-hidden="true">🌐</span>
+   <select class="ss-common-language-select" id="dft-language" aria-label="Language"><option value="mixed">한/영</option><option value="en">English</option><option value="ko">한국어</option></select>
+  </label>
+  <label class="ss-common-theme" for="dft-theme">
+   <select id="dft-theme" data-els-theme-picker aria-label="Theme"><option value="white-clean">White Clean</option><option value="warm-neutral">Warm Neutral</option><option value="warm-dark">Warm Dark</option><option value="navy-dark">Navy Dark</option><option value="neutral-dark">Neutral Dark</option></select>
+  </label>
+ </div>
+</header>
+<main id="dft-main" class="dft-main">
+ <div class="dft-heading">
+  <h1 id="dft-title">DFT vs FFT</h1>
+  <p id="dft-intro">Same result. Different computation. Why is FFT faster?</p>
+ </div>
+ <nav class="dft-tabs" role="tablist" aria-label="DFT vs FFT experiments">
+  <button type="button" role="tab" data-panel="same" id="tab-same" aria-controls="panel-same" aria-selected="true">1 · Same Result</button>
+  <button type="button" role="tab" data-panel="butterfly" id="tab-butterfly" aria-controls="panel-butterfly" aria-selected="false">2 · Butterfly</button>
+  <button type="button" role="tab" data-panel="speed" id="tab-speed" aria-controls="panel-speed" aria-selected="false">3 · Speed</button>
+ </nav>
 
-/* Compact guided lab: experiment controls and results stay in one viewport. */
-main{padding-top:12px}main>h1{font-size:clamp(1.45rem,2.3vw,1.85rem);margin:2px 0}main>.eyebrow{font-size:.72rem}main>h1+p{font-size:.91rem;line-height:1.45;margin:2px 0 8px;max-width:980px}
-.steps{margin:10px 0 9px;gap:7px}.steps button{min-height:40px;padding:7px 10px;font-size:.91rem;min-width:120px}
-.learning-guide{padding:11px 15px;margin:8px 0;box-shadow:none}.learning-guide h3{font-size:1.02rem;margin:0 0 2px}.learning-guide #guide-goal{font-size:.91rem;margin:3px 0}.learning-guide .guide-columns{gap:11px;margin-top:4px}.learning-guide .guide-columns p{font-size:.89rem;line-height:1.48;margin:2px 0}.guide-buttons{margin-top:8px}.guide-buttons button{min-height:34px;padding:5px 10px;font-size:.87rem}
-#intro{margin:8px 0;padding:11px 15px}#intro .formula{padding:9px;margin:7px 0;font-size:1.05rem}#intro p{font-size:.9rem}
-#signal-workspace{margin-top:8px;padding:12px 15px}#signal-workspace>.controls{margin:8px 0 10px;gap:9px}#signal-workspace>.controls label{font-size:.88rem;min-width:90px}#signal-workspace .controls input,#signal-workspace .controls select{min-height:37px;padding:6px 9px}#signal-workspace>.controls #run{min-height:38px;padding:7px 15px;background:var(--accent);color:var(--bg);font-weight:750}
-#signal-workspace .two{gap:10px}.axis-lab{border:1px solid var(--edge);border-radius:11px;padding:11px 13px;margin:7px 0 11px;background:var(--bg)}.axis-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-bottom:8px}.axis-summary>div{border:1px solid var(--edge);border-radius:8px;padding:7px 9px;min-width:0}.axis-summary span{display:block;font-size:.77rem;color:var(--sub)}.axis-summary strong{display:block;font-size:1.07rem;font-variant-numeric:tabular-nums}#frequency-axis{height:174px;width:100%}.axis-presets{display:flex;gap:7px;flex-wrap:wrap}.axis-presets button{padding:5px 9px;min-height:34px;font-size:.83rem}.axis-lab #axis-insight{margin:7px 0;line-height:1.5}@media(max-width:750px){.axis-summary{grid-template-columns:repeat(2,minmax(0,1fr))}#frequency-axis{height:165px}}#signal-workspace h3{font-size:.98rem;margin:0 0 5px}#signal-workspace canvas{height:190px;aspect-ratio:auto}#axis-note{font-size:.82rem;margin:6px 0 0}
-#upload-setup:not([hidden]){border-top:1px solid var(--edge);padding:10px 0 9px;margin-top:6px}#upload-setup>.controls{margin:8px 0}#upload-setup>p{font-size:.85rem}#upload-setup #fixtures-note{margin-bottom:4px}#upload-setup #download-wav{font-size:.85rem;min-height:32px;padding:4px 9px}#upload-setup #file-info{font-size:.84rem}
-#upload{margin:10px 0}#upload .box{margin:8px 0}#upload .metrics{gap:8px}
-#status{min-height:0;margin:4px 0}section.card{scroll-margin-top:65px}.butterfly-lesson{border:1px solid var(--edge);border-radius:12px;padding:13px;margin:12px 0;background:var(--bg)}.butterfly-heading{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.butterfly-heading h3{margin:0}.butterfly-lesson p{margin:5px 0;font-size:.91rem}.butterfly-lesson svg{width:100%;height:auto;display:block;max-height:350px}.butterfly-equation{font-family:"Cambria Math",serif;font-size:1.08rem;padding:8px 0;color:var(--ink)}#butterfly-diagram text{fill:var(--ink);font:14px system-ui}#butterfly-diagram .butterfly-line{stroke:var(--edge);stroke-width:1.5;fill:none}#butterfly-diagram .butterfly-cross{stroke:var(--accent);stroke-width:2;fill:none}#butterfly-diagram .butterfly-node{fill:var(--accent)}@media(max-width:750px){.butterfly-lesson{padding:8px}.butterfly-equation{font-size:.91rem}}#padding-comparison{margin-top:10px}.padding-cards{margin-top:10px}.padding-cards>div{min-width:0}.padding-cards h3{font-size:.94rem;margin:0 0 5px}.padding-stats{font-size:.83rem;color:var(--sub);margin:4px 0 7px}#padding-comparison canvas{height:170px;max-width:100%}#padding-conclusion{font-weight:600;line-height:1.5}.padding-teaching{margin-top:13px;padding-top:12px;border-top:1px solid var(--edge)}.padding-teaching h3{margin:0 0 5px;font-size:1rem}.padding-teaching p{line-height:1.55}.padding-table th,.padding-table td{text-align:left;font-size:.85rem}.padding-table th:first-child{width:34%}.padding-table{overflow-wrap:anywhere}.padding-legend{display:flex;gap:18px;flex-wrap:wrap;margin:8px 0;font-size:.83rem}.padding-legend>span{display:inline-flex;align-items:center;gap:6px}.padding-key{display:inline-block;width:19px;height:5px;border-radius:3px}.padding-key-original{background:#e6a44d}.padding-key-zero{background:#4ab9cc}#padding-comparison #padding-overlay-plot{height:245px;max-width:100%;aspect-ratio:auto}@media(max-width:750px){#padding-comparison #padding-overlay-plot{height:215px}.padding-table th,.padding-table td{font-size:.76rem;padding:5px}}@media(max-width:750px){#padding-comparison .padding-cards{grid-template-columns:1fr}}
-@media(min-width:1100px){.learning-guide .guide-columns{grid-template-columns:1fr 1fr}#signal-workspace .controls label{max-width:210px}}
-@media(max-width:750px){main{padding:11px 12px 35px}.steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.steps button{min-width:0;font-size:.83rem}.learning-guide{padding:11px}.guide-columns{grid-template-columns:1fr}#signal-workspace .two{grid-template-columns:1fr}#signal-workspace canvas{height:175px}#signal-workspace>.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}#signal-workspace>.controls label{min-width:0}#signal-workspace>.controls #run{grid-column:1/-1}#upload-setup .controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}#upload-setup .controls label{min-width:0}#upload-setup input[type=file]{max-width:100%}}
-
-/* FFT 8-point numerical butterfly laboratory */
-#butterfly-lab{margin:12px 0;padding:14px;background:var(--bg)}
-.butterfly-input-row{display:grid;grid-template-columns:minmax(155px,210px) minmax(180px,1fr) auto;gap:10px;align-items:end;margin:13px 0 6px}
-.butterfly-input-row label{display:flex;flex-direction:column;gap:4px;font-size:.88rem;font-weight:700;min-width:0}
-.butterfly-input-row label :is(input,select){width:100%;min-height:39px;font-size:.9rem}
-.butterfly-input-row button{min-height:39px;font-weight:700}
-#butterfly-input-error{padding:8px;border:1px solid #c56b61;border-radius:8px;color:var(--ink)}
-.butterfly-stage-buttons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:13px 0 8px}
-.butterfly-stage-buttons button{min-height:38px;padding:6px 8px;font-size:.85rem;text-align:center}
-.butterfly-stage-buttons button[aria-pressed="true"],.butterfly-operation-buttons button[aria-pressed="true"]{background:var(--panel);border:2px solid var(--accent);font-weight:800}
-.butterfly-stage-summary{font-size:.9rem;min-height:23px;margin:8px 0;color:var(--sub)}
-.butterfly-svg-scroller{overflow-x:auto;max-width:100%;border:1px solid var(--edge);border-radius:9px;background:var(--panel);padding:6px}
-#butterfly-diagram{display:block;width:100%;height:auto;min-width:1050px;max-height:none}
-#butterfly-diagram text{fill:var(--ink);font:13px system-ui,"Malgun Gothic",sans-serif}
-#butterfly-diagram .butterfly-value{font:12px ui-monospace,Consolas,monospace}
-#butterfly-diagram .butterfly-muted{fill:var(--sub)}
-#butterfly-diagram .butterfly-line{stroke:var(--edge);stroke-width:1.35;fill:none}
-#butterfly-diagram .butterfly-cross{stroke:var(--accent);stroke-width:1.55;fill:none;opacity:.57}
-#butterfly-diagram .butterfly-selected{stroke:var(--accent);stroke-width:4.2;opacity:1}
-#butterfly-diagram .butterfly-future{stroke:var(--edge);stroke-width:1;opacity:.19;fill:none}
-#butterfly-diagram .butterfly-node{fill:var(--accent)}
-#butterfly-diagram .butterfly-active-node{fill:var(--accent);stroke:var(--ink);stroke-width:1.9}
-.butterfly-operation-buttons{display:flex;flex-wrap:wrap;gap:7px;margin:11px 0}
-.butterfly-operation-buttons button{padding:5px 10px;font-size:.84rem;min-height:36px}
-.butterfly-inspection{display:grid;grid-template-columns:minmax(240px,1fr) minmax(350px,1.18fr);gap:13px}
-.butterfly-details,.butterfly-table-wrap,#butterfly-dft-compare{min-width:0;background:var(--panel);border:1px solid var(--edge);padding:11px 13px;border-radius:10px}
-.butterfly-inspection h4,#butterfly-dft-compare h4{font-size:.94rem;margin:0 0 8px}
-.butterfly-values{display:grid;grid-template-columns:minmax(105px,1fr) 1.5fr;gap:5px 9px;font:13px/1.5 ui-monospace,Consolas,monospace;overflow-wrap:anywhere}
-.butterfly-values>span:nth-child(odd){color:var(--sub)}
-.butterfly-values>span:nth-child(even){font-weight:700}
-#butterfly-next{margin-top:12px;font-size:.85rem}
-.butterfly-table-scroll,.butterfly-table-wrap{overflow-x:auto}
-.butterfly-table{width:100%;border-collapse:collapse;font:13px/1.45 ui-monospace,Consolas,monospace;white-space:nowrap}
-.butterfly-table th,.butterfly-table td{padding:6px 9px;text-align:left;border-bottom:1px solid var(--edge)}
-.butterfly-table tbody tr[data-butterfly-op]{cursor:pointer}
-.butterfly-table tbody tr[aria-selected="true"]{background:var(--bg);outline:1px solid var(--accent)}
-.butterfly-table tbody tr:focus-visible{outline:3px solid var(--accent)}
-#butterfly-dft-compare{margin-top:12px}
-#butterfly-max-error{font-weight:800;color:var(--ink)}
-#peak-results{max-width:100%;overflow-x:auto;overflow-y:hidden}#peak-analysis,#sensor-physics{min-width:0;max-width:100%}#peak-results table{min-width:390px}
-#butterfly-computation-formula{max-width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;white-space:nowrap;scrollbar-width:thin;font-size:1rem;line-height:1.55}
-#butterfly-computation-formula .katex-display{margin:5px 0;overflow-x:auto;overflow-y:hidden}
-#butterfly-computation-formula .katex{color:var(--ink);font-size:1.06em}
-@media(max-width:900px){.butterfly-inspection{grid-template-columns:1fr}.butterfly-input-row{grid-template-columns:1fr 1fr}.butterfly-input-row button{grid-column:1/-1}}
-@media(max-width:600px){.butterfly-input-row{grid-template-columns:1fr}.butterfly-stage-buttons{grid-template-columns:1fr 1fr}#butterfly-lab{padding:10px}.butterfly-input-row button{grid-column:auto}.butterfly-values{grid-template-columns:1fr 1.4fr}}
-</style><script src="../assets/els-language.js"></script><script src="./assets/ss-common-header.js"></script><script src="../assets/els-theme-v2.js"></script><link rel="stylesheet" href="./assets/ss-app-fft-path.css?v=20261123-contentqa">
-</head><body><header class="ss-common-header" aria-label="Engineering Learning Studio navigation"><a class="ss-common-home" href="../index.html">← Studio</a><a class="ss-common-home" href="./applications.html#part-c" aria-label="Back to Applications Part C">← Applications · FFT</a><details class="ss-common-menu"><summary class="ss-common-title">Signals &amp; Systems · Applications · DFT vs FFT <span aria-hidden="true">⌄</span></summary><nav class="ss-common-links" aria-label="Choose chapter"></nav></details><div class="ss-common-actions"><label class="ss-common-language" for="dft-language"><span class="ss-language-icon" aria-hidden="true">🌐</span><select class="ss-common-language-select" id="dft-language" aria-label="Language"><option value="mixed">한/영</option><option value="en">English</option><option value="ko">한국어</option></select></label><label class="ss-common-theme" for="dft-theme"><select id="dft-theme" data-els-theme-picker aria-label="Theme"></select></label></div></header>
-<main><div class="eyebrow">APPLICATIONS / INTERACTIVE LAB</div><h1>DFT vs FFT · Same spectrum, smarter computation</h1><p data-english="Explore a finite record, confirm identical DFT and FFT results, compare computational cost, and inspect audio or sensor readings." data-korean="유한 신호를 통해 DFT·FFT 결과의 일치성과 계산량 차이를 확인하고 음성·센서 데이터에 적용합니다.">Explore a finite record, confirm identical DFT and FFT results, compare computational cost, and inspect audio or sensor readings.</p>
-<nav class="steps" aria-label="Learning steps"><button data-step="0" aria-current="step">01 · Understand</button><button data-step="1">02 · Observe</button><button data-step="2">03 · Experiment</button><button data-step="3">04 · Discover / Upload</button></nav>
-<section class="learning-guide" aria-labelledby="guide-title"><div class="eyebrow" id="guide-number"></div><h3 id="guide-title"></h3><p id="guide-goal"></p><div class="guide-columns"><div><div class="guide-kicker" id="guide-try-label"></div><p id="guide-task"></p></div><div><div class="guide-kicker" id="guide-question-label"></div><p id="guide-question"></p></div></div><div class="guide-buttons"><button id="guide-reveal" type="button" aria-expanded="false"></button><button id="guide-next" type="button"></button></div><p id="guide-feedback" hidden aria-live="polite"></p></section><section class="card" id="signal-workspace">
-<nav id="intro-path" class="intro-path" aria-label="Understand learning sequence">
-<button type="button" data-intro-part="0" aria-current="step">1 · Signal → Spectrum</button>
-<button type="button" data-intro-part="1">2 · Bin ↔ Hz</button>
-<button type="button" data-intro-part="2">3 · Observe vs Pad</button>
-<button type="button" data-intro-part="3">4 · Eureka</button>
-</nav>
-<p class="intro-path-lead" id="intro-part-lead" aria-live="polite"></p>
-<h3 id="workspace-heading">Input signal and spectrum</h3><p id="stage-focus" class="stage-focus" aria-live="polite"></p><div class="controls">
-<label id="control-signal">Signal<select id="signal"><option value="two">Two tones</option><option value="one" selected>Single tone</option><option value="noise">Tone + deterministic noise</option><option value="upload">Uploaded data</option></select></label>
-<label id="control-size">N (samples)<select id="size"><option>32</option><option>64</option><option>128</option><option>256</option><option selected>512</option><option>1024</option><option>2048</option><option>4096</option><option>8192</option><option>16384</option></select></label>
-<label id="control-fs">fₛ (Hz)<input type="number" id="fs" value="1024" min="0.001" step="any"></label>
-<label id="control-tone">Tone f (Hz)<input id="tone" type="number" min="0" value="128"></label>
-<button id="run">Analyze / 분석</button></div>
-<div id="upload-setup" hidden></div>
-<div class="two" id="signal-graphs"><div id="time-graph-panel"><h3>Time-domain samples</h3><canvas id="time" width="650" height="240" role="img" aria-label="Time domain signal graph"></canvas></div><div id="spectrum-graph-panel"><h3>One-sided amplitude spectrum</h3><canvas id="spectrum" width="650" height="240" role="img" aria-label="FFT amplitude spectrum"></canvas></div></div><p id="axis-note" class="small"></p><section class="card" id="intro"><h2 id="step-title">01 · Understand the DFT</h2><p id="step-desc"></p><div class="box formula" aria-label="Discrete Fourier transform equation">X[k] = Σ<sub>n=0</sub><sup>N−1</sup> x[n] e<sup>−j2πkn/N</sup>, &nbsp; k = 0, …, N−1</div><p class="note">FFT is an algorithm for evaluating this same DFT. It is not a different transform. FFT and DFT use the same N-point input, sign convention, and scaling below.</p></section>
-<section id="frequency-axis-lab" class="axis-lab" aria-label="Frequency axis explorer">
- <div class="axis-summary">
-  <div><span id="axis-df-label">Bin spacing Δf</span><strong id="axis-df">—</strong></div>
-  <div><span id="axis-nyquist-label">Nyquist frequency</span><strong id="axis-nyquist">—</strong></div>
-  <div><span id="axis-duration-label">Record duration T=N/fₛ</span><strong id="axis-duration">—</strong></div>
-  <div><span id="axis-bin-label">Tone position k=fN/fₛ</span><strong id="axis-bin">—</strong></div>
- </div>
- <canvas id="frequency-axis" width="1024" height="174" role="img" aria-label="DFT bin index and physical frequency axis comparison"></canvas>
- <p id="axis-insight" class="note" aria-live="polite"></p>
- <div class="axis-presets"><button type="button" id="axis-double-n">Double N · N × 2</button><button type="button" id="axis-double-fs">Double fₛ · fₛ × 2</button><button type="button" id="axis-reset">Reset comparison</button></div>
-</section>
-<section id="padding-comparison" class="axis-lab" aria-labelledby="padding-title">
- <h3 id="padding-title">Longer observation vs zero-padding</h3>
- <p id="padding-purpose" class="note">Compare two equal-size FFT grids. One uses twice as many measured samples; the other adds zeros to the original record.</p>
- <div class="axis-presets"><button type="button" id="padding-offbin">Try 129 Hz · Off-bin tone</button><button type="button" id="padding-coherent">Try 128 Hz · Bin-centered</button></div>
- <div class="two padding-cards" id="padding-paired-plots">
-  <div><h3 id="padding-long-title">Actual longer observation (2N samples)</h3><div class="padding-stats" id="padding-long-stats"></div><canvas id="padding-long-plot" width="650" height="240" aria-label="Spectrum using 2N actual samples"></canvas></div>
-  <div><h3 id="padding-zero-title">Zero-padding (N samples + N zeros)</h3><div class="padding-stats" id="padding-zero-stats"></div><canvas id="padding-zero-plot" width="650" height="240" aria-label="Spectrum using N original samples and N zeros"></canvas></div>
- </div>
- <p id="padding-conclusion" class="note" aria-live="polite"></p>
- <div class="padding-teaching" id="padding-teaching">
-  <h3 id="padding-teaching-title">What actually changes?</h3>
-  <p id="padding-teaching-intro"></p>
-  <table aria-label="Observation length versus zero padding" class="padding-table">
-   <thead><tr><th id="pad-h-property">Property</th><th id="pad-h-real">2N measured</th><th id="pad-h-zero">N + N zeros</th></tr></thead>
-   <tbody>
-    <tr><th id="pad-row-samples">Observed samples</th><td id="pad-real-samples"></td><td id="pad-zero-samples"></td></tr>
-    <tr><th id="pad-row-time">Observation time</th><td id="pad-real-time"></td><td id="pad-zero-time"></td></tr>
-    <tr><th id="pad-row-grid">Displayed FFT interval</th><td id="pad-real-grid"></td><td id="pad-zero-grid"></td></tr>
-    <tr><th id="pad-row-resolution">Nominal resolution (1/T)</th><td id="pad-real-resolution"></td><td id="pad-zero-resolution"></td></tr>
-   </tbody>
-  </table>
-  <p id="padding-teaching-key" class="note"></p>
- </div>
- <div id="padding-overlay-section" class="padding-teaching">
-  <h3 id="padding-overlay-title">Overlay: original FFT bins and zero-padded samples</h3>
-  <p id="padding-overlay-intro" class="note"></p>
-  <div class="padding-legend"><span><i class="padding-key padding-key-original"></i><span id="padding-original-legend">Original N-point FFT · sampled dots</span></span><span><i class="padding-key padding-key-zero"></i><span id="padding-zero-legend">Zero-padded 2N-point FFT · line</span></span></div>
-  <canvas id="padding-overlay-plot" width="1024" height="320" role="img" aria-label="Original frequency bins as dots overlaid with zero-padded FFT curve"></canvas>
-  <p id="padding-overlay-result" class="note" aria-live="polite"></p>
-  <p id="padding-overlay-question" class="note"></p>
- </div>
- <div id="intro-wrap-up" class="intro-wrap-up">
-  <h3 id="intro-takeaway-title">Three discoveries to remember</h3>
-  <p id="intro-takeaway-1"></p><p id="intro-takeaway-2"></p><p id="intro-takeaway-3"></p>
-  <button type="button" id="intro-finish">Continue to 02 · Observe →</button>
- </div>
-</section>
-</section>
-<section class="card" id="compare"><h3 id="comparison-title">Same N-point result / 동일한 결과 비교</h3><div class="metrics"><div class="metric" id="accuracy-metric"><span>Max |DFT − FFT|</span><strong id="error">—</strong></div><div class="metric" id="dft-speed-metric"><span>Direct DFT · measured</span><strong id="dtime">—</strong></div><div class="metric" id="fft-speed-metric"><span>Radix-2 FFT · measured</span><strong id="ftime">—</strong></div></div><p class="note" id="timing-note"></p><div class="question" id="comparison-explanation"><strong>Why does this matter?</strong><p>Compare identical complex X[k] values, not just matching magnitude plots. Browser timing depends on CPU, warm-up, JIT and load; it is not a hardware benchmark.</p></div></section>
-<section class="card" id="dft-fft-knowledge-check" hidden aria-labelledby="dft-fft-check-title">
-<h3 id="dft-fft-check-title">Knowledge Check</h3>
-<p id="dft-fft-check-question"></p>
-<div class="controls"><label><span id="dft-fft-check-label">Your prediction</span><select id="dft-fft-check-choice"></select></label><button type="button" id="dft-fft-check-button">Check understanding</button></div>
-<p id="dft-fft-check-feedback" role="status" aria-live="polite"></p>
-</section>
-<section class="card" id="growth"><h3>Calculation growth / 계산량 증가</h3>
-<section class="butterfly-lesson" id="butterfly-lab" aria-labelledby="butterfly-heading">
- <div class="butterfly-heading"><h3 id="butterfly-heading">Radix-2 FFT: calculate every butterfly</h3><span class="note" id="butterfly-stage-count">N = 8 · three computation stages</span></div>
- <p id="butterfly-description">Follow real input samples through bit reversal and three radix-2 decimation-in-time butterfly stages. Select one operation to inspect every complex intermediate value.</p>
- <div class="butterfly-input-row">
-  <label><span id="butterfly-preset-label">Choose a signal</span><select id="butterfly-preset">
-    <option value="ramp">Ramp · 0,1,2,…,7</option>
-    <option value="impulse">Unit impulse · x[0]=1</option>
-    <option value="tone">Single tone · one cycle</option>
-    <option value="custom">Your eight samples</option>
-   </select></label>
-  <label class="butterfly-custom-label" id="butterfly-custom-wrap"><span id="butterfly-input-label">8 real samples x[0]…x[7]</span><input type="text" id="butterfly-input" value="0, 1, 2, 3, 4, 5, 6, 7" autocomplete="off" spellcheck="false" aria-describedby="butterfly-input-help"></label>
-  <button type="button" id="butterfly-apply">Calculate 8-point FFT</button>
- </div>
- <p id="butterfly-input-help" class="note">Enter eight finite real numbers separated by commas or spaces. The 8-point trace is independent of the larger-N runtime benchmark above.</p>
- <p id="butterfly-input-error" role="alert" hidden></p>
- <div id="butterfly-stage-buttons" class="butterfly-stage-buttons" role="group" aria-label="Butterfly computation stages">
-  <button type="button" data-butterfly-stage="0">Input · bit reversal</button>
-  <button type="button" data-butterfly-stage="1">1 · 2-point</button>
-  <button type="button" data-butterfly-stage="2">2 · 4-point</button>
-  <button type="button" data-butterfly-stage="3">3 · 8-point</button>
- </div>
- <p id="butterfly-stage-summary" class="butterfly-stage-summary" aria-live="polite"></p>
- <p id="butterfly-scroll-hint" class="note">On small screens, scroll this diagram horizontally to inspect every stage.</p>
- <div class="butterfly-svg-scroller" tabindex="0" role="region" aria-label="Scrollable eight-point FFT butterfly diagram"><svg id="butterfly-diagram" viewBox="0 0 1100 428" role="img" aria-label="Eight point radix two FFT butterfly, values at each intermediate stage and selected operation"></svg></div>
- <div id="butterfly-operation-buttons" class="butterfly-operation-buttons" role="group" aria-label="Choose butterfly operation"></div>
- <div class="butterfly-inspection">
-  <div class="butterfly-details">
-   <h4 id="butterfly-detail-heading">Selected butterfly calculation</h4>
-   <div class="butterfly-equation" id="butterfly-computation-formula" role="math" aria-label="W sub L to power r equals e to negative j two pi r over L; t equals W times v; y a equals u plus t; y b equals u minus t">t = W<sub>L</sub><sup>r</sup> · v; &nbsp; y[a] = u + t; &nbsp; y[b] = u − t</div>
-   <div id="butterfly-operation-detail" class="butterfly-values" aria-live="polite"></div>
-   <button type="button" id="butterfly-next">Next stage →</button>
+ <section id="panel-same" class="dft-panel" role="tabpanel" aria-labelledby="tab-same">
+  <div class="dft-panel-header"><h2 id="same-title">Same samples → Same DFT coefficients</h2>
+  <p id="same-desc">Calculate one signal using direct DFT and radix-2 FFT. Compare their complex results.</p></div>
+  <div class="dft-controls">
+   <label><span id="same-signal-label">Signal</span><select id="same-signal"><option value="tone">Single tone</option><option value="two">Two tones</option><option value="offbin">Off-bin tone</option><option value="impulse">Impulse</option></select></label>
+   <label><span id="same-size-label">N samples</span><select id="same-n"><option>8</option><option>16</option><option selected>64</option><option>128</option><option>256</option><option>512</option></select></label>
+   <label><span id="same-rate-label">Sampling rate fₛ (Hz)</span><input id="same-fs" type="number" min="1" step="any" value="1024"></label>
+   <button id="same-run" type="button" class="dft-primary">Calculate</button>
   </div>
-  <div class="butterfly-table-wrap">
-   <h4 id="butterfly-table-heading">All operations in this stage</h4><p class="note" id="butterfly-table-hint">On narrow screens, swipe sideways to see both output columns.</p>
-   <table class="butterfly-table"><thead><tr><th id="butterfly-col-pair">Pair (a,b)</th><th>W</th><th>u + Wv</th><th>u − Wv</th></tr></thead><tbody id="butterfly-operations-table"></tbody></table>
+  <div class="dft-metrics">
+   <div><span id="metric-err-label">Max |DFT − FFT|</span><strong id="same-error" aria-live="polite">—</strong></div>
+   <div><span id="metric-bin-label">Dominant frequency</span><strong id="same-peak">—</strong></div>
+   <div><span id="metric-grid-label">Bin spacing Δf</span><strong id="same-grid">—</strong></div>
   </div>
+  <div class="dft-paired-plots">
+   <div class="dft-plot-card"><h3 id="plot-time-title">Samples x[n]</h3><svg id="dft-time-plot" viewBox="0 0 640 250" role="img" aria-label="Sampled time-domain signal"></svg></div>
+   <div class="dft-plot-card"><h3 id="plot-spectrum-title">Amplitude |X[k]|</h3><svg id="dft-spectrum-plot" viewBox="0 0 640 250" role="img" aria-label="One-sided FFT amplitude spectrum"></svg></div>
+  </div>
+  <div class="dft-explain">
+   <div class="dft-formula" id="same-formula">X[k] = Σ x[n] e^(−j2πkn/N)</div>
+   <p id="same-discovery">The FFT produces the same complex DFT coefficients within floating-point precision. It is an algorithm, not a new transform.</p>
+  </div>
+  <details class="dft-optional"><summary id="same-table-toggle">Inspect complex coefficients X[k]</summary>
+   <div class="dft-table-scroll"><table><thead><tr><th>k</th><th id="same-th-dft">Direct DFT</th><th id="same-th-fft">FFT</th><th id="same-th-error">|Error|</th></tr></thead><tbody id="same-rows"></tbody></table></div>
+  </details>
+  <p id="same-validation" class="dft-alert" role="alert" hidden></p>
+ </section>
+
+ <section id="panel-butterfly" class="dft-panel" role="tabpanel" aria-labelledby="tab-butterfly" hidden>
+  <div class="dft-panel-header"><h2 id="butterfly-title">How does the 8-point FFT reuse calculations?</h2>
+  <p id="butterfly-desc">Follow bit-reversed samples through three stages. Select one butterfly to inspect its complex multiplication.</p></div>
+  <div class="dft-controls dft-butterfly-controls">
+   <label><span id="butterfly-preset-label">Input</span><select id="butterfly-preset"><option value="ramp">Ramp · x[n]=n</option><option value="impulse">Impulse</option><option value="tone">One-cycle cosine</option><option value="custom">Custom input</option></select></label>
+   <label class="dft-grow"><span id="butterfly-samples-label">Eight real samples</span><input id="butterfly-input" type="text" value="0,1,2,3,4,5,6,7" spellcheck="false"></label>
+   <button id="butterfly-apply" type="button" class="dft-primary">Recalculate</button>
+  </div>
+  <p id="butterfly-error" class="dft-alert" role="alert" hidden></p>
+  <div class="dft-stage-buttons" id="butterfly-stages" role="group" aria-label="Butterfly computation stages">
+   <button type="button" data-stage="0">Input · reorder</button>
+   <button type="button" data-stage="1">1 · Pairs</button>
+   <button type="button" data-stage="2">2 · Combine</button>
+   <button type="button" data-stage="3">3 · Final</button>
+  </div>
+  <p id="butterfly-stage-note" class="dft-stage-note" aria-live="polite"></p>
+  <div class="dft-plot-card dft-butterfly-plot">
+   <div class="dft-scroll-figure" tabindex="0" role="region" aria-label="Scrollable FFT butterfly values">
+    <svg id="butterfly-diagram" viewBox="0 0 1040 380" role="img" aria-label="Eight-point radix-2 FFT intermediate complex values"></svg>
+   </div>
+   <p id="butterfly-scroll-hint" class="dft-caption">On narrow screens, swipe the diagram horizontally.</p>
+  </div>
+  <div class="dft-butterfly-bottom">
+   <div>
+    <div class="dft-inspection-header"><h3 id="butterfly-inspect-title">Selected butterfly</h3><div id="butterfly-pairs" class="dft-pair-buttons" role="group" aria-label="Choose one butterfly"></div></div>
+    <div id="butterfly-details" class="dft-value-grid" aria-live="polite"></div>
+    <div id="butterfly-formula" class="dft-formula">t = W·v; y[a] = u + t; y[b] = u − t</div>
+   </div>
+   <div>
+    <h3 id="butterfly-table-title">Four calculations in this stage</h3>
+    <div class="dft-table-scroll"><table id="butterfly-table"><thead><tr><th>(a,b)</th><th>W</th><th>u+Wv</th><th>u−Wv</th></tr></thead><tbody id="butterfly-rows"></tbody></table></div>
+   </div>
+  </div>
+  <div class="dft-verified" id="butterfly-proof" hidden>
+   <h3 id="butterfly-proof-title">Final verification: FFT = DFT</h3>
+   <p id="butterfly-proof-error"></p>
+   <details class="dft-optional"><summary id="butterfly-proof-toggle">Compare all 8 coefficients</summary>
+    <div class="dft-table-scroll"><table><thead><tr><th>k</th><th>FFT X[k]</th><th>Direct DFT X[k]</th><th>|Error|</th></tr></thead><tbody id="butterfly-proof-rows"></tbody></table></div>
+   </details>
+  </div>
+ </section>
+
+ <section id="panel-speed" class="dft-panel" role="tabpanel" aria-labelledby="tab-speed" hidden>
+  <div class="dft-panel-header"><h2 id="speed-title">Why is FFT faster?</h2>
+  <p id="speed-desc">Change N and compare measured execution time with the growth of DFT and radix-2 FFT operations.</p></div>
+  <div class="dft-controls">
+   <label><span id="speed-n-label">Transform length N</span><select id="speed-n"><option>32</option><option>64</option><option>128</option><option selected>256</option><option>512</option><option>1024</option></select></label>
+   <button type="button" class="dft-primary" id="speed-run">Compare speed</button>
+  </div>
+  <div class="dft-metrics">
+   <div><span id="speed-dft-label">Direct DFT time</span><strong id="speed-dft">—</strong></div>
+   <div><span id="speed-fft-label">Radix-2 FFT time</span><strong id="speed-fft">—</strong></div>
+   <div><span id="speed-ratio-label">Measured speedup</span><strong id="speed-ratio">—</strong></div>
+  </div>
+  <div class="dft-plot-card"><h3 id="speed-chart-title">As N grows: N² vs N log₂N</h3>
+   <svg id="dft-speed-plot" viewBox="0 0 850 310" role="img" aria-label="DFT and FFT asymptotic operation growth curves"></svg>
+  </div>
+  <div class="dft-explain">
+   <div class="dft-formula" id="speed-formula">Direct DFT: O(N²)  |  FFT: O(N log₂ N)</div>
+   <p id="speed-discovery">FFT reuses partial transforms. The chart shows growth rates, not exact instruction counts. Measured times depend on the browser and device.</p>
+  </div>
+ </section>
+ <div class="dft-related"><span id="related-label">Review related lessons:</span>
+  <a id="related-resolution" href="./applications-fft-resolution.html">Frequency Bins &amp; Zero-padding</a>
+  <a id="related-upload" href="./applications-fft-upload.html">Real Audio &amp; Sensor FFT</a>
  </div>
- <div id="butterfly-dft-compare" hidden>
-  <h4 id="butterfly-dft-title">Final proof: FFT equals direct DFT</h4>
-  <p id="butterfly-dft-note" class="note"></p>
-  <div class="butterfly-table-scroll"><table class="butterfly-table"><thead><tr><th>k</th><th>FFT X[k]</th><th>Direct DFT X[k]</th><th>|Error|</th></tr></thead><tbody id="butterfly-dft-rows"></tbody></table></div>
-  <p id="butterfly-max-error" aria-live="polite"></p>
- </div>
- <p id="butterfly-note" class="note">Each stage reuses intermediate complex values. The displayed twiddle factors W are the actual complex weights used in the FFT.</p>
-</section><div class="two"><div><canvas id="complexity" width="650" height="240" role="img" aria-label="Asymptotic work comparison"></canvas></div><div><table><thead><tr><th>N</th><th>DFT N²</th><th>FFT N log₂N</th></tr></thead><tbody id="cost-rows"></tbody></table><p class="note">Illustrative growth terms, not literal operation counts. FFT implementation constants and actual timing may differ.</p></div></div></section>
-<section class="card" id="upload"><h3 id="upload-heading">Real data / 음성·센서 데이터 분석</h3><p class="note" id="upload-transfer"><span id="upload-transfer-intro">Preview uploaded-signal FFT here; the full investigation follows in the dedicated lab.</span> <a href="./applications-fft-upload.html" id="upload-transfer-link">Real Audio &amp; Sensor FFT →</a></p><p id="upload-description">Choose WAV/MP3 audio (browser decoding) or CSV/TXT sensor measurements. All processing runs locally in your browser; no file is uploaded to a server.</p>
-<p class="note" id="fixtures-note">Reference datasets · 기준 데이터: <a href="./tests/fixtures/dft-fft-vibration-64-160hz.csv" download>Sensor CSV (64 + 160 Hz)</a> · <button type="button" id="download-wav">Download synthetic audio WAV (250 + 750 Hz)</button>. These are controlled test signals, not human voice recordings or physical sensor measurements.</p>
-<div class="controls" id="upload-controls"><label>Load file<input id="file" type="file" accept=".wav,.mp3,.m4a,.ogg,.csv,.txt,audio/*,text/csv,text/plain"></label>
-<label>CSV sample-rate (Hz)<input id="csvfs" type="number" min=".001" step="any" placeholder="optional"></label>
-<label>CSV column<select id="column"><option value="auto">Auto / last numeric column</option><option value="0">Column 1</option><option value="1">Column 2</option><option value="2">Column 3</option><option value="3">Column 4</option></select></label>
-<label>Start sample<input id="offset" type="number" min="0" value="0"></label></div>
-<p class="note" id="upload-frame-note">The frame uses exactly N samples. Select N ≤ available samples; fₛ may be overridden after upload to correct sensor metadata. · 분석에는 정확히 N개 샘플을 사용합니다. 파일 업로드 후 fₛ 입력값을 수정할 수 있습니다.</p>
-<p id="file-info" aria-live="polite">No file selected. For CSV: one numeric sample per row, or time,value rows with numeric time in seconds. A header is allowed.</p>
-<div class="box" id="peak-analysis" aria-live="polite"><h3 id="peak-heading">Detected frequency components · 주요 주파수 자동 분석</h3><p id="peak-explanation">Choose or upload a signal to inspect its prominent spectral peaks.</p><div id="peak-results"></div><p class="note" id="peak-caution"></p></div><div class="box" id="sensor-physics"><h3 data-base-text="Sensor physics · frequency to RPM and period">Sensor physics · frequency to RPM and period</h3><p data-base-text="Interpret a selected spectral peak as a periodic event. RPM requires a verified events-per-revolution assumption.">Interpret a selected spectral peak as a periodic event. RPM requires a verified events-per-revolution assumption.</p>
-<div class="controls"><label><span data-base-text="Observed peak">Observed peak</span><select id="physics-peak"></select></label>
-<label><span data-base-text="Events per revolution">Events per revolution</span><input id="events-per-rev" type="number" min="0.001" step="any" value="1"></label></div>
-<div class="metrics"><div class="metric"><span data-base-text="Peak frequency">Peak frequency</span><strong id="physics-hz">—</strong></div><div class="metric"><span data-base-text="Oscillation period">Oscillation period</span><strong id="physics-period">—</strong></div><div class="metric"><span data-base-text="Conditional shaft speed">Conditional shaft speed</span><strong id="physics-rpm">—</strong></div></div>
-<p id="physics-harmonics" class="note"></p><p id="physics-note" class="note" aria-live="polite"></p></div>
-<div class="question"><strong>Investigate</strong><p>What frequencies dominate the record? How does window length affect Δf = fₛ/N? If the sampling rate is unknown, report cycles/sample rather than inventing Hz. Can you distinguish closely spaced tones?</p></div></section>
-<p id="status" role="status" aria-live="polite"></p>
-</main><script src="./assets/ss-app-fft-butterfly-core.js?v=20261123-numeric"></script>
-<script>
-(()=>{
-"use strict";
-const $=id=>document.getElementById(id), $all=s=>Array.from(document.querySelectorAll(s));
-let step=0,upload=null;
-const steps=[
-["01 · Understand","N samples are mapped into N complex frequency coefficients. Adjust a sinusoid and observe its bin location. · DFT는 N개의 샘플을 N개의 복소 주파수 계수로 변환합니다."],
-["02 · Observe","Direct DFT and FFT compute the same complex coefficients. Inspect their maximum numerical discrepancy. · 같은 데이터를 두 계산법으로 분석합니다."],
-["03 · Experiment","Increase N and compare measured runtime with N² versus N log₂N growth. · 데이터 길이가 길어질 때 계산시간 변화를 비교합니다."],
-["04 · Discover","Upload real audio or sensor data, specify fₛ when known, and find the prominent frequency components. · 실측 파일의 숨겨진 주파수를 찾아보세요."]];
-const missions=[[["Find the hidden frequency","숨은 주파수 찾기"],["Predict the DFT bin from the sampling rate and record length.","샘플링 주파수와 데이터 길이로 DFT bin을 예측합니다."],["Set Single tone, N=512, fₛ=1024 Hz, f=128 Hz, then Analyze.","Single tone, N=512, fₛ=1024 Hz, f=128 Hz로 설정하고 분석하세요."],["Is the largest peak at bin 64 or bin 128? Why?","가장 큰 피크는 64번 bin일까요, 128번 bin일까요? 이유는?"],["k=fN/fₛ = 64; the physical frequency is 128 Hz. Bin number and Hz are different quantities.","k=fN/fₛ=64이고 실제 주파수는 128 Hz입니다. bin 번호와 Hz는 다릅니다."]],[["Same spectrum, two methods","동일한 결과, 다른 계산법"],["Verify complex DFT–FFT equivalence within numerical error.","복소 DFT–FFT 값이 수치 오차 범위에서 일치함을 확인합니다."],["At N=512, compare Max |DFT−FFT| for two frequencies. Runtime will be explored in Step 3.","N=512에서 두 주파수의 최대 복소 오차를 비교하세요. 실행 시간은 3단계에서 탐구합니다."],["Does a faster algorithm create different frequency information?","빠른 알고리즘으로 계산하면 다른 주파수 정보를 얻을까요?"],["No. With the same N and input, FFT computes the same DFT. Small differences are floating-point errors.","아닙니다. 같은 N과 입력에서 FFT는 동일한 DFT를 계산합니다. 작은 차이는 부동소수점 오차입니다."]],[["Why FFT matters","FFT가 필요한 이유"],["Compare theoretical growth against observed browser execution times.","이론적 계산량 증가와 브라우저 측정 시간을 구분합니다."],["Try N=128, 512, 2048, then 4096. Find where direct DFT is skipped.","N=128, 512, 2048, 4096을 시도하고 직접 DFT가 생략되는 구간을 확인하세요."],["Will doubling N always double runtime?","N이 두 배이면 실행 시간도 항상 두 배일까요?"],["No. DFT grows as O(N²); radix-2 FFT grows as O(N log₂N). Measured times depend on JIT and CPU load.","아닙니다. DFT는 O(N²), radix-2 FFT는 O(N log₂N)으로 증가하며 실측 시간은 JIT와 CPU 부하에도 영향을 받습니다."]],[["Find meaning in real data","실제 데이터에서 의미 찾기"],["Connect FFT peak locations to physical meaning without overclaiming.","피크 위치를 물리량과 연결하되 근거 없는 단정은 피합니다."],["Upload the reference sensor CSV at N=512. Find 64 Hz and 160 Hz; set events per revolution to 1 and 2.","센서 CSV를 N=512로 올려 64 Hz와 160 Hz를 찾고 회전당 이벤트 수를 1, 2로 바꿔 보세요."],["Does 64 Hz always mean 3840 RPM? What if fₛ is unknown?","64 Hz는 항상 3840 RPM일까요? fₛ를 모르면 어떻게 되나요?"],["3840 RPM assumes one event per revolution; two events imply 1920 RPM. Unknown fₛ means cycles/sample, not Hz or RPM.","3840 RPM은 회전당 1회 이벤트 가정이며, 2회이면 1920 RPM입니다. fₛ가 없으면 cycles/sample만 알 수 있습니다."]]];
-function renderMission(){const m=missions[step],put=(id,pair)=>$(id).textContent=L(...pair);
-$("guide-number").textContent="LEARNING MISSION "+String(step+1).padStart(2,"0")+" / 04";
-put("guide-title",m[0]);put("guide-goal",m[1]);put("guide-task",m[2]);put("guide-question",m[3]);put("guide-feedback",m[4]);
-$("guide-try-label").textContent=L("TRY THIS","직접 해보기");$("guide-question-label").textContent=L("PREDICT & EXPLAIN","예측하고 설명하기");
-$("guide-feedback").hidden=true;$("guide-reveal").setAttribute("aria-expanded","false");$("guide-reveal").textContent=L("Reveal explanation","해설 보기");
-$("guide-next").textContent=step===3?L("Return to step 1 ↺","첫 단계로 ↺"):L("Next step →","다음 단계 →");
-}
-let introPart=0;
-const introParts=[
- {label:["1 · Signal → Spectrum","1 · 신호 → 스펙트럼"],lead:["First, create one tone. Predict and locate its frequency peak in the time and frequency plots.","먼저 정현파 하나를 만들고 시간·주파수 그래프에서 피크를 찾으세요."]},
- {label:["2 · Bin ↔ Hz","2 · Bin ↔ Hz"],lead:["Keep the tone fixed; change N and fₛ separately to see how bin index and the Hz axis change.","정현파는 그대로 두고 N과 fₛ를 각각 바꾸어 bin 번호와 Hz 축의 변화를 확인하세요."]},
- {label:["3 · Observe vs Pad","3 · 관측 vs Padding"],lead:["Compare two 2N-point spectra: one from 2N real samples, the other from N samples followed by N zeros.","2N개의 실제 관측과 N개의 관측 뒤에 N개의 0을 추가한 경우를 비교하세요."]},
- {label:["4 · Eureka","4 · 핵심 발견"],lead:["Overlay the old FFT dots and the new padded curve. Check that the original points stay unchanged.","원래 FFT 점과 Zero-padding한 곡선을 겹쳐 원래 결과가 그대로 보존되는지 확인하세요."]}
-];
-function renderIntroPart(){
- $("intro-path").querySelectorAll("[data-intro-part]").forEach(b=>{const i=Number(b.dataset.introPart);b.setAttribute("aria-current",i===introPart?"step":"false");b.textContent=L(...introParts[i].label)});
- $("intro-part-lead").textContent=L(...introParts[introPart].lead);
- $("intro").hidden=introPart!==0;
- $("signal-graphs").hidden=introPart>=2;
- $("axis-note").hidden=introPart>=2;
- $("frequency-axis-lab").hidden=introPart!==1;
- $("padding-comparison").hidden=introPart<2;
- $("padding-paired-plots").hidden=introPart!==2;
- $("padding-conclusion").hidden=introPart!==2;
- $("padding-teaching").hidden=introPart!==2;
- $("padding-overlay-section").hidden=introPart!==3;
- $("intro-wrap-up").hidden=introPart!==3;
- const values=[
-  ["You can locate a tone using the waveform and the corresponding spectral peak.","시간 파형과 스펙트럼 피크를 비교하면 정현파의 주파수를 찾을 수 있습니다."],
-  ["N and fₛ determine the mapping from bin number to Hz: Δf=fₛ/N.","N과 fₛ가 bin 번호와 Hz의 대응 관계를 결정합니다: Δf=fₛ/N."],
-  ["Zero-padding adds frequency samples, not measured time. More actual observations improve the nominal resolution scale 1/T.","Zero-padding은 측정 시간이 아닌 주파수 표시점을 늘립니다. 실제 관측 시간이 늘어나야 분해능 척도 1/T가 작아집니다."]
- ];
- $("intro-takeaway-title").textContent=L("Three discoveries to remember","기억해야 할 세 가지 핵심");
- values.forEach((pair,i)=>$("intro-takeaway-"+(i+1)).textContent=(i+1)+". "+L(...pair));
- $("intro-finish").textContent=L("Continue to 02 · Observe →","02 · Observe로 이동 →");
- if(step===0)$("guide-next").textContent=introPart<3?L("Next discovery →","다음 발견 →"):L("Continue to 02 · Observe →","02 · Observe로 이동 →");
-}
-$("intro-path").querySelectorAll("[data-intro-part]").forEach(b=>b.addEventListener("click",()=>{
- introPart=Number(b.dataset.introPart);renderIntroPart();$("signal-workspace").scrollIntoView({behavior:"smooth",block:"start"});
-}));
-$("intro-finish").addEventListener("click",()=>{setStep(1);document.querySelector(".steps").scrollIntoView({behavior:"smooth",block:"start"})});
-const stageFocus=[
-["Quick recap: bins, Hz and zero-padding were introduced in the Resolution lab. Here they support the DFT-versus-FFT comparison.","빠른 복습: Bin·Hz·Zero-padding은 분해능 실습에서 다룬 개념입니다. 여기서는 DFT와 FFT의 계산 원리를 이해하기 위해 다시 활용합니다."],
-["Compare complex DFT and FFT results; runtime belongs to the next step.","DFT와 FFT의 복소 결과 오차에 집중하세요. 실행 시간은 다음 단계에서 비교합니다."],
-["Vary N and compare measured times with theoretical work growth.","N을 변경하며 실측 시간과 이론적 계산량 증가를 비교하세요."],
-["Upload a signal; compare its waveform, spectral peaks, and physical meaning.","신호를 업로드한 뒤 파형·스펙트럼 피크·물리적 의미를 비교하세요."]
-];
-const computationChecks=[
- {question:["With identical N samples, what fundamentally differs between direct DFT and FFT?","같은 N개 표본에 대해 직접 DFT와 FFT의 본질적인 차이는 무엇인가요?"],
-  options:[["The resulting X[k] values","계산 결과 X[k]"],["The algorithm used to compute the same X[k]","같은 X[k]를 계산하는 알고리즘"],["The sampling rate","샘플링 주파수"]],correct:1,
-  why:["FFT changes the computation strategy, not the defined DFT. Tiny numerical errors may remain.","FFT는 DFT의 정의가 아닌 계산 방식을 바꿉니다. 매우 작은 수치 오차는 발생할 수 있습니다."]},
- {question:["When N doubles, which asymptotic statement best explains the FFT advantage?","N이 두 배가 될 때 FFT의 이점을 가장 잘 설명하는 것은 무엇인가요?"],
-  options:[["Direct DFT has quadratic work, while radix-2 FFT grows approximately N log₂N","직접 DFT는 N², radix-2 FFT는 대략 N log₂N으로 증가합니다."],["FFT needs zero operations","FFT의 연산량은 0입니다."],["Both methods require exactly the same work","두 방법의 연산량은 항상 같습니다."]],correct:0,
-  why:["The plotted curves describe growth rates, not exact instructions or guaranteed browser timings.","그래프는 연산 증가율을 보여주며 정확한 명령어 수나 브라우저 실행 시간을 보장하지는 않습니다."]}
-];
-function renderComputationCheck(){
- const item=step===1?computationChecks[0]:computationChecks[1],field=$("dft-fft-check-choice");
- $("dft-fft-check-title").textContent=L("Quick check · Is the concept clear?","핵심 확인 · 개념을 이해했나요?");
- $("dft-fft-check-question").textContent=L(...item.question);
- $("dft-fft-check-label").textContent=L("Choose one answer","답을 선택하세요");
- $("dft-fft-check-button").textContent=L("Check understanding","이해도 확인");
- field.replaceChildren();
- const choose=document.createElement("option");choose.value="";choose.textContent=L("Select your answer","답을 선택하세요");field.append(choose);
- item.options.forEach((pair,i)=>{const option=document.createElement("option");option.value=String(i);option.textContent=L(...pair);field.append(option)});
- $("dft-fft-check-feedback").textContent="";
-}
-$("dft-fft-check-button").addEventListener("click",()=>{
- const selected=$("dft-fft-check-choice").value,box=$("dft-fft-check-feedback"),item=step===1?computationChecks[0]:computationChecks[1];
- if(selected===""){box.textContent=L("Choose an answer first.","먼저 답을 선택하세요.");return;}
- const correct=Number(selected)===item.correct;box.dataset.result=correct?"correct":"incorrect";
- box.textContent=correct?L("Correct. ","정답입니다. ")+L(...item.why):L("Try again. Observe the results above before choosing.","위의 결과를 관찰한 뒤 다시 선택하세요.");
-});
-function setStep(v){
- step=v;$all("[data-step]").forEach(b=>b.setAttribute("aria-current",Number(b.dataset.step)===v?"step":"false"));
- $("step-title").textContent=L(...stepsLocalized[v][0]);$("step-desc").textContent=L(...stepsLocalized[v][1]);
- $all("[data-step]").forEach((b,i)=>{const names=[["01 · Understand","01 · 이해"],["02 · Observe","02 · 관찰"],["03 · Experiment","03 · 실험"],["04 · Discover / Upload","04 · 실제 데이터"]];b.textContent=L(...names[i])});
- $("intro").hidden=v!==0;$("compare").hidden=!(v===1||v===2);$("growth").hidden=v!==2;$("dft-fft-knowledge-check").hidden=!(v===1||v===2);
- $("upload").hidden=v!==3;$("upload-setup").hidden=v!==3;
- $("signal-graphs").hidden=v===2;$("frequency-axis-lab").hidden=v!==0;$("padding-comparison").hidden=v!==0;$("intro-path").hidden=v!==0;$("intro-part-lead").hidden=v!==0;
- $("signal-graphs").classList.toggle("spectrum-only",v===1);
- $("time-graph-panel").hidden=v===1;
- $("axis-note").hidden=v===2;
- $("accuracy-metric").hidden=v!==1;
- $("dft-speed-metric").hidden=v!==2;$("fft-speed-metric").hidden=v!==2;
- $("timing-note").hidden=v!==2;$("comparison-explanation").hidden=v!==1;
- $("compare").querySelector(".metrics").className="metrics "+(v===1?"metrics-one":"metrics-two");
- $("control-tone").hidden=v===2||v===3;
- $("control-fs").hidden=v===2;
- $("control-signal").hidden=v===2||v===3;
- $("workspace-heading").textContent=v===2?L("Choose the record length N","데이터 길이 N 선택"):v===3?L("Upload and inspect a signal","데이터 업로드와 신호 관찰"):L("Input signal and spectrum","입력 신호와 스펙트럼");
- $("stage-focus").textContent=L(...stageFocus[v]);
- $("comparison-title").textContent=v===2?L("Execution time comparison","계산 시간 비교"):L("Numerical equivalence: DFT vs FFT","수치 결과 일치성: DFT vs FFT");
- renderMission();
- if(v===1||v===2)renderComputationCheck();
- if(v===0)renderIntroPart();
-}
-$("guide-reveal").onclick=()=>{const e=$("guide-feedback");e.hidden=!e.hidden;$("guide-reveal").setAttribute("aria-expanded",String(!e.hidden));$("guide-reveal").textContent=e.hidden?L("Reveal explanation","해설 보기"):L("Hide explanation","해설 접기")};
-$("guide-next").onclick=()=>{
- if(step===0&&introPart<3){introPart++;renderIntroPart();$("signal-workspace").scrollIntoView({block:"start",behavior:"smooth"});return;}
- setStep((step+1)%4);document.querySelector(".steps").scrollIntoView({block:"start",behavior:"smooth"});
-};
-$all("[data-step]").forEach(b=>b.onclick=()=>{setStep(+b.dataset.step);if(step===3)$("signal-workspace").scrollIntoView({behavior:"smooth",block:"nearest"});});
-const language=()=>window.ELSLanguage?.get()||"mixed";
-const L=(en,ko)=>language()==="en"?en:language()==="ko"?ko:en+" · "+ko;
-const stepsLocalized=[
- [["01 · Understand","01 · 이해"],["Understand how N time samples become N complex DFT coefficients.","N개 시간 샘플이 N개 복소 DFT 계수가 되는 원리를 이해합니다."]],
- [["02 · Observe","02 · 관찰"],["Direct DFT and FFT compute the same X[k] values within numerical precision.","직접 DFT와 FFT가 수치 오차 범위에서 같은 X[k]를 계산함을 확인합니다."]],
- [["03 · Experiment","03 · 실험"],["Increase N and compare measured runtime and asymptotic growth.","N을 늘리며 실행 시간과 계산 복잡도를 비교합니다."]],
- [["04 · Discover","04 · 발견"],["Analyze real audio or sensor data and interpret dominant frequency components.","실제 음성 또는 센서 데이터의 주파수 피크와 물리적 의미를 분석합니다."]]
-];
-const optionTranslations={"Two tones":"정현파 2개","Single tone":"정현파 1개","Tone + deterministic noise":"정현파 + 합성 잡음","Uploaded data":"업로드한 데이터","Auto / last numeric column":"자동 / 마지막 숫자 열","Column 1":"1열","Column 2":"2열","Column 3":"3열","Column 4":"4열"};
-const translations={
-"DFT vs FFT · Same spectrum, smarter computation":"DFT와 FFT · 동일한 스펙트럼, 효율적인 계산",
-"Explore a finite record, confirm identical transform results, measure calculation cost, and inspect uploaded audio or sensor readings. · DFT와 FFT의 동일한 결과 및 계산 속도를 비교하고 실제 데이터를 분석합니다.":"유한 신호의 DFT·FFT 결과, 계산 시간 및 실제 음성·센서 데이터를 분석합니다.",
-"FFT is an algorithm for evaluating this same DFT. It is not a different transform. FFT and DFT use the same N-point input, sign convention, and scaling below.":"FFT는 동일한 DFT를 효율적으로 계산하는 알고리즘입니다. 같은 입력 길이, 부호 및 정규화 조건을 적용합니다.",
-"Input record / 입력 신호":"입력 신호","Sensor physics · frequency to RPM and period":"센서 물리 해석 · 주파수를 RPM과 주기로 변환","Interpret a selected spectral peak as a periodic event. RPM requires a verified events-per-revolution assumption.":"선택한 피크를 반복 이벤트로 해석합니다. RPM 계산에는 회전당 이벤트 수에 대한 검증된 가정이 필요합니다.","Observed peak":"관측 피크","Events per revolution":"회전당 이벤트 수","Peak frequency":"피크 주파수","Oscillation period":"진동 주기","Conditional shaft speed":"가정에 따른 축 회전수","Time-domain samples":"시간 영역 샘플","One-sided amplitude spectrum":"단측 진폭 스펙트럼",
-"Same N-point result / 동일한 결과 비교":"동일한 N점 결과 비교","Calculation growth / 계산량 증가":"계산량 증가",
-"Real data / 음성·센서 데이터 분석":"실제 음성·센서 데이터 분석","Detected frequency components · 주요 주파수 자동 분석":"검출된 주요 주파수 성분",
-"Why does this matter?":"왜 중요한가요?","Investigate":"탐구 과제","Load file":"파일 선택",
-"CSV sample-rate (Hz)":"CSV 샘플링 주파수 (Hz)","CSV column":"CSV 열","Start sample":"시작 샘플",
-"Analyze / 분석":"분석","Signal":"신호","Tone f (Hz)":"정현파 주파수 (Hz)",
-"Direct DFT · measured":"직접 DFT · 실측 시간","Radix-2 FFT · measured":"Radix-2 FFT · 실측 시간",
-"Choose WAV/MP3 audio (browser decoding) or CSV/TXT sensor measurements. All processing runs locally in your browser; no file is uploaded to a server.":"WAV/MP3 등의 오디오 파일 또는 CSV/TXT 센서 데이터를 선택합니다. 파일 분석은 브라우저에서 로컬로 수행됩니다.",
-"Compare identical complex X[k] values, not just matching magnitude plots. Browser timing depends on CPU, warm-up, JIT and load; it is not a hardware benchmark.":"크기 그래프뿐 아니라 복소 X[k]의 일치 여부를 확인합니다. 실행 시간은 CPU, JIT, 시스템 부하에 영향을 받습니다.",
-"Illustrative growth terms, not literal operation counts. FFT implementation constants and actual timing may differ.":"이론적인 증가율 비교이며 정확한 연산 횟수 또는 실제 속도 향상 배수는 아닙니다.",
-"No file selected. For CSV: one numeric sample per row, or time,value rows with numeric time in seconds. A header is allowed.":"파일을 선택하지 않았습니다. CSV는 행마다 값 하나 또는 시간(초),값을 입력합니다. 헤더가 있어도 됩니다.",
-"Choose or upload a signal to inspect its prominent spectral peaks.":"신호를 선택하거나 업로드하면 주요 주파수 피크를 분석합니다.",
-"What frequencies dominate the record? How does window length affect Δf = fₛ/N? If the sampling rate is unknown, report cycles/sample rather than inventing Hz. Can you distinguish closely spaced tones?":"어떤 주파수가 우세한가요? N과 Δf=fₛ/N은 어떤 관계인가요? fₛ가 없으면 Hz 대신 cycles/sample로 보고해야 합니다."
-};
-function localize(){
-const mode=language();
-$("upload-transfer-intro").textContent=L("This is a quick transfer exercise. Complete the full recording/sensor investigation in the next dedicated lab.","이 단계는 적용을 미리 체험합니다. 실제 음성·센서 데이터에 대한 심화 분석은 별도 실습에서 진행합니다.");
-$("upload-transfer-link").textContent=L("Real Audio & Sensor FFT →","실제 음성·센서 FFT 실습 →");
-$("butterfly-heading").textContent=L("Radix-2 FFT: reuse smaller transforms","Radix-2 FFT: 작은 변환 결과 재활용");
-
-$("butterfly-description").textContent=L("An 8-point FFT has three butterfly stages. Inputs appear in bit-reversed order; the stages combine length-2, length-4 and length-8 results.","8점 FFT는 세 단계의 버터플라이 연산으로 구성됩니다. 입력을 비트 반전 순서로 배치하고 2점·4점·8점의 결과를 결합합니다.");
-$("butterfly-note").textContent=L("Each butterfly reuses intermediate complex values rather than separately summing N input terms for every output. This diagram shows the data connections, not every twiddle-factor value.","각 버터플라이는 중간 복소수 계산을 재사용하므로 출력마다 N개의 입력을 독립적으로 더할 필요가 없습니다. 이 그림은 데이터 연결 구조를 보여주며 모든 회전인자 값을 표시하지는 않습니다.");document.documentElement.lang=mode==="en"?"en":"ko";
-document.querySelectorAll("[data-english]").forEach(el=>{el.textContent=L(el.dataset.english,el.dataset.korean)});
-document.querySelectorAll("[data-base-text]").forEach(el=>{const en=el.dataset.baseText,ko=translations[en];if(ko)el.textContent=L(en,ko)});
-document.querySelectorAll("option[data-base-option]").forEach(el=>{const en=el.dataset.baseOption;el.textContent=L(en,optionTranslations[en])});
-setStep(step);if(window.__dftReady)run(false);
-}
-document.querySelectorAll("h1,h2,h3,p,strong,button,label,span").forEach(el=>{if(el.children.length===0){const value=el.textContent.trim();if(translations[value])el.dataset.baseText=value;}});
-document.querySelectorAll("option").forEach(el=>{if(optionTranslations[el.textContent.trim()])el.dataset.baseOption=el.textContent.trim()});
-window.ELSLanguage?.subscribe(localize);
-window.addEventListener("els:themechange",()=>{if(window.__dftReady)run(false)});
-
-function radix2(x){const N=x.length,re=new Float64Array(N),im=new Float64Array(N);for(let i=0;i<N;i++)re[i]=x[i];for(let i=1,j=0;i<N;i++){let b=N>>1;for(;j&b;b>>=1)j^=b;j^=b;if(i<j){[re[i],re[j]]=[re[j],re[i]];[im[i],im[j]]=[im[j],im[i]];}}for(let len=2;len<=N;len*=2){const ar=-2*Math.PI/len;for(let p=0;p<N;p+=len)for(let j=0;j<len/2;j++){const a=ar*j,c=Math.cos(a),s=Math.sin(a),u=p+j,v=u+len/2,tr=c*re[v]-s*im[v],ti=s*re[v]+c*im[v];re[v]=re[u]-tr;im[v]=im[u]-ti;re[u]+=tr;im[u]+=ti;}}return {re,im}}
-function direct(x){const N=x.length,re=new Float64Array(N),im=new Float64Array(N);for(let k=0;k<N;k++){const ang=-2*Math.PI*k/N,c=Math.cos(ang),s=Math.sin(ang);let cr=1,ci=0,sr=0,si=0;for(let n=0;n<N;n++){sr+=x[n]*cr;si+=x[n]*ci;const nr=cr*c-ci*s;ci=cr*s+ci*c;cr=nr;}re[k]=sr;im[k]=si;}return {re,im}}
-function benchmark(fn,x,reps){let y;for(let j=0;j<2;j++)y=fn(x);const t=[];for(let j=0;j<reps;j++){const start=performance.now();y=fn(x);t.push(performance.now()-start)}return {result:y,ms:t.sort((a,b)=>a-b)[Math.floor(t.length/2)]}}
-function synthetic(N,fs){const x=new Float64Array(N),f=Number($("tone").value)||128,kind=$("signal").value;for(let i=0;i<N;i++){const t=i/fs;let v=Math.sin(2*Math.PI*f*t);if(kind==="two")v+=.5*Math.sin(2*Math.PI*2.5*f*t);if(kind==="noise")v+=.25*(Math.sin(i*12.9898)*43758.5453%1);x[i]=v;}return x}
-function draw(id,values,xMax,yLabel,peakLabels){const canvas=$(id),ctx=canvas.getContext("2d"),W=canvas.width,H=canvas.height,pad=48,ink=getComputedStyle(document.body).getPropertyValue("--ink").trim(),edge=getComputedStyle(document.body).getPropertyValue("--edge").trim(),accent=getComputedStyle(document.body).getPropertyValue("--accent").trim();ctx.clearRect(0,0,W,H);ctx.strokeStyle=edge;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad,12);ctx.lineTo(pad,H-31);ctx.lineTo(W-8,H-31);ctx.stroke();let hi=0;for(const v of values)hi=Math.max(hi,Math.abs(v));hi=hi||1;ctx.fillStyle=ink;ctx.font="13px system-ui";ctx.fillText(id==="spectrum"?"Amplitude |X[k]|":"x[n]",9,17);ctx.fillText(yLabel,W/2-30,H-9);ctx.fillText("0",pad-13,H-13);ctx.fillText(Number(xMax).toLocaleString("en-US",{maximumFractionDigits:2}),W-100,H-13);ctx.strokeStyle=accent;ctx.lineWidth=1.8;ctx.beginPath();const visible=values.length,isSpectrum=id==="spectrum";for(let i=0;i<visible;i++){const xp=pad+i/Math.max(1,visible-1)*(W-pad-10),yp=isSpectrum?(H-31)-(Math.max(0,values[i])/hi)*(H-45):12+(1-(values[i]/hi+1)/2)*(H-44);if(i===0)ctx.moveTo(xp,yp);else ctx.lineTo(xp,yp);}ctx.stroke();if(peakLabels){ctx.fillStyle=ink;ctx.fillText(peakLabels,W-190,17)}}
-const butterflyCore=window.SSButterfly8;
-let butterflyStage=1,butterflyOperation=0,butterflyTrace=butterflyCore.trace(butterflyCore.presets.ramp);
-function butterflyRow(label,value,root){
- const a=document.createElement("span"),b=document.createElement("span");
- a.textContent=label;b.textContent=value;root.append(a,b);
-}
-function positionButterflyDiagram(){
- const scroller=document.querySelector(".butterfly-svg-scroller");
- if(!scroller)return;
- if(window.innerWidth<=750){
-  const max=Math.max(0,scroller.scrollWidth-scroller.clientWidth);
-  scroller.scrollLeft=Math.round(butterflyStage/3*max);
- }else scroller.scrollLeft=0;
-}
-window.addEventListener("resize",positionButterflyDiagram);
-function butterflyChoice(stage,operation){
- butterflyStage=stage;butterflyOperation=operation;drawButterfly();
- positionButterflyDiagram();
-}
-function drawButterfly(){
- const core=butterflyCore,trace=butterflyTrace,fmt=core.format,stage=butterflyStage;
- $("butterfly-heading").textContent=L("8-point FFT · inspect every complex butterfly","8점 FFT · 버터플라이 복소수 계산 살펴보기");
- $("butterfly-stage-count").textContent=L("N = 8 · three computation stages","N = 8 · 세 단계의 계산");
- $("butterfly-scroll-hint").textContent=L("On small screens, scroll this diagram horizontally to inspect every stage.","모바일 화면에서는 그림을 좌우로 스크롤하여 각 단계를 확인하세요.");
- $("butterfly-description").textContent=L(
-  "Follow bit-reversed input samples through three radix-2 decimation-in-time stages. Select a pair to inspect u, v, twiddle W, product Wv and both output values.",
-  "입력의 비트 반전 배치를 확인하고 radix-2 DIT의 세 단계를 따라가세요. 한 연산을 선택하면 u, v, 회전인자 W, 곱 Wv 및 두 출력 값을 볼 수 있습니다.");
- $("butterfly-preset-label").textContent=L("Choose input","입력 신호 선택");
- $("butterfly-input-label").textContent=L("Eight real samples x[0]…x[7]","실수 표본 8개 x[0]…x[7]");
- $("butterfly-input-help").textContent=L("Enter exactly eight finite real samples. This 8-point example is separate from the N-point performance benchmark.","유한한 실수 표본 8개를 입력하세요. 8점 계산 과정은 아래 N점 성능 비교와 독립된 실습입니다.");
- $("butterfly-apply").textContent=L("Calculate 8-point FFT","8점 FFT 계산");
- $("butterfly-preset").querySelectorAll("option").forEach((option,i)=>{
-  const labels=[["Ramp · x[n]=n","증가 신호 · x[n]=n"],["Impulse · x[0]=1","임펄스 · x[0]=1"],["Cosine · one cycle","코사인 · 1주기"],["Custom · eight numbers","직접 입력 · 숫자 8개"]];
-  option.textContent=L(...labels[i]);
- });
- $("butterfly-stage-buttons").querySelectorAll("button").forEach(button=>{
-  const k=Number(button.dataset.butterflyStage),labels=[
-   ["0 · Bit-reversed input","0 · 입력 비트 반전"],
-   ["1 · Length 2","1 · 2점 연산"],["2 · Length 4","2 · 4점 연산"],["3 · Length 8","3 · 8점 연산"]
-  ];
-  button.textContent=L(...labels[k]);button.setAttribute("aria-pressed",String(k===stage));
- });
- $("butterfly-detail-heading").textContent=L("Inspect one butterfly","버터플라이 연산 하나 살펴보기");
- $("butterfly-table-hint").textContent=L("On narrow screens, swipe sideways to see both output columns.","모바일에서는 연산 표를 좌우로 스와이프하면 두 출력 열까지 확인할 수 있습니다.");
- $("butterfly-table-heading").textContent=stage===0?L("Bit-reversed sample order","입력 표본의 비트 반전 순서"):L("Four butterflies in this stage","현재 단계의 버터플라이 4개");
- $("butterfly-col-pair").textContent=stage===0?L("Row","행"):L("Pair (a,b)","입출력 인덱스 (a,b)");
- $("butterfly-dft-title").textContent=L("Final verification: FFT = direct DFT","최종 검증: FFT = 직접 DFT");
- $("butterfly-dft-note").textContent=L("The 8 values at the last stage equal the directly summed DFT coefficients; each complex error is computed before rounding for display.","마지막 단계의 8개 값은 직접 합산한 DFT 계수와 같습니다. 복소수 오차는 화면 표시용 반올림 전에 계산합니다.");
- $("butterfly-note").textContent=L("Each stage has 4 butterflies; 3 stages use 12 butterflies in total. The diagram highlights only the selected operation, but all values come from the same full calculation.","단계마다 4개, 총 3단계에 12개의 버터플라이를 계산합니다. 그림은 선택한 연산만 강조하지만 모든 값은 동일한 전체 계산 결과입니다.");
- $("butterfly-next").textContent=stage===3?L("Review input ↺","입력부터 다시 보기 ↺"):L("Next computation stage →","다음 계산 단계 →");
- $("butterfly-stage-summary").textContent=stage===0?
-  L("Before combining values: position 0…7 stores x[0], x[4], x[2], x[6], x[1], x[5], x[3], x[7]. The bit reversal changes memory order, not the DFT definition.","계산 전에 표본을 x[0], x[4], x[2], x[6], x[1], x[5], x[3], x[7] 순서로 배치합니다. 비트 반전은 연산 순서 변경이며 DFT의 정의는 바뀌지 않습니다."):
-  L("Stage "+stage+": four independent butterflies combine length-"+(2**stage)+" groups. Select an operation to see its exact intermediate values.","단계 "+stage+": 길이 "+(2**stage)+" 묶음에서 4개의 버터플라이를 수행합니다. 연산을 선택하여 중간 계산값을 확인하세요.");
- const buttons=$("butterfly-operation-buttons"),table=$("butterfly-operations-table"),detail=$("butterfly-operation-detail");
- buttons.replaceChildren();table.replaceChildren();detail.replaceChildren();
- const head=$("butterfly-col-pair").parentElement.querySelectorAll("th");
- head[1].textContent=stage===0?L("Sample","원래 표본"):"W";
- head[2].textContent=stage===0?L("Reordered value","재배열 값"):"u + Wv";
- head[3].textContent=stage===0?L("Binary index","인덱스 이진수"):"u − Wv";
- if(stage===0){
-  trace.order.forEach((original,i)=>{
-   const tr=document.createElement("tr");
-   [String(i),"x["+original+"]",fmt(trace.stages[0][i]),i.toString(2).padStart(3,"0")+" ← "+original.toString(2).padStart(3,"0")].forEach(value=>{const td=document.createElement("td");td.textContent=value;tr.append(td)});
-   table.append(tr);
-  });
-  butterflyRow(L("Original","원래 표본"),trace.samples.map((x,i)=>"x["+i+"]="+Number(x.toFixed(3))).join(", "),detail);
-  butterflyRow(L("Bit-reversed","비트 반전"),trace.order.map(i=>"x["+i+"]").join(" → "),detail);
- }else{
-  const ops=trace.operations[stage],selected=ops[Math.min(butterflyOperation,ops.length-1)];
-  ops.forEach((op,index)=>{
-   const b=document.createElement("button");b.type="button";b.textContent="("+op.a+", "+op.b+") · W"+op.length+"^"+op.r;
-   b.setAttribute("aria-pressed",String(index===butterflyOperation));b.addEventListener("click",()=>butterflyChoice(stage,index));buttons.append(b);
-   const row=document.createElement("tr");row.dataset.butterflyOp=String(index);row.tabIndex=0;row.setAttribute("aria-selected",String(index===butterflyOperation));
-   ["("+op.a+", "+op.b+")","W"+op.length+"^"+op.r+" = "+fmt(op.W,2),fmt(op.plus),fmt(op.minus)].forEach(text=>{const td=document.createElement("td");td.textContent=text;row.append(td)});
-   row.addEventListener("click",()=>butterflyChoice(stage,index));
-   row.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();butterflyChoice(stage,index)}});
-   table.append(row);
-  });
-  butterflyRow(L("Pair","입출력 위치"),"a="+selected.a+", b="+selected.b,detail);
-  butterflyRow("u = previous[a]",fmt(selected.u),detail);
-  butterflyRow("v = previous[b]",fmt(selected.v),detail);
-  butterflyRow("W"+selected.length+"^"+selected.r+" = exp(−j2π·"+selected.r+"/"+selected.length+")",fmt(selected.W),detail);
-  butterflyRow("t = W × v",fmt(selected.t),detail);
-  butterflyRow("y["+selected.a+"] = u + t",fmt(selected.plus),detail);
-  butterflyRow("y["+selected.b+"] = u − t",fmt(selected.minus),detail);
- }
- const compare=$("butterfly-dft-compare");compare.hidden=stage!==3;
- if(stage===3){
-  const body=$("butterfly-dft-rows");body.replaceChildren();
-  trace.fft.forEach((fft,k)=>{
-   const row=document.createElement("tr");
-   [String(k),fmt(fft),fmt(trace.direct[k]),trace.errors[k].toExponential(2)].forEach(value=>{const td=document.createElement("td");td.textContent=value;row.append(td)});
-   body.append(row);
-  });
-  $("butterfly-max-error").textContent=L("Maximum complex coefficient error: ","최대 복소 계수 오차: ")+trace.maxError.toExponential(3);
- }
- const svg=$("butterfly-diagram"),NS="http://www.w3.org/2000/svg";svg.replaceChildren();
- const add=(tag,attrs,text)=>{
-  const node=document.createElementNS(NS,tag);
-  Object.entries(attrs).forEach(([key,value])=>node.setAttribute(key,String(value)));
-  if(text!==undefined)node.textContent=text;
-  svg.append(node);return node;
- };
- const xs=[150,383,616,849],ys=Array.from({length:8},(_,i)=>79+i*42);
- const headings=[["Input · 3-bit reversal","입력 · 3비트 반전"],["Length 2","길이 2"],["Length 4","길이 4"],["Length 8 = X[k]","길이 8 = X[k]"]];
- headings.forEach((pair,k)=>{
-  add("text",{x:xs[k]-28,y:27,"font-weight":k===stage?"800":"500"},L(...pair));
-  if(k===stage)add("rect",{x:xs[k]-17,y:42,width:195,height:362,rx:9,fill:"var(--accent)",opacity:.07});
- });
- // Each output in a butterfly depends on both inputs. Highlight the current pair.
- for(let st=1;st<=3;st++){
-  for(const [idx,op] of trace.operations[st].entries()){
-   const selected=st===stage&&idx===butterflyOperation;
-   for(const [from,to,cross] of [[op.a,op.a,false],[op.b,op.b,false],[op.a,op.b,true],[op.b,op.a,true]]){
-    add("line",{x1:xs[st-1],y1:ys[from],x2:xs[st],y2:ys[to],class:(selected?"butterfly-selected":st>stage?"butterfly-future":cross?"butterfly-cross":"butterfly-line")});
-   }
-  }
- }
- for(let st=0;st<=3;st++)for(let row=0;row<8;row++){
-  const selected=st===stage&&(stage===0||trace.operations[st][butterflyOperation]&&[trace.operations[st][butterflyOperation].a,trace.operations[st][butterflyOperation].b].includes(row));
-  add("circle",{cx:xs[st],cy:ys[row],r:selected?5.6:3.2,class:selected?"butterfly-active-node":"butterfly-node"});
-  if(st===0)add("text",{x:12,y:ys[row]+4,class:"butterfly-muted"},"x["+trace.order[row]+"]");
-  if(st<=stage){
-   const value=fmt(trace.stages[st][row],2);
-   add("text",{x:xs[st]+10,y:ys[row]+4,class:"butterfly-value"},st===3?"X["+row+"]="+value:value);
-  }
- }
-}
-$("butterfly-stage-buttons").querySelectorAll("button").forEach(button=>button.addEventListener("click",()=>{
- butterflyChoice(Number(button.dataset.butterflyStage),0);
-}));
-$("butterfly-next").addEventListener("click",()=>butterflyChoice((butterflyStage+1)%4,0));
-$("butterfly-preset").addEventListener("change",()=>{
- const key=$("butterfly-preset").value;
- if(key!=="custom")$("butterfly-input").value=butterflyCore.presets[key].map(x=>Number(x.toFixed(6))).join(", ");
- $("butterfly-input-error").hidden=true;
- if(key!=="custom")applyButterflyInput();
-});
-$("butterfly-input").addEventListener("input",()=>{
- $("butterfly-preset").value="custom";
- $("butterfly-input-error").hidden=true;
-});
-function applyButterflyInput(){
- try{
-  const values=butterflyCore.parseSamples($("butterfly-input").value);
-  butterflyTrace=butterflyCore.trace(values);
-  $("butterfly-input-error").hidden=true;drawButterfly();
- }catch(error){
-  const node=$("butterfly-input-error");node.hidden=false;
-  node.textContent=L("Input error: ","입력 오류: ")+error.message;
- }
-}
-$("butterfly-apply").addEventListener("click",applyButterflyInput);
-function enhanceButterflyMath(){
- if(!window.katex)return;
- const node=$("butterfly-computation-formula");
- if(!node||node.dataset.mathRendered==="yes")return;
- try{
-  window.katex.render(String.raw`\begin{aligned}
-  W_L^r &= e^{-j2\pi r/L},\qquad t = W_L^r v \\
-  y[a] &= u+t,\qquad y[b] = u-t
-  \end{aligned}`,node,{throwOnError:false,displayMode:true,output:"htmlAndMathml"});
-  node.dataset.mathRendered="yes";
- }catch(error){console.warn("Optional KaTeX rendering unavailable:",error)}
-}
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",enhanceButterflyMath,{once:true});
-else enhanceButterflyMath();
-
-
-function chartCosts(){
- const rows=$("cost-rows");rows.replaceChildren();
- [32,128,512,2048,8192].forEach(n=>{const tr=document.createElement("tr");[n,n*n,Math.round(n*Math.log2(n))].forEach(q=>{const td=document.createElement("td");td.textContent=q.toLocaleString();tr.append(td)});rows.append(tr)});
- const canvas=$("complexity"),ctx=canvas.getContext("2d"),W=canvas.width,H=canvas.height,ink=getComputedStyle(document.documentElement).getPropertyValue("--ink").trim()||"#ddd",edge=getComputedStyle(document.documentElement).getPropertyValue("--edge").trim()||"#777";
- const x0=65,x1=W-24,y0=H-43,y1=20;
- ctx.clearRect(0,0,W,H);ctx.strokeStyle=edge;ctx.beginPath();ctx.moveTo(x0,y1);ctx.lineTo(x0,y0);ctx.lineTo(x1,y0);ctx.stroke();
- ctx.fillStyle=ink;ctx.font="13px system-ui";ctx.fillText("log10(work)",5,17);ctx.fillText("log2(N)",W-87,H-11);
- for(const exp of [5,8,11,14]){const x=x0+(exp-5)/9*(x1-x0);ctx.fillText(String(2**exp),x-14,y0+18)}
- [{color:"#db9655",fn:n=>n*n},{color:"#40b1b6",fn:n=>n*Math.log2(n)}].forEach(({color,fn})=>{ctx.strokeStyle=color;ctx.lineWidth=2.8;ctx.beginPath();for(let i=0;i<=90;i++){const e=5+9*i/90,n=2**e,x=x0+i/90*(x1-x0),y=y0-Math.log10(fn(n))/9*(y0-y1);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}ctx.stroke()});
- ctx.fillStyle="#db9655";ctx.fillText("DFT  N²",x0+12,40);ctx.fillStyle="#40b1b6";ctx.fillText("FFT  N log₂N",x0+140,40);
- drawButterfly();
-}
-function drawFrequencyAxis(N,fs,tone){
- const canvas=$("frequency-axis"),ctx=canvas.getContext("2d"),W=canvas.width,H=canvas.height;
- const style=getComputedStyle(document.documentElement),ink=style.getPropertyValue("--ink").trim()||"#ddd",edge=style.getPropertyValue("--edge").trim()||"#888",accent=style.getPropertyValue("--accent").trim()||"#3da9ae";
- const left=75,right=W-35,width=right-left,maxK=N/2,nyquist=fs/2,position=tone*N/fs,valid=tone>=0&&tone<=nyquist;
- ctx.clearRect(0,0,W,H);ctx.lineWidth=1;ctx.font="16px system-ui";
- const row=(y,label)=>{ctx.strokeStyle=edge;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(right,y);ctx.stroke();ctx.fillStyle=ink;ctx.fillText(label,9,y+5)};
- row(45,"k");row(119,"Hz");
- for(let i=0;i<=8;i++){
-  const ratio=i/8,x=left+ratio*width,k=Math.round(maxK*ratio),hz=nyquist*ratio;
-  ctx.strokeStyle=edge;ctx.beginPath();ctx.moveTo(x,38);ctx.lineTo(x,52);ctx.moveTo(x,112);ctx.lineTo(x,126);ctx.stroke();
-  ctx.fillStyle=ink;ctx.textAlign="center";ctx.fillText(String(k),x,24);ctx.fillText(hz.toLocaleString("en-US",{maximumFractionDigits:2}),x,151);
- }
- if(valid){const x=left+position/maxK*width,nearest=Math.round(position),binHz=nearest*fs/N;
-  ctx.strokeStyle=accent;ctx.lineWidth=3;ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(x,34);ctx.lineTo(x,129);ctx.stroke();ctx.setLineDash([]);
-  ctx.fillStyle=accent;ctx.beginPath();ctx.arc(x,45,5.5,0,Math.PI*2);ctx.arc(x,119,5.5,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle=ink;ctx.textAlign=x>W*.7?"right":"left";ctx.fillText("k ≈ "+position.toFixed(2)+(Math.abs(position-nearest)<1e-8?"":"  (between bins)"),x+(x>W*.7?-10:10),79);
-  ctx.font="13px system-ui";ctx.fillText("Nearest bin: "+binHz.toFixed(2)+" Hz",x+(x>W*.7?-10:10),98);
- }else{ctx.fillStyle=ink;ctx.textAlign="center";ctx.fillText("Tone exceeds Nyquist: aliasing possible",W/2,87)}
- ctx.textAlign="left";
-}
-function renderAxisSummary(N,fs){
- const tone=Number($("tone").value),safeTone=Number.isFinite(tone)?tone:0,df=fs/N,position=safeTone/df,nyq=fs/2;
- $("axis-df-label").textContent=L("Bin spacing Δf","Bin 간격 Δf");
- $("axis-nyquist-label").textContent=L("Nyquist frequency","나이퀴스트 주파수");
- $("axis-duration-label").textContent=L("Record duration T=N/fₛ","관측 시간 T=N/fₛ");
- $("axis-bin-label").textContent=L("Tone position k=fN/fₛ","정현파 위치 k=fN/fₛ");
- $("axis-df").textContent=df.toPrecision(4)+" Hz";
- $("axis-nyquist").textContent=nyq.toPrecision(5)+" Hz";
- $("axis-duration").textContent=(N/fs).toPrecision(4)+" s";
- $("axis-bin").textContent=position.toFixed(2)+" bins";
- const aligned=Math.abs(position-Math.round(position))<1e-8;
- $("axis-insight").textContent=safeTone>nyq?
- L("The tone is above Nyquist. The samples may alias; the original analog frequency cannot be uniquely recovered.","정현파가 나이퀴스트 주파수보다 높으므로 aliasing이 발생할 수 있습니다. 샘플만으로 원래 아날로그 주파수를 유일하게 복원할 수 없습니다."):
- (aligned?L("The tone falls exactly on a DFT bin.","정현파가 DFT bin과 정확히 일치합니다."):L("The tone lies between DFT bins; a rectangular window causes spectral leakage.","정현파가 두 DFT bin 사이에 있어 사각창에서 spectral leakage가 발생합니다."))+" "+
- L("Increasing N at fixed fₛ lengthens the observation and narrows Δf. Increasing fₛ at fixed N shortens the observation, widens Δf and raises Nyquist.","fₛ를 고정하고 N을 늘리면 관측 시간이 길어지고 Δf가 작아집니다. N을 고정하고 fₛ를 늘리면 관측 시간은 짧아지고 Δf는 커지며 Nyquist 주파수는 높아집니다.");
- drawFrequencyAxis(N,fs,safeTone);
-}
-for(const [id,kind] of [["axis-double-n","n"],["axis-double-fs","fs"],["axis-reset","reset"]]){
- $(id).addEventListener("click",()=>{
-  if(kind==="reset"){$("size").value="512";$("fs").value="1024";$("tone").value="128";$("signal").value="one";}
-  else if(kind==="n"){$("size").value=String(Math.min(16384,Number($("size").value)*2));}
-  else {$("fs").value=String((Number($("fs").value)||1024)*2);}
-  run(false);
- });
-}
-function drawComparisonSpectrum(canvasId,fft,scale,fs){
- const canvas=$(canvasId),ctx=canvas.getContext("2d"),W=canvas.width,H=canvas.height,style=getComputedStyle(document.documentElement);
- const ink=style.getPropertyValue("--ink").trim()||"#ddd",edge=style.getPropertyValue("--edge").trim()||"#888",accent=style.getPropertyValue("--accent").trim()||"#3aa6ae";
- const x0=56,x1=W-15,y0=H-31,y1=18,M=fft.re.length;
- let max=1e-12;const bins=new Float64Array(M/2+1);
- for(let k=0;k<bins.length;k++){bins[k]=(k===0||k===M/2?1:2)*Math.hypot(fft.re[k],fft.im[k])/scale;max=Math.max(max,bins[k]);}
- ctx.clearRect(0,0,W,H);ctx.lineWidth=1;ctx.strokeStyle=edge;ctx.beginPath();ctx.moveTo(x0,y1);ctx.lineTo(x0,y0);ctx.lineTo(x1,y0);ctx.stroke();
- ctx.font="13px system-ui";ctx.fillStyle=ink;ctx.fillText("|X|",10,18);
- for(let j=0;j<=4;j++){const x=x0+(x1-x0)*j/4;ctx.fillText((fs*j/8).toFixed(0),x-12,H-9);}
- ctx.fillText("Hz",W-22,H-9);
- ctx.strokeStyle=accent;ctx.lineWidth=1.9;ctx.beginPath();
- for(let k=0;k<bins.length;k++){const x=x0+(x1-x0)*k/(bins.length-1),y=y0-(bins[k]/max)*(y0-y1);if(k===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
- ctx.stroke();
-}
-function drawPaddingOverlay(original,padded,N,fs,tone){
- const canvas=$("padding-overlay-plot"),ctx=canvas.getContext("2d"),W=canvas.width,H=canvas.height;
- const palette=getComputedStyle(document.documentElement),ink=palette.getPropertyValue("--ink").trim()||"#ddd",grid=palette.getPropertyValue("--edge").trim()||"#888";
- const originalColor="#e6a44d",paddedColor="#4ab9cc",left=67,right=W-23,top=24,bottom=H-45;
- // Zoom around the signal tone; use identical Hz coordinates for original and padded bins.
- const halfWidth=Math.max(8*fs/N,16),nyquist=fs/2;
- const center=Math.min(Math.max(tone,0),nyquist);
- const low=Math.max(0,center-halfWidth),high=Math.min(nyquist,center+halfWidth);
- const span=Math.max(1e-12,high-low);
- const base=new Float64Array(N/2+1),fine=new Float64Array(N+1);
- for(let k=0;k<base.length;k++)base[k]=(k===0||k===N/2?1:2)*Math.hypot(original.re[k],original.im[k])/N;
- for(let k=0;k<fine.length;k++)fine[k]=(k===0||k===N?1:2)*Math.hypot(padded.re[k],padded.im[k])/N;
- let max=1e-12;
- for(let k=0;k<fine.length;k++){const freq=k*fs/(2*N);if(freq>=low&&freq<=high)max=Math.max(max,fine[k]);}
- ctx.clearRect(0,0,W,H);ctx.strokeStyle=grid;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(left,top);ctx.lineTo(left,bottom);ctx.lineTo(right,bottom);ctx.stroke();
- ctx.font="14px system-ui";ctx.fillStyle=ink;ctx.textAlign="left";ctx.fillText("|X| / N",8,18);
- for(let i=0;i<=4;i++){const freq=low+span*i/4,x=left+(right-left)*i/4;ctx.fillStyle=ink;ctx.textAlign="center";ctx.fillText(freq.toFixed(2),x,H-19);}
- ctx.fillText("Hz",right-9,H-5);
- const xf=freq=>left+(freq-low)/span*(right-left),yf=value=>bottom-(value/max)*(bottom-top-8);
- ctx.strokeStyle=paddedColor;ctx.lineWidth=2.6;ctx.beginPath();let first=true;
- for(let k=0;k<fine.length;k++){const freq=k*fs/(2*N);if(freq<low||freq>high)continue;const x=xf(freq),y=yf(fine[k]);if(first){ctx.moveTo(x,y);first=false}else ctx.lineTo(x,y);}
- ctx.stroke();
- ctx.fillStyle=originalColor;ctx.strokeStyle="#25292c";ctx.lineWidth=.8;
- for(let k=0;k<base.length;k++){const freq=k*fs/N;if(freq<low||freq>high)continue;ctx.beginPath();ctx.arc(xf(freq),yf(base[k]),4.5,0,2*Math.PI);ctx.fill();ctx.stroke();}
- let maximumDifference=0;for(let k=0;k<base.length;k++)maximumDifference=Math.max(maximumDifference,Math.abs(base[k]-fine[2*k]));
- return maximumDifference;
-}
-function renderPaddingComparison(N,fs){
- const clearPlots=()=>{for(const id of ["padding-long-plot","padding-zero-plot","padding-overlay-plot"]){const c=$(id);c.getContext("2d").clearRect(0,0,c.width,c.height)}};
- if($("signal").value==="upload"){clearPlots();$("padding-overlay-section").hidden=true;$("padding-teaching").hidden=true; $("padding-conclusion").textContent=L("Choose a synthetic signal for this controlled comparison.","이 비교에서는 합성 신호를 선택하세요.");return;}
- if(N>8192){clearPlots();$("padding-overlay-section").hidden=true;$("padding-teaching").hidden=true;$("padding-long-stats").textContent="";$("padding-zero-stats").textContent="";$("padding-conclusion").textContent=L("Select N ≤ 8192 for the two additional FFT calculations.","비교 계산을 위해 N을 8192 이하로 선택하세요.");return;}
- $("padding-overlay-section").hidden=false;$("padding-teaching").hidden=false;
- const M=2*N,base=synthetic(N,fs),long=synthetic(M,fs),padded=new Float64Array(M);
- padded.set(base);
- const full=radix2(long),zero=radix2(padded),original=radix2(base),dfOriginal=fs/N,dfGrid=fs/M;
- $("padding-title").textContent=L("Longer observation vs zero-padding","관측 시간 증가와 Zero-padding 비교");
- $("padding-purpose").textContent=L("Both spectra use M=2N FFT bins. Only the left case has 2N actual observations.","두 그래프 모두 M=2N FFT를 사용하지만 왼쪽만 실제 관측 샘플이 2N개입니다.");
- $("padding-long-title").textContent=L("Actual longer observation · 2N measured samples","실제 관측 시간 증가 · 2N개 샘플");
- $("padding-zero-title").textContent=L("Zero-padding · N samples + N zeros","Zero-padding · N개 샘플 + N개 0");
- $("padding-offbin").textContent=L("Try 129 Hz · Off-bin tone","129 Hz 시도 · Bin 비일치");
- $("padding-coherent").textContent=L("Try 128 Hz · Bin-centered","128 Hz 시도 · Bin 일치");
- $("padding-long-stats").textContent=L("Observed duration","관측 시간")+" = "+(M/fs).toFixed(4)+" s · "+
- L("Grid spacing","표시 간격")+" = "+dfGrid.toPrecision(4)+" Hz";
- $("padding-zero-stats").textContent=L("Observed duration","관측 시간")+" = "+(N/fs).toFixed(4)+" s · "+
- L("Grid spacing","표시 간격")+" = "+dfGrid.toPrecision(4)+" Hz";
- drawComparisonSpectrum("padding-long-plot",full,M,fs);
- drawComparisonSpectrum("padding-zero-plot",zero,N,fs);
- const tone=Number($("tone").value)||0;
- const difference=drawPaddingOverlay(original,zero,N,fs,tone);
- const ids={
- "padding-teaching-title":["What actually changes?","무엇이 실제로 달라질까요?"],
- "padding-teaching-intro":["A zero-padded FFT has more plotted frequency samples, not more recorded measurements. Both comparison FFTs have M=2N, but only one extends the observation.","Zero-padding으로 FFT 주파수 표시점은 늘어나지만 측정값이 추가되지는 않습니다. 두 FFT 모두 M=2N이지만 실제 관측 시간은 한 경우에만 늘어납니다."],
- "pad-h-property":["Property","비교 항목"],"pad-h-real":["2N measured samples","실제 2N개 관측"],"pad-h-zero":["N samples + N zeros","N개 관측 + N개 0"],
- "pad-row-samples":["Real observed samples","실제 관측 샘플"],"pad-row-time":["Observation time","실제 관측 시간"],
- "pad-row-grid":["FFT display spacing","FFT 표시 간격"],"pad-row-resolution":["Nominal resolution scale 1/T","분해능 척도 1/T"],
- "padding-overlay-title":["Overlay: original vs zero-padded FFT","중첩 비교: 원본 FFT와 Zero-padding"],
- "padding-overlay-intro":["The orange dots are existing N-point FFT values. The cyan curve uses the same N samples plus zeros, giving intermediate FFT bins.","주황색 점은 기존 N점 FFT 결과이고 청록색 선은 같은 N개 샘플 뒤에 0을 추가하여 중간 주파수 bin을 계산한 결과입니다."],
- "padding-original-legend":["Original N-point FFT · dots","원본 N점 FFT · 점"],
- "padding-zero-legend":["Zero-padded 2N-point FFT · line","Zero-padding 2N점 FFT · 선"],
- "padding-overlay-question":["Try 129 Hz: are the old sample dots still on the new curve? What information would require more real observations?","129 Hz를 시도하세요. 기존 FFT 점들이 새 곡선 위에 그대로 있나요? 가까운 두 성분을 분리하려면 무엇을 더 관측해야 할까요?"]
- };
- for(const [id,pair] of Object.entries(ids))$(id).textContent=L(...pair);
- $("pad-real-samples").textContent=String(M);$("pad-zero-samples").textContent=String(N);
- $("pad-real-time").textContent=(M/fs).toFixed(4)+" s";$("pad-zero-time").textContent=(N/fs).toFixed(4)+" s";
- $("pad-real-grid").textContent=dfGrid.toPrecision(4)+" Hz";$("pad-zero-grid").textContent=dfGrid.toPrecision(4)+" Hz";
- $("pad-real-resolution").textContent=dfGrid.toPrecision(4)+" Hz";$("pad-zero-resolution").textContent=dfOriginal.toPrecision(4)+" Hz";
- $("padding-overlay-result").textContent=L("At every original bin, the two amplitude values agree (max difference: ","원래 FFT bin 위치에서 두 진폭 값이 일치합니다 (최대 차이: ")+difference.toExponential(2)+"). "+L("Zero-padding samples the same finite-record spectrum more densely; it does not improve physical resolving power.","Zero-padding은 같은 유한 관측 신호의 스펙트럼을 더 촘촘하게 평가할 뿐 실제 주파수 분리 능력을 개선하지 않습니다.");
- $("padding-conclusion").textContent=L("Original record: T=N/fₛ="+(N/fs).toFixed(4)+" s and native spacing fₛ/N="+dfOriginal.toPrecision(4)+" Hz. Padding halves the displayed bin interval to "+dfGrid.toPrecision(4)+" Hz without lengthening T or improving the ability to resolve nearby tones. The 2N-observation case actually doubles T and improves nominal resolution.","원본 관측 시간은 "+(N/fs).toFixed(4)+" s, 원래 bin 간격은 "+dfOriginal.toPrecision(4)+" Hz입니다. Zero-padding으로 표시 간격은 "+dfGrid.toPrecision(4)+" Hz로 줄지만 실제 관측 시간이나 가까운 주파수의 분리 능력은 개선되지 않습니다. 실제로 2N개를 관측하면 T가 두 배로 길어져 주파수 분리 능력이 향상됩니다.");
-}
-for(const [id,tone] of [["padding-offbin",129],["padding-coherent",128]]){
- $(id).addEventListener("click",()=>{$("signal").value="one";$("tone").value=String(tone);run(false)});
-}
-// Stage 04: prominent spectral peaks and conditional physical interpretation.
-let physicsPeaks=[],physicsFs=0,physicsN=0;
-function renderPhysics(){
- const pick=$("physics-peak"),selected=physicsPeaks.find(p=>String(p.k)===pick.value);
- const count=Number($("events-per-rev").value),known=physicsFs>0,valid=!!selected&&Number.isFinite(count)&&count>0;
- const frequency=selected?(known?selected.k*physicsFs/physicsN:selected.k/physicsN):0;
- $("physics-hz").textContent=selected?(known?frequency.toFixed(2)+" Hz":frequency.toFixed(5)+" cycles/sample"):"—";
- $("physics-period").textContent=valid&&known?(1000/frequency).toFixed(3)+" ms":"—";
- $("physics-rpm").textContent=valid&&known?(60*frequency/count).toFixed(2)+" RPM":"—";
- if(!selected){
-  $("physics-harmonics").textContent="";
-  $("physics-note").textContent=L("Choose a detected peak to interpret it.","해석할 주파수 피크를 선택하세요.");
-  return;
- }
- if(!known){
-  $("physics-harmonics").textContent="";
-  $("physics-note").textContent=L("Sample rate unknown. Only cycles/sample is available; period in seconds and RPM cannot be inferred.","샘플링 주파수를 알 수 없어 cycles/sample만 확인할 수 있습니다. 초 단위 주기와 RPM은 추정할 수 없습니다.");
-  return;
- }
- if(!valid){
-  $("physics-harmonics").textContent="";
-  $("physics-note").textContent=L("Enter a positive number of events per revolution.","회전당 이벤트 수를 0보다 크게 입력하세요.");
-  return;
- }
- const harmonics=physicsPeaks.filter(p=>p.k!==selected.k).map(p=>({k:p.k,ratio:p.k/selected.k}))
-  .filter(p=>p.ratio>=1.75&&Math.abs(p.ratio-Math.round(p.ratio))<=Math.max(.1,1.5/selected.k));
- $("physics-harmonics").textContent=harmonics.length?
-  L("Possible integer-multiple harmonics: ","정수배 고조파 후보: ")+harmonics.map(p=>Math.round(p.ratio)+"× ("+(p.k*physicsFs/physicsN).toFixed(2)+" Hz)").join(", "):
-  L("No clear integer-multiple harmonics among the selected peaks.","선택된 피크들 사이에 뚜렷한 정수배 고조파 후보는 없습니다.");
- $("physics-note").textContent=L("T = 1/f; RPM = 60f / events per revolution. This is a conditional speed estimate, not a measured shaft speed. A sensor peak may instead come from a gear tooth, blade passage, resonant mode, or interference; verify machine geometry.","T=1/f, RPM=60f/회전당 이벤트 수입니다. 이 값은 conditional speed estimate(조건부 속도 추정)로 축 회전수 실측값이 아닙니다. 센서 피크는 기어·블레이드 통과·공진·간섭에서 생길 수도 있으므로 기계 구조를 확인해야 합니다.");
-}
-function updatePhysics(peaks,fs,N){
- const menu=$("physics-peak"),previous=menu.value;
- physicsPeaks=peaks.slice();physicsFs=fs;physicsN=N;
- menu.replaceChildren();
- for(const p of peaks){
-  const option=document.createElement("option");
-  option.value=String(p.k);
-  option.textContent=fs>0?(p.k*fs/N).toFixed(2)+" Hz":(p.k/N).toFixed(5)+" cycles/sample";
-  menu.append(option);
- }
- if(peaks.some(p=>String(p.k)===previous))menu.value=previous;
- renderPhysics();
-}
-$("physics-peak").addEventListener("change",renderPhysics);
-$("events-per-rev").addEventListener("input",renderPhysics);
-function describePeaks(amp,fs,N,fromUpload){
- const results=$("peak-results");
- results.replaceChildren();
- $("sensor-physics").hidden=fromUpload&&upload?.kind==="audio";
- $("peak-heading").textContent=L("Detected frequency components","검출된 주요 주파수 성분");
- const unit=fs>0?"Hz":"cycles/sample",delta=fs>0?fs/N:1/N;
- const max=amp.slice(1).reduce((m,x)=>Math.max(m,x),0);
- if(!Number.isFinite(max)||max<=1e-10){
-  updatePhysics([],fs,N);
-  $("peak-explanation").textContent=L("No significant non-DC frequency peak found.","DC를 제외한 유의미한 주파수 피크를 찾지 못했습니다.");
-  $("peak-caution").textContent=L("A constant or silent record has no meaningful dominant tone.","상수 신호나 무음 데이터에서는 우세 주파수를 의미 있게 판단할 수 없습니다.");
-  return;
- }
- const candidates=[];
- for(let k=1;k<amp.length;k++){
-  const left=k===1?0:amp[k-1],right=k===amp.length-1?0:amp[k+1];
-  if(amp[k]>=max*.08&&amp[k]>=left&&amp[k]>=right)candidates.push({k,amp:amp[k]});
- }
- candidates.sort((a,b)=>b.amp-a.amp);
- const peaks=[];
- for(const p of candidates){if(peaks.every(q=>Math.abs(q.k-p.k)>=2))peaks.push(p);if(peaks.length===5)break}
- peaks.sort((a,b)=>b.amp-a.amp);
- updatePhysics(peaks,fs,N);
- const source=fromUpload&&upload?.kind==="audio"?"audio":fromUpload?"sensor":"synthetic";
- $("sensor-physics").hidden=source==="audio";
- $("peak-explanation").textContent=source==="audio"?
-  L("For audio: spectral peaks may indicate tones or harmonics, but the highest peak is not always the fundamental pitch.","오디오에서는 피크가 음높이나 고조파 후보일 수 있지만 가장 큰 피크가 항상 기본주파수는 아닙니다."):
-  source==="sensor"?L("For sensor measurements: peaks represent observed periodic components; mechanical causes require independent evidence.","센서 피크는 관측된 주기 성분입니다. 물리적 원인을 판단하려면 추가 근거가 필요합니다."):
-  L("Controlled synthetic signal: identify its strongest frequency bins.","합성 예제에서 가장 강한 주파수 bin을 찾아보세요.");
- const table=document.createElement("table");table.className="butterfly-table";table.setAttribute("aria-label",L("Detected spectral peaks","검출된 스펙트럼 피크"));
- const head=document.createElement("thead"),body=document.createElement("tbody"),tr=document.createElement("tr");
- [L("Bin","Bin"),L("Frequency","주파수"),L("Amplitude","진폭"),L("Relative","상대 크기")].forEach(v=>{const th=document.createElement("th");th.textContent=v;tr.append(th)});head.append(tr);
- for(const p of peaks){
-  const row=document.createElement("tr");
-  [String(p.k),(p.k*delta).toFixed(fs>0?2:5)+" "+unit,p.amp.toFixed(5),(100*p.amp/max).toFixed(1)+"%"].forEach(v=>{
-   const cell=document.createElement("td");cell.textContent=v;row.append(cell);
-  });body.append(row);
- }
- table.append(head,body);results.append(table);
- $("peak-caution").textContent=fs>0?
-  L("Frequency resolution scale: Δf=fₛ/N="+delta.toPrecision(4)+" Hz. Finite duration, leakage and noise limit peak precision. The maximum peak alone does not establish a fundamental frequency or machine RPM.","주파수 간격 Δf=fₛ/N="+delta.toPrecision(4)+" Hz입니다. 관측 시간·누설·잡음에 따라 피크 정확도가 달라지며 최대 피크만으로 기본주파수나 RPM을 단정할 수 없습니다."):
-  L("Sample rate unknown: values are in cycles/sample, not Hz. Absolute frequency, seconds and RPM cannot be inferred.","샘플링 주파수를 알 수 없으므로 Hz 대신 cycles/sample로 표시합니다. 실제 주파수·초·RPM은 계산할 수 없습니다.");
-}
-function run(show=true){const N=Number($("size").value);let fs=Number($("fs").value);if(!Number.isFinite(fs)||fs<=0)fs=1024;let x;if($("signal").value==="upload"&&upload){const start=Math.max(0,Math.floor(Number($("offset").value)||0));x=new Float64Array(N);x.set(upload.samples.subarray(start,Math.min(upload.samples.length,start+N)));fs=Number($("fs").value)>0?Number($("fs").value):upload.fs||0;if(start+N>upload.samples.length){$("status").textContent=L("Not enough remaining samples for the chosen N.","선택한 N만큼의 샘플이 남아 있지 않습니다.");return;}if(start>=upload.samples.length){$("status").textContent="Start sample exceeds the record length.";return}}else{x=synthetic(N,fs);}
-const mean=x.reduce((a,b)=>a+b,0)/N;const x0=Float64Array.from(x,v=>v-mean);const fast=benchmark(radix2,x0,5);let slow=null;if(N<=2048)slow=benchmark(direct,x0,N<=512?3:1);
-let error=0;if(slow){for(let i=0;i<N;i++)error=Math.max(error,Math.hypot(slow.result.re[i]-fast.result.re[i],slow.result.im[i]-fast.result.im[i]));}
-$("error").textContent=slow?error.toExponential(2):"Skipped";$("dtime").textContent=slow?slow.ms.toFixed(3)+" ms":"N > 2048";$("ftime").textContent=fast.ms.toFixed(3)+" ms";
-$("timing-note").textContent="Direct DFT benchmark capped at N=2048 to keep the page responsive. Timings are median of "+(N<=512?"3":N<=2048?"1":"0")+" DFT and 5 FFT runs; 2 warm-ups each. A single DFT run is not statistically robust. Both inputs are mean-centered (DC removed).";
-const amp=Array.from({length:N/2+1},(_,k)=>{const factor=(k===0||k===N/2)?1:2;return factor*Math.hypot(fast.result.re[k],fast.result.im[k])/N;});
-if($("signal").value!=="upload"&&fs>0){renderAxisSummary(N,fs);renderPaddingComparison(N,fs)}
-const peaks=amp.map((a,i)=>({a,i})).slice(1).sort((a,b)=>b.a-a.a).slice(0,3);const freqUnit=fs>0?"Hz":"cycles/sample",df=fs>0?fs/N:1/N;
-$("axis-note").textContent="Δf = "+df.toPrecision(5)+" "+freqUnit+"; peak bins: "+peaks.map(p=>(p.i*df).toFixed(fs?2:5)+" "+freqUnit).join(", ")+". Rectangular window; amplitude uses 2|X[k]|/N except DC/Nyquist. Mean removed. No zero padding.";
-describePeaks(amp,fs,N,$("signal").value==="upload"&&!!upload);draw("time",Array.from(x0).slice(0,Math.min(N,600)),fs>0?(Math.min(N,600)-1)/fs:Math.min(N,600)-1,fs>0?"time (s)":"sample index");draw("spectrum",amp,fs>0?fs/2:.5,freqUnit);chartCosts();if(step===0)renderIntroPart();if(show)$("status").textContent=L("Analysis complete","분석 완료")+" · "+N+" samples.";}
-$("run").onclick=()=>run();["size","signal","fs","tone","offset"].forEach(id=>$(id).addEventListener("change",()=>run(false)));["column","csvfs"].forEach(id=>$(id).addEventListener("change",()=>{if($("file").files?.length&&/\.(csv|txt)$/i.test($("file").files[0].name))$("file").dispatchEvent(new Event("change"));}));
-function parseCSV(content){const rows=content.split(/\r?\n/).map(line=>line.trim()).filter(line=>line&&!line.startsWith("#")).map(line=>line.split(/[,;\t]+/).map(v=>Number(v.trim()))).filter(row=>row.length&&row.every(Number.isFinite));if(rows.length<16)throw Error("CSV requires at least 16 numeric rows.");const col=$("column").value==="auto"?rows[0].length-1:+$("column").value;if(rows.some(r=>r.length<=col))throw Error("Selected column is unavailable.");
-let fs=Number($("csvfs").value)||0;if(!fs&&rows[0].length>=2&&col!==0){const dt=[];for(let i=1;i<Math.min(rows.length,1000);i++){const d=rows[i][0]-rows[i-1][0];if(d>0)dt.push(d);}if(dt.length>=12){dt.sort((a,b)=>a-b);const m=dt[Math.floor(dt.length/2)];if(dt.every(v=>Math.abs(v-m)<m*.02))fs=1/m;}}
-return {samples:Float64Array.from(rows,r=>r[col]),fs,kind:"sensor"};}
-$("download-wav").addEventListener("click",()=>{
- const rate=8000,n=1024,buf=new ArrayBuffer(44+n*2),view=new DataView(buf);
- const str=(off,value)=>{for(let i=0;i<value.length;i++)view.setUint8(off+i,value.charCodeAt(i))};
- str(0,"RIFF");view.setUint32(4,36+n*2,true);str(8,"WAVE");str(12,"fmt ");
- view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,1,true);
- view.setUint32(24,rate,true);view.setUint32(28,rate*2,true);view.setUint16(32,2,true);view.setUint16(34,16,true);
- str(36,"data");view.setUint32(40,n*2,true);
- for(let i=0;i<n;i++){const value=.65*Math.sin(2*Math.PI*250*i/rate)+.22*Math.sin(2*Math.PI*750*i/rate);view.setInt16(44+2*i,Math.round(value*32767),true)}
- const url=URL.createObjectURL(new Blob([buf],{type:"audio/wav"})),a=document.createElement("a");
- a.href=url;a.download="dft-fft-synthetic-audio-250-750hz.wav";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
-});
-function sourceWavSampleRate(buffer){
- const view=new DataView(buffer);
- if(view.byteLength<28)return 0;
- const word=(at)=>String.fromCharCode(...new Uint8Array(buffer,at,4));
- if(word(0)!=="RIFF"||word(8)!=="WAVE")return 0;
- for(let offset=12;offset+8<=view.byteLength;){
-  const size=view.getUint32(offset+4,true);
-  if(word(offset)==="fmt "&&size>=16&&offset+8+size<=view.byteLength){
-   const rate=view.getUint32(offset+12,true);
-   return rate>=3000&&rate<=192000?rate:0;
-  }
-  if(!Number.isFinite(size)||size>view.byteLength-offset-8)break;
-  offset+=8+size+(size%2);
- }
- return 0;
-}
-$("file").addEventListener("change",async()=>{const file=$("file").files?.[0];if(!file)return;try{let data;if(/\.(csv|txt)$/i.test(file.name)||file.type.startsWith("text/"))data=parseCSV(await file.text());else{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw Error("Browser audio decoding unavailable.");const bytes=await file.arrayBuffer(),nativeRate=sourceWavSampleRate(bytes);
-let ac;try{ac=new AC(nativeRate?{sampleRate:nativeRate}:undefined)}catch{ac=new AC()}
-try{const decoded=await ac.decodeAudioData(bytes);const arr=new Float64Array(decoded.length);for(let c=0;c<decoded.numberOfChannels;c++){const ch=decoded.getChannelData(c);for(let i=0;i<arr.length;i++)arr[i]+=ch[i]/decoded.numberOfChannels;}data={samples:arr,fs:decoded.sampleRate,kind:"audio"}}finally{await ac.close()}}if(data.samples.length<16)throw Error("At least 16 samples are needed.");upload=data;$("signal").value="upload";$("fs").value=data.fs||"";$("offset").value=0;$("file-info").textContent=file.name+" · "+data.samples.length.toLocaleString()+" samples · "+(data.fs?data.fs.toFixed(2)+" Hz":"sample rate unknown; spectrum in cycles/sample")+". Only the chosen N-sample frame is analyzed.";run();}catch(err){$("file-info").textContent="Unable to read file: "+err.message;}});
-// Keep file controls adjacent to waveform controls and charts, not separated by result cards.
-const setup=$("upload-setup");for(const id of ["upload-description","fixtures-note","upload-controls","upload-frame-note","file-info"]){const node=$(id);if(node)setup.append(node)}
-window.__dftReady=true;setStep(0);localize();run(false);
-})();
-</script><script src="./assets/ss-app-fft-path.js?v=20261123-contentqa" defer></script>
-</body></html>
+</main>
+</body>
+</html>

@@ -41,9 +41,10 @@ for(const k of [0,1,4,11,20,50,101,128]){
 console.log("PASS 2: FFT magnitude matches direct DFT and zero-padding does not change observation");
 
 const html=await source("applications-dft-fft.html");
-const start=html.indexOf("function radix2(x)"),end=html.indexOf("function benchmark(",start);
-assert.ok(start>0&&end>start);
-const {radix2,direct}=vm.runInNewContext(html.slice(start,end)+";({radix2,direct})");
+const fftCoreSource=await source("assets/ss-app-dft-fft-core.js");
+const moduleContext={window:{}};vm.runInNewContext(fftCoreSource,moduleContext,{timeout:2500});
+const {radix2,direct}=moduleContext.window.SSDFTFFTCore;
+assert.ok(html.includes('id="panel-same"')&&html.includes('id="panel-butterfly"')&&html.includes('id="panel-speed"'));
 for(const N of [32,64,128,512]){
  const x=Float64Array.from({length:N},(_,n)=>Math.sin(2*Math.PI*3*n/N)+.3*Math.sin(2*Math.PI*7*n/N));
  const a=radix2(x),b=direct(x);
@@ -51,7 +52,8 @@ for(const N of [32,64,128,512]){
  const p=new Float64Array(N*2);p.set(x);const z=radix2(p);
  for(let k=0;k<N;k++)close(Math.hypot(a.re[k]-z.re[2*k],a.im[k]-z.im[2*k]),0,1e-8);
 }
-assert.ok(html.includes('id="dft-fft-knowledge-check"'));
+assert.ok(html.includes('id="butterfly-proof-rows"'));
+assert.ok(html.includes('id="speed-run"'));
 console.log("PASS 3: direct DFT, FFT and zero-padding coefficient invariants");
 
 const dtmf=await browserModule("ss-dtmf-decoder.js","SSDTMF");
