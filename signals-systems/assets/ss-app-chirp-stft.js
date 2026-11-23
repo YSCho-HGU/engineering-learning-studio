@@ -297,10 +297,6 @@ function localization(){
  const items={
  "stft-title":["Chirp, STFT, and Spectrogram","처프·STFT·스펙트로그램"],
  "stft-intro":["Compare rising, falling, and step-frequency signals: the full FFT gives spectral content, while moving-window FFT and Spectrogram show when frequencies occur.","상승·하강·계단형 주파수 신호를 비교하세요. 전체 FFT는 주파수 성분을 보여주지만, 이동 Window FFT와 Spectrogram은 언제 발생했는지를 보여줍니다."],
- "stft-step-1":["1 · Chirp","1 · 처프"],
- "stft-step-2":["2 · Global FFT","2 · 전체 FFT"],
- "stft-step-3":["3 · Moving FFT","3 · 이동 FFT"],
- "stft-step-4":["4 · Spectrogram","4 · 스펙트로그램"],
  "stft-controls-title":["Change · Signal and analysis","Change · 신호와 분석 설정"],
  "stft-controls-help":["Adjust chirp frequency, observation duration, and the STFT window. Then move the selected frame.","처프 주파수·관측 시간·STFT 창을 조절한 뒤 현재 분석 구간을 이동하세요."],
  "stft-shape-label":["Frequency pattern","주파수 변화 유형"],
@@ -335,8 +331,6 @@ function localization(){
  "stft-mission-title":["Check · Graph experiment mission","확인 · 그래프 실험 미션"],
  "stft-mission-prompt":["Choose a rising, falling, or step-frequency signal; move the window into the last quarter and compare the local FFT peak with the theoretical frequency.","상승·하강·계단형 주파수 신호를 선택하고 Window를 마지막 1/4 구간으로 옮겨 국소 FFT 피크와 이론 주파수를 비교하세요."],
  "stft-mission-check":["Check my experiment","실험 목표 확인"],
- "stft-prev-link":["← Real Audio & Sensor FFT","← 실제 음성·센서 FFT"],
- "stft-catalog-link":["Part C · Learning map","Part C · 학습 목록"]
  };
  for(const [id,[en,ko]] of Object.entries(items)){const el=$(id);if(el)el.textContent=tr(en,ko,id.startsWith("stft-step")||id.endsWith("-link"))}
  for(const [id,entries] of Object.entries({
