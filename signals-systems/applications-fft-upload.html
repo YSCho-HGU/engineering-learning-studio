@@ -25,7 +25,7 @@
 <label><span id="fft-upload-file-label"></span><input type="file" id="fft-upload-file" accept=".wav,.mp3,.ogg,.m4a,.aac,.flac,.csv,.txt,audio/*,text/csv,text/plain"></label>
 <p id="fft-upload-file-help" class="ss-fft-upload-help"></p>
 <label id="fft-upload-column-row" hidden><span id="fft-upload-column-label"></span><select id="fft-upload-column"></select></label>
-<button type="button" id="fft-upload-demo"></button>
+<button type="button" id="fft-upload-demo"></button><button type="button" id="fft-upload-harmonic-demo"></button>
 <output id="fft-upload-status" role="status" aria-live="polite"></output>
 <div class="ss-fft-upload-meta" id="fft-upload-meta"></div>
 <label><span id="fft-upload-fs-label"></span><input id="fft-upload-fs" type="number" inputmode="decimal" min="0" max="1000000" step="any" placeholder="0 = unknown"></label>
@@ -37,7 +37,21 @@
 </aside>
 <div class="ss-fft-upload-results">
 <section class="ss-fft-upload-panel"><h2 id="fft-upload-step1"></h2><p id="fft-upload-wave-help"></p><svg id="fft-upload-wave" viewBox="0 0 850 240" role="img" aria-label="Uploaded sample waveform and selected FFT window"></svg></section>
-<section class="ss-fft-upload-panel"><h2 id="fft-upload-step2"></h2><p id="fft-upload-spectrum-help"></p><svg id="fft-upload-spectrum" viewBox="0 0 850 300" role="img" aria-label="Single-sided FFT amplitude spectrum"></svg><div class="ss-fft-upload-stats" id="fft-upload-stats"></div><h3 id="fft-upload-peaks-title"></h3><div class="ss-fft-upload-peaks" id="fft-upload-peaks"></div></section>
+<section class="ss-fft-upload-panel"><h2 id="fft-upload-step2"></h2><p id="fft-upload-spectrum-help"></p><svg id="fft-upload-spectrum" viewBox="0 0 850 300" role="img" aria-label="Single-sided FFT amplitude spectrum"></svg><div class="ss-fft-upload-stats" id="fft-upload-stats"></div><h3 id="fft-upload-peaks-title"></h3><div class="ss-fft-upload-peaks" id="fft-upload-peaks"></div>
+<div class="ss-fft-harmonics" id="fft-upload-harmonics">
+ <h3 id="fft-upload-harmonics-title"></h3><p id="fft-upload-harmonics-help"></p>
+ <div class="ss-fft-harmonic-toolbar">
+   <label><span id="fft-upload-harmonic-mode-label"></span>
+    <select id="fft-upload-harmonic-mode"><option value="auto">Automatic candidate</option><option value="manual">Specify candidate</option></select>
+   </label>
+   <label id="fft-upload-manual-row" hidden><span id="fft-upload-manual-label"></span>
+    <input id="fft-upload-manual-f0" type="number" min="0" step="any" placeholder="e.g. 100">
+   </label>
+ </div>
+ <div class="ss-fft-harmonic-result" id="fft-upload-harmonic-result" role="status"></div>
+ <div class="ss-fft-harmonic-table" id="fft-upload-harmonic-table"></div>
+ <p class="ss-fft-harmonic-warning" id="fft-upload-harmonic-warning"></p>
+</div></section>
 <section class="ss-fft-upload-panel"><h2 id="fft-upload-step3"></h2><p id="fft-upload-explain"></p><div class="ss-fft-upload-formulas">
 <div><div data-ss-math="X[k]=\sum_{n=0}^{N-1}(x[n]-\bar{x})w[n]e^{-j2\pi kn/N}" data-ss-math-display="block"></div></div>
 <div><div data-ss-math="f_k=\frac{k f_s}{N},\qquad \nu_k=\frac{k}{N}" data-ss-math-display="block"></div></div></div>
@@ -50,6 +64,6 @@
 <script src="./assets/ss-common-header.js?v=applications2" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js" defer></script>
 <script src="./assets/ss-math-core.js?v=1" defer></script><script src="./assets/ss-applications-math.js?v=5" defer></script>
-<script src="./assets/ss-fft-upload.js?v=1" defer></script>
+<script src="./assets/ss-fft-harmonics.js?v=1" defer></script><script src="./assets/ss-fft-upload.js?v=2" defer></script>
 <script src="../assets/els-header-controls.js?v=1" defer></script><script src="./assets/ss-presentation-mode.js?v=1" defer></script>
 </body></html>
