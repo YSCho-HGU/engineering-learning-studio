@@ -51,6 +51,24 @@ for(const route of cases){
      return{explicit:explicit.length,missing:missing.length,errors:errors.length,unrendered:unrendered.length,
        raw:raw.slice(0,12),legacyError,katexAvailable:!!window.katex?.render};
    });
+   if(!await page.evaluate(()=>!!window.SSApplicationsMath?.enhance))
+     findings.push({route,language,error:"Shared math adapter is not installed"});
+   // Verify the same adapter processes a late-inserted explanation, as future labs do.
+   const dynamic=await page.evaluate(async()=>{
+     const root=document.querySelector("main"),probe=document.createElement("p");
+     probe.id="ss-math-future-probe";
+     probe.textContent=String.raw`Future lab: \\(\\frac{1}{2}\\) and Δf.`;
+     root.append(probe);
+     window.SSMathCore?.renderNow?.();
+     await Promise.resolve();
+     const converted=probe.querySelectorAll("[data-ss-math]").length;
+     const rendered=probe.querySelectorAll(".katex").length;
+     const plain=probe.textContent.includes("\\frac");
+     probe.remove();
+     return{converted,rendered,plain};
+   });
+   if(dynamic.converted!==2||dynamic.rendered!==2||dynamic.plain)
+     findings.push({route,language,error:"Future dynamic card formula did not render",dynamic});
    results.push({route,language,...audit});
    if(audit.missing||audit.errors||audit.unrendered||audit.raw.length||audit.legacyError||errors.length)
      findings.push({route,language,...audit,pageErrors:errors});
