@@ -78,7 +78,8 @@ for(let chapter=1;chapter<=8;chapter++){
     await page.waitForTimeout(100);
     const mobile=await page.evaluate(()=>({
       overflow:Math.max(0,document.documentElement.scrollWidth-innerWidth),
-      audit:window.SSChaptersMathAudit.audit().passed
+      audit:window.SSChaptersMathAudit.audit().passed,
+      offenders:[...document.querySelectorAll("body *")].filter(el=>{const b=el.getBoundingClientRect();return b.width>0&&(b.right>innerWidth+7||b.left< -7)}).slice(0,16).map(el=>({tag:el.tagName,id:el.id,cls:typeof el.className==="string"?el.className:"",right:Math.round(el.getBoundingClientRect().right),width:Math.round(el.getBoundingClientRect().width)}))
     }));
     record(index+1,"mixed",null,"mobile",mobile);
     if(mobile.overflow>8||!mobile.audit)issues.push({chapter,section:index+1,reason:"mobile",mobile});
