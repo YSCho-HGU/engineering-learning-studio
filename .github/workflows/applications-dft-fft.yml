@@ -2,6 +2,7 @@ name: Applications FFT curriculum and lab QA
 on:
   push:
     paths:
+      - 'tests/applications-fft-six-browser-regression.mjs'
       - 'signals-systems/assets/ss-app-fft-butterfly-core.js'
       - 'tests/fft-butterfly-invariants.mjs'
       - 'signals-systems/assets/ss-app-fft-foundations.js'
@@ -27,6 +28,7 @@ on:
       - '.github/workflows/applications-dft-fft.yml'
   pull_request:
     paths:
+      - 'tests/applications-fft-six-browser-regression.mjs'
       - 'signals-systems/assets/ss-app-fft-butterfly-core.js'
       - 'tests/fft-butterfly-invariants.mjs'
       - 'signals-systems/assets/ss-app-fft-foundations.js'
@@ -75,6 +77,8 @@ jobs:
         run: node tests/applications-dft-fft-regression.mjs
       - name: Validate FFT learning progression and navigation
         run: node tests/applications-fft-path-regression.mjs
+      - name: Verify other six FFT Applications in Chromium
+        run: node tests/applications-fft-six-browser-regression.mjs
       - name: Preserve FFT browser source snapshot for offline visual diagnosis
         if: always()
         uses: actions/upload-artifact@v4
@@ -99,6 +103,14 @@ jobs:
             tests/applications-dft-fft-regression.mjs
           if-no-files-found: error
           retention-days: 7
+      - name: Capture six FFT lessons (desktop, light/dark and mobile)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fft-six-lessons-browser-screenshots
+          path: artifacts/fft-six-browser-qa/*.png
+          if-no-files-found: warn
+          retention-days: 14
       - name: Attach Chromium screenshots and failure evidence
         if: always()
         uses: actions/upload-artifact@v4

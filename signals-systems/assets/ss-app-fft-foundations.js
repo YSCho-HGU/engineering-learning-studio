@@ -279,9 +279,9 @@ function show(result){
  metrics.replaceChildren(
   containerMetric("N",String(result.n)),
   containerMetric(uniform?i("Spectrum","스펙트럼",true):i("Dominant bin","주요 Bin",true),uniform?i("Flat |X[k]|","균일한 |X[k]|",true):"k = "+top.k),
-  containerMetric(known?i("Bin spacing","Bin 간격",true):i("Normalized spacing","정규화 간격",true),fmt(known?result.hzSpacing:result.normalizedSpacing,4)+(known?" Hz":" cyc/sample")),
+  containerMetric(known?i("Bin spacing","Bin 간격",true):i("Normalized spacing","정규화 간격",true),fmt(known?result.hzSpacing:result.normalizedSpacing,4)+(known?" Hz":" cycles/sample")),
   containerMetric(uniform?i("Peak interpretation","피크 해석",true):known?i("Peak frequency","피크 주파수",true):i("Peak / sample","표본당 주파수",true),
-   uniform?i("Multiple bins","여러 Bin",true):fmt(known?top.hz:top.normalized,4)+(known?" Hz":" cyc/sample"))
+   uniform?i("Multiple bins","여러 Bin",true):fmt(known?top.hz:top.normalized,4)+(known?" Hz":" cycles/sample"))
  );
  graph($("fft-time-plot"),result.samples.map((y,n)=>({x:n,y})), "time",false);
  const peakSet=new Set(result.peaks.map(x=>x.k));
