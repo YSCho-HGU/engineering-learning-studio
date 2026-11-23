@@ -96,3 +96,24 @@ html[data-ss-presentation="on"]{
   --ss-canvas-legend-size:12px;
  }
 }
+
+/* Explicit SVG semantics for Chapters 7 and 8. SVG viewBox layout is preserved. */
+html main svg text.ss-plot-tick{
+ font-size:var(--ss-plot-tick-size)!important;
+ font-family:Arial,"Malgun Gothic",sans-serif;
+ font-weight:500;
+}
+html main svg text.ss-plot-axis-title{
+ font-size:var(--ss-plot-axis-size)!important;
+ font-family:Arial,"Malgun Gothic",sans-serif;
+ font-weight:700;
+}
+html main .plot-card .legend,
+html main .plot-card .legend span{
+ font-size:var(--ss-plot-legend-size)!important;
+ line-height:1.45!important;
+}
+html main .plot-card .axis-key{
+ font-size:var(--ss-plot-legend-size);
+ line-height:1.45;
+}
