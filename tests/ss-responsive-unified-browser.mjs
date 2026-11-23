@@ -69,6 +69,18 @@ for(const view of sizes){
      await mode.click();
      if(await mode.getAttribute("aria-pressed")!=="true")issues.push({route,reason:"Presentation mode not enabled"});
      check(await measure(page),"Presentation Applications "+route+" "+view.name);
+     if(route.includes("fft")){
+       const sight=await page.evaluate(()=>{
+         const controls=document.querySelector(".ss-fft-controls,.ss-fft-r-controls");
+         const graph=document.querySelector(".ss-fft-graphs svg,.ss-fft-r-graphs svg");
+         const a=controls?.getBoundingClientRect(),b=graph?.getBoundingClientRect();
+         return{controlsVisible:!!a&&a.top<innerHeight&&a.bottom>0,
+           graphVisible:!!b&&b.top<innerHeight&&b.bottom>0,
+           graphWidth:b?.width||0,controlsWidth:a?.width||0};
+       });
+       if(!sight.controlsVisible||!sight.graphVisible||sight.graphWidth<260||sight.controlsWidth<220)
+         issues.push({route,reason:"Projector controls and graph not simultaneously readable",sight});
+     }
      await page.keyboard.press("Escape");
      if(await mode.getAttribute("aria-pressed")!=="false")issues.push({route,reason:"Presentation mode not restored"});
    }
