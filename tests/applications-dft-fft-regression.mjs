@@ -32,6 +32,7 @@ try{
  const card=page.locator('[data-area="fft"][data-learning-step="3"]');
  await card.waitFor({state:"visible"});
  assert.ok(await card.evaluate(el=>el.classList.contains("ss-app-topic-ready")),"DFT vs FFT card remains Planned");
+ await card.locator("summary").click();
  expectContains(await card.locator(".ss-app-status").innerText(),"Interactive lab available","Available-status label");
  const start=card.locator("a.ss-app-open-lab");
  assert.equal(await start.getAttribute("href"),"./applications-dft-fft.html","Applications card link");
