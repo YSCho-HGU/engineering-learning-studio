@@ -48,3 +48,34 @@ html main :is(.ss-fft-equation,.ss7-key-equation,.ss8-key-equation,.ss6-theory-e
 @media(prefers-reduced-motion:reduce){
  html main *{scroll-behavior:auto}
 }
+
+/* The Part A chart gallery cannot fit beside a 230px rail at 768px.
+   Move the whole control stack above the result plots at tablet widths. */
+@media(min-width:601px) and (max-width:860px){
+ html .ss-al-workspace{grid-template-columns:minmax(0,1fr)!important}
+ html .ss-al-controls{position:static!important;top:auto!important;max-height:none!important;overflow:visible!important}
+ html .ss-al-results{min-width:0!important}
+ html .ss-al-results-bar{min-width:0;flex-wrap:wrap}
+ html .ss-al-graph-actions{min-width:0;flex-wrap:wrap}
+ html .ss-al-metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ html .ss-al-charts{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+/* Small phones need the full content width, not an 188px lesson rail.
+   Preserve the canonical 52px collapsed-sidebar behavior where explicitly selected. */
+@media(max-width:600px){
+ html:not([data-ss-sidebar="collapsed"]) body .ss-layout-root{
+  display:block!important;grid-template-columns:minmax(0,1fr)!important;
+ }
+ html:not([data-ss-sidebar="collapsed"]) body .ss-layout-root>.ss-layout-sidebar{
+  position:relative!important;top:0!important;width:100%!important;
+  height:auto!important;max-height:205px!important;overflow-y:auto!important;
+  border-right:0!important;border-bottom:1px solid var(--els-border)!important
+ }
+ html:not([data-ss-sidebar="collapsed"]) body .ss-layout-root>.ss-layout-main,
+ html:not([data-ss-sidebar="collapsed"]) body .ss-layout-root>main{
+  display:block!important;width:100%!important;min-width:0!important;
+  max-width:100%!important;margin-left:0!important
+ }
+ html .ss-al-results-bar{min-width:0;flex-wrap:wrap}
+ html .ss-al-graph-actions{min-width:0;flex-wrap:wrap}
+}
