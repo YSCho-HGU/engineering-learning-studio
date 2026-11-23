@@ -1,8 +1,11 @@
 {
-  "source_sha": "9aab336ebb60fbe5f00a2afb732be7485bd5e9eb",
+  "source_sha": "c5898314c35cb56a2ca5e5fe8a4a4ab8dd768284",
   "workflow": "ss-applications-browser",
-  "tested_at": "2026-11-23T07:56:06.962982+00:00",
-  "fft_browser_outcome": "skipped",
+  "tested_at": "2026-11-23T08:00:28.487563+00:00",
+  "fft_browser_outcome": "success",
+  "original_labs_outcome": "success",
+  "additional_labs_outcome": "failure",
+  "applications_math_outcome": "success",
   "viewport_widths": [
     1366,
     390
