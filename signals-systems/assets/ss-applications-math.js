@@ -50,7 +50,20 @@ function enhance(root=document){
  }
  return processed;
 }
-function init(){global.SSMathCore?.install({beforeRender:()=>enhance()})}
+function init(){
+ if(!global.SSMathCore)return;
+ global.SSMathCore.install({beforeRender:()=>enhance()});
+ const root=document.querySelector("main")||document.body;
+ // The hub and all labs replace text/cards after language or parameter changes.
+ // Watch their prose, but never re-process KaTeX-owned descendants.
+ const observer=new MutationObserver(mutations=>{
+  if(mutations.some(m=>{
+   const target=m.target.nodeType===1?m.target:m.target.parentElement;
+   return target?.closest?.(roots)&&!target.closest(skip);
+  }))global.SSMathCore.queue();
+ });
+ observer.observe(root,{childList:true,subtree:true,characterData:true});
+}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});
 else init();
 global.SSApplicationsMath=Object.freeze({enhance,get converted(){return processed}});
