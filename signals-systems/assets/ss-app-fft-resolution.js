@@ -15,7 +15,7 @@ timeNote:["The horizontal axis is n (sample index), not seconds.","가로축은 
 spectrumNote:["The horizontal axis is frequency in Hz; the graph shows one-sided amplitude.","가로축은 Hz 단위 주파수이며 단측 진폭을 표시합니다."],
 theory:["3 · Read the equations","3 · 수식으로 해석"],eq1:["Observation and nominal bin spacing","관측 시간과 원래 Bin 간격"],eq2:["Padded grid spacing","영 채우기 후의 표시 격자"],
 theoryNote:["N is the number of acquired samples, M is the transform length after padding. With the same observation, denser bins are not automatically better physical resolution.","N은 실제 관측 표본 개수이고 M은 영 채우기를 적용한 변환 길이입니다. 관측 구간이 같다면 FFT 격자만 촘촘해져도 실제 분해능은 자동으로 높아지지 않습니다."],
-observation:["4 · Explain your observation","4 · 관찰 결과 해석"],back:["← Sample Data FFT","← 샘플 데이터 FFT"],quizTitle:["5 · Check your understanding","5 · 이해도 확인"],quizButton:["Check answer","정답 확인"],quizRetry:["Choose another answer","다른 답을 선택해 보세요"],legend:["Solid = signal frequency; dashed = FFT bins","실선 = 실제 신호 주파수, 점선 = FFT Bin"],next:["Next · Chirp and STFT →","다음 · Chirp와 STFT →"]
+observation:["4 · Explain your observation","4 · 관찰 결과 해석"],back:["← Sample Data FFT","← 샘플 데이터 FFT"],quizTitle:["5 · Check your understanding","5 · 이해도 확인"],quizButton:["Check answer","정답 확인"],quizRetry:["Choose another answer","다른 답을 선택해 보세요"],legend:["Solid = signal frequency; dashed = FFT bins","실선 = 실제 신호 주파수, 점선 = FFT Bin"],next:["Next · DFT vs FFT →","다음 · DFT와 FFT →"]
 };
 const lang=()=>global.ELSLanguage?.get?.()||"mixed";
 const tr=([en,ko],short=false)=>lang()==="en"?en:lang()==="ko"?ko:en+(short?" · ":"\n")+ko;
