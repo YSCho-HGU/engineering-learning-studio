@@ -35,3 +35,16 @@ html[data-ss-presentation=on] .ss-stft-controls{top:8px}html[data-ss-presentatio
 @media(max-width:1080px){.ss-stft-pair{grid-template-columns:1fr}.ss-stft-formulas{grid-template-columns:1fr}}
 @media(max-width:860px){.ss-stft-layout,html[data-ss-presentation=on] .ss-stft-layout{grid-template-columns:1fr}.ss-stft-controls,html[data-ss-presentation=on] .ss-stft-controls{position:static;max-height:none;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible}.ss-stft-controls h2,.ss-stft-controls .ss-stft-note,.ss-stft-frame-actions,.ss-stft-reset{grid-column:1/-1}}
 @media(max-width:600px){.ss-stft-root{padding:9px}.ss-stft-controls{grid-template-columns:1fr}.ss-stft-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.ss-stft-card{padding:10px}.ss-stft-tick{font-size:11px}}
+
+/* Two computed STFT views use the same input signal and common color scale. */
+.ss-stft-contrast-head{display:flex;align-items:end;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.ss-stft-contrast-head>div{flex:1;min-width:230px}
+.ss-stft-contrast-head label{display:grid;gap:3px;min-width:200px;font-size:13px;font-weight:700}
+.ss-stft-contrast-head select{border:1px solid var(--els-border);border-radius:8px;background:var(--els-surface-alt);color:var(--els-ink);font:inherit;padding:7px;max-width:100%}
+.ss-stft-compare-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.ss-stft-compare-card{min-width:0;border:1px solid var(--els-border);border-radius:9px;background:var(--els-surface-alt);padding:10px}
+.ss-stft-compare-card h3{font-size:14px;line-height:1.4;margin:0;color:var(--els-ink)}
+.ss-stft-compare-card p{font-variant-numeric:tabular-nums;margin:4px 0 8px}
+.ss-stft-compare-card svg{width:100%;height:auto}
+#stft-compare-insight{margin:9px 0 0;font-size:14px;line-height:1.6;color:var(--els-ink)}
+@media(max-width:900px){.ss-stft-compare-grid{grid-template-columns:minmax(0,1fr)}}
