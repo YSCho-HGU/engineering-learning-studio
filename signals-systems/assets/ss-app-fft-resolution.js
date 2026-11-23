@@ -21,11 +21,33 @@ const lang=()=>global.ELSLanguage?.get?.()||"mixed";
 const tr=([en,ko],short=false)=>lang()==="en"?en:lang()==="ko"?ko:en+(short?" · ":"\n")+ko;
 const f=(v,d=2)=>Number(v.toFixed(d)).toLocaleString("en-US",{maximumFractionDigits:d});
 function dftMagnitude(samples,M){
+ // Calculate the same DFT with radix-2 FFT whenever M is a power of two.
+ // Zero-padding changes the frequency grid but not the number of measurements.
  const N=samples.length,half=Math.floor(M/2),out=[];
- for(let k=0;k<=half;k++){
-  let re=0,im=0;
-  for(let n=0;n<N;n++){const a=-tau*k*n/M;re+=samples[n]*Math.cos(a);im+=samples[n]*Math.sin(a)}
-  out.push((k===0||(M%2===0&&k===half)?1:2)*Math.hypot(re,im)/N);
+ if(M<N||M<2||!Number.isInteger(M))throw Error("FFT size must be an integer >= observed samples");
+ if((M&(M-1))===0){
+  const re=new Float64Array(M),im=new Float64Array(M);
+  re.set(samples);
+  for(let i=1,j=0;i<M;i++){
+   let bit=M>>1;for(;j&bit;bit>>=1)j^=bit;j^=bit;
+   if(i<j){[re[i],re[j]]=[re[j],re[i]];[im[i],im[j]]=[im[j],im[i]]}
+  }
+  for(let length=2;length<=M;length*=2){
+   const halfLength=length/2,theta=-tau/length;
+   for(let block=0;block<M;block+=length)for(let j=0;j<halfLength;j++){
+    const angle=theta*j,c=Math.cos(angle),d=Math.sin(angle),a=block+j,b=a+halfLength;
+    const tr=c*re[b]-d*im[b],ti=d*re[b]+c*im[b];
+    re[b]=re[a]-tr;im[b]=im[a]-ti;re[a]+=tr;im[a]+=ti;
+   }
+  }
+  for(let k=0;k<=half;k++)out.push((k===0||(M%2===0&&k===half)?1:2)*Math.hypot(re[k],im[k])/N);
+ }else{
+  // Keep the exported function useful for arbitrary integer transform sizes.
+  for(let k=0;k<=half;k++){
+   let re=0,im=0;
+   for(let n=0;n<N;n++){const a=-tau*k*n/M;re+=samples[n]*Math.cos(a);im+=samples[n]*Math.sin(a)}
+   out.push((k===0||(M%2===0&&k===half)?1:2)*Math.hypot(re,im)/N);
+  }
  }
  return out;
 }
