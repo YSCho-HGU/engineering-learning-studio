@@ -159,14 +159,17 @@ try{
  assert.equal(await page.locator("#butterfly-operations-table tr").count(),4,"Four length-2 butterflies");
  expectContains(await page.locator("#butterfly-operation-detail").innerText(),"t = W × v","Complex product must be visible");
  await page.locator('[data-butterfly-stage="0"]').click();
+ assert.equal(await butterfly.locator(".butterfly-value").count(),8,"Input stage must reveal only eight initial values");
  assert.equal(await page.locator("#butterfly-operations-table tr").count(),8,"Bit-reversed input table must have eight positions");
  expectContains(await page.locator("#butterfly-stage-summary").innerText(),"x[4]","Bit-reversed input description");
  await page.locator('[data-butterfly-stage="2"]').click();
+ assert.equal(await butterfly.locator(".butterfly-value").count(),24,"Stage 2 must reveal only input and first two stages");
  await page.locator('#butterfly-operation-buttons button').nth(1).click();
  const second=await page.locator("#butterfly-operation-detail").innerText();
  expectContains(second,"W4^1","Stage 2 nontrivial twiddle");
  expectContains(second,"−1.000j","Stage 2 W4^1 = -j");
  await page.locator('[data-butterfly-stage="3"]').click();
+ assert.equal(await butterfly.locator(".butterfly-value").count(),32,"Final FFT must reveal all complex stage values");
  await page.locator('#butterfly-operation-buttons button').nth(1).click();
  const last=await page.locator("#butterfly-operation-detail").innerText();
  expectContains(last,"W8^1","Stage 3 nontrivial twiddle");
