@@ -6,3 +6,21 @@
 .ss-fft-upload-peak strong{color:var(--els-ink)}
 .ss-fft-upload-peak span{min-width:0;overflow-wrap:anywhere}
 @media(max-width:600px){.ss-fft-upload-peak{grid-template-columns:27px minmax(35px,.55fr) minmax(0,1.5fr) minmax(0,1fr);gap:4px;font-size:11px}}
+
+.ss-fft-harmonics{border:1px solid var(--els-border);background:var(--els-surface-alt);border-radius:10px;padding:11px;min-width:0;margin-top:11px}
+.ss-fft-harmonics h3{margin:0 0 4px;font-size:16px}.ss-fft-harmonics p{font-size:13px;line-height:1.55}
+.ss-fft-harmonic-toolbar{display:flex;align-items:end;flex-wrap:wrap;gap:10px;margin:8px 0}
+.ss-fft-harmonic-toolbar label{display:grid;gap:4px;flex:1;min-width:165px;font:700 12px Arial,"Malgun Gothic",sans-serif}
+.ss-fft-harmonic-toolbar select,.ss-fft-harmonic-toolbar input{min-width:0;width:100%;padding:7px;border:1px solid var(--els-border);background:var(--els-surface);color:var(--els-ink);border-radius:7px;font:13px Arial,"Malgun Gothic",sans-serif}
+.ss-fft-harmonic-toolbar [hidden]{display:none!important}
+.ss-fft-harmonic-result{padding:9px 10px;border-radius:8px;border-left:3px solid var(--els-link);background:var(--els-surface);font-size:14px;line-height:1.5}
+.ss-fft-harmonic-result strong{font-size:17px;color:var(--els-ink)}
+.ss-fft-harmonic-table{margin:8px 0;display:grid;gap:4px}
+.ss-fft-harmonic-row{display:grid;grid-template-columns:minmax(50px,.5fr) minmax(70px,1fr) minmax(70px,1fr) minmax(64px,.7fr);gap:6px;align-items:center;font:12px/1.45 Arial,"Malgun Gothic",sans-serif;padding:6px 8px;border-bottom:1px solid var(--els-border);font-variant-numeric:tabular-nums}
+.ss-fft-harmonic-row span{min-width:0;overflow-wrap:anywhere}
+.ss-fft-harmonic-row.is-header{font-weight:750;background:var(--els-surface);border-radius:6px;color:var(--els-ink)}
+.ss-fft-harmonic-warning{color:var(--els-muted);font-size:12px!important}
+.ss-fft-harmonic-marker{stroke:var(--els-link);stroke-width:1.5;stroke-dasharray:5 4;opacity:.75}
+.ss-fft-harmonic-number{fill:var(--els-ink);font:700 12px Arial,"Malgun Gothic",sans-serif}
+.ss-fft-harmonic-f0{stroke:var(--els-link);stroke-width:2.6}
+@media(max-width:600px){.ss-fft-harmonic-row{grid-template-columns:40px minmax(0,1fr) minmax(0,1fr) 52px;gap:4px;font-size:11px;padding:5px 4px}.ss-fft-harmonic-toolbar label{min-width:100%}}
