@@ -1,0 +1,59 @@
+/* Same semantic colors, chapter header and compact two-column chart rhythm as other Applications labs. */
+:root{font-family:Arial,"Malgun Gothic",sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--els-page);color:var(--els-ink);font:16px/1.55 Arial,"Malgun Gothic",sans-serif}
+button,select,input{font:inherit}
+button{cursor:pointer}
+a{color:var(--els-link);text-decoration:none}
+a:hover{text-decoration:underline}
+:where(a,button,input,select):focus-visible{outline:3px solid var(--els-focus);outline-offset:3px}
+.ss-sys-skip{position:absolute;top:-110px;left:12px;background:var(--els-surface);padding:8px;z-index:110}
+.ss-sys-skip:focus{top:56px}
+.ss-sys-header{position:sticky!important;top:0!important;z-index:70!important}
+.ss-sys-header .ss-common-actions{margin-left:auto!important}
+.ss-sys-root{max-width:none;padding:0 clamp(12px,1.55vw,26px) 28px}
+.ss-sys-intro{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 18px;margin:10px 0 8px;border:1px solid var(--els-border);border-radius:12px;background:var(--els-surface)}
+.ss-sys-kicker{font-size:12px;font-weight:800;letter-spacing:.06em}
+.ss-sys-intro h1{font-size:clamp(22px,2.25vw,30px);line-height:1.2;margin:5px 0}
+.ss-sys-intro p{margin:0;color:var(--els-muted);font-size:14px;line-height:1.5}
+.ss-sys-return,.ss-sys-tabs a{display:inline-flex;align-items:center;min-height:36px;padding:6px 12px;border:1px solid var(--els-border);border-radius:8px;background:var(--els-surface-alt);color:var(--els-ink);font-size:13px;font-weight:650;white-space:normal}
+.ss-sys-tabs{display:flex;gap:8px;margin-bottom:9px;flex-wrap:wrap}
+.ss-sys-tabs a[aria-current=page]{border-color:var(--els-link);box-shadow:inset 3px 0 var(--els-link)}
+.ss-sys-workspace{display:grid;grid-template-columns:minmax(275px,320px) minmax(0,1fr);gap:12px;align-items:start}
+.ss-sys-controls,.ss-sys-results{min-width:0;border:1px solid var(--els-border);border-radius:12px;background:var(--els-surface);padding:14px}
+.ss-sys-controls{position:sticky;top:61px;max-height:calc(100dvh - 72px);overflow:auto}
+.ss-sys-panel-heading h2{font-size:16px;margin:0 0 6px}
+.ss-sys-panel-heading p{color:var(--els-muted);font-size:13px;margin:0 0 13px}
+.ss-sys-fields{display:grid;gap:13px}
+.ss-sys-field{display:grid;gap:6px}
+.ss-sys-field>label,.ss-sys-field-head{display:flex;justify-content:space-between;align-items:center;gap:7px;font-size:13px;font-weight:700}
+.ss-sys-field output{font-variant-numeric:tabular-nums;color:var(--els-link);font-weight:750}
+.ss-sys-field input[type=range]{width:100%;accent-color:var(--els-link);min-height:26px;cursor:pointer}
+.ss-sys-field select{width:100%;min-height:39px;padding:6px 9px;background:var(--els-surface-alt);color:var(--els-ink);border:1px solid var(--els-border);border-radius:8px}
+.ss-sys-task{padding:12px;margin-top:15px;border-top:1px solid var(--els-border);background:var(--els-surface-alt);border-radius:8px}
+.ss-sys-task h3{font-size:14px;margin:0 0 5px}
+.ss-sys-task p{color:var(--els-muted);font-size:13px;margin:0}
+.ss-sys-tools{display:flex;gap:9px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding-bottom:9px;border-bottom:1px solid var(--els-border)}
+.ss-sys-equation{font-size:clamp(16px,1.4vw,20px);line-height:1.5;min-width:0;overflow-x:auto}
+.ss-sys-equation .katex-display{margin:4px 0}
+.ss-sys-tools button{padding:6px 12px;min-height:36px;background:var(--els-surface-alt);color:var(--els-ink);border:1px solid var(--els-border);border-radius:8px}
+.ss-sys-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:11px 0}
+.ss-sys-metric{min-width:0;border:1px solid var(--els-border);border-radius:8px;background:var(--els-surface-alt);padding:9px}
+.ss-sys-metric span{display:block;color:var(--els-muted);font-size:12px}
+.ss-sys-metric strong{font-size:clamp(16px,1.6vw,20px);font-variant-numeric:tabular-nums;font-weight:750}
+.ss-sys-plots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ss-sys-plot{min-width:0;border:1px solid var(--els-border);border-radius:10px;background:var(--els-surface-alt);padding:11px}
+.ss-sys-plot:first-child{grid-column:span 2}
+.ss-sys-plot h2{font-size:16px;line-height:1.4;font-weight:750;margin:0 0 5px}
+.ss-sys-plot canvas{display:block;width:100%;height:185px;background:var(--els-surface);border-radius:7px}
+.ss-sys-plot:first-child canvas{height:218px}
+.ss-sys-legend{display:flex;gap:16px;font-size:12px;flex-wrap:wrap;min-height:20px;margin-bottom:4px;color:var(--els-muted)}
+.ss-sys-legend span:before{content:"";display:inline-block;width:17px;height:3px;border-radius:3px;vertical-align:middle;margin-right:6px;background:var(--legend-color)}
+.ss-sys-plot p{margin:6px 0 0;color:var(--els-muted);font-size:12px}
+.ss-sys-insight{border-left:3px solid var(--els-link);padding:11px 14px;margin-top:11px;background:var(--els-surface-alt);border-radius:7px;font-size:14px;line-height:1.6}
+.ss-sys-insight strong{display:block;margin-bottom:4px}
+.ss-sys-insight p{margin:0;color:var(--els-muted)}
+@media(min-width:1450px){.ss-sys-plot canvas{height:235px}.ss-sys-plot:first-child canvas{height:260px}}
+@media(max-width:970px){.ss-sys-workspace{grid-template-columns:minmax(245px,290px) minmax(0,1fr)}.ss-sys-plots{grid-template-columns:1fr}.ss-sys-plot:first-child{grid-column:auto}}
+@media(max-width:720px){.ss-sys-workspace{grid-template-columns:1fr}.ss-sys-controls{position:static;max-height:none}.ss-sys-intro{align-items:flex-start;flex-direction:column}.ss-sys-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.ss-sys-plot canvas{height:205px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
