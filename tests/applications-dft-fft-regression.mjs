@@ -36,6 +36,7 @@ try{
  assert.ok(await page.locator("#same-validation").isVisible(),"Invalid fs was not detected");
  await page.locator("#same-fs").fill("1024");
  assert.ok(await page.locator("#same-validation").isHidden(),"Valid fs did not restore experiment");
+ await page.screenshot({path:path.join(screenshots,"dft-fft-same-result-desktop.png"),fullPage:true});
  console.log("PASS 1 Same Result: plots, complex coefficients, fs, input validation");
 
  await page.locator("#tab-butterfly").click();
@@ -76,6 +77,7 @@ try{
  assert.ok((await page.locator("#speed-ratio").innerText()).includes("×"));
  assert.equal(await page.locator("#dft-speed-plot path").count(),2,"Expected DFT and FFT cost curves");
  assert.ok((await page.locator("#speed-discovery").innerText()).length>70);
+ await page.screenshot({path:path.join(screenshots,"dft-fft-speed-desktop.png"),fullPage:true});
  console.log("PASS 3 Speed: N selection, measured runtime, N² and N log₂N");
 
  const language=page.locator("#dft-language"),theme=page.locator("#dft-theme");
