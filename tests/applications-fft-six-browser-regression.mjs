@@ -105,6 +105,8 @@ try{
    await page.locator("#dtmf-fft").click();
    check(await page.locator("#dtmf-spectrum").isVisible(),"dtmf: spectrum hidden after FFT");
    await svgNonblank(page,"dtmf-spectrum");
+   const traceFill=await page.locator("#dtmf-spectrum path.ss-dtmf-trace").evaluate(el=>getComputedStyle(el).fill);
+   check(traceFill==="none","dtmf: spectrum line must be unfilled, got "+traceFill);
    check((await page.locator("#dtmf-peaks").innerText()).includes("Hz"),"dtmf: no two frequency peaks");
    const digit=await page.evaluate(()=>window.SSDTMF.result?.decoded);
    check(typeof digit==="string"&&digit.length===1,"dtmf: no valid decoded key");
