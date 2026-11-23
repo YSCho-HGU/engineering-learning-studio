@@ -182,8 +182,8 @@ function refresh(){
    [tr("FFT bin index","FFT Bin 인덱스"),"k = "+analysis.peakBin]
   ];
   $("fft-upload-stats").innerHTML=metrics.map(([name,value])=>'<div class="ss-fft-upload-stat">'+safe(name)+'<strong>'+safe(value)+'</strong></div>').join("");
-  $("fft-upload-peaks").innerHTML=a.topPeaks.map((p,i)=>
-   '<div class="ss-fft-upload-peak"><strong>#'+(i+1)+'</strong><span>k = '+p.bin+'</span><span>'+fmt(p.frequency,a.fs?2:5)+' '+a.freqUnit+'</span><span>A = '+fmt(p.amplitude,4)+'</span></div>').join("");
+  $("fft-upload-peaks").innerHTML=analysis.topPeaks.map((p,i)=>
+   '<div class="ss-fft-upload-peak"><strong>#'+(i+1)+'</strong><span>k = '+p.bin+'</span><span>'+fmt(p.frequency,analysis.fs?2:5)+' '+analysis.freqUnit+'</span><span>A = '+fmt(p.amplitude,4)+'</span></div>').join("");
   $("fft-upload-spectrum-help").textContent=analysis.fs===null?
    tr("Sampling rate unknown: FFT bins are described in cycles/sample. Hz cannot be recovered from sample values alone.","샘플링 주파수를 알 수 없어 cycles/sample 단위로 해석합니다. 표본값만으로 Hz를 결정할 수 없습니다."):
    tr("Known sampling rate: frequency bin k maps to k × fs/N Hz. The original bin spacing is fs/N.","샘플링 주파수가 주어졌으므로 k번째 Bin은 k × fs/N Hz입니다. 원래 Bin 간격은 fs/N입니다.");
