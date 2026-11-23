@@ -49,10 +49,23 @@ function analyze(samples,{N=1024,position=0,fs=null,window="hann",removeMean=tru
  }
  let peakBin=1;
  for(let k=2;k<spectrum.length;k++)if(spectrum[k]>spectrum[peakBin])peakBin=k;
+ const candidates=[];
+ for(let k=1;k<spectrum.length-1;k++){
+  if(spectrum[k]>=spectrum[k-1]&&spectrum[k]>spectrum[k+1])
+   candidates.push({bin:k,amplitude:spectrum[k]});
+ }
+ candidates.sort((a,b)=>b.amplitude-a.amplitude);
+ const topPeaks=[];
+ for(const p of candidates){
+  if(topPeaks.every(q=>Math.abs(q.bin-p.bin)>2)){
+   topPeaks.push({bin:p.bin,amplitude:p.amplitude,frequency:fs===null?p.bin/N:p.bin*fs/N});
+   if(topPeaks.length>=5)break;
+  }
+ }
  const freqUnit=fs===null?"cycles/sample":"Hz";
  const peakFreq=fs===null?peakBin/N:peakBin*fs/N;
  return {N,total:data.length,start,end:start+N,position:maxStart?start/maxStart:0,fs,window,removeMean,mean,
-   segment, spectrum,peakBin,peakAmplitude:spectrum[peakBin],peakFreq,freqUnit,
+   segment, spectrum,peakBin,peakAmplitude:spectrum[peakBin],peakFreq,freqUnit,topPeaks,
    binSpacing:fs===null?1/N:fs/N,nyquist:fs===null?.5:fs/2,
    duration:fs===null?null:N/fs};
 }
@@ -158,6 +171,8 @@ function refresh(){
    [tr("FFT bin index","FFT Bin 인덱스"),"k = "+analysis.peakBin]
   ];
   $("fft-upload-stats").innerHTML=metrics.map(([name,value])=>'<div class="ss-fft-upload-stat">'+safe(name)+'<strong>'+safe(value)+'</strong></div>').join("");
+  $("fft-upload-peaks").innerHTML=a.topPeaks.map((p,i)=>
+   '<div class="ss-fft-upload-peak"><strong>#'+(i+1)+'</strong><span>k = '+p.bin+'</span><span>'+fmt(p.frequency,a.fs?2:5)+' '+a.freqUnit+'</span><span>A = '+fmt(p.amplitude,4)+'</span></div>').join("");
   $("fft-upload-spectrum-help").textContent=analysis.fs===null?
    tr("Sampling rate unknown: FFT bins are described in cycles/sample. Hz cannot be recovered from sample values alone.","샘플링 주파수를 알 수 없어 cycles/sample 단위로 해석합니다. 표본값만으로 Hz를 결정할 수 없습니다."):
    tr("Known sampling rate: frequency bin k maps to k × fs/N Hz. The original bin spacing is fs/N.","샘플링 주파수가 주어졌으므로 k번째 Bin은 k × fs/N Hz입니다. 원래 Bin 간격은 fs/N입니다.");
@@ -168,7 +183,7 @@ function refresh(){
   $("fft-upload-status").textContent=tr("Ready · processed locally in your browser","준비 완료 · 브라우저 내부에서만 처리");
  }catch(error){
   analysis=null;$("fft-upload-status").textContent=tr("Cannot analyze: ","분석 불가: ")+String(error.message);
-  $("fft-upload-spectrum").replaceChildren();$("fft-upload-stats").replaceChildren();
+  $("fft-upload-spectrum").replaceChildren();$("fft-upload-stats").replaceChildren();$("fft-upload-peaks").replaceChildren();
  }
 }
 function loadSource({samples,fs=null,name="",kind="sensor",metadata=""}){
@@ -242,6 +257,7 @@ function localize(){
  "fft-upload-step1":["2 · Observe the waveform","2 · 시간 파형 관찰"],
  "fft-upload-wave-help":["The shaded region contains the selected N samples used for the FFT.","음영 영역은 FFT에 사용되는 N개 표본 구간입니다."],
  "fft-upload-step2":["3 · FFT magnitude spectrum","3 · FFT 크기 스펙트럼"],
+ "fft-upload-peaks-title":["Strong peaks (not necessarily the fundamental)","주요 피크 (반드시 기본주파수는 아님)"],
  "fft-upload-step3":["4 · Explain the spectrum","4 · 스펙트럼 해석"],
  "fft-upload-question":["Check · What does the frequency axis mean?","확인 · 주파수 축은 무엇을 뜻할까요?"],
  "fft-upload-answer":["Explain my FFT","FFT 해석 확인"],
