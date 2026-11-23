@@ -137,26 +137,33 @@ function insight(result){
  const root=$("fft-insight"),comp=$("fft-compare"),best=result.best;
  const type=$("fft-preset").value;
  const normalized=fmt(best.normalized,4),k=best.k,n=result.n,fs=result.fs;
+ const flatMagnitude=Math.max(...result.bins.map(b=>b.magnitude))-Math.min(...result.bins.map(b=>b.magnitude))<1e-7;
  const examples=[];
  if(fs===null){
-  examples.push(i("The largest non-DC component is at bin k="+k+"; its normalized frequency is "+normalized+" cycles/sample.",
+  examples.push(flatMagnitude?
+   i("All FFT bins have the same magnitude: there is no unique tone to identify.","모든 FFT Bin의 크기가 같으므로 특정한 하나의 주파수 성분을 대표값으로 볼 수 없습니다."):
+   i("The largest non-DC component is at bin k="+k+"; its normalized frequency is "+normalized+" cycles/sample.",
    "DC를 제외한 주요 성분은 k="+k+"이며 정규화 주파수는 "+normalized+" cycles/sample입니다."));
   examples.push(i("With no sample rate, you cannot determine Hz, a sampling interval in seconds, or a real-world time scale.",
    "샘플링 주파수가 없으면 Hz, 초 단위 표본 간격, 실제 시간축을 결정할 수 없습니다."));
   comp.textContent=i("Example: if fs were 8000 Hz, this bin would be "+fmt(k*8000/n,2)+" Hz; if fs were 16000 Hz, it would be "+fmt(k*16000/n,2)+" Hz. Both produce the same FFT coefficients.",
    "예: fs를 8000Hz라고 가정하면 "+fmt(k*8000/n,2)+"Hz, 16000Hz라면 "+fmt(k*16000/n,2)+"Hz입니다. FFT 계수는 바뀌지 않습니다.");
  }else{
-  examples.push(i("The strongest non-DC bin k="+k+" maps to "+fmt(best.hz,2)+" Hz, because f = k fs / N.",
-   "주요 Bin k="+k+"는 f=k fs/N에 따라 "+fmt(best.hz,2)+"Hz로 해석합니다."));
-  examples.push(i("Your bin spacing is "+fmt(result.hzSpacing,3)+" Hz. The record lasts "+fmt(1000*result.duration,3)+" ms. A frequency between bins may leak across several bins.",
-   "Bin 간격은 "+fmt(result.hzSpacing,3)+"Hz, 표본 기록 길이는 "+fmt(1000*result.duration,3)+"ms입니다. Bin 사이의 성분은 여러 Bin에 퍼질 수 있습니다."));
+  examples.push(flatMagnitude?
+   i("The FFT magnitude is spread equally over all bins. An impulse has no single dominant tone.","FFT 크기가 모든 Bin에 동일하게 분포합니다. 임펄스에는 하나의 지배적인 순음이 없습니다."):
+   i("The strongest non-DC bin k="+k+" maps to "+fmt(best.hz,2)+" Hz on the sampled frequency axis, using fₖ=k fₛ/N.",
+   "주요 Bin k="+k+"는 표본화된 주파수 축에서 fₖ=k fₛ/N에 따라 "+fmt(best.hz,2)+"Hz로 대응합니다."));
+  examples.push(i("Bin spacing: "+fmt(result.hzSpacing,3)+" Hz; Nyquist limit: "+fmt(fs/2,3)+" Hz; record duration: "+fmt(1000*result.duration,3)+" ms. Peaks between bins may leak.",
+   "Bin 간격: "+fmt(result.hzSpacing,3)+"Hz; 나이퀴스트 경계: "+fmt(fs/2,3)+"Hz; 기록 길이: "+fmt(1000*result.duration,3)+"ms입니다. Bin 사이의 성분은 누설됩니다."));
+  examples.push(i("Hz labels describe the sampled baseband; without a band-limit assumption, the original analog frequency may still be aliased.",
+   "Hz 축은 표본화된 기저대역 해석입니다. 대역제한 가정이 없다면 원래 아날로그 주파수는 에일리어싱으로 모호할 수 있습니다."));
   comp.textContent=i("Try changing fs to "+fmt(2*fs,2)+" Hz without editing the samples: bin k="+k+" and its amplitude stay unchanged, but its frequency becomes "+fmt(2*best.hz,2)+" Hz.",
    "표본값은 유지하고 fs를 "+fmt(2*fs,2)+"Hz로 바꾸어 보세요. Bin k="+k+"와 진폭은 그대로지만 주파수는 "+fmt(2*best.hz,2)+"Hz가 됩니다.");
  }
  if(type==="leak")examples.push(i("This example contains 3.4 cycles in the record. It lies between bins, so the FFT energy spreads: the largest bin is not the exact sinusoid frequency.",
  "이 예제는 관측 구간에 3.4주기를 포함합니다. Bin 사이의 성분이므로 누설이 발생하며 최대 Bin은 정확한 정현파 주파수와 다를 수 있습니다."));
- else if(type==="pulse")examples.push(i("A single impulse spreads over all frequency bins; one bin is not enough to identify its shape.",
- "임펄스 신호의 주파수 성분은 모든 Bin에 퍼집니다. 특정 Bin 하나만으로 신호를 판단할 수 없습니다."));
+ else if(type==="pulse")examples.push(i("An impulse has equal raw |X[k]| at every bin. Interior one-sided amplitudes are doubled only by plotting normalization, not by a different FFT coefficient.",
+ "임펄스의 |X[k]|는 모든 Bin에서 같습니다. 단측 진폭의 내부 Bin이 두 배인 것은 표시 정규화 때문이지 FFT 계수가 달라서가 아닙니다."));
  else examples.push(i("A large FFT bin indicates a strong component near that grid point; the normalized one-sided amplitude is not the unscaled |X[k]|.",
  "큰 FFT Bin은 그 격자 부근의 성분이 강함을 뜻합니다. 단측 진폭은 스케일링 전 |X[k]|와 다릅니다."));
  root.replaceChildren(...examples.map(s=>{const p=document.createElement("p");p.textContent=s;return p}));
@@ -168,7 +175,7 @@ const labels={
  roadmap:[["Read samples","표본 확인"],["Compute FFT","FFT 수행"],["Interpret bins","Bin 해석"],["Add sampling rate","샘플링 주파수 적용"]],
  controls:["Input samples","입력 표본 데이터"],note:["Choose a sample set or paste numeric samples. One column, separated by spaces, commas, or line breaks.","예제 데이터를 선택하거나 숫자 표본을 붙여넣습니다. 공백·쉼표·줄바꿈으로 구분합니다."],
  preset:["Example dataset","예제 데이터"],samples:["Sample values x[n]","표본값 x[n]"],format:["Enter 8–128 real values. For power-of-two N, a radix-2 FFT is used; otherwise, a direct DFT returns the same coefficients.","실수 표본 8~128개를 입력합니다. N이 2의 거듭제곱이면 radix-2 FFT, 아니면 동일한 계수를 구하는 직접 DFT를 사용합니다."],
- known:["Sampling rate fs is known","샘플링 주파수 fs를 알고 있습니다"],fs:["Sampling rate fs (Hz)","샘플링 주파수 fs (Hz)"],
+ known:["Sampling rate fₛ is known","샘플링 주파수 fₛ를 알고 있습니다"],fs:["Sampling rate fₛ (Hz)","샘플링 주파수 fₛ (Hz)"],
  run:["Run FFT","FFT 실행"],reset:["Reset","초기화"],
  theory:["What does an FFT compute?","FFT는 무엇을 계산할까요?"],theoryDesc:["A DFT transforms N samples into complex coefficients X[k]. The FFT is a fast way to compute that same DFT; it does not create the missing sampling rate.","DFT는 N개 표본을 복소수 계수 X[k]로 변환합니다. FFT는 동일한 DFT를 빠르게 계산하는 알고리즘이며, 누락된 샘플링 주파수를 생성하지 않습니다."],
  equation1:["DFT definition","DFT 정의"],equation2:["Normalized frequency and physical frequency","정규화 주파수와 실제 주파수"],
@@ -196,12 +203,13 @@ function localize(){
 function show(result){
  lastResult=result;
  const known=result.fs!==null,top=result.best,metrics=$("fft-metrics");
+ const uniform=Math.max(...result.bins.map(b=>b.magnitude))-Math.min(...result.bins.map(b=>b.magnitude))<1e-7;
  metrics.replaceChildren(
   containerMetric("N",String(result.n)),
-  containerMetric(i("Dominant bin","주요 Bin",true),"k = "+top.k),
+  containerMetric(uniform?i("Spectrum","스펙트럼",true):i("Dominant bin","주요 Bin",true),uniform?i("Flat |X[k]|","균일한 |X[k]|",true):"k = "+top.k),
   containerMetric(known?i("Bin spacing","Bin 간격",true):i("Normalized spacing","정규화 간격",true),fmt(known?result.hzSpacing:result.normalizedSpacing,4)+(known?" Hz":" cyc/sample")),
-  containerMetric(known?i("Peak frequency","피크 주파수",true):i("Peak / sample","표본당 주파수",true),
-   fmt(known?top.hz:top.normalized,4)+(known?" Hz":" cyc/sample"))
+  containerMetric(uniform?i("Peak interpretation","피크 해석",true):known?i("Peak frequency","피크 주파수",true):i("Peak / sample","표본당 주파수",true),
+   uniform?i("Multiple bins","여러 Bin",true):fmt(known?top.hz:top.normalized,4)+(known?" Hz":" cyc/sample"))
  );
  graph($("fft-time-plot"),result.samples.map((y,n)=>({x:n,y})), "time",false);
  const peakSet=new Set(result.peaks.map(x=>x.k));
