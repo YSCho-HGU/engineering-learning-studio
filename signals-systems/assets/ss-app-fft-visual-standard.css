@@ -85,6 +85,15 @@ main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-
  font-size:var(--fft-ui-body);
  line-height:1.6;
 }
+/* DFT and sound fingerprint use h3 for plots; keep their visual role at plot-title level. */
+main.dft-main .dft-plot-card h3,
+main.ss-finger-root .ss-finger-sample-grid h3{
+ font-size:var(--fft-ui-plot-heading);
+ line-height:1.4;
+ font-weight:750;
+ margin:0 0 7px;
+ color:var(--els-ink);
+}
 /* Comfortable, equal target heights; never force sliders and checkboxes into text-field height. */
 main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
  :is(label,.ss-fft-field,.ss-fft-r-controls label,.dft-controls label,.ss-finger-controls label,.ss-dtmf-controls label,.ss-fft-upload-controls label,.ss-stft-controls label){
