@@ -18,7 +18,7 @@ async function inspectHub(part,view){
  const result=await p.evaluate(part=>{
   const main=document.querySelector(".ss-app-container"),section=document.querySelector("#part-"+part);
   const row=section.querySelector(part==="a"?".ss-app-abd-lab-row":".ss-app-abd-planned-summary");
-  const title=row.querySelector(".ss-app-lesson-title"),s=getComputedStyle(row);
+  const title=row.querySelector(".ss-app-lesson-title"),card=row.closest(".ss-app-abd-planned")||row,s=getComputedStyle(card);
   return{
    header:!!document.querySelector("header.ss-common-header"),
    heading:getComputedStyle(title).fontSize,
