@@ -65,3 +65,15 @@ html.ss-foundations-standard .ss-found-bridge{margin:16px 0}
    max-width:100%;
  }
 }
+
+/* Prevent small browser viewport/font rounding from producing a document-level
+   horizontal scrollbar. Long formulas remain accessible within their own
+   horizontal scroll containers defined above. */
+@media(max-width:700px){
+ html.ss-foundations-standard,html.ss-foundations-standard body{
+  max-width:100%;overflow-x:clip
+ }
+ html.ss-foundations-standard main :is(.formula,.math,.ss-found-predict p,.ss-found-four-step p):has(.katex){
+  overflow-x:auto;scrollbar-width:thin;min-width:0;max-width:100%
+ }
+}
