@@ -28,6 +28,13 @@ for(let chapter=1;chapter<=8;chapter++){
    // Use DOM click: sidebar movement should not influence the visible graph geometry.
    await page.locator(navSelector[chapter]).nth(i).evaluate(el=>el.click());
    await page.waitForTimeout(90);
+   const navState=await page.locator(navSelector[chapter]).nth(i).evaluate(el=>({
+     current:el.getAttribute("aria-current"),
+     classes:el.className,
+     active:el.classList.contains("active")||el.classList.contains("on")||
+      ["page","true"].includes(el.getAttribute("aria-current"))
+   }));
+   if(!navState.active)issues.push({chapter,section:i+1,reason:"navigation-not-active",navState});
    for(const language of languages){
     const select=page.locator("select[aria-label='Language'],#ss7-language-picker").first();
     if(await select.count()){await select.selectOption(language);await page.waitForTimeout(80)}
