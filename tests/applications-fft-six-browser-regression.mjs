@@ -28,6 +28,13 @@ async function svgNonblank(page,id){
  });
  check(result.drawing>2&&result.width>40&&result.height>30,id+" must render nonempty SVG: "+JSON.stringify(result));
 }
+async function setRange(page,id,value){
+ await page.locator("#"+id).evaluate((element,v)=>{
+  element.value=String(v);
+  element.dispatchEvent(new Event("input",{bubbles:true}));
+  element.dispatchEvent(new Event("change",{bubbles:true}));
+ },value);
+}
 async function capture(page,name){
  await page.screenshot({path:path.join(artifacts,name+".png"),fullPage:true,animations:"disabled",timeout:20000});
 }
@@ -87,7 +94,7 @@ try{
    check((await page.locator("#fft-r-stats").innerText()).includes("Hz"),"resolution: no frequency metrics");
    await page.locator("#fft-r-experiment").selectOption("leakage");
    await page.locator("#fft-r-window").selectOption("hann");
-   await page.locator("#fft-r-offset").fill("0.4");
+   await setRange(page,"fft-r-offset","0.4");
    await svgNonblank(page,"fft-r-spectrum");
    await page.locator("#fft-r-experiment").selectOption("padding");
    await page.locator("#fft-r-padding").selectOption("4");
@@ -147,7 +154,7 @@ try{
    await page.locator("#stft-window-type").selectOption("rect");
    await page.locator("#stft-compare-kind").selectOption("overlap");
    await svgNonblank(page,"stft-spectrogram");await svgNonblank(page,"stft-compare-a");
-   await page.locator("#stft-frame").fill(await page.locator("#stft-frame").getAttribute("max"));
+   await setRange(page,"stft-frame",await page.locator("#stft-frame").getAttribute("max"));
    await page.locator("#stft-mission-check").click();
    check((await page.locator("#stft-mission-feedback").innerText()).length>10,"chirp: mission no feedback");
   }
