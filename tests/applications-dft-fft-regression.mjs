@@ -167,7 +167,7 @@ try{
  await page.locator('#butterfly-operation-buttons button').nth(1).click();
  const second=await page.locator("#butterfly-operation-detail").innerText();
  expectContains(second,"W4^1","Stage 2 nontrivial twiddle");
- expectContains(second,"−1.000j","Stage 2 W4^1 = -j");
+ expectContains(second,"-1.000j","Stage 2 W4^1 = -j");
  await page.locator('[data-butterfly-stage="3"]').click();
  assert.equal(await butterfly.locator(".butterfly-value").count(),32,"Final FFT must reveal all complex stage values");
  await page.locator('#butterfly-operation-buttons button').nth(1).click();
