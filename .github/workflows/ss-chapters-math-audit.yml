@@ -1,0 +1,43 @@
+name: Signals Systems Chapters 1-8 math audit
+on:
+  push:
+    paths:
+      - 'signals-systems/chapter[1-8].html'
+      - 'signals-systems/assets/ss-chapters-math-audit.js'
+      - 'signals-systems/assets/ss-math-core.js'
+      - 'signals-systems/assets/ss-ch*-math.js'
+      - 'signals-systems/assets/ss-ch*-prose-math.js'
+      - 'signals-systems/assets/ss-foundations-standard.js'
+      - 'tests/ss-chapters-math-audit.mjs'
+      - '.github/workflows/ss-chapters-math-audit.yml'
+  workflow_dispatch:
+jobs:
+  chapters-math:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify auditor syntax
+        run: |
+          node --check signals-systems/assets/ss-chapters-math-audit.js
+          node --check tests/ss-chapters-math-audit.mjs
+      - name: Install Chromium
+        run: |
+          npm install --no-save @playwright/test
+          npx playwright install --with-deps chromium
+      - name: Start local static site
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/ss-chapters-server.log 2>&1 &
+          sleep 2
+      - name: Audit chapter math in three language modes
+        run: node tests/ss-chapters-math-audit.mjs
+      - name: Upload detailed math audit
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ss-chapters-math-audit
+          path: qa/chapters-math-audit.json
+          if-no-files-found: ignore
