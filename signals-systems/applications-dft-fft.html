@@ -113,7 +113,7 @@ main{padding-top:12px}main>h1{font-size:clamp(1.45rem,2.3vw,1.85rem);margin:2px 
  <div class="butterfly-equation">E[k] + W<sub>N</sub><sup>k</sup> O[k] &nbsp; / &nbsp; E[k] − W<sub>N</sub><sup>k</sup> O[k] &nbsp;&nbsp; (W<sub>N</sub> = e<sup>−j2π/N</sup>)</div>
  <p id="butterfly-note" class="note">Each butterfly combines two intermediate complex values. FFT shares intermediate work instead of evaluating all N terms independently for every output.</p>
 </div><div class="two"><div><canvas id="complexity" width="650" height="240" role="img" aria-label="Asymptotic work comparison"></canvas></div><div><table><thead><tr><th>N</th><th>DFT N²</th><th>FFT N log₂N</th></tr></thead><tbody id="cost-rows"></tbody></table><p class="note">Illustrative growth terms, not literal operation counts. FFT implementation constants and actual timing may differ.</p></div></div></section>
-<section class="card" id="upload"><h3 id="upload-heading">Real data / 음성·센서 데이터 분석</h3><p id="upload-description">Choose WAV/MP3 audio (browser decoding) or CSV/TXT sensor measurements. All processing runs locally in your browser; no file is uploaded to a server.</p>
+<section class="card" id="upload"><h3 id="upload-heading">Real data / 음성·센서 데이터 분석</h3><p class="note" id="upload-transfer">Preview how FFT behaves on uploaded signals. For the full audio/sensor investigation, see <a href="./applications-fft-upload.html">Real Audio &amp; Sensor FFT</a>. · 이곳은 실제 데이터 적용을 미리 체험하는 단계입니다. 심화 분석은 별도의 음성·센서 FFT 실습에서 진행합니다.</p><p id="upload-description">Choose WAV/MP3 audio (browser decoding) or CSV/TXT sensor measurements. All processing runs locally in your browser; no file is uploaded to a server.</p>
 <p class="note" id="fixtures-note">Reference datasets · 기준 데이터: <a href="./tests/fixtures/dft-fft-vibration-64-160hz.csv" download>Sensor CSV (64 + 160 Hz)</a> · <button type="button" id="download-wav">Download synthetic audio WAV (250 + 750 Hz)</button>. These are controlled test signals, not human voice recordings or physical sensor measurements.</p>
 <div class="controls" id="upload-controls"><label>Load file<input id="file" type="file" accept=".wav,.mp3,.m4a,.ogg,.csv,.txt,audio/*,text/csv,text/plain"></label>
 <label>CSV sample-rate (Hz)<input id="csvfs" type="number" min=".001" step="any" placeholder="optional"></label>
@@ -181,7 +181,7 @@ $("intro-path").querySelectorAll("[data-intro-part]").forEach(b=>b.addEventListe
 }));
 $("intro-finish").addEventListener("click",()=>{setStep(1);document.querySelector(".steps").scrollIntoView({behavior:"smooth",block:"start"})});
 const stageFocus=[
-["Observe the time signal and locate its frequency peak.","시간 신호와 주파수 피크를 함께 관찰하세요."],
+["Quick recap: bins, Hz and zero-padding were introduced in the Resolution lab. Here they support the DFT-versus-FFT comparison.","빠른 복습: Bin·Hz·Zero-padding은 분해능 실습에서 다룬 개념입니다. 여기서는 DFT와 FFT의 계산 원리를 이해하기 위해 다시 활용합니다."],
 ["Compare complex DFT and FFT results; runtime belongs to the next step.","DFT와 FFT의 복소 결과 오차에 집중하세요. 실행 시간은 다음 단계에서 비교합니다."],
 ["Vary N and compare measured times with theoretical work growth.","N을 변경하며 실측 시간과 이론적 계산량 증가를 비교하세요."],
 ["Upload a signal; compare its waveform, spectral peaks, and physical meaning.","신호를 업로드한 뒤 파형·스펙트럼 피크·물리적 의미를 비교하세요."]
