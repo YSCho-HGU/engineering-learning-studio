@@ -1,0 +1,81 @@
+/* Clean, focused DFT vs FFT experiment workspace. Uses Studio theme and common header. */
+:root{font-family:Arial,"Malgun Gothic",sans-serif}
+*{box-sizing:border-box}
+html{scroll-padding-top:66px}
+body{margin:0;min-width:0;background:var(--els-page,#171a19);color:var(--els-ink,#e5eeec);font:15px/1.6 Arial,"Malgun Gothic",sans-serif}
+button,input,select{font:inherit}
+.dft-skip{position:absolute;left:-9999px;top:4px;padding:8px;background:var(--els-surface,#252928);z-index:999}
+.dft-skip:focus{left:10px}
+.dft-main{width:min(100%,1480px);margin:auto;padding:16px 22px 55px}
+.dft-heading{margin:0 0 13px}
+.dft-heading h1{font-size:clamp(22px,2.3vw,28px);line-height:1.3;margin:0 0 3px}
+.dft-heading p{margin:0;color:var(--els-muted,#b7c3bf);font-size:14px}
+.dft-tabs{display:flex;flex-wrap:wrap;gap:7px;border-bottom:1px solid var(--els-border,#64716c);padding:0 0 9px;margin:0 0 13px}
+.dft-tabs button{border:1px solid var(--els-border,#64716c);background:var(--els-surface-alt,#252c29);color:var(--els-ink,#e5eeec);
+ border-radius:8px;min-height:39px;padding:7px 17px;cursor:pointer;white-space:nowrap;font-weight:700}
+.dft-tabs button[aria-selected="true"]{border-color:var(--els-link,#69c7c0);background:var(--els-info-bg,var(--els-surface,#303a36));color:var(--els-ink,#e5eeec)}
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--els-focus,#e2c977);outline-offset:2px}
+.dft-panel[hidden],.dft-verified[hidden],.dft-alert[hidden]{display:none!important}
+.dft-panel{display:grid;gap:10px}
+.dft-panel-header h2{font-size:20px;line-height:1.3;margin:0 0 2px}
+.dft-panel-header p{margin:0;color:var(--els-muted,#b7c3bf);font-size:14px}
+.dft-controls{display:flex;align-items:end;gap:10px;flex-wrap:wrap;background:var(--els-surface-alt,#252c29);
+ border:1px solid var(--els-border,#64716c);padding:11px 13px;border-radius:10px}
+.dft-controls label{display:grid;gap:3px;font-size:12px;font-weight:700;min-width:100px}
+.dft-controls select,.dft-controls input{min-height:37px;min-width:0;border:1px solid var(--els-border,#64716c);border-radius:7px;padding:6px 8px;
+ background:var(--els-surface,#29322e);color:var(--els-ink,#e5eeec);width:100%;font-size:14px}
+.dft-controls label.dft-grow{flex:1 1 240px}
+.dft-primary{min-height:37px;border:1px solid var(--els-link,#69c7c0);background:var(--els-info-bg,var(--els-surface,#303d39));
+ color:var(--els-ink,#e5eeec);border-radius:7px;padding:7px 15px;font-weight:800;cursor:pointer}
+.dft-primary:hover{border-color:var(--els-ink,#e5eeec)}
+.dft-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.dft-metrics>div{display:grid;gap:2px;border:1px solid var(--els-border,#64716c);background:var(--els-surface-alt,#252c29);border-radius:9px;padding:9px 12px}
+.dft-metrics span{font-size:12px;color:var(--els-muted,#b7c3bf)}
+.dft-metrics strong{font:700 16px/1.4 ui-monospace,Consolas,monospace;overflow-wrap:anywhere}
+.dft-paired-plots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.dft-plot-card{min-width:0;border:1px solid var(--els-border,#64716c);border-radius:10px;padding:11px;background:var(--els-surface-alt,#252c29)}
+.dft-plot-card h3{font-size:15px;line-height:1.3;margin:0 0 7px}
+.dft-plot-card svg{display:block;max-width:100%;width:100%;height:auto;min-height:170px;color:var(--els-ink,#e5eeec)}
+.dft-explain{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;border-left:3px solid var(--els-link,#69c7c0);
+ background:var(--els-surface-alt,#252c29);padding:9px 13px}
+.dft-explain p{margin:0;flex:1 1 350px;font-size:13px}
+.dft-formula{font:16px/1.5 "Cambria Math",serif;max-width:100%;overflow-x:auto;overflow-y:hidden;white-space:nowrap}
+.dft-formula .katex{font-size:1.02em;color:var(--els-ink,#e5eeec)}
+.dft-formula .katex-display{margin:4px 0;overflow-x:auto}
+.dft-optional{background:var(--els-surface-alt,#252c29);border:1px solid var(--els-border,#64716c);border-radius:9px;padding:8px 11px;font-size:13px}
+.dft-optional summary{font-weight:700;cursor:pointer}
+.dft-table-scroll{overflow-x:auto;max-width:100%;min-width:0}
+.dft-table-scroll table{border-collapse:collapse;width:100%;min-width:370px;font:13px/1.4 ui-monospace,Consolas,monospace}
+.dft-table-scroll th,.dft-table-scroll td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--els-border,#64716c);white-space:nowrap}
+.dft-table-scroll th{font-weight:800}
+.dft-alert{color:var(--els-ink,#e5eeec);border:1px solid #a6635a;border-radius:8px;padding:8px 11px;margin:0;font-size:13px}
+.dft-stage-buttons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.dft-stage-buttons button,.dft-pair-buttons button{border:1px solid var(--els-border,#64716c);background:var(--els-surface-alt,#252c29);
+ color:var(--els-ink,#e5eeec);border-radius:7px;min-height:37px;padding:5px 9px;cursor:pointer;font-size:13px}
+.dft-stage-buttons button[aria-pressed="true"],.dft-pair-buttons button[aria-pressed="true"]{border:2px solid var(--els-link,#69c7c0);font-weight:800}
+.dft-stage-note{font-size:13px;color:var(--els-muted,#b7c3bf);margin:0}
+.dft-scroll-figure{width:100%;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;scrollbar-width:thin}
+.dft-butterfly-plot svg{min-width:1030px;height:auto;min-height:0}
+.dft-caption{margin:4px 0 0;font-size:12px;color:var(--els-muted,#b7c3bf)}
+.dft-butterfly-bottom{display:grid;grid-template-columns:1fr 1.15fr;gap:12px}
+.dft-butterfly-bottom>div{min-width:0;border:1px solid var(--els-border,#64716c);border-radius:10px;padding:11px;background:var(--els-surface-alt,#252c29)}
+.dft-butterfly-bottom h3{margin:0 0 7px;font-size:15px}
+.dft-inspection-header{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.dft-pair-buttons{display:flex;gap:4px;flex-wrap:wrap}
+.dft-pair-buttons button{font-size:12px;min-height:30px;padding:4px 8px}
+.dft-value-grid{display:grid;grid-template-columns:minmax(105px,1fr) minmax(0,1.3fr);gap:5px 10px;font:13px/1.6 ui-monospace,Consolas,monospace;overflow-wrap:anywhere;margin:8px 0}
+.dft-value-grid span:nth-child(odd){color:var(--els-muted,#b7c3bf)}
+.dft-value-grid span:nth-child(even){font-weight:700}
+.dft-verified{border:1px solid var(--els-border,#64716c);border-radius:10px;padding:10px 13px;background:var(--els-info-bg,var(--els-surface-alt,#29322e))}
+.dft-verified h3{margin:0;font-size:15px}
+.dft-verified p{margin:5px 0;font-size:13px}
+.dft-related{display:flex;gap:8px 16px;flex-wrap:wrap;align-items:center;border-top:1px solid var(--els-border,#64716c);margin:15px 0 0;padding-top:11px;font-size:12px;color:var(--els-muted,#b7c3bf)}
+.dft-related a{color:var(--els-link,#69c7c0);text-decoration:underline}
+@media(max-width:940px){.dft-butterfly-bottom{grid-template-columns:1fr}}
+@media(max-width:760px){.dft-paired-plots{grid-template-columns:1fr}.dft-main{padding:12px 12px 45px}.dft-panel-header h2{font-size:18px}}
+@media(max-width:560px){.dft-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.dft-tabs button{min-height:38px;padding:6px 4px;font-size:12px;white-space:normal}
+ .dft-metrics{grid-template-columns:1fr 1fr}.dft-metrics>div:last-child{grid-column:1/-1}
+ .dft-stage-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .dft-plot-card{padding:8px}.dft-plot-card svg{min-height:145px}
+ .dft-butterfly-bottom>div{padding:9px}
+}
