@@ -62,3 +62,32 @@ Preserve Studio common header, language modes, White Clean / Warm Neutral / Warm
 - **Numerical evidence:** ramp, impulse, cosine and 40 deterministic additional input vectors were tested independently, with maximum complex discrepancy approximately 2.43e-14. Built-in W4^1=-j and W8^1=(1-j)/sqrt(2) cases also have explicit assertions.
 - **Tests:** `tests/fft-butterfly-invariants.mjs` and added Playwright checks in `tests/applications-dft-fft-regression.mjs`. GitHub Actions workflow watches both the pure computation module and its test.
 - **Remaining validation:** Chromium visual interaction and CI green status have **not** been independently confirmed during this chat. This report does not claim those tests executed successfully.
+
+
+## Chromium verification of 8-point FFT Butterfly — 2026-11-23
+
+**Result:** PASS. GitHub Actions **Applications FFT curriculum and lab QA** run
+https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/45175713731
+completed successfully on Ubuntu 24.04 with Chromium through Playwright 1.56.1.
+
+Verified assertions:
+- Part C DFT vs FFT card opens the integrated lab.
+- Direct DFT equals FFT numerically (complex error below 1e-7).
+- 8-point DIT bit reversal; 4 butterflies per stage; stage-by-stage reveal and selected 4 dependency edges.
+- Nontrivial twiddle factors W4^1 = -j and W8^1 = (1-j)/sqrt(2); all 8 final FFT coefficients agree with directly summed DFT.
+- Ramp, cosine, impulse and custom input with validation.
+- 64/160 Hz sensor peaks, 250/750 Hz WAV peaks, unknown sample rate shown as cycles/sample, and conditional sensor period/RPM.
+- English and Korean language switching; White Clean and Neutral Dark themes; 390px mobile document overflow check, SVG internal scrolling and selected-stage focusing.
+- Frequency grid and zero-padding original-bin equality, learning checkpoints, and 7-lesson shared navigation.
+- On pass, screenshots are collected as an inspectable workflow artifact named `fft-butterfly-browser-screenshots`.
+
+Actual bugs found and fixed:
+1. Missing integrated `describePeaks` and `renderPhysics` logic caused runtime failure and empty sensor spectral peaks.
+2. Default Web Audio context resampled an 8000 Hz WAV, shifting expected peak readings. Prefer a valid native WAV rate and fall back to decoded rate.
+3. Duplicated FFT learning navigation wasted vertical space.
+4. Sensor-specific shaft RPM controls appeared for audio. Hide those for audio; keep them for sensor.
+5. On mobile, large SVG did not focus the selected FFT stage. Auto-scroll the internal region and provide scrolling instructions.
+6. Math is rendered with KaTeX when available with readable HTML fallback.
+7. Test-infrastructure defects corrected: cross-realm array assertions, Ubuntu 26.04 vs Playwright 1.56.1, asynchronous decoding races, and incorrect assumptions about persisted substep state / data-type-specific panels.
+
+**Scope:** CI exercised the checked-out repository in real headless Chromium and passed. It does not demonstrate that the separately deployed GitHub Pages CDN has finished propagating every new commit at the same instant. The final PR was merged to main with commit `2fd1f11ef557733273b555a85eb2b197a52c6740`.
