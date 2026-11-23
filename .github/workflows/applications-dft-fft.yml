@@ -1,7 +1,16 @@
-name: Applications DFT FFT integration QA
+name: Applications FFT curriculum and lab QA
 on:
   push:
     paths:
+      - 'signals-systems/assets/ss-applications-hub.css'
+      - 'signals-systems/assets/ss-app-fft-path.js'
+      - 'signals-systems/assets/ss-app-fft-path.css'
+      - 'signals-systems/applications-fft-*.html'
+      - 'signals-systems/applications-chirp-stft.html'
+      - 'signals-systems/assets/ss-app-chirp-stft.js'
+      - 'signals-systems/assets/ss-dtmf-decoder.js'
+      - 'signals-systems/assets/ss-fft-upload.js'
+      - 'tests/applications-fft-path-regression.mjs'
       - 'signals-systems/applications-dft-fft.html'
       - 'signals-systems/applications.html'
       - 'signals-systems/assets/ss-applications-hub.js'
@@ -10,6 +19,15 @@ on:
       - '.github/workflows/applications-dft-fft.yml'
   pull_request:
     paths:
+      - 'signals-systems/assets/ss-applications-hub.css'
+      - 'signals-systems/assets/ss-app-fft-path.js'
+      - 'signals-systems/assets/ss-app-fft-path.css'
+      - 'signals-systems/applications-fft-*.html'
+      - 'signals-systems/applications-chirp-stft.html'
+      - 'signals-systems/assets/ss-app-chirp-stft.js'
+      - 'signals-systems/assets/ss-dtmf-decoder.js'
+      - 'signals-systems/assets/ss-fft-upload.js'
+      - 'tests/applications-fft-path-regression.mjs'
       - 'signals-systems/applications-dft-fft.html'
       - 'signals-systems/applications.html'
       - 'signals-systems/assets/ss-applications-hub.js'
@@ -32,3 +50,5 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Run integrated DFT FFT regression
         run: node tests/applications-dft-fft-regression.mjs
+      - name: Validate FFT learning progression and navigation
+        run: node tests/applications-fft-path-regression.mjs
