@@ -254,7 +254,7 @@ try{
  assert.ok(await page.locator("#spectrum-graph-panel").isVisible(),"Stage 4 spectrum plot absent");
  assert.ok(await page.locator("#control-fs").isVisible(),"Stage 4 needs sampling-rate correction");
  assert.ok(await page.locator("#peak-analysis").isVisible(),"Stage 4 peak analysis absent");
- assert.ok(await page.locator("#sensor-physics").isVisible(),"Stage 4 physical interpretation absent");
+ assert.ok(await page.locator("#sensor-physics").isHidden(),"Audio session should not display irrelevant shaft RPM controls");
  assert.ok(await page.locator("#compare").isHidden(),"Stage 4 numerical comparison should be hidden");
  console.log("PASS focused content visibility across all four stages");
  // Stage 1: N, fs and bin-index/Hz mapping must stay mathematically consistent.
