@@ -196,6 +196,9 @@ try{
  await page.locator("#butterfly-apply").click();
  assert.ok(await page.locator("#butterfly-input-error").isHidden(),"Valid custom data should clear input error");
  await page.setViewportSize({width:390,height:844});
+ await page.locator('[data-butterfly-stage="3"]').click();
+ const selectedStageScroll=await page.locator(".butterfly-svg-scroller").evaluate(el=>({left:el.scrollLeft,max:el.scrollWidth-el.clientWidth}));
+ assert.ok(selectedStageScroll.left>=selectedStageScroll.max*.84,"Mobile butterfly should scroll to selected stage, "+JSON.stringify(selectedStageScroll));
  const mobileState=await page.evaluate(()=>{
   const scroller=document.querySelector(".butterfly-svg-scroller");
   return{documentWidth:document.documentElement.scrollWidth,viewportWidth:window.innerWidth,scrollerScrollWidth:scroller.scrollWidth,scrollerClientWidth:scroller.clientWidth};
@@ -228,6 +231,7 @@ try{
  // Stage-specific display contract: suppress irrelevant graphs and data in every mission.
  await page.setViewportSize({width:1366,height:900});
  await page.locator('[data-step="0"]').click();
+ await page.locator('[data-intro-part="0"]').click();
  assert.ok(await page.locator("#intro").isVisible(),"Stage 1 DFT concept absent");
  assert.ok(await page.locator("#time-graph-panel").isVisible(),"Stage 1 time-domain plot absent");
  assert.ok(await page.locator("#spectrum-graph-panel").isVisible(),"Stage 1 spectrum absent");
