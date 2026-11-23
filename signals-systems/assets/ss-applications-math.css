@@ -23,3 +23,13 @@
 :is(.ss-app-topic,.ss-al-insight,.ss-al-guidance,.ss-fft-interpret) .katex{
  color:inherit
 }
+
+/* Explicit block LaTeX is full-width, unlike inline math in card prose. */
+:is(.ss-app-main,.ss-app-intro,.ss-al-root,.ss-fft-root) .ss-app-display-math{
+ display:block;box-sizing:border-box;max-width:100%;min-width:0;
+ margin:8px 0;padding:5px 2px;overflow-x:auto;overflow-y:hidden;
+ font-family:KaTeX_Main,"Cambria Math",serif;line-height:1.6;
+}
+:is(.ss-app-main,.ss-app-intro,.ss-al-root,.ss-fft-root) .ss-app-display-math .katex-display{
+ margin:.25em 0;overflow-x:auto;overflow-y:hidden;
+}
