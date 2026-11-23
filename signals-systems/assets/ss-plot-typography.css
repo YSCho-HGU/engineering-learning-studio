@@ -35,3 +35,64 @@ html main :is(.ss-fft-equation,.ss-fft-r-theory,.formula,.deriv-math) .katex-dis
 @media(max-width:600px){
  :root{--ss-plot-title-size:14px;--ss-plot-axis-size:12px;--ss-plot-tick-size:11px;--ss-plot-legend-size:12px;--ss-plot-display-math:17px}
 }
+
+/* Canvas rendering uses these roles through SSCanvasTypography at draw time.
+   Tick values and axis titles deliberately have separate sizes. */
+:root{
+ --ss-canvas-tick-size:13px;
+ --ss-canvas-axis-size:15px;
+ --ss-canvas-annotation-size:12px;
+ --ss-canvas-minor-size:11px;
+ --ss-canvas-legend-size:13px;
+}
+html main :is(.legend-item,.legend-chip-label,.ss7-legend-item,.ss8-legend-item,.ss-plot-legend,.ss-al-legend){
+ font-size:var(--ss-plot-legend-size)!important;
+ line-height:1.5!important;
+}
+html main :is(.axisnote,.axis-note,.ss-plot-axis-note){
+ font-size:var(--ss-plot-axis-size);
+ line-height:1.5;
+}
+@media(min-width:1600px){
+ :root{
+  --ss-canvas-tick-size:14px;
+  --ss-canvas-axis-size:16px;
+  --ss-canvas-annotation-size:13px;
+  --ss-canvas-minor-size:12px;
+  --ss-canvas-legend-size:14px;
+ }
+}
+@media(max-width:860px){
+ :root{
+  --ss-canvas-tick-size:12px;
+  --ss-canvas-axis-size:14px;
+  --ss-canvas-annotation-size:12px;
+  --ss-canvas-minor-size:11px;
+  --ss-canvas-legend-size:12px;
+ }
+}
+@media(max-width:600px){
+ :root{
+  --ss-canvas-tick-size:11px;
+  --ss-canvas-axis-size:13px;
+  --ss-canvas-annotation-size:11px;
+  --ss-canvas-minor-size:10px;
+  --ss-canvas-legend-size:12px;
+ }
+}
+html[data-ss-presentation="on"]{
+ --ss-canvas-tick-size:15px;
+ --ss-canvas-axis-size:18px;
+ --ss-canvas-annotation-size:14px;
+ --ss-canvas-minor-size:12px;
+ --ss-canvas-legend-size:15px;
+}
+@media(max-width:1050px){
+ html[data-ss-presentation="on"]{
+  --ss-canvas-tick-size:12px;
+  --ss-canvas-axis-size:14px;
+  --ss-canvas-annotation-size:12px;
+  --ss-canvas-minor-size:11px;
+  --ss-canvas-legend-size:12px;
+ }
+}
