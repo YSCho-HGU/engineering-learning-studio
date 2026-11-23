@@ -99,6 +99,12 @@ main{padding-top:12px}main>h1{font-size:clamp(1.45rem,2.3vw,1.85rem);margin:2px 
 </section>
 </section>
 <section class="card" id="compare"><h3 id="comparison-title">Same N-point result / 동일한 결과 비교</h3><div class="metrics"><div class="metric" id="accuracy-metric"><span>Max |DFT − FFT|</span><strong id="error">—</strong></div><div class="metric" id="dft-speed-metric"><span>Direct DFT · measured</span><strong id="dtime">—</strong></div><div class="metric" id="fft-speed-metric"><span>Radix-2 FFT · measured</span><strong id="ftime">—</strong></div></div><p class="note" id="timing-note"></p><div class="question" id="comparison-explanation"><strong>Why does this matter?</strong><p>Compare identical complex X[k] values, not just matching magnitude plots. Browser timing depends on CPU, warm-up, JIT and load; it is not a hardware benchmark.</p></div></section>
+<section class="card" id="dft-fft-knowledge-check" hidden aria-labelledby="dft-fft-check-title">
+<h3 id="dft-fft-check-title">Knowledge Check</h3>
+<p id="dft-fft-check-question"></p>
+<div class="controls"><label><span id="dft-fft-check-label">Your prediction</span><select id="dft-fft-check-choice"></select></label><button type="button" id="dft-fft-check-button">Check understanding</button></div>
+<p id="dft-fft-check-feedback" role="status" aria-live="polite"></p>
+</section>
 <section class="card" id="growth"><h3>Calculation growth / 계산량 증가</h3>
 <div class="butterfly-lesson">
  <div class="butterfly-heading"><h3 id="butterfly-heading">Radix-2 FFT: reuse smaller transforms</h3><span class="note">N = 8 · worked structure</span></div>
@@ -180,10 +186,35 @@ const stageFocus=[
 ["Vary N and compare measured times with theoretical work growth.","N을 변경하며 실측 시간과 이론적 계산량 증가를 비교하세요."],
 ["Upload a signal; compare its waveform, spectral peaks, and physical meaning.","신호를 업로드한 뒤 파형·스펙트럼 피크·물리적 의미를 비교하세요."]
 ];
+const computationChecks=[
+ {question:["With identical N samples, what fundamentally differs between direct DFT and FFT?","같은 N개 표본에 대해 직접 DFT와 FFT의 본질적인 차이는 무엇인가요?"],
+  options:[["The resulting X[k] values","계산 결과 X[k]"],["The algorithm used to compute the same X[k]","같은 X[k]를 계산하는 알고리즘"],["The sampling rate","샘플링 주파수"]],correct:1,
+  why:["FFT changes the computation strategy, not the defined DFT. Tiny numerical errors may remain.","FFT는 DFT의 정의가 아닌 계산 방식을 바꿉니다. 매우 작은 수치 오차는 발생할 수 있습니다."]},
+ {question:["When N doubles, which asymptotic statement best explains the FFT advantage?","N이 두 배가 될 때 FFT의 이점을 가장 잘 설명하는 것은 무엇인가요?"],
+  options:[["Direct DFT has quadratic work, while radix-2 FFT grows approximately N log₂N","직접 DFT는 N², radix-2 FFT는 대략 N log₂N으로 증가합니다."],["FFT needs zero operations","FFT의 연산량은 0입니다."],["Both methods require exactly the same work","두 방법의 연산량은 항상 같습니다."]],correct:0,
+  why:["The plotted curves describe growth rates, not exact instructions or guaranteed browser timings.","그래프는 연산 증가율을 보여주며 정확한 명령어 수나 브라우저 실행 시간을 보장하지는 않습니다."]}
+];
+function renderComputationCheck(){
+ const item=step===1?computationChecks[0]:computationChecks[1],field=$("dft-fft-check-choice");
+ $("dft-fft-check-title").textContent=L("Quick check · Is the concept clear?","핵심 확인 · 개념을 이해했나요?");
+ $("dft-fft-check-question").textContent=L(...item.question);
+ $("dft-fft-check-label").textContent=L("Choose one answer","답을 선택하세요");
+ $("dft-fft-check-button").textContent=L("Check understanding","이해도 확인");
+ field.replaceChildren();
+ const choose=document.createElement("option");choose.value="";choose.textContent=L("Select your answer","답을 선택하세요");field.append(choose);
+ item.options.forEach((pair,i)=>{const option=document.createElement("option");option.value=String(i);option.textContent=L(...pair);field.append(option)});
+ $("dft-fft-check-feedback").textContent="";
+}
+$("dft-fft-check-button").addEventListener("click",()=>{
+ const selected=$("dft-fft-check-choice").value,box=$("dft-fft-check-feedback"),item=step===1?computationChecks[0]:computationChecks[1];
+ if(selected===""){box.textContent=L("Choose an answer first.","먼저 답을 선택하세요.");return;}
+ const correct=Number(selected)===item.correct;box.dataset.result=correct?"correct":"incorrect";
+ box.textContent=correct?L("Correct. ","정답입니다. ")+L(...item.why):L("Try again. Observe the results above before choosing.","위의 결과를 관찰한 뒤 다시 선택하세요.");
+});
 function setStep(v){
  step=v;$all("[data-step]").forEach(b=>b.setAttribute("aria-current",Number(b.dataset.step)===v?"step":"false"));
  $("step-title").textContent=L(...stepsLocalized[v][0]);$("step-desc").textContent=L(...stepsLocalized[v][1]);
- $("intro").hidden=v!==0;$("compare").hidden=!(v===1||v===2);$("growth").hidden=v!==2;
+ $("intro").hidden=v!==0;$("compare").hidden=!(v===1||v===2);$("growth").hidden=v!==2;$("dft-fft-knowledge-check").hidden=!(v===1||v===2);
  $("upload").hidden=v!==3;$("upload-setup").hidden=v!==3;
  $("signal-graphs").hidden=v===2;$("frequency-axis-lab").hidden=v!==0;$("padding-comparison").hidden=v!==0;$("intro-path").hidden=v!==0;$("intro-part-lead").hidden=v!==0;
  $("signal-graphs").classList.toggle("spectrum-only",v===1);
@@ -200,6 +231,7 @@ function setStep(v){
  $("stage-focus").textContent=L(...stageFocus[v]);
  $("comparison-title").textContent=v===2?L("Execution time comparison","계산 시간 비교"):L("Numerical equivalence: DFT vs FFT","수치 결과 일치성: DFT vs FFT");
  renderMission();
+ if(v===1||v===2)renderComputationCheck();
  if(v===0)renderIntroPart();
 }
 $("guide-reveal").onclick=()=>{const e=$("guide-feedback");e.hidden=!e.hidden;$("guide-reveal").setAttribute("aria-expanded",String(!e.hidden));$("guide-reveal").textContent=e.hidden?L("Reveal explanation","해설 보기"):L("Hide explanation","해설 접기")};
