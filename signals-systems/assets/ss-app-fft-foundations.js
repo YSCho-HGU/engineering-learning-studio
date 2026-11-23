@@ -186,6 +186,44 @@ const labels={
  next:["Next, after this foundation","기초 이해 후 다음 단계"],nextText:["Now compare observation length, FFT bin spacing and leakage. In the next interactive lab, change N and fs, then test windows and zero padding.","이제 관측 길이·FFT Bin 간격·누설을 직접 비교합니다. 다음 실습에서 N과 fs를 변경하고 창 함수와 영 채우기를 실험하세요."],
  nextLink:["Open Resolution & Leakage Lab →","분해능과 누설 실습 열기 →"]
 };
+const practiceTasks={
+ bins:{
+  title:["Mission 1 · Reveal two FFT peaks without fs","미션 1 · fs 없이 두 FFT 피크 찾아내기"],
+  instruction:["Choose the two-sinusoid dataset (N=32) and keep fs unknown. Inspect bins k=3 and k=7; explain why Hz cannot be shown.","두 정현파 표본(N=32)을 선택하고 fs는 미지수로 유지하세요. k=3과 k=7의 피크를 찾아보고 왜 Hz로 표시하지 못하는지 생각해 보세요."]},
+ hz:{
+  title:["Mission 2 · Locate the 1,500 Hz FFT bin","미션 2 · 1,500 Hz Bin 만들기"],
+  instruction:["Choose the one-tone dataset (N=16), turn on known fs, and set fs=8000 Hz. Inspect the peak at k=3 and its 1,500 Hz label.","단일 정현파 데이터(N=16)를 선택하고 fs 알려짐을 켠 후 8000 Hz를 입력하세요. k=3 피크의 1,500 Hz 표시를 확인하세요."]}
+};
+let practiceStage="bins",practiceVerified=false;
+function practiceEvaluation(result){
+ if(!result)return {ok:false,detail:"—"};
+ if(practiceStage==="bins"){
+  const a=result.bins.find(b=>b.k===3),b=result.bins.find(b=>b.k===7);
+  return {ok:result.n===32&&result.fs===null&&$("fft-preset").value==="two"&&a?.amplitude>.8&&b?.amplitude>.45,
+   detail:"N = "+result.n+" · k = 3: "+fmt(a?.amplitude||0,3)+" · k = 7: "+fmt(b?.amplitude||0,3)+" · fs = "+(result.fs===null?"unknown":fmt(result.fs)+" Hz")};
+ }
+ return {ok:result.n===16&&result.fs===8000&&$("fft-preset").value==="one"&&result.best.k===3&&Math.abs(result.best.hz-1500)<.01,
+ detail:"N = "+result.n+" · k = "+result.best.k+" · f = "+(result.best.hz===null?"unknown":fmt(result.best.hz,1)+" Hz")};
+}
+function renderPractice(){
+ const task=practiceTasks[practiceStage];
+ $("fft-practice-title").textContent=i(...task.title);
+ $("fft-practice-label").textContent=i("Choose a graph experiment","그래프 실험 선택");
+ $("fft-practice-task").options[0].textContent=i("Mission 1 · Two peaks, no fs","미션 1 · fs 없이 두 피크",true);
+ $("fft-practice-task").options[1].textContent=i("Mission 2 · 1,500 Hz peak","미션 2 · 1,500 Hz 피크",true);
+ $("fft-practice-task").value=practiceStage;
+ $("fft-practice-instruction").textContent=i(...task.instruction);
+ $("fft-practice-check").textContent=i("Verify graph target","그래프 목표 확인");
+ const status=practiceEvaluation(lastResult);
+ $("fft-practice-measure").textContent=status.detail;
+ if(!practiceVerified||!status.ok){$("fft-practice-feedback").textContent=i("Change the input controls, observe the graphs and verify.","입력값을 바꾸고 그래프를 확인한 다음 목표를 검증하세요.");$("fft-practice-feedback").dataset.result="pending";practiceVerified=false}
+}
+function checkPractice(){
+ const status=practiceEvaluation(lastResult),out=$("fft-practice-feedback");practiceVerified=status.ok;
+ out.dataset.result=status.ok?"correct":"incorrect";
+ out.textContent=status.ok?i("Target achieved. The graph and numeric interpretation agree.","목표 달성! 그래프와 수치 해석이 일치합니다."):i("Target not reached. Compare the selected dataset and sampling-rate setting.","아직 목표에 도달하지 않았습니다. 표본 데이터와 fs 설정을 비교하세요.");
+}
+
 const checks={
  unknown:{
   question:["Given x[n] and its FFT, but no sampling rate fs, what can you determine?","표본 x[n]과 FFT 결과는 있지만 fs를 모른다면 무엇을 알 수 있을까요?"],
@@ -232,7 +270,7 @@ function localize(){
   el.append(number,title);return el;
  }));
  document.documentElement.lang=language()==="ko"?"ko":"en";
- renderCheckpoint();
+ renderCheckpoint();renderPractice();
 }
 function show(result){
  lastResult=result;
@@ -252,7 +290,7 @@ function show(result){
   "Horizontal axis is now in Hz; f = k fs / N.":"Horizontal axis is bin index k. Physical Hz is unknown.",
   known?"가로축은 Hz입니다. f=k fs/N로 변환합니다.":"가로축은 Bin k입니다. 실제 Hz는 아직 결정되지 않습니다.");
  $("fft-sample-source").textContent=i("Algorithm: "+result.method+" · "+result.n+" data samples.","알고리즘: "+result.method+" · 표본 "+result.n+"개.");
- insight(result);renderTable(result);
+ insight(result);renderTable(result);renderPractice();
  global.SSMathCore?.queue?.();
 }
 function compute(){
@@ -283,6 +321,8 @@ function init(){
  $("fft-run").addEventListener("click",compute);
  $("fft-checkpoint-answer").addEventListener("change",e=>{savedAnswer=e.target.value;$("fft-checkpoint-feedback").textContent=""});
  $("fft-checkpoint-check").addEventListener("click",gradeCheckpoint);
+ $("fft-practice-task").addEventListener("change",e=>{practiceStage=e.target.value;practiceVerified=false;renderPractice()});
+ $("fft-practice-check").addEventListener("click",checkPractice);
  $("fft-reset").addEventListener("click",()=>{
   $("fft-preset").value="one";$("fft-known").checked=false;$("fft-fs").value="8000";$("fft-fs").disabled=true;
   selectPreset("one");renderCheckpoint();
