@@ -64,7 +64,7 @@ main{padding-top:12px}main>h1{font-size:clamp(1.45rem,2.3vw,1.85rem);margin:2px 
 .butterfly-values>span:nth-child(even){font-weight:700}
 #butterfly-next{margin-top:12px;font-size:.85rem}
 .butterfly-table-scroll,.butterfly-table-wrap{overflow-x:auto}
-.butterfly-table{width:100%;border-collapse:collapse;font:12px/1.45 ui-monospace,Consolas,monospace;white-space:nowrap}
+.butterfly-table{width:100%;border-collapse:collapse;font:13px/1.45 ui-monospace,Consolas,monospace;white-space:nowrap}
 .butterfly-table th,.butterfly-table td{padding:6px 9px;text-align:left;border-bottom:1px solid var(--edge)}
 .butterfly-table tbody tr[data-butterfly-op]{cursor:pointer}
 .butterfly-table tbody tr[aria-selected="true"]{background:var(--bg);outline:1px solid var(--accent)}
@@ -72,7 +72,7 @@ main{padding-top:12px}main>h1{font-size:clamp(1.45rem,2.3vw,1.85rem);margin:2px 
 #butterfly-dft-compare{margin-top:12px}
 #butterfly-max-error{font-weight:800;color:var(--ink)}
 #peak-results{max-width:100%;overflow-x:auto;overflow-y:hidden}#peak-analysis,#sensor-physics{min-width:0;max-width:100%}#peak-results table{min-width:390px}
-#butterfly-computation-formula{max-width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;white-space:nowrap;scrollbar-width:thin}
+#butterfly-computation-formula{max-width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;white-space:nowrap;scrollbar-width:thin;font-size:1rem;line-height:1.55}
 #butterfly-computation-formula .katex-display{margin:5px 0;overflow-x:auto;overflow-y:hidden}
 #butterfly-computation-formula .katex{color:var(--ink);font-size:1.06em}
 @media(max-width:900px){.butterfly-inspection{grid-template-columns:1fr}.butterfly-input-row{grid-template-columns:1fr 1fr}.butterfly-input-row button{grid-column:1/-1}}
@@ -187,7 +187,7 @@ main{padding-top:12px}main>h1{font-size:clamp(1.45rem,2.3vw,1.85rem);margin:2px 
    <button type="button" id="butterfly-next">Next stage →</button>
   </div>
   <div class="butterfly-table-wrap">
-   <h4 id="butterfly-table-heading">All operations in this stage</h4>
+   <h4 id="butterfly-table-heading">All operations in this stage</h4><p class="note" id="butterfly-table-hint">On narrow screens, swipe sideways to see both output columns.</p>
    <table class="butterfly-table"><thead><tr><th id="butterfly-col-pair">Pair (a,b)</th><th>W</th><th>u + Wv</th><th>u − Wv</th></tr></thead><tbody id="butterfly-operations-table"></tbody></table>
   </div>
  </div>
@@ -384,8 +384,18 @@ function butterflyRow(label,value,root){
  const a=document.createElement("span"),b=document.createElement("span");
  a.textContent=label;b.textContent=value;root.append(a,b);
 }
+function positionButterflyDiagram(){
+ const scroller=document.querySelector(".butterfly-svg-scroller");
+ if(!scroller)return;
+ if(window.innerWidth<=750){
+  const max=Math.max(0,scroller.scrollWidth-scroller.clientWidth);
+  scroller.scrollLeft=Math.round(butterflyStage/3*max);
+ }else scroller.scrollLeft=0;
+}
+window.addEventListener("resize",positionButterflyDiagram);
 function butterflyChoice(stage,operation){
  butterflyStage=stage;butterflyOperation=operation;drawButterfly();
+ positionButterflyDiagram();
 }
 function drawButterfly(){
  const core=butterflyCore,trace=butterflyTrace,fmt=core.format,stage=butterflyStage;
@@ -411,6 +421,7 @@ function drawButterfly(){
   button.textContent=L(...labels[k]);button.setAttribute("aria-pressed",String(k===stage));
  });
  $("butterfly-detail-heading").textContent=L("Inspect one butterfly","버터플라이 연산 하나 살펴보기");
+ $("butterfly-table-hint").textContent=L("On narrow screens, swipe sideways to see both output columns.","모바일에서는 연산 표를 좌우로 스와이프하면 두 출력 열까지 확인할 수 있습니다.");
  $("butterfly-table-heading").textContent=stage===0?L("Bit-reversed sample order","입력 표본의 비트 반전 순서"):L("Four butterflies in this stage","현재 단계의 버터플라이 4개");
  $("butterfly-col-pair").textContent=stage===0?L("Row","행"):L("Pair (a,b)","입출력 인덱스 (a,b)");
  $("butterfly-dft-title").textContent=L("Final verification: FFT = direct DFT","최종 검증: FFT = 직접 DFT");
