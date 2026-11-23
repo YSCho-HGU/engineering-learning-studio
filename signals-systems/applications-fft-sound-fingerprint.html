@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sound Fingerprint · FFT Discovery · Engineering Learning Studio</title>
+<script>(function(){var t="neutral-dark";try{var v=localStorage.getItem("els-theme-v2");if(["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark"].includes(v))t=v}catch(e){}document.documentElement.dataset.elsTheme=t;document.documentElement.dataset.theme=["white-clean","warm-neutral"].includes(t)?"light":"dark";document.documentElement.style.colorScheme=["white-clean","warm-neutral"].includes(t)?"only light":"dark"})();</script>
+<link rel="stylesheet" href="../assets/els-theme-v2.css?v=6"><link rel="stylesheet" href="../assets/els-typography-standard.css?v=1">
+<link rel="stylesheet" href="./assets/ss-common-header.css?v=20261122-four-controls"><link rel="stylesheet" href="../assets/els-header-controls.css?v=1">
+<link rel="stylesheet" href="./assets/ss-formula-standard.css?v=3"><link rel="stylesheet" href="./assets/ss-applications-math.css?v=3">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css">
+<link rel="stylesheet" href="./assets/ss-sound-fingerprint.css?v=1"><link rel="stylesheet" href="./assets/ss-responsive-unified.css?v=1"><link rel="stylesheet" href="./assets/ss-plot-typography.css?v=1"><link rel="stylesheet" href="./assets/ss-presentation-mode.css?v=1"></head>
+<body><header class="ss-common-header" aria-label="Engineering Learning Studio navigation">
+<a class="ss-common-home" href="../">← Studio</a><details class="ss-common-menu"><summary class="ss-common-title">Signals &amp; Systems · Applications <span aria-hidden="true">⌄</span></summary><nav class="ss-common-links" aria-label="Choose chapter"></nav></details>
+<div class="ss-common-actions"><label class="ss-common-language" for="finger-language">🌐 <select class="ss-common-language-select" id="finger-language" aria-label="Language"><option value="mixed">한/영</option><option value="en">English</option><option value="ko">한국어</option></select></label><label class="ss-common-theme"><select data-els-theme-picker aria-label="Theme"><option value="white-clean">White Clean</option><option value="warm-neutral">Warm Neutral</option><option value="warm-dark">Warm Dark</option><option value="navy-dark">Navy Dark</option><option value="neutral-dark">Neutral Dark</option></select></label></div></header>
+<main class="ss-finger-root" id="finger-main">
+<section class="ss-finger-card ss-finger-intro">
+ <p class="ss-finger-eyebrow">PART C · FFT DISCOVERY SERIES · DISCOVER</p><h1 id="finger-title"></h1><p id="finger-intro"></p>
+ <div class="ss-finger-steps"><a href="#finger-predict" id="finger-link1"></a><a href="#finger-observe" id="finger-link2"></a><a href="#finger-reveal" id="finger-link3"></a><a href="#finger-conclude" id="finger-link4"></a></div>
+</section>
+<div class="ss-finger-layout">
+<aside class="ss-finger-card ss-finger-controls">
+<h2 id="finger-controls-title"></h2>
+<label><span id="finger-note-label"></span><select id="finger-note"><option value="110">A2 · 110 Hz</option><option value="220" selected>A3 · 220 Hz</option><option value="330">E4 · 330 Hz</option></select></label>
+<label><span id="finger-length-label"></span><select id="finger-fft-length"><option value="2048">N = 2048</option><option value="4096" selected>N = 4096</option><option value="8192">N = 8192</option></select></label>
+<label><span id="finger-window-label"></span><select id="finger-window"><option value="hann" selected>Hann</option><option value="rect">Rectangular</option></select></label>
+<label><span id="finger-position-label"></span><input type="range" id="finger-position" min="0" max="100" value="20" step="1"><output id="finger-position-value"></output></label>
+<p class="ss-finger-small" id="finger-controls-help"></p>
+<button type="button" id="finger-reset"></button>
+<details class="ss-finger-real"><summary id="finger-recordings-title"></summary><p id="finger-recordings-help"></p>
+<label><span id="finger-piano-file-label"></span><input id="finger-piano-file" type="file" accept="audio/*,.wav,.mp3,.ogg,.m4a,.flac"></label>
+<label><span id="finger-guitar-file-label"></span><input id="finger-guitar-file" type="file" accept="audio/*,.wav,.mp3,.ogg,.m4a,.flac"></label>
+<label><span id="finger-voice-file-label"></span><input id="finger-voice-file" type="file" accept="audio/*,.wav,.mp3,.ogg,.m4a,.flac"></label>
+<button type="button" id="finger-clear-files"></button><p id="finger-files-status" role="status"></p>
+</details>
+</aside>
+<div class="ss-finger-content">
+<section class="ss-finger-card" id="finger-predict">
+<h2 id="finger-predict-title"></h2><p id="finger-predict-help"></p>
+<div class="ss-finger-listen">
+ <div><strong>A</strong><button type="button" id="finger-play-a"></button></div>
+ <div><strong>B</strong><button type="button" id="finger-play-b"></button></div>
+ <div><strong>C</strong><button type="button" id="finger-play-c"></button></div>
+</div>
+<div class="ss-finger-prediction"><label for="finger-guess" id="finger-guess-label"></label><select id="finger-guess"><option value="">—</option><option value="piano">Piano-like</option><option value="guitar">Guitar-like</option><option value="voice">Voice-like</option></select>
+<button type="button" id="finger-guess-check"></button></div>
+<p id="finger-guess-feedback" role="status" aria-live="polite"></p>
+<p id="finger-synthesis-note" class="ss-finger-small"></p>
+</section>
+<section class="ss-finger-card" id="finger-observe">
+<h2 id="finger-observe-title"></h2><p id="finger-observe-help"></p>
+<div class="ss-finger-sample-grid"><div><h3 id="finger-wave-title"></h3><svg id="finger-wave" viewBox="0 0 780 200" role="img" aria-label="Waveform for selected sound"></svg></div>
+<div><h3 id="finger-spectrum-title"></h3><svg id="finger-spectrum" viewBox="0 0 780 235" role="img" aria-label="Computed single-sided FFT with harmonic markers"></svg></div></div>
+<div class="ss-finger-data" id="finger-data"></div>
+</section>
+<section class="ss-finger-card" id="finger-reveal">
+<h2 id="finger-reveal-title"></h2><p id="finger-reveal-help"></p><button id="finger-reveal-btn" type="button" class="ss-finger-primary"></button>
+<div id="finger-reveal-content" hidden>
+<div class="ss-finger-compare" id="finger-compare"></div>
+<div class="ss-finger-harmonic-table" id="finger-harmonic-table"></div>
+<p id="finger-compare-note"></p>
+</div>
+</section>
+<section class="ss-finger-card" id="finger-conclude">
+<h2 id="finger-conclude-title"></h2>
+<div class="ss-finger-math"><div data-ss-math="x(t)=\\sum_{h=1}^{H}A_h(t)\\sin(2\\pi h f_0t+\\phi_h)" data-ss-math-display="block"></div><div data-ss-math="f_h=h f_0,\\qquad\\Delta f=\\frac{f_s}{N}" data-ss-math-display="block"></div></div>
+<p id="finger-conclude-explain"></p><p id="finger-question"></p>
+<label><span id="finger-quiz-label"></span><select id="finger-quiz"><option value="">—</option><option value="pitch"></option><option value="harmonics"></option><option value="volume"></option></select></label>
+<button type="button" id="finger-quiz-check"></button><p id="finger-quiz-feedback" role="status"></p>
+</section>
+<nav class="ss-finger-footer"><a href="./applications-fft-dtmf.html" id="finger-prior"></a><a href="./applications-fft-upload.html" id="finger-next"></a><a href="./applications.html#part-c" id="finger-catalog"></a></nav>
+</div></div>
+</main>
+<script src="../assets/els-language.js?v=1" defer></script><script src="../assets/els-theme-v2.js?v=6" defer></script>
+<script src="./assets/ss-common-header.js?v=applications2" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js" defer></script><script src="./assets/ss-math-core.js?v=1" defer></script><script src="./assets/ss-applications-math.js?v=5" defer></script>
+<script src="./assets/ss-sound-fingerprint.js?v=1" defer></script>
+<script src="../assets/els-header-controls.js?v=1" defer></script><script src="./assets/ss-presentation-mode.js?v=1" defer></script>
+</body></html>
