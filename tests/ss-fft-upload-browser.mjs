@@ -38,13 +38,19 @@ try{
    assert(pure.bin===128&&near(pure.unknownFreq,.125,1e-9),"Normalized frequency wrong "+JSON.stringify(pure));
    assert(near(pure.knownFreq,64,1e-9)&&near(pure.amplitude,.8,1e-6),"FFT amplitude/Hz wrong "+JSON.stringify(pure));
    assert(near(pure.inferredFs,512,1e-5)&&pure.noFs&&pure.csvLen===1024,"CSV sampling-rate inference incorrect "+JSON.stringify(pure));
-   const csv="time_s,value\n"+Array.from({length:2048},(_,n)=>{
-     const f=n<1024?64:96;return(n/512)+","+Math.sin(2*Math.PI*f*n/512);
+   const csv="time_s,value,secondary\n"+Array.from({length:2048},(_,n)=>{
+     const f=n<1024?64:96;return(n/512)+","+Math.sin(2*Math.PI*f*n/512)+","+Math.sin(2*Math.PI*40*n/512);
    }).join("\n");
    await page.locator("#fft-upload-file").setInputFiles({name:"sensor.csv",mimeType:"text/csv",buffer:Buffer.from(csv)});
    await page.waitForFunction(()=>window.SSRealFFT?.analysis?.fs===512);
    const first=await page.evaluate(()=>({peak:window.SSRealFFT.analysis.peakFreq,points:document.querySelectorAll("#fft-upload-spectrum path").length}));
    assert(near(first.peak,64,1e-5)&&first.points===1,"CSV first segment spectrum wrong "+JSON.stringify(first));
+   assert(await page.locator("#fft-upload-column-row").isVisible(),"Multi-column sensor chooser not shown");
+   await page.locator("#fft-upload-column").selectOption("secondary");
+   assert(near(await page.evaluate(()=>window.SSRealFFT.analysis.peakFreq),40,1e-5),"Secondary sensor channel not selected");
+   await page.locator("#fft-upload-column").selectOption("value");
+   assert(near(await page.evaluate(()=>window.SSRealFFT.analysis.peakFreq),64,1e-5),"Sensor channel did not restore");
+
    await page.locator("#fft-upload-location").evaluate(el=>{el.value="1000";el.dispatchEvent(new Event("input",{bubbles:true}))});
    assert(near(await page.evaluate(()=>window.SSRealFFT.analysis.peakFreq),96,1e-5),"CSV selected segment not updated");
    await page.locator("#fft-upload-fs").fill("0");
