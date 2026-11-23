@@ -16,6 +16,9 @@ on:
       - 'tests/ss-applications-math-audit.mjs'
       - 'tests/ss-fft-foundations-browser.mjs'
       - 'tests/ss-chirp-stft-browser.mjs'
+      - 'tests/ss-fft-upload-browser.mjs'
+      - 'signals-systems/assets/ss-fft-upload.js'
+      - 'signals-systems/assets/ss-fft-upload.css'
       - 'signals-systems/assets/ss-app-extra-labs.js'
       - 'tests/ss-extra-labs-browser.mjs'
       - 'signals-systems/assets/ss-common-header.js'
@@ -42,6 +45,8 @@ jobs:
           node --check signals-systems/assets/ss-app-fft-resolution.js
           node --check signals-systems/assets/ss-app-chirp-stft.js
           node --check tests/ss-chirp-stft-browser.mjs
+          node --check signals-systems/assets/ss-fft-upload.js
+          node --check tests/ss-fft-upload-browser.mjs
           node --check tests/ss-fft-foundations-browser.mjs
           node --check signals-systems/assets/ss-app-extra-labs.js
           node --check tests/ss-extra-labs-browser.mjs
@@ -71,6 +76,10 @@ jobs:
         id: stft
         continue-on-error: true
         run: node tests/ss-chirp-stft-browser.mjs
+      - name: Check real audio and sensor FFT upload lab
+        id: realfft
+        continue-on-error: true
+        run: node tests/ss-fft-upload-browser.mjs
       - name: Check mathematical notation across all Applications and language modes
         id: math
         continue-on-error: true
@@ -84,6 +93,7 @@ jobs:
           EXTRA_RESULT: ${{ steps.extra.outcome }}
           MATH_RESULT: ${{ steps.math.outcome }}
           STFT_RESULT: ${{ steps.stft.outcome }}
+          REALFFT_RESULT: ${{ steps.realfft.outcome }}
         run: |
           mkdir -p qa
           python3 - <<'PY'
@@ -97,6 +107,7 @@ jobs:
             "additional_labs_outcome":os.environ["EXTRA_RESULT"],
             "applications_math_outcome":os.environ["MATH_RESULT"],
             "chirp_stft_outcome":os.environ["STFT_RESULT"],
+            "real_fft_upload_outcome":os.environ["REALFFT_RESULT"],
             "viewport_widths":[1366,390],
             "coverage":["FFT arithmetic","graph missions","KaTeX","language modes","five themes","responsive overflow"]
           }
@@ -126,6 +137,7 @@ jobs:
           FFT: ${{ steps.fft.outcome }}
           MATH: ${{ steps.math.outcome }}
           STFT: ${{ steps.stft.outcome }}
+          REALFFT: ${{ steps.realfft.outcome }}
         run: |
-          echo "original=$PRIMARY extra=$EXTRA fft=$FFT stft=$STFT math=$MATH"
-          test "$PRIMARY" = success && test "$EXTRA" = success && test "$FFT" = success && test "$STFT" = success && test "$MATH" = success
+          echo "original=$PRIMARY extra=$EXTRA fft=$FFT stft=$STFT realfft=$REALFFT math=$MATH"
+          test "$PRIMARY" = success && test "$EXTRA" = success && test "$FFT" = success && test "$STFT" = success && test "$REALFFT" = success && test "$MATH" = success
