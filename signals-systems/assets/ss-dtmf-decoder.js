@@ -134,7 +134,6 @@ function localize(){
  const labels={
  "dtmf-title":["DTMF Mystery Decoder · Find the Hidden Number","DTMF 비밀 숫자 해독 · 소리 속 숫자 찾기"],
  "dtmf-intro":["Listen to a hidden telephone key, use FFT to reveal two frequencies, then decode the number. The secret remains hidden until you guess correctly.","전화기 버튼의 비밀 소리를 듣고 FFT로 두 주파수를 찾은 뒤 숫자를 해독하세요. 정답을 맞힐 때까지 비밀 번호는 공개되지 않습니다."],
- "dtmf-step1":["1 · Listen & Predict","1 · 듣고 예측"],"dtmf-step2":["2 · Observe FFT","2 · FFT 관찰"],"dtmf-step3":["3 · Decode","3 · 숫자 해독"],"dtmf-step4":["4 · Explain","4 · 원리 설명"],
  "dtmf-mystery-title":["1 · Mystery Sound","1 · 비밀 소리"],"dtmf-mystery-help":["Listen first. Can you guess the keypad digit without an FFT?","FFT 없이 소리를 먼저 들어 보세요. 어느 전화기 숫자일까요?"],
  "dtmf-mode-label":["Challenge","도전 유형"],"dtmf-challenge-label":["Mystery key","비밀 숫자"],
  "dtmf-play":["▶ Play Mystery Sound","▶ 비밀 소리 듣기"],"dtmf-new":["New Mystery","새 문제"],
@@ -147,7 +146,6 @@ function localize(){
  "dtmf-explain-title":["4 · Why Did FFT Work?","4 · FFT가 답을 찾은 이유"],
  "dtmf-explain":["DTMF combines two sinusoids. The time waveform mixes them; FFT separates the two frequencies. Increasing N reduces bin spacing fs/N. A sequence of keys must be divided into segments before decoding its order.","DTMF는 두 정현파의 합입니다. 시간 파형에는 두 성분이 섞여 있지만 FFT는 각 주파수를 보여줍니다. N을 늘리면 Bin 간격 fs/N이 작아집니다. 여러 숫자의 순서를 알려면 신호를 구간별로 나누어 분석해야 합니다."],
  "dtmf-challenge-conclusion":["Reflection · What did FFT reveal that the waveform did not?","성찰 · 시간 파형에 비해 FFT에서 어떤 정보를 발견했나요?"],
- "dtmf-prior":["← DFT vs FFT","← DFT와 FFT"],"dtmf-catalog":["Part C · All Topics","Part C · 전체 목록"]
  };
  for(const [id,[en,ko]] of Object.entries(labels))$(id).textContent=tr(en,ko);
  [...$("dtmf-mode").options].forEach((o,i)=>o.textContent=i===0?tr("One hidden key","비밀 숫자 1개"):tr("Three hidden keys","비밀 숫자 3개"));
