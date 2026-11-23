@@ -94,3 +94,22 @@ button,select{font:inherit}
  background:color-mix(in srgb,var(--els-surface-alt) 65%,var(--els-page) 35%);
 }
 .ss-app-topic-details .ss-app-inline-math .katex{font-size:1.07em}
+
+/* Part C FFT pathway: phase structure and clearly distinguished available modules. */
+#topics-c{align-items:start}
+.ss-app-phase{grid-column:1/-1;min-width:0;display:grid;gap:10px}
+.ss-app-phase:not(:first-child){border-top:1px solid var(--els-border);padding-top:15px;margin-top:6px}
+.ss-app-phase-head{padding:2px 4px 4px;border-left:3px solid var(--els-link);padding-left:12px}
+.ss-app-phase-head h3{font-size:17px;line-height:1.35;margin:0 0 3px;font-weight:800;color:var(--els-ink)}
+.ss-app-phase-head p{font-size:13px;line-height:1.5;margin:0;color:var(--els-muted);max-width:860px;white-space:pre-line}
+.ss-app-phase-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ss-app-topic-availability{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.035em;border:1px solid var(--els-link);color:var(--els-link);border-radius:999px;padding:1px 7px;margin:8px 0 0}
+.ss-app-topic[data-area="fft"]:not(.ss-app-topic-ready) .ss-app-topic-availability{border-color:var(--els-border);color:var(--els-muted)}
+.ss-app-topic[data-area="fft"]>summary{min-height:91px}
+.ss-app-fft-route{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:11px 14px;margin:0 0 15px;border:1px solid var(--els-border);border-radius:11px;background:var(--els-surface-alt)}
+.ss-app-fft-route>div{flex:1 1 390px}
+.ss-app-fft-route strong{display:block;font-size:14px}
+.ss-app-fft-route p{font-size:13px;margin:3px 0;color:var(--els-muted);line-height:1.55}
+.ss-app-fft-route>a{color:var(--els-link);background:var(--els-surface);border:1px solid var(--els-link);border-radius:9px;min-height:39px;display:inline-flex;align-items:center;padding:7px 13px;font-weight:800;font-size:13px;white-space:nowrap}
+.ss-app-fft-route>a:hover{text-decoration:none;background:var(--els-info-bg)}
+@media(max-width:670px){.ss-app-phase-grid{grid-template-columns:1fr}.ss-app-fft-route>a{width:100%;justify-content:center}}
