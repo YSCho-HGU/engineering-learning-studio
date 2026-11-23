@@ -38,3 +38,5 @@
  .ss-fft-path-actions{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
  .ss-fft-path-actions .ss-fft-path-home{grid-column:1/-1;grid-row:2}
 }
+
+.ss-fft-path-focus{margin:0;padding:1px 0;color:var(--els-muted,var(--sub,#b7c5b9));font-size:12px;line-height:1.5;overflow-wrap:anywhere}
