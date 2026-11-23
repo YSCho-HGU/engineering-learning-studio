@@ -31,7 +31,7 @@ function analyze(samples,{N=2048,window="hann",offset=.4}={}){
  const row=LOW.reduce((b,v,i)=>Math.abs(v-low.frequency)<Math.abs(LOW[b]-low.frequency)?i:b,0),col=HIGH.reduce((b,v,i)=>Math.abs(v-high.frequency)<Math.abs(HIGH[b]-high.frequency)?i:b,0);
  return{N,start,spectrum,delta,low,high,decoded:KEYS[row][col]};
 }
-let randomSeed=null,st={secret:[],index:0,guess:null,result:null,tries:0,correct:0,done:false},audioContext=null;
+let randomSeed=null,st={secret:[],index:0,guess:null,result:null,tries:0,correct:0,done:false,solved:false},audioContext=null;
 const match=(W.location?.search||"").match(/[?&]seed=(\d+)/);if(match)randomSeed=Number(match[1])>>>0;
 function randomKey(){let i;if(randomSeed!==null){randomSeed=(Math.imul(randomSeed,1664525)+1013904223)>>>0;i=randomSeed%12}else{const a=new Uint32Array(1);W.crypto.getRandomValues(a);i=a[0]%12}return KEYS.join("")[i]}
 const current=()=>st.secret[st.index];
@@ -80,8 +80,8 @@ function drawMap(){
 function keypad(){
  const el=$("dtmf-keypad");el.replaceChildren();
  for(const v of KEYS.join("")){
-  const b=document.createElement("button");b.type="button";b.textContent=v;b.dataset.digit=v;b.disabled=st.done;b.setAttribute("aria-pressed",String(st.guess===v));
-  b.addEventListener("click",()=>{st.guess=v;$("dtmf-current-guess").textContent=v;$("dtmf-check").disabled=!st.result;keypad();drawMap()});el.append(b);
+  const b=document.createElement("button");b.type="button";b.textContent=v;b.dataset.digit=v;b.disabled=st.done||st.solved;b.setAttribute("aria-pressed",String(st.guess===v));
+  b.addEventListener("click",()=>{if(st.solved)return;st.guess=v;$("dtmf-current-guess").textContent=v;$("dtmf-check").disabled=!st.result;keypad();drawMap()});el.append(b);
  }
 }
 function progress(){
@@ -89,7 +89,7 @@ function progress(){
  $("dtmf-progress").textContent=tr("Correct "+st.correct+" / "+st.secret.length+" · Attempts "+st.tries,"정답 "+st.correct+" / "+st.secret.length+" · 시도 "+st.tries);
 }
 function resetView(){
- st.result=null;st.guess=null;
+ st.result=null;st.guess=null;st.solved=false;
  $("dtmf-current-guess").textContent="—";$("dtmf-check").disabled=true;$("dtmf-fft").disabled=false;$("dtmf-play").disabled=false;$("dtmf-next").hidden=true;
  $("dtmf-spectrum").hidden=true;$("dtmf-spectrum").replaceChildren();$("dtmf-peaks").hidden=true;$("dtmf-peaks").replaceChildren();$("dtmf-spectrum-placeholder").hidden=false;
  $("dtmf-spectrum-placeholder").textContent=tr("FFT hidden · Listen and run FFT.","FFT 숨김 · 소리를 듣고 FFT를 실행하세요.");
@@ -100,11 +100,11 @@ function newMystery(){
  st={secret:Array.from({length:$("dtmf-mode").value==="sequence"?3:1},randomKey),index:0,guess:null,result:null,tries:0,correct:0,done:false};resetView();
 }
 function check(){
- if(!st.guess||st.done||!st.result)return;st.tries++;
+ if(!st.guess||st.done||st.solved||!st.result)return;st.tries++;
  if(st.guess===current()){
-  st.correct++;const p=tones(current());
+  st.correct++;st.solved=true;const p=tones(current());
   $("dtmf-feedback").textContent=tr("Correct! "+p.low+" Hz + "+p.high+" Hz → "+current(),"정답! "+p.low+"Hz + "+p.high+"Hz → "+current());
-  $("dtmf-feedback").dataset.result="correct";$("dtmf-check").disabled=true;$("dtmf-next").hidden=false;
+  $("dtmf-feedback").dataset.result="correct";$("dtmf-check").disabled=true;$("dtmf-next").hidden=false;keypad();
   $("dtmf-next").textContent=st.index+1===st.secret.length?tr("Finish Challenge","도전 결과 확인"):tr("Next Mystery","다음 비밀 숫자");
  }else{
   $("dtmf-feedback").textContent=tr("Try again: compare both FFT peaks with the table.","다시 시도하세요. 두 FFT 피크와 주파수 표를 비교해 보세요.");
