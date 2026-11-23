@@ -81,7 +81,7 @@ function keypad(){
  const el=$("dtmf-keypad");el.replaceChildren();
  for(const v of KEYS.join("")){
   const b=document.createElement("button");b.type="button";b.textContent=v;b.dataset.digit=v;b.disabled=st.done;b.setAttribute("aria-pressed",String(st.guess===v));
-  b.addEventListener("click",()=>{st.guess=v;$("dtmf-current-guess").textContent=v;$("dtmf-check").disabled=false;keypad();drawMap()});el.append(b);
+  b.addEventListener("click",()=>{st.guess=v;$("dtmf-current-guess").textContent=v;$("dtmf-check").disabled=!st.result;keypad();drawMap()});el.append(b);
  }
 }
 function progress(){
@@ -100,7 +100,7 @@ function newMystery(){
  st={secret:Array.from({length:$("dtmf-mode").value==="sequence"?3:1},randomKey),index:0,guess:null,result:null,tries:0,correct:0,done:false};resetView();
 }
 function check(){
- if(!st.guess||st.done)return;st.tries++;
+ if(!st.guess||st.done||!st.result)return;st.tries++;
  if(st.guess===current()){
   st.correct++;const p=tones(current());
   $("dtmf-feedback").textContent=tr("Correct! "+p.low+" Hz + "+p.high+" Hz → "+current(),"정답! "+p.low+"Hz + "+p.high+"Hz → "+current());
@@ -157,8 +157,8 @@ function localize(){
 function init(){
  W.ELSLanguage?.bindSelect?.("#dtmf-language");
  $("dtmf-mode").addEventListener("change",newMystery);$("dtmf-new").addEventListener("click",newMystery);$("dtmf-play").addEventListener("click",play);
- $("dtmf-fft").addEventListener("click",()=>{st.result=analyze(synth(current()),{N:Number($("dtmf-fft-n").value),window:$("dtmf-window").value,offset:Number($("dtmf-start").value)/100});drawSpectrum()});
- for(const id of ["dtmf-fft-n","dtmf-window","dtmf-start"])$(id).addEventListener("input",()=>{drawWave();st.result=null;$("dtmf-spectrum").hidden=true;$("dtmf-peaks").hidden=true;$("dtmf-spectrum-placeholder").hidden=false});
+ $("dtmf-fft").addEventListener("click",()=>{st.result=analyze(synth(current()),{N:Number($("dtmf-fft-n").value),window:$("dtmf-window").value,offset:Number($("dtmf-start").value)/100});drawSpectrum();$("dtmf-check").disabled=!st.guess});
+ for(const id of ["dtmf-fft-n","dtmf-window","dtmf-start"])$(id).addEventListener("input",()=>{drawWave();st.result=null;$("dtmf-check").disabled=true;$("dtmf-spectrum").hidden=true;$("dtmf-peaks").hidden=true;$("dtmf-spectrum-placeholder").hidden=false});
  $("dtmf-check").addEventListener("click",check);$("dtmf-next").addEventListener("click",next);
  W.ELSLanguage?.subscribe?.(localize);newMystery();localize();W.SSMathCore?.renderNow?.();
 }
