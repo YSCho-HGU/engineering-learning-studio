@@ -174,7 +174,15 @@ try{
      return {graphWidth:graph.width,controlWidth:controls.width,formulas};
    });
    check(visual.graphWidth>200&&visual.controlWidth>200,"FFT graph/controls collapsed "+JSON.stringify(visual));
-   check((await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth))<=6,"Resolution lab horizontal overflow");
+   const overflowAudit=await page.evaluate(()=>{
+      const excess=document.documentElement.scrollWidth-innerWidth;
+      const offenders=[...document.querySelectorAll("body *")].filter(el=>{
+        const b=el.getBoundingClientRect();
+        return b.width>0&&(b.right>innerWidth+6||b.left< -6);
+      }).slice(0,14).map(el=>({tag:el.tagName,id:el.id,cls:typeof el.className==="string"?el.className:"",right:Math.round(el.getBoundingClientRect().right),scroll:el.scrollWidth}));
+      return{excess,offenders};
+   });
+   check(overflowAudit.excess<=6,"Resolution lab horizontal overflow: "+JSON.stringify(overflowAudit));
    await page.screenshot({path:"tests/screenshots/fft-resolution-"+width+".png",fullPage:true});
    await page.goto(base+"/signals-systems/applications-fft-lab.html",{waitUntil:"domcontentloaded"});
    await page.locator("#fft-table tbody tr").first().waitFor();
