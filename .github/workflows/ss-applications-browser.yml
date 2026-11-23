@@ -18,6 +18,9 @@ on:
       - 'tests/ss-chirp-stft-browser.mjs'
       - 'tests/ss-fft-upload-browser.mjs'
       - 'tests/ss-dtmf-decoder-browser.mjs'
+      - 'tests/ss-sound-fingerprint-browser.mjs'
+      - 'signals-systems/assets/ss-sound-fingerprint.js'
+      - 'signals-systems/assets/ss-sound-fingerprint.css'
       - 'signals-systems/assets/ss-dtmf-decoder.js'
       - 'signals-systems/assets/ss-fft-dtmf.css'
       - 'signals-systems/assets/ss-fft-upload.js'
@@ -54,6 +57,8 @@ jobs:
           node --check tests/ss-fft-upload-browser.mjs
           node --check signals-systems/assets/ss-dtmf-decoder.js
           node --check tests/ss-dtmf-decoder-browser.mjs
+          node --check signals-systems/assets/ss-sound-fingerprint.js
+          node --check tests/ss-sound-fingerprint-browser.mjs
           node --check tests/ss-fft-foundations-browser.mjs
           node --check signals-systems/assets/ss-app-extra-labs.js
           node --check tests/ss-extra-labs-browser.mjs
@@ -91,6 +96,10 @@ jobs:
         id: dtmf
         continue-on-error: true
         run: node tests/ss-dtmf-decoder-browser.mjs
+      - name: Check Sound Fingerprint listening, FFT and harmonic discovery
+        id: fingerprint
+        continue-on-error: true
+        run: node tests/ss-sound-fingerprint-browser.mjs
       - name: Check mathematical notation across all Applications and language modes
         id: math
         continue-on-error: true
@@ -106,6 +115,7 @@ jobs:
           STFT_RESULT: ${{ steps.stft.outcome }}
           REALFFT_RESULT: ${{ steps.realfft.outcome }}
           DTMF_RESULT: ${{ steps.dtmf.outcome }}
+          FINGERPRINT_RESULT: ${{ steps.fingerprint.outcome }}
         run: |
           mkdir -p qa
           python3 - <<'PY'
@@ -121,6 +131,7 @@ jobs:
             "chirp_stft_outcome":os.environ["STFT_RESULT"],
             "real_fft_upload_outcome":os.environ["REALFFT_RESULT"],
             "dtmf_mystery_outcome":os.environ["DTMF_RESULT"],
+            "sound_fingerprint_outcome":os.environ["FINGERPRINT_RESULT"],
             "viewport_widths":[1366,390],
             "coverage":["FFT arithmetic","graph missions","KaTeX","language modes","five themes","responsive overflow"]
           }
@@ -152,6 +163,7 @@ jobs:
           STFT: ${{ steps.stft.outcome }}
           REALFFT: ${{ steps.realfft.outcome }}
           DTMF: ${{ steps.dtmf.outcome }}
+          FINGERPRINT: ${{ steps.fingerprint.outcome }}
         run: |
-          echo "original=$PRIMARY extra=$EXTRA fft=$FFT stft=$STFT realfft=$REALFFT dtmf=$DTMF math=$MATH"
-          test "$PRIMARY" = success && test "$EXTRA" = success && test "$FFT" = success && test "$STFT" = success && test "$REALFFT" = success && test "$DTMF" = success && test "$MATH" = success
+          echo "original=$PRIMARY extra=$EXTRA fft=$FFT stft=$STFT realfft=$REALFFT dtmf=$DTMF fingerprint=$FINGERPRINT math=$MATH"
+          test "$PRIMARY" = success && test "$EXTRA" = success && test "$FFT" = success && test "$STFT" = success && test "$REALFFT" = success && test "$DTMF" = success && test "$FINGERPRINT" = success && test "$MATH" = success
