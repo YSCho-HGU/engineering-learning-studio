@@ -206,7 +206,8 @@ main{padding-top:12px}main>h1{font-size:clamp(1.45rem,2.3vw,1.85rem);margin:2px 
 <p id="physics-harmonics" class="note"></p><p id="physics-note" class="note" aria-live="polite"></p></div>
 <div class="question"><strong>Investigate</strong><p>What frequencies dominate the record? How does window length affect Δf = fₛ/N? If the sampling rate is unknown, report cycles/sample rather than inventing Hz. Can you distinguish closely spaced tones?</p></div></section>
 <p id="status" role="status" aria-live="polite"></p>
-</main><script>
+</main><script src="./assets/ss-app-fft-butterfly-core.js?v=20261123-numeric"></script>
+<script>
 (()=>{
 "use strict";
 const $=id=>document.getElementById(id), $all=s=>Array.from(document.querySelectorAll(s));
@@ -368,29 +369,145 @@ function direct(x){const N=x.length,re=new Float64Array(N),im=new Float64Array(N
 function benchmark(fn,x,reps){let y;for(let j=0;j<2;j++)y=fn(x);const t=[];for(let j=0;j<reps;j++){const start=performance.now();y=fn(x);t.push(performance.now()-start)}return {result:y,ms:t.sort((a,b)=>a-b)[Math.floor(t.length/2)]}}
 function synthetic(N,fs){const x=new Float64Array(N),f=Number($("tone").value)||128,kind=$("signal").value;for(let i=0;i<N;i++){const t=i/fs;let v=Math.sin(2*Math.PI*f*t);if(kind==="two")v+=.5*Math.sin(2*Math.PI*2.5*f*t);if(kind==="noise")v+=.25*(Math.sin(i*12.9898)*43758.5453%1);x[i]=v;}return x}
 function draw(id,values,xMax,yLabel,peakLabels){const canvas=$(id),ctx=canvas.getContext("2d"),W=canvas.width,H=canvas.height,pad=48,ink=getComputedStyle(document.body).getPropertyValue("--ink").trim(),edge=getComputedStyle(document.body).getPropertyValue("--edge").trim(),accent=getComputedStyle(document.body).getPropertyValue("--accent").trim();ctx.clearRect(0,0,W,H);ctx.strokeStyle=edge;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad,12);ctx.lineTo(pad,H-31);ctx.lineTo(W-8,H-31);ctx.stroke();let hi=0;for(const v of values)hi=Math.max(hi,Math.abs(v));hi=hi||1;ctx.fillStyle=ink;ctx.font="13px system-ui";ctx.fillText(id==="spectrum"?"Amplitude |X[k]|":"x[n]",9,17);ctx.fillText(yLabel,W/2-30,H-9);ctx.fillText("0",pad-13,H-13);ctx.fillText(Number(xMax).toLocaleString("en-US",{maximumFractionDigits:2}),W-100,H-13);ctx.strokeStyle=accent;ctx.lineWidth=1.8;ctx.beginPath();const visible=values.length,isSpectrum=id==="spectrum";for(let i=0;i<visible;i++){const xp=pad+i/Math.max(1,visible-1)*(W-pad-10),yp=isSpectrum?(H-31)-(Math.max(0,values[i])/hi)*(H-45):12+(1-(values[i]/hi+1)/2)*(H-44);if(i===0)ctx.moveTo(xp,yp);else ctx.lineTo(xp,yp);}ctx.stroke();if(peakLabels){ctx.fillStyle=ink;ctx.fillText(peakLabels,W-190,17)}}
-function drawButterfly(){
- const svg=$("butterfly-diagram"),NS="http://www.w3.org/2000/svg";svg.replaceChildren();
- const add=(tag,attrs,text)=>{const n=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,String(v));if(text!==undefined)n.textContent=text;svg.append(n);return n;};
- const xs=[115,300,485,670],ys=Array.from({length:8},(_,i)=>67+i*31);
- // Iterative decimation-in-time uses bit-reversed input order (0,4,2,6,1,5,3,7).
- const order=[0,4,2,6,1,5,3,7];
- ["Bit-reversed x[n]","Length 2","Length 4","Length 8"].forEach((label,i)=>add("text",{x:xs[i]-53,y:21},label));
- for(let i=0;i<8;i++){
-  add("text",{x:16,y:ys[i]+5},"x["+order[i]+"]");
-  add("circle",{cx:xs[0],cy:ys[i],r:3.5,class:"butterfly-node"});
- }
- for(let stage=0;stage<3;stage++){
-  const span=1<<(stage+1),half=span/2,x0=xs[stage],x1=xs[stage+1];
-  for(let start=0;start<8;start+=span)for(let j=0;j<half;j++){
-   const top=start+j,bottom=start+j+half;
-   for(const row of [top,bottom])add("line",{x1:x0,y1:ys[row],x2:x1,y2:ys[row],class:"butterfly-line"});
-   add("line",{x1:x0,y1:ys[top],x2:x1,y2:ys[bottom],class:"butterfly-cross"});
-   add("line",{x1:x0,y1:ys[bottom],x2:x1,y2:ys[top],class:"butterfly-cross"});
-  }
-  for(let i=0;i<8;i++)add("circle",{cx:x1,cy:ys[i],r:3.5,class:"butterfly-node"});
- }
- for(let i=0;i<8;i++)add("text",{x:xs[3]+18,y:ys[i]+5},"X["+i+"]");
+const butterflyCore=window.SSButterfly8;
+let butterflyStage=1,butterflyOperation=0,butterflyTrace=butterflyCore.trace(butterflyCore.presets.ramp);
+function butterflyRow(label,value,root){
+ const a=document.createElement("span"),b=document.createElement("span");
+ a.textContent=label;b.textContent=value;root.append(a,b);
 }
+function butterflyChoice(stage,operation){
+ butterflyStage=stage;butterflyOperation=operation;drawButterfly();
+}
+function drawButterfly(){
+ const core=butterflyCore,trace=butterflyTrace,fmt=core.format,stage=butterflyStage;
+ $("butterfly-heading").textContent=L("8-point FFT · inspect every complex butterfly","8점 FFT · 버터플라이 복소수 계산 살펴보기");
+ $("butterfly-description").textContent=L(
+  "Follow bit-reversed input samples through three radix-2 decimation-in-time stages. Select a pair to inspect u, v, twiddle W, product Wv and both output values.",
+  "입력의 비트 반전 배치를 확인하고 radix-2 DIT의 세 단계를 따라가세요. 한 연산을 선택하면 u, v, 회전인자 W, 곱 Wv 및 두 출력 값을 볼 수 있습니다.");
+ $("butterfly-preset-label").textContent=L("Choose input","입력 신호 선택");
+ $("butterfly-input-label").textContent=L("Eight real samples x[0]…x[7]","실수 표본 8개 x[0]…x[7]");
+ $("butterfly-input-help").textContent=L("Enter exactly eight finite real samples. This 8-point example is separate from the N-point performance benchmark.","유한한 실수 표본 8개를 입력하세요. 8점 계산 과정은 아래 N점 성능 비교와 독립된 실습입니다.");
+ $("butterfly-apply").textContent=L("Calculate 8-point FFT","8점 FFT 계산");
+ $("butterfly-preset").querySelectorAll("option").forEach((option,i)=>{
+  const labels=[["Ramp · x[n]=n","증가 신호 · x[n]=n"],["Impulse · x[0]=1","임펄스 · x[0]=1"],["Cosine · one cycle","코사인 · 1주기"],["Custom · eight numbers","직접 입력 · 숫자 8개"]];
+  option.textContent=L(...labels[i]);
+ });
+ $("butterfly-stage-buttons").querySelectorAll("button").forEach(button=>{
+  const k=Number(button.dataset.butterflyStage),labels=[
+   ["0 · Bit-reversed input","0 · 입력 비트 반전"],
+   ["1 · Length 2","1 · 2점 연산"],["2 · Length 4","2 · 4점 연산"],["3 · Length 8","3 · 8점 연산"]
+  ];
+  button.textContent=L(...labels[k]);button.setAttribute("aria-pressed",String(k===stage));
+ });
+ $("butterfly-detail-heading").textContent=L("Inspect one butterfly","버터플라이 연산 하나 살펴보기");
+ $("butterfly-table-heading").textContent=stage===0?L("Bit-reversed sample order","입력 표본의 비트 반전 순서"):L("Four butterflies in this stage","현재 단계의 버터플라이 4개");
+ $("butterfly-col-pair").textContent=stage===0?L("Row","행"):L("Pair (a,b)","입출력 인덱스 (a,b)");
+ $("butterfly-dft-title").textContent=L("Final verification: FFT = direct DFT","최종 검증: FFT = 직접 DFT");
+ $("butterfly-dft-note").textContent=L("The 8 values at the last stage equal the directly summed DFT coefficients; each complex error is computed before rounding for display.","마지막 단계의 8개 값은 직접 합산한 DFT 계수와 같습니다. 복소수 오차는 화면 표시용 반올림 전에 계산합니다.");
+ $("butterfly-note").textContent=L("Each stage has 4 butterflies; 3 stages use 12 butterflies in total. The diagram highlights only the selected operation, but all values come from the same full calculation.","단계마다 4개, 총 3단계에 12개의 버터플라이를 계산합니다. 그림은 선택한 연산만 강조하지만 모든 값은 동일한 전체 계산 결과입니다.");
+ $("butterfly-next").textContent=stage===3?L("Review input ↺","입력부터 다시 보기 ↺"):L("Next computation stage →","다음 계산 단계 →");
+ $("butterfly-stage-summary").textContent=stage===0?
+  L("Before combining values: position 0…7 stores x[0], x[4], x[2], x[6], x[1], x[5], x[3], x[7]. The bit reversal changes memory order, not the DFT definition.","계산 전에 표본을 x[0], x[4], x[2], x[6], x[1], x[5], x[3], x[7] 순서로 배치합니다. 비트 반전은 연산 순서 변경이며 DFT의 정의는 바뀌지 않습니다."):
+  L("Stage "+stage+": four independent butterflies combine length-"+(2**stage)+" groups. Select an operation to see its exact intermediate values.","단계 "+stage+": 길이 "+(2**stage)+" 묶음에서 4개의 버터플라이를 수행합니다. 연산을 선택하여 중간 계산값을 확인하세요.");
+ const buttons=$("butterfly-operation-buttons"),table=$("butterfly-operations-table"),detail=$("butterfly-operation-detail");
+ buttons.replaceChildren();table.replaceChildren();detail.replaceChildren();
+ const head=$("butterfly-col-pair").parentElement.querySelectorAll("th");
+ head[1].textContent=stage===0?L("Sample","원래 표본"):"W";
+ head[2].textContent=stage===0?L("Reordered value","재배열 값"):"u + Wv";
+ head[3].textContent=stage===0?L("Binary index","인덱스 이진수"):"u − Wv";
+ if(stage===0){
+  trace.order.forEach((original,i)=>{
+   const tr=document.createElement("tr");
+   [String(i),"x["+original+"]",fmt(trace.stages[0][i]),i.toString(2).padStart(3,"0")+" ← "+original.toString(2).padStart(3,"0")].forEach(value=>{const td=document.createElement("td");td.textContent=value;tr.append(td)});
+   table.append(tr);
+  });
+  butterflyRow(L("Original","원래 표본"),trace.samples.map((x,i)=>"x["+i+"]="+Number(x.toFixed(3))).join(", "),detail);
+  butterflyRow(L("Bit-reversed","비트 반전"),trace.order.map(i=>"x["+i+"]").join(" → "),detail);
+ }else{
+  const ops=trace.operations[stage],selected=ops[Math.min(butterflyOperation,ops.length-1)];
+  ops.forEach((op,index)=>{
+   const b=document.createElement("button");b.type="button";b.textContent="("+op.a+", "+op.b+") · W"+op.length+"^"+op.r;
+   b.setAttribute("aria-pressed",String(index===butterflyOperation));b.addEventListener("click",()=>butterflyChoice(stage,index));buttons.append(b);
+   const row=document.createElement("tr");row.dataset.butterflyOp=String(index);row.tabIndex=0;row.setAttribute("aria-selected",String(index===butterflyOperation));
+   ["("+op.a+", "+op.b+")","W"+op.length+"^"+op.r+" = "+fmt(op.W,2),fmt(op.plus),fmt(op.minus)].forEach(text=>{const td=document.createElement("td");td.textContent=text;row.append(td)});
+   row.addEventListener("click",()=>butterflyChoice(stage,index));
+   row.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();butterflyChoice(stage,index)}});
+   table.append(row);
+  });
+  butterflyRow(L("Pair","입출력 위치"),"a="+selected.a+", b="+selected.b,detail);
+  butterflyRow("u = previous[a]",fmt(selected.u),detail);
+  butterflyRow("v = previous[b]",fmt(selected.v),detail);
+  butterflyRow("W"+selected.length+"^"+selected.r+" = exp(−j2π·"+selected.r+"/"+selected.length+")",fmt(selected.W),detail);
+  butterflyRow("t = W × v",fmt(selected.t),detail);
+  butterflyRow("y["+selected.a+"] = u + t",fmt(selected.plus),detail);
+  butterflyRow("y["+selected.b+"] = u − t",fmt(selected.minus),detail);
+ }
+ const compare=$("butterfly-dft-compare");compare.hidden=stage!==3;
+ if(stage===3){
+  const body=$("butterfly-dft-rows");body.replaceChildren();
+  trace.fft.forEach((fft,k)=>{
+   const row=document.createElement("tr");
+   [String(k),fmt(fft),fmt(trace.direct[k]),trace.errors[k].toExponential(2)].forEach(value=>{const td=document.createElement("td");td.textContent=value;row.append(td)});
+   body.append(row);
+  });
+  $("butterfly-max-error").textContent=L("Maximum complex coefficient error: ","최대 복소 계수 오차: ")+trace.maxError.toExponential(3);
+ }
+ const svg=$("butterfly-diagram"),NS="http://www.w3.org/2000/svg";svg.replaceChildren();
+ const add=(tag,attrs,text)=>{
+  const node=document.createElementNS(NS,tag);
+  Object.entries(attrs).forEach(([key,value])=>node.setAttribute(key,String(value)));
+  if(text!==undefined)node.textContent=text;
+  svg.append(node);return node;
+ };
+ const xs=[150,383,616,849],ys=Array.from({length:8},(_,i)=>79+i*42);
+ const headings=[["Input · 3-bit reversal","입력 · 3비트 반전"],["Length 2","길이 2"],["Length 4","길이 4"],["Length 8 = X[k]","길이 8 = X[k]"]];
+ headings.forEach((pair,k)=>{
+  add("text",{x:xs[k]-28,y:27,"font-weight":k===stage?"800":"500"},L(...pair));
+  if(k===stage)add("rect",{x:xs[k]-17,y:42,width:195,height:362,rx:9,fill:"var(--accent)",opacity:.07});
+ });
+ // Each output in a butterfly depends on both inputs. Highlight the current pair.
+ for(let st=1;st<=3;st++){
+  for(const [idx,op] of trace.operations[st].entries()){
+   const selected=st===stage&&idx===butterflyOperation;
+   for(const [from,to,cross] of [[op.a,op.a,false],[op.b,op.b,false],[op.a,op.b,true],[op.b,op.a,true]]){
+    add("line",{x1:xs[st-1],y1:ys[from],x2:xs[st],y2:ys[to],class:(selected?"butterfly-selected":cross?"butterfly-cross":"butterfly-line")});
+   }
+  }
+ }
+ for(let st=0;st<=3;st++)for(let row=0;row<8;row++){
+  const selected=st===stage&&(stage===0||trace.operations[st][butterflyOperation]&&[trace.operations[st][butterflyOperation].a,trace.operations[st][butterflyOperation].b].includes(row));
+  add("circle",{cx:xs[st],cy:ys[row],r:selected?5.6:3.2,class:selected?"butterfly-active-node":"butterfly-node"});
+  if(st===0)add("text",{x:12,y:ys[row]+4,class:"butterfly-muted"},"x["+trace.order[row]+"]");
+  const value=fmt(trace.stages[st][row],2);
+  add("text",{x:xs[st]+10,y:ys[row]+4,class:"butterfly-value"},st===3?"X["+row+"]="+value:value);
+ }
+}
+$("butterfly-stage-buttons").querySelectorAll("button").forEach(button=>button.addEventListener("click",()=>{
+ butterflyChoice(Number(button.dataset.butterflyStage),0);
+}));
+$("butterfly-next").addEventListener("click",()=>butterflyChoice((butterflyStage+1)%4,0));
+$("butterfly-preset").addEventListener("change",()=>{
+ const key=$("butterfly-preset").value;
+ if(key!=="custom")$("butterfly-input").value=butterflyCore.presets[key].map(x=>Number(x.toFixed(6))).join(", ");
+ $("butterfly-input-error").hidden=true;
+ if(key!=="custom")applyButterflyInput();
+});
+$("butterfly-input").addEventListener("input",()=>{
+ $("butterfly-preset").value="custom";
+ $("butterfly-input-error").hidden=true;
+});
+function applyButterflyInput(){
+ try{
+  const values=butterflyCore.parseSamples($("butterfly-input").value);
+  butterflyTrace=butterflyCore.trace(values);
+  $("butterfly-input-error").hidden=true;drawButterfly();
+ }catch(error){
+  const node=$("butterfly-input-error");node.hidden=false;
+  node.textContent=L("Input error: ","입력 오류: ")+error.message;
+ }
+}
+$("butterfly-apply").addEventListener("click",applyButterflyInput);
+
 function chartCosts(){
  const rows=$("cost-rows");rows.replaceChildren();
  [32,128,512,2048,8192].forEach(n=>{const tr=document.createElement("tr");[n,n*n,Math.round(n*Math.log2(n))].forEach(q=>{const td=document.createElement("td");td.textContent=q.toLocaleString();tr.append(td)});rows.append(tr)});
