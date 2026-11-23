@@ -22,7 +22,7 @@ for(const route of cases){
   if(!response?.ok())throw Error("HTTP "+response?.status());
   await page.waitForTimeout(350);
   for(const language of ["en","ko","mixed"]){
-   const select=page.locator("#ss-app-language,#ss-al-language,#ss-fft-language,#fft-r-language").first();
+   const select=page.locator("#ss-app-language,#ss-al-language,#ss-fft-language,#fft-r-language,#stft-language").first();
    if(await select.count()){await select.selectOption(language);await page.waitForTimeout(150)}
    const audit=await page.evaluate(()=>{
      window.SSMathCore?.renderNow?.();
