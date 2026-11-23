@@ -1,0 +1,32 @@
+/* Shared FFT Applications visual contract, aligned with Chapters 5/6. */
+:root{--ss-fft-stage-ink:var(--ss-step-foreground,var(--els-link));--ss-fft-stage-bg:var(--ss-step-background,var(--els-surface-alt));--ss-fft-stage-border:var(--ss-step-stroke,var(--els-link))}
+.ss-fft-root,.ss-fft-r-wrap{max-width:100%;min-width:0;overflow-wrap:break-word}
+.ss-fft-card,.ss-fft-r-card,.ss-fft-controls,.ss-fft-r-controls{border-radius:13px;box-shadow:none}
+.ss-fft-card h2,.ss-fft-r-card h2,.ss-fft-controls h2,.ss-fft-r-controls h2{color:var(--els-ink);font-size:17px;line-height:1.4;font-weight:800}
+.ss-fft-intro h1,.ss-fft-r-intro h1{letter-spacing:-.02em;line-height:1.3}
+.ss-fft-stage-num{width:31px;height:31px;min-width:31px;border:1.5px solid var(--ss-fft-stage-border);border-radius:8px;background:var(--ss-fft-stage-bg);color:var(--ss-fft-stage-ink);font:850 15px/1 Arial,"Malgun Gothic",sans-serif}
+.ss-fft-r-steps span{border-radius:8px;line-height:1.45;font-weight:700;padding:7px 11px}
+.ss-fft-card p,.ss-fft-r-card p{font-size:14px;line-height:1.6}
+.ss-fft-field,.ss-fft-r-controls label{font-size:13px;line-height:1.5}
+.ss-fft-field select,.ss-fft-field input,.ss-fft-field textarea,.ss-fft-r-controls select,.ss-fft-r-controls input{min-height:36px}
+.ss-fft-card button,.ss-fft-r-card button,.ss-fft-buttons button{min-height:40px}
+.ss-fft-checkpoint,.ss-fft-practice,.ss-fft-r-quiz,.ss-fft-r-challenge{border-left:3px solid var(--els-link);display:grid;gap:9px;min-width:0}
+.ss-fft-practice select,.ss-fft-practice button,.ss-fft-r-challenge button{font:inherit;padding:9px 12px;border:1px solid var(--els-border);border-radius:8px;background:var(--els-surface-alt);color:var(--els-ink)}
+.ss-fft-practice button,.ss-fft-r-challenge button{font-weight:700;justify-self:start;cursor:pointer}
+.ss-fft-practice .ss-fft-field{margin:0}
+#fft-practice-measure,#fft-r-challenge-measure{font:750 14px/1.6 Arial,"Malgun Gothic",sans-serif;color:var(--els-ink);font-variant-numeric:tabular-nums}
+#fft-practice-feedback,#fft-r-challenge-feedback{white-space:pre-line}
+#fft-practice-feedback[data-result="correct"],#fft-r-challenge-feedback[data-result="correct"]{border-left:3px solid var(--els-link);padding-left:9px;color:var(--els-ink)}
+#fft-practice-feedback[data-result="incorrect"],#fft-r-challenge-feedback[data-result="incorrect"]{border-left:3px solid var(--els-accent,var(--els-link));padding-left:9px}
+.ss-fft-equation,.ss-fft-r-theory [data-ss-math]{max-width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
+.ss-fft-equation .katex-display,.ss-fft-r-theory .katex-display{margin:5px 0!important;text-align:left}
+.ss-fft-equation .katex,.ss-fft-r-theory .katex{line-height:1.5}
+.ss-fft-svg,.ss-fft-r-card svg{max-width:100%}
+.ss-fft-graph-card h2,.ss-fft-r-graphs h2{margin-bottom:6px}
+.ss-fft-graph-card .plot-label,.ss-fft-r-card svg .title{font-size:13px}
+.ss-fft-graph-card .tick-label,.ss-fft-r-card svg .tick{font-size:11px}
+.ss-fft-r-theory small{color:var(--els-muted);font-weight:700}
+.ss-fft-r-card svg .curve{stroke-width:2.2}
+@media(max-width:1100px){.ss-fft-math-grid,.ss-fft-r-theory{grid-template-columns:1fr}}
+@media(max-width:860px){.ss-fft-controls,.ss-fft-r-controls{position:static;max-height:none;overflow:visible}.ss-fft-r-graphs,.ss-fft-graphs{grid-template-columns:1fr}}
+@media(max-width:690px){.ss-fft-card,.ss-fft-r-card{padding:12px}.ss-fft-r-stat,.ss-fft-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.ss-fft-roadmap{grid-template-columns:repeat(2,minmax(0,1fr))}.ss-fft-stage{padding:8px}.ss-fft-r-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.ss-fft-r-steps span{min-width:0}.ss-fft-card p,.ss-fft-r-card p{font-size:13px}}
