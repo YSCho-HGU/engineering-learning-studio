@@ -68,6 +68,7 @@ try{
    expect((await page.locator("#finger-data").innerText()).includes("330 Hz"),"Pitch control failed");
    await page.locator("#finger-reset").click();
    expect(await page.locator("#finger-reveal-content").isHidden()&&await page.locator("#finger-reveal-btn").isDisabled(),"Reset failed to hide solution");
+   await page.locator(".ss-finger-real summary").click();
    const clip=wav();
    await page.locator("#finger-piano-file").setInputFiles({name:"real-piano.wav",mimeType:"audio/wav",buffer:clip});
    await page.waitForFunction(()=>document.getElementById("finger-files-status")?.textContent.includes("real-piano.wav"),{timeout:15000});
