@@ -15,7 +15,9 @@ const pairs=[
  ["H(f)","H(f)"],["fₛ","f_s"],["f₀","f_0"],["f₁","f_1"],
  ["Δf","\\Delta f"],["2π","2\\pi"]
 ];
-const roots=".ss-app-intro,.ss-app-toc,.ss-app-main,.ss-al-root,.ss-fft-root";
+// Any Applications page that loads this adapter gets common math inside <main>.
+// Avoid hand-maintained per-lab selectors: future labs are covered automatically.
+const roots="main";
 const skip="code,pre,kbd,samp,textarea,script,style,select,option,svg,math,.katex,[data-ss-math],[data-latex],[contenteditable=true]";
 const quoted=pairs.map(x=>x[0].replace(/[-/\\^$*+?.()|[\]{}]/g,"\\$&"));
 const re=new RegExp(/\\\((.+?)\\\)|\\\[([\s\S]+?)\\\]/.source+"|"+quoted.join("|"),"g");
@@ -56,7 +58,7 @@ function enhance(root=document){
  return processed;
 }
 function init(){
- if(!global.SSMathCore)return;
+ if(!global.SSMathCore){document.documentElement.dataset.ssMathStatus="missing-core";return;}
  global.SSMathCore.install({beforeRender:()=>enhance()});
  const root=document.querySelector("main")||document.body;
  // The hub and all labs replace text/cards after language or parameter changes.
