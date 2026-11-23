@@ -135,6 +135,7 @@ try{
  await page.locator("#dft-theme").selectOption("neutral-dark");
  assert.equal(await page.locator("html").getAttribute("data-els-theme"),"neutral-dark");
  console.log("PASS shared theme contract");
+ await page.locator("#dft-language").selectOption("en");
  await page.locator('[data-step="2"]').click();
  assert.ok(await page.locator("#complexity").isVisible(),"Complexity chart unavailable");
  const chartPixels=await page.locator("#complexity").evaluate(el=>{
