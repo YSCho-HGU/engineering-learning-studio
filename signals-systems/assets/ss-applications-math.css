@@ -1,35 +1,39 @@
 /* Same KaTeX inline/display conventions as S&S Chapters 5-8.
  * Scope Applications hub, signal labs, FFT foundation lab and future parts.
  */
-:is(.ss-app-main,.ss-app-intro,.ss-app-toc,.ss-al-root,.ss-fft-root) .ss-app-inline-math{
+main .ss-app-inline-math{
  display:inline-block;vertical-align:-.09em;max-width:100%;margin:0 .025em;
  line-height:1.38;white-space:nowrap;color:inherit;font-weight:inherit
 }
-:is(.ss-app-main,.ss-app-intro,.ss-app-toc,.ss-al-root,.ss-fft-root) .ss-app-inline-math .katex{
+main .ss-app-inline-math .katex{
  font-size:1.07em;line-height:1.4;color:inherit;font-weight:inherit
 }
-:is(.ss-app-main,.ss-app-intro,.ss-app-toc,.ss-al-root,.ss-fft-root) .ss-app-inline-math[data-ss-math-state=error]{
+main .ss-app-inline-math[data-ss-math-state=error]{
  border-bottom:2px dotted var(--els-accent,var(--els-link));
  font-family:"Cambria Math",Georgia,serif
 }
-:is(.ss-app-main,.ss-al-root,.ss-fft-root) :is([data-ss-math-display=block],.ss-al-equation){
+main :is([data-ss-math-display=block],.ss-al-equation){
  max-width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;
  scrollbar-width:thin;font-family:KaTeX_Main,"Cambria Math",Georgia,serif;
  font-weight:400;line-height:1.55
 }
-:is(.ss-app-main,.ss-al-root,.ss-fft-root) [data-ss-math-display=block] .katex-display{
+main [data-ss-math-display=block] .katex-display{
  margin:.22em 0;overflow-x:auto;overflow-y:hidden
 }
-:is(.ss-app-topic,.ss-al-insight,.ss-al-guidance,.ss-fft-interpret) .katex{
+main .katex{
  color:inherit
 }
 
 /* Explicit block LaTeX is full-width, unlike inline math in card prose. */
-:is(.ss-app-main,.ss-app-intro,.ss-al-root,.ss-fft-root) .ss-app-display-math{
+main .ss-app-display-math{
  display:block;box-sizing:border-box;max-width:100%;min-width:0;
  margin:8px 0;padding:5px 2px;overflow-x:auto;overflow-y:hidden;
  font-family:KaTeX_Main,"Cambria Math",serif;line-height:1.6;
 }
-:is(.ss-app-main,.ss-app-intro,.ss-al-root,.ss-fft-root) .ss-app-display-math .katex-display{
+main .ss-app-display-math .katex-display{
  margin:.25em 0;overflow-x:auto;overflow-y:hidden;
 }
+
+/* All future Applications <main> areas inherit the same inline and display math contract. */
+main .ss-app-inline-math,main .ss-app-display-math{box-sizing:border-box}
+main .ss-app-inline-math[data-ss-math-state=waiting],main .ss-app-display-math[data-ss-math-state=waiting]{font-family:"Cambria Math",Georgia,serif}
