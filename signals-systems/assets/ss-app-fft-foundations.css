@@ -74,9 +74,6 @@ a{color:var(--els-link)}
 #fft-table tr[data-peak=true]{background:var(--els-info-bg,var(--els-surface-alt));font-weight:750}
 .ss-fft-next{border-left:3px solid var(--els-link)}
 .ss-fft-next a{font-size:13px;font-weight:800}
-.ss-app-inline-math{display:inline-block;vertical-align:-.09em;max-width:100%;line-height:1.35;margin:0 .025em;white-space:nowrap}
-.ss-app-inline-math .katex{font-size:1.04em;color:inherit}
-.ss-app-inline-math[data-ss-math-state=error]{border-bottom:2px dotted var(--els-accent);font-family:"Cambria Math",serif}
 @media(max-width:1100px){.ss-fft-workspace{grid-template-columns:250px minmax(0,1fr)}.ss-fft-math-grid{grid-template-columns:1fr}}
 @media(max-width:860px){.ss-fft-workspace{grid-template-columns:1fr}.ss-fft-controls{position:static;max-height:none}.ss-fft-graphs{grid-template-columns:1fr 1fr}}
 @media(max-width:690px){.ss-fft-root{padding:0 10px 25px}.ss-fft-intro{flex-wrap:wrap;padding:14px}.ss-fft-roadmap{grid-template-columns:repeat(2,minmax(0,1fr))}.ss-fft-graphs{grid-template-columns:1fr}.ss-fft-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.ss-fft-svg{min-height:210px}.ss-fft-math-grid{grid-template-columns:1fr}}
