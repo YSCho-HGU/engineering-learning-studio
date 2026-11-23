@@ -1,15 +1,15 @@
 {
-  "source_sha": "a42a4892a45445750abfa1f7c93e4bd90853a6b7",
+  "source_sha": "fdf38cfc55908cab9ec47cb0731c1cc381ee7273",
   "workflow": "ss-applications-browser",
-  "tested_at": "2026-11-23T12:22:29.252879+00:00",
+  "tested_at": "2026-11-23T13:26:23.827675+00:00",
   "fft_browser_outcome": "success",
   "original_labs_outcome": "success",
   "additional_labs_outcome": "success",
   "applications_math_outcome": "success",
-  "chirp_stft_outcome": "success",
-  "real_fft_upload_outcome": "success",
-  "dtmf_mystery_outcome": "success",
-  "sound_fingerprint_outcome": "success",
+  "chirp_stft_outcome": "failure",
+  "real_fft_upload_outcome": "failure",
+  "dtmf_mystery_outcome": "failure",
+  "sound_fingerprint_outcome": "failure",
   "viewport_widths": [
     1366,
     390
