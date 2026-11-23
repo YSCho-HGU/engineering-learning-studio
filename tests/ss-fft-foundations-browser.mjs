@@ -86,6 +86,43 @@ try{
     const title=await page.locator("#fft-title").innerText();
     check(lang==="en"?!/[가-힣]/.test(title):/[가-힣]/.test(title),"Language mode not reflected in FFT title: "+lang);
    }
+   // Follow-up FFT lesson: acquisition duration, leakage, windows and padding.
+   await page.goto(base+"/signals-systems/applications-fft-resolution.html",{waitUntil:"domcontentloaded"});
+   await page.locator("#fft-r-spectrum path.curve").waitFor();
+   const v=await page.evaluate(()=>{
+     const a=window.SSFFTResolution;
+     const short=a.analyze({N:64,fs:256,experiment:"resolution"});
+     const long=a.analyze({N:128,fs:256,experiment:"resolution"});
+     const padded=a.analyze({N:64,fs:256,experiment:"padding",padding:4});
+     const off=a.analyze({N:64,fs:256,experiment:"leakage",offset:.35,window:"rect"});
+     const tapered=a.analyze({N:64,fs:256,experiment:"leakage",offset:.35,window:"hann"});
+     return {shortDf:short.df,longDf:long.df,shortT:short.duration,longT:long.duration,
+       paddedDf:padded.df,paddedGrid:padded.grid,paddedT:padded.duration,paddedM:padded.M,
+       offBins:off.bins.filter(b=>b.amplitude>.02).length,
+       hannBins:tapered.bins.filter(b=>b.amplitude>.02).length};
+   });
+   check(almost(v.shortDf,4)&&almost(v.longDf,2),"Changing observation N must change nominal bin spacing");
+   check(almost(v.shortT,.25)&&almost(v.longT,.5),"Observation time must increase with N");
+   check(almost(v.paddedDf,4)&&almost(v.paddedGrid,1)&&almost(v.paddedT,.25)&&v.paddedM===256,"Padding changes only FFT grid, not observation");
+   await page.locator("#fft-r-experiment").selectOption("leakage");
+   await page.locator("#fft-r-window").selectOption("hann");
+   await page.locator("#fft-r-experiment").selectOption("padding");
+   await page.locator("#fft-r-padding").selectOption("4");
+   check((await page.locator("#fft-r-stats").innerText()).includes("1 Hz"),"Padding grid metric failed");
+   for(const theme of ["white-clean","neutral-dark"]){
+     await page.locator('[data-els-theme-picker]').selectOption(theme);
+     check(await page.locator("html").getAttribute("data-els-theme")===theme,"Resolution theme broken");
+   }
+   for(const lang of ["en","ko","mixed"]){
+     await page.locator("#fft-r-language").selectOption(lang);
+     const title=await page.locator("#fft-r-title").innerText();
+     check(lang==="en"?!/[가-힣]/.test(title):/[가-힣]/.test(title),"Resolution language failed");
+   }
+   check((await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth))<=6,"Resolution lab horizontal overflow");
+   await page.screenshot({path:"tests/screenshots/fft-resolution-"+width+".png",fullPage:true});
+   await page.goto(base+"/signals-systems/applications-fft-lab.html",{waitUntil:"domcontentloaded"});
+   await page.locator("#fft-table tbody tr").first().waitFor();
+   check((await page.locator("#fft-next-link").getAttribute("href"))==="./applications-fft-resolution.html","Foundation to resolution link missing");
    const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
    check(overflow<=6,"Horizontal overflow at "+width+"px: "+overflow);
    await page.screenshot({path:"tests/screenshots/fft-foundations-"+width+".png",fullPage:true});
