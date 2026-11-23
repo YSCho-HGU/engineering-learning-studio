@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css">
 <link rel="stylesheet" href="./assets/ss-four-step-standard.css?v=1">
 <link rel="stylesheet" href="./assets/ss-fft-lab-standard.css?v=1">
-<link rel="stylesheet" href="./assets/ss-chirp-stft.css?v=1">
+<link rel="stylesheet" href="./assets/ss-chirp-stft.css?v=2">
 <link rel="stylesheet" href="./assets/ss-responsive-unified.css?v=1">
 <link rel="stylesheet" href="./assets/ss-plot-typography.css?v=1">
 <link rel="stylesheet" href="./assets/ss-presentation-mode.css?v=1">
@@ -40,6 +40,7 @@
   <aside class="ss-stft-controls" aria-labelledby="stft-controls-title">
    <h2 id="stft-controls-title"></h2>
    <p class="ss-stft-note" id="stft-controls-help"></p>
+   <label><span id="stft-shape-label">Frequency pattern</span><select id="stft-shape"><option value="rising">Rising chirp</option><option value="falling">Falling chirp</option><option value="step">Sudden frequency change</option></select></label>
    <label><span id="stft-fs-label">Sampling rate</span><select id="stft-fs"><option value="256">256 Hz</option><option value="512" selected>512 Hz</option><option value="1024">1024 Hz</option></select></label>
    <label><span id="stft-duration-label">Duration</span><select id="stft-duration"><option value="1">1 s</option><option value="2" selected>2 s</option><option value="4">4 s</option></select></label>
    <label><span id="stft-start-label">Start frequency</span><input id="stft-start" type="range" min="10" max="100" step="5" value="20"><output id="stft-start-value"></output></label>
@@ -60,6 +61,15 @@
     <section class="ss-stft-card" id="stft-local-section"><h2 id="stft-local-title"></h2><p id="stft-local-help"></p><svg id="stft-local-plot" viewBox="0 0 580 260" role="img" aria-label="Windowed short-time FFT magnitude spectrum"></svg></section>
    </div>
    <section class="ss-stft-card" id="stft-map"><h2 id="stft-map-title"></h2><p id="stft-map-help"></p><svg id="stft-spectrogram" viewBox="0 0 900 325" role="img" aria-label="Computed STFT magnitude spectrogram over time and frequency"></svg><div class="ss-stft-colorbar"><span id="stft-low-db">−60 dB</span><span class="ss-stft-gradient"></span><span id="stft-high-db">0 dB</span></div><p id="stft-map-note"></p></section>
+   <section class="ss-stft-card ss-stft-contrast" id="stft-contrast-section" aria-labelledby="stft-contrast-title">
+    <div class="ss-stft-contrast-head"><div><h2 id="stft-contrast-title"></h2><p id="stft-contrast-help"></p></div>
+     <label><span id="stft-compare-label"></span><select id="stft-compare-kind"><option value="window">Short vs long window</option><option value="overlap">0% vs 75% overlap</option></select></label></div>
+    <div class="ss-stft-compare-grid">
+     <div class="ss-stft-compare-card"><h3 id="stft-compare-a-title"></h3><p id="stft-compare-a-stats"></p><svg id="stft-compare-a" viewBox="0 0 450 246" role="img" aria-label="Reference STFT spectrogram"></svg></div>
+     <div class="ss-stft-compare-card"><h3 id="stft-compare-b-title"></h3><p id="stft-compare-b-stats"></p><svg id="stft-compare-b" viewBox="0 0 450 246" role="img" aria-label="Comparison STFT spectrogram"></svg></div>
+    </div>
+    <p id="stft-compare-insight" aria-live="polite"></p>
+   </section>
    <section class="ss-stft-card"><h2 id="stft-insight-title"></h2><div class="ss-stft-formulas">
     <div><small id="stft-eq1-label"></small><div data-ss-math="f(t)=f_0+\frac{f_1-f_0}{T}t" data-ss-math-display="block"></div></div>
     <div><small id="stft-eq2-label"></small><div data-ss-math="X(m,k)=\sum_{r=0}^{L-1}x[r+mH]w[r]e^{-j2\pi kr/M}" data-ss-math-display="block"></div></div>
@@ -77,7 +87,7 @@
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js" defer></script>
 <script src="./assets/ss-math-core.js?v=1" defer></script>
 <script src="./assets/ss-applications-math.js?v=5" defer></script>
-<script src="./assets/ss-app-chirp-stft.js?v=1" defer></script>
+<script src="./assets/ss-app-chirp-stft.js?v=2" defer></script>
 <script src="../assets/els-header-controls.js?v=1" defer></script>
 <script src="./assets/ss-presentation-mode.js?v=1" defer></script>
 </body></html>
