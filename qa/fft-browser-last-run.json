@@ -1,7 +1,7 @@
 {
-  "source_sha": "9cbe09248bb1e824312c286dddd5d46fa8054c0c",
+  "source_sha": "bfc09c530a722e41405a11501ce22ede3ed27bb5",
   "workflow": "ss-applications-browser",
-  "tested_at": "2026-11-23T09:58:05.858245+00:00",
+  "tested_at": "2026-11-23T10:07:07.276960+00:00",
   "fft_browser_outcome": "success",
   "original_labs_outcome": "success",
   "additional_labs_outcome": "success",
@@ -9,6 +9,7 @@
   "chirp_stft_outcome": "success",
   "real_fft_upload_outcome": "success",
   "dtmf_mystery_outcome": "success",
+  "sound_fingerprint_outcome": "success",
   "viewport_widths": [
     1366,
     390
