@@ -78,3 +78,43 @@ a{color:var(--els-link)}
 @media(max-width:860px){.ss-fft-workspace{grid-template-columns:1fr}.ss-fft-controls{position:static;max-height:none}.ss-fft-graphs{grid-template-columns:1fr 1fr}}
 @media(max-width:690px){.ss-fft-root{padding:0 10px 25px}.ss-fft-intro{flex-wrap:wrap;padding:14px}.ss-fft-roadmap{grid-template-columns:repeat(2,minmax(0,1fr))}.ss-fft-graphs{grid-template-columns:1fr}.ss-fft-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.ss-fft-svg{min-height:210px}.ss-fft-math-grid{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* 2026-11-23: Keep controls in view while prioritizing the two plots. */
+.ss-fft-controls{padding:12px 14px;scrollbar-gutter:stable}
+.ss-fft-controls .ss-fft-field{margin-bottom:9px;gap:4px}
+.ss-fft-controls .ss-fft-hint{margin:4px 0 9px}
+.ss-fft-controls .ss-fft-check{margin:9px 0 7px}
+.ss-fft-field textarea{min-height:84px;max-height:160px}
+.ss-fft-theory{padding:10px 14px}
+.ss-fft-theory h2{margin-bottom:4px}
+.ss-fft-theory p{margin:2px 0}
+.ss-fft-math-grid{margin-top:6px;gap:8px}
+.ss-fft-math-grid>div{padding:6px 9px}
+.ss-fft-equation{font-size:14px;min-height:29px}
+.ss-fft-card.ss-fft-graph-card{padding:11px 12px}
+.ss-fft-graph-card h2{margin-bottom:5px}
+.ss-fft-graph-card p{margin-top:3px;font-size:12px}
+.ss-fft-svg{min-height:0;max-height:none;aspect-ratio:620/300}
+.ss-fft-metrics{gap:7px}
+.ss-fft-metric{padding:8px 10px}
+@media(min-width:1181px){
+ .ss-fft-workspace{grid-template-columns:clamp(255px,21vw,305px) minmax(0,1fr)}
+ .ss-fft-graphs{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(min-width:691px) and (max-width:1180px){
+ .ss-fft-graphs{grid-template-columns:1fr}
+ .ss-fft-graph-card{max-width:100%}
+ .ss-fft-svg{max-height:320px}
+}
+@media(max-width:860px){
+ .ss-fft-controls{position:static;max-height:none;overflow:visible}
+ .ss-fft-graphs{grid-template-columns:1fr}
+ .ss-fft-controls .ss-fft-buttons{max-width:480px}
+}
+@media(max-width:690px){
+ .ss-fft-controls{padding:12px}
+ .ss-fft-math-grid{grid-template-columns:1fr}
+ .ss-fft-equation{font-size:13px}
+ .ss-fft-svg{width:100%;min-height:0}
+ .ss-fft-intro{margin-top:8px}
+}
