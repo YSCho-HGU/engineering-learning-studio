@@ -16,7 +16,7 @@ for(const invalid of ["1,2,3","0 1 2 3 4 5 6 NaN","0 1 2 3 4 5 6 Infinity"])asse
 let checked=0,maxError=0;
 for(const mode of ["ramp","impulse","tone"]){
  const trace=core.trace(core.presets[mode]);
- assert.deepEqual(trace.operations.map(x=>x.length),[0,4,4,4]);
+ assert.deepEqual(Array.from(trace.operations,ops=>ops.length),[0,4,4,4]);
  for(let stage=1;stage<=3;stage++){
   assert.equal(trace.operations[stage].length,4);
   for(const op of trace.operations[stage]){
