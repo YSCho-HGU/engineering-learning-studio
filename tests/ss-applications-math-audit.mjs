@@ -9,7 +9,8 @@ const cases=[
  "/signals-systems/applications.html#part-d",
  ...["harmonics","chirp","helix","beats","amfm","sampling"].map(x=>"/signals-systems/applications-lab.html?lab="+x),
  "/signals-systems/applications-fft-lab.html",
- "/signals-systems/applications-fft-resolution.html"
+ "/signals-systems/applications-fft-resolution.html",
+ "/signals-systems/applications-chirp-stft.html"
 ];
 const findings=[],results=[];
 await mkdir("qa",{recursive:true});
