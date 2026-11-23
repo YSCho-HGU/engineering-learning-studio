@@ -85,7 +85,7 @@ function graphicBase(w,h,{xMax,yMax,xLabel,yLabel,yMin=0}){
  return{l,t,W,H,html:marks.join("")};
 }
 function waveform(){
- const x=realSample(reverse()),a=analyzed,svg=$("finger-wave"),g=graphicBase(780,200,{xMax:COUNT/FS,yMax:.7,yMin:-.7,xLabel:"Time (s)",yLabel:"x[n]"});
+ const x=realSample(reverse()),a=analyzed,svg=$("finger-wave"),g=graphicBase(780,200,{xMax:x.length/FS,yMax:.7,yMin:-.7,xLabel:"Time (s)",yLabel:"x[n]"});
  const stride=Math.max(1,Math.ceil(x.length/1500)),path=[];
  for(let n=0;n<x.length;n+=stride){
   path.push((n?"L":"M")+fmt(g.l+n/(x.length-1)*g.W,2)+" "+fmt(g.t+g.H*(.7-x[n])/1.4,2));
@@ -110,7 +110,7 @@ function render(){
  analyzed=currentAnalysis(reverse());waveform();spectrum();
  const a=analyzed,type=reverse(),start=a.offset/FS;
  $("finger-position-value").textContent=fmt(start*1000,1)+"–"+fmt((start+a.N/FS)*1000,1)+" ms";
- const cells=[[tr("Reference f₀","기준 f₀"),a.f0+" Hz"],[tr("FFT bin spacing","FFT Bin 간격"),fmt(a.binHz,2)+" Hz"],
+ const cells=[[recordings[type]?tr("Assumed f₀ (not estimated)","가정한 f₀ (자동 추정 아님)"):tr("Reference f₀","기준 f₀"),a.f0+" Hz"],[tr("FFT bin spacing","FFT Bin 간격"),fmt(a.binHz,2)+" Hz"],
  [tr("Strongest partial","최대 고조파"),"h = "+a.dominant.h]];
  $("finger-data").innerHTML=cells.map(([label,value])=>'<div>'+label+'<strong>'+value+'</strong></div>').join("");
  for(let i=0;i<3;i++)$("finger-play-"+LETTERS[i].toLowerCase()).setAttribute("aria-pressed",String(selected===i));
@@ -206,7 +206,7 @@ function localize(){
  "finger-length-label":["FFT observation N","FFT 관측 표본 수 N"],
  "finger-window-label":["Analysis window","분석 창 함수"],
  "finger-position-label":["Observation position","관측 구간 위치"],
- "finger-controls-help":["All synthetic sources share the reference pitch; changing N and time position changes which part of the sound is measured.","합성 신호의 기본주파수는 모두 같습니다. N과 관측 위치를 바꾸면 분석하는 소리 구간이 변합니다."],
+ "finger-controls-help":["Synthetic sources share the selected reference pitch; for uploaded recordings, f₀ is a user assumption and must be checked before comparing harmonics.","합성 신호는 선택한 기준 음높이가 같습니다. 실제 녹음의 f₀는 사용자 가정이므로 고조파를 비교하기 전에 확인해야 합니다."],
  "finger-reset":["Reset the discovery","탐구 초기화"],
  "finger-recordings-title":["Optional · Compare your real recordings","선택 · 실제 녹음으로 비교"],
  "finger-recordings-help":["Choose three separate clips playing/singing the same steady note. Files stay in this browser. Uploaded audio replaces only that source; no remote upload. Recording pitch must be checked by the student.","같은 음높이로 연주하거나 부른 안정된 구간의 파일 세 개를 선택하세요. 파일은 브라우저 내부에서만 처리됩니다. 업로드는 해당 소리만 대체하며 녹음 음높이는 학생이 확인해야 합니다."],
