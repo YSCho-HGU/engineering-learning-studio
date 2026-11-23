@@ -125,18 +125,28 @@ function axes(w,h,{xMax,yMin,yMax,xLabel,yLabel}){
 }
 function draw(a,samples){
  const wave=$("fft-upload-wave"),spec=$("fft-upload-spectrum");
+ const bins=Math.min(1024,samples.length);
+ const lows=new Float64Array(bins),highs=new Float64Array(bins);
+ lows.fill(Infinity);highs.fill(-Infinity);
  let yMin=Infinity,yMax=-Infinity;
- const stride=Math.max(1,Math.floor(samples.length/1700));
- for(let i=0;i<samples.length;i+=stride){yMin=Math.min(yMin,samples[i]);yMax=Math.max(yMax,samples[i])}
+ for(let i=0;i<samples.length;i++){
+  const v=samples[i],b=Math.min(bins-1,Math.floor(i*bins/samples.length));
+  if(v<lows[b])lows[b]=v;if(v>highs[b])highs[b]=v;
+  if(v<yMin)yMin=v;if(v>yMax)yMax=v;
+ }
  if(yMax-yMin<1e-9){yMax+=1;yMin-=1}
  const pad=(yMax-yMin)*.08;yMax+=pad;yMin-=pad;
  const xMax=a.fs===null?samples.length-1:(samples.length-1)/a.fs;
  const g=axes(850,240,{xMax,yMin,yMax,xLabel:a.fs===null?"Sample index n":"Time (s)",yLabel:"x[n]"});
  const x=i=>g.left+i/Math.max(1,samples.length-1)*g.W,y=v=>g.top+(yMax-v)/(yMax-yMin)*g.H;
- const points=[];
- for(let i=0;i<samples.length;i+=stride)points.push((i?"L":"M")+fmt(x(i),2)+" "+fmt(y(samples[i]),2));
+ const waveform=[];
+ for(let b=0;b<bins;b++){
+  const px=g.left+(b+.5)*g.W/bins;
+  if(samples.length===bins)waveform.push((b?"L":"M")+fmt(px,2)+" "+fmt(y(lows[b]),2));
+  else waveform.push("M"+fmt(px,2)+" "+fmt(y(lows[b]),2)+" L"+fmt(px,2)+" "+fmt(y(highs[b]),2));
+ }
  const start=x(a.start),end=x(a.end-1);
- wave.innerHTML=g.markup+'<rect class="ss-fft-upload-wave-region" x="'+start+'" y="'+g.top+'" width="'+Math.max(1,end-start)+'" height="'+g.H+'"/>'+'<path class="ss-fft-upload-line" d="'+points.join(" ")+'"/>';
+ wave.innerHTML=g.markup+'<rect class="ss-fft-upload-wave-region" x="'+start+'" y="'+g.top+'" width="'+Math.max(1,end-start)+'" height="'+g.H+'"/>'+'<path class="ss-fft-upload-line" d="'+waveform.join(" ")+'"/>';
  const max=Math.max(...a.spectrum,1e-9),p=axes(850,300,{xMax:a.nyquist,yMin:0,yMax:max*1.08,xLabel:a.fs===null?"Normalized frequency (cycles/sample)":"Frequency (Hz)",yLabel:"Amplitude"});
  const path=[];
  for(let k=0;k<a.spectrum.length;k++){
