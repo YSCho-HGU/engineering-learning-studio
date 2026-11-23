@@ -36,6 +36,13 @@ try{
       inferredFs:csv.fs,csvLen:csv.samples.length,noFs:unlabelled.fs===null};
    });
    assert(pure.bin===128&&near(pure.unknownFreq,.125,1e-9),"Normalized frequency wrong "+JSON.stringify(pure));
+   const multiplePeaks=await page.evaluate(()=>{
+     const samples=Float64Array.from({length:1024},(_,n)=>.7*Math.sin(2*Math.PI*64*n/1024)+.3*Math.sin(2*Math.PI*192*n/1024));
+     const r=window.SSRealFFT.analyze(samples,{N:1024,fs:512,window:"rect"});
+     return r.topPeaks.slice(0,2).map(x=>({bin:x.bin,freq:x.frequency,amplitude:x.amplitude}));
+   });
+   assert(multiplePeaks.length===2&&multiplePeaks[0].bin===64&&multiplePeaks[1].bin===192,"Multiple audio harmonic peaks missing "+JSON.stringify(multiplePeaks));
+
    assert(near(pure.knownFreq,64,1e-9)&&near(pure.amplitude,.8,1e-6),"FFT amplitude/Hz wrong "+JSON.stringify(pure));
    assert(near(pure.inferredFs,512,1e-5)&&pure.noFs&&pure.csvLen===1024,"CSV sampling-rate inference incorrect "+JSON.stringify(pure));
    const csv="time_s,value,secondary\n"+Array.from({length:2048},(_,n)=>{
@@ -45,6 +52,7 @@ try{
    await page.waitForFunction(()=>window.SSRealFFT?.analysis?.fs===512);
    const first=await page.evaluate(()=>({peak:window.SSRealFFT.analysis.peakFreq,points:document.querySelectorAll("#fft-upload-spectrum path").length}));
    assert(near(first.peak,64,1e-5)&&first.points===1,"CSV first segment spectrum wrong "+JSON.stringify(first));
+   assert(await page.locator("#fft-upload-peaks .ss-fft-upload-peak").count()>0,"Top peaks table missing");
    assert(await page.locator("#fft-upload-column-row").isVisible(),"Multi-column sensor chooser not shown");
    await page.locator("#fft-upload-column").selectOption("secondary");
    assert(near(await page.evaluate(()=>window.SSRealFFT.analysis.peakFreq),40,1e-5),"Secondary sensor channel not selected");
