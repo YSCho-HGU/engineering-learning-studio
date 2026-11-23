@@ -7,6 +7,10 @@ const pairs=[
  ["e^(σ+jω)t","e^{(\\sigma+j\\omega)t}"],
  ["fₛ/2","\\frac{f_s}{2}"],
  ["|X[k]|","\\lvert X[k]\\rvert"],
+ ["k/N","\\frac{k}{N}"],
+ ["H(jω)","H(j\\omega)"],
+ ["H(z)","H(z)"],["X(z)","X(z)"],
+ ["Tₛ","T_s"],
  ["X[k]","X[k]"],["x[n]","x[n]"],["x(t)","x(t)"],
  ["H(f)","H(f)"],["fₛ","f_s"],["f₀","f_0"],["f₁","f_1"],
  ["Δf","\\Delta f"],["2π","2\\pi"]
