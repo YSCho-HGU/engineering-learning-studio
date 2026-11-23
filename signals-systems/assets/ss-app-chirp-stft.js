@@ -219,6 +219,7 @@ function updateRange(){
  $("stft-end").max=String(Math.min(240,limit));
  if(v.f0>=v.fs/2){$("stft-start").value=String(Math.max(10,Math.min(100,limit)))}
  if(v.f1>=v.fs/2){$("stft-end").value=String(Math.max(80,Math.min(240,limit)))}
+ if(+$("stft-start").value>+$("stft-end").value){$("stft-end").value=$("stft-start").value}
 }
 function stats(a){
  const values=[
@@ -279,6 +280,13 @@ function updatePatternText(){
   equation.dataset.ssMath=tex[shape];
   global.SSMathCore?.queue?.();
  }
+ const frequencies={
+  rising:[["Start frequency f0","시작 주파수 f0"],["End frequency f1","종료 주파수 f1"]],
+  falling:[["Final frequency f0","종료 주파수 f0"],["Initial frequency f1","시작 주파수 f1"]],
+  step:[["First-half frequency f0","전반부 주파수 f0"],["Second-half frequency f1","후반부 주파수 f1"]]
+ }[shape];
+ $("stft-start-label").textContent=tr(...frequencies[0]);
+ $("stft-end-label").textContent=tr(...frequencies[1]);
  $("stft-time-title").textContent=tr("1 · Observe the time signal","1 · 시간 신호 관찰");
  $("stft-time-help").textContent=shape==="step"?
   tr("The frequency changes abruptly at T/2, but the signal phase stays continuous. The shaded region shows the selected window.","T/2에서 주파수가 갑자기 바뀌지만 신호 위상은 연속입니다. 음영은 현재 분석 구간입니다."):
