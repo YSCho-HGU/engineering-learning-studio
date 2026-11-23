@@ -186,6 +186,39 @@ const labels={
  next:["Next, after this foundation","기초 이해 후 다음 단계"],nextText:["Now compare observation length, FFT bin spacing and leakage. In the next interactive lab, change N and fs, then test windows and zero padding.","이제 관측 길이·FFT Bin 간격·누설을 직접 비교합니다. 다음 실습에서 N과 fs를 변경하고 창 함수와 영 채우기를 실험하세요."],
  nextLink:["Open Resolution & Leakage Lab →","분해능과 누설 실습 열기 →"]
 };
+const checks={
+ unknown:{
+  question:["Given x[n] and its FFT, but no sampling rate fs, what can you determine?","표본 x[n]과 FFT 결과는 있지만 fs를 모른다면 무엇을 알 수 있을까요?"],
+  answers:[["The frequency bin index and cycles/sample, but not Hz.","FFT Bin 번호와 cycles/sample은 알 수 있지만 Hz는 알 수 없습니다."],["The exact original analog frequency in Hz.","원래 아날로그 신호의 정확한 주파수(Hz)를 알 수 있습니다."],["The sampling period in seconds.","샘플링 주기(초)를 알 수 있습니다."]],
+  correct:0,reason:["The DFT depends on sample values and N; an external time reference fs is needed to convert bins to Hz.","DFT는 표본값과 N으로 계산됩니다. Bin을 Hz로 변환하려면 외부 시간 기준인 fs가 필요합니다."]},
+ known:{
+  question:["N=16, dominant bin k=3, and fs=8000 Hz. What frequency does that bin represent?","N=16, 주요 Bin k=3, fs=8000Hz일 때 해당 Bin의 주파수는 얼마인가요?"],
+  answers:[["500 Hz","500 Hz"],["1500 Hz","1500 Hz"],["8000 Hz","8000 Hz"]],
+  correct:1,reason:["f_k=k fs/N=3×8000/16=1500 Hz. A peak bin is not automatically proof of the unique original analog frequency.","f_k=k fs/N=3×8000/16=1500Hz입니다. 다만 피크 Bin만으로 원래 아날로그 신호의 주파수가 유일하게 정해지는 것은 아닙니다."]}
+};
+let currentCheckStage="",savedAnswer="";
+function renderCheckpoint(){
+ const key=$("fft-known").checked?"known":"unknown",check=checks[key];
+ if(currentCheckStage!==key){currentCheckStage=key;savedAnswer=""}
+ $("fft-checkpoint-title").textContent=i("5 · Check your understanding","5 · 이해도 확인");
+ $("fft-checkpoint-question").textContent=i(...check.question);
+ $("fft-checkpoint-label").textContent=i("Choose the best answer","가장 적절한 답 선택");
+ $("fft-checkpoint-check").textContent=i("Check answer","정답 확인");
+ const select=$("fft-checkpoint-answer");select.replaceChildren();
+ const empty=document.createElement("option");empty.value="";empty.textContent=i("Select an answer","답을 선택하세요");select.append(empty);
+ check.answers.forEach((pair,index)=>{const option=document.createElement("option");option.value=String(index);option.textContent=i(...pair,true);select.append(option)});
+ select.value=savedAnswer;
+ $("fft-checkpoint-feedback").textContent="";
+ $("fft-checkpoint-feedback").dataset.result="";
+}
+function gradeCheckpoint(){
+ const selected=$("fft-checkpoint-answer").value,node=$("fft-checkpoint-feedback");
+ if(selected===""){node.textContent=i("Choose an answer first.","먼저 답을 선택하세요.");node.dataset.result="pending";return}
+ const q=checks[currentCheckStage],ok=Number(selected)===q.correct;
+ node.dataset.result=ok?"correct":"incorrect";
+ node.textContent=ok?i("Correct. ","정답입니다. ")+i(...q.reason):i("Try again after checking the FFT bins and the frequency formula.","FFT Bin과 주파수 변환식을 확인한 후 다시 답해 보세요.");
+}
+
 let lastSamples=sampleArray("one"),lastResult=null;
 function localize(){
  for(const [id,key] of [["fft-title","title"],["fft-subtitle","subtitle"],["fft-back","back"],["fft-controls-title","controls"],["fft-controls-note","note"],["fft-preset-label","preset"],["fft-samples-label","samples"],["fft-format","format"],["fft-known-label","known"],["fft-fs-label","fs"],["fft-run","run"],["fft-reset","reset"],["fft-theory-title","theory"],["fft-theory-desc","theoryDesc"],["fft-equation-1-label","equation1"],["fft-equation-2-label","equation2"],["fft-time-title","time"],["fft-time-note","timeNote"],["fft-spectrum-title","spectrum"],["fft-insight-title","insightTitle"],["fft-table-title","table"],["fft-table-note","tableNote"],["fft-next-title","next"],["fft-next-desc","nextText"],["fft-next-link","nextLink"]]){
@@ -199,6 +232,7 @@ function localize(){
   el.append(number,title);return el;
  }));
  document.documentElement.lang=language()==="ko"?"ko":"en";
+ renderCheckpoint();
 }
 function show(result){
  lastResult=result;
@@ -244,12 +278,14 @@ function init(){
  localize();
  $("fft-preset").addEventListener("change",e=>selectPreset(e.target.value));
  $("fft-samples").addEventListener("input",()=>{$("fft-preset").value="custom"});
- $("fft-known").addEventListener("change",()=>{$("fft-fs").disabled=!$("fft-known").checked;compute()});
+ $("fft-known").addEventListener("change",()=>{$("fft-fs").disabled=!$("fft-known").checked;compute();renderCheckpoint()});
  $("fft-fs").addEventListener("change",compute);
  $("fft-run").addEventListener("click",compute);
+ $("fft-checkpoint-answer").addEventListener("change",e=>{savedAnswer=e.target.value;$("fft-checkpoint-feedback").textContent=""});
+ $("fft-checkpoint-check").addEventListener("click",gradeCheckpoint);
  $("fft-reset").addEventListener("click",()=>{
   $("fft-preset").value="one";$("fft-known").checked=false;$("fft-fs").value="8000";$("fft-fs").disabled=true;
-  selectPreset("one");
+  selectPreset("one");renderCheckpoint();
  });
  global.ELSLanguage?.subscribe?.(()=>{localize();if(lastResult)show(lastResult)});
  selectPreset("one");
