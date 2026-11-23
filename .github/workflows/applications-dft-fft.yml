@@ -72,3 +72,11 @@ jobs:
         run: node tests/applications-dft-fft-regression.mjs
       - name: Validate FFT learning progression and navigation
         run: node tests/applications-fft-path-regression.mjs
+      - name: Attach Chromium screenshots and failure evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fft-butterfly-browser-screenshots
+          path: artifacts/fft-browser-qa/*.png
+          if-no-files-found: warn
+          retention-days: 14
