@@ -156,6 +156,86 @@ function draw(a,samples){
  const peakX=p.left+a.peakBin/(a.spectrum.length-1)*p.W;
  spec.innerHTML=p.markup+'<path class="ss-fft-upload-line" d="'+path.join(" ")+'"/><circle cx="'+fmt(peakX,2)+'" cy="'+fmt(p.top+p.H-a.peakAmplitude/(max*1.08)*p.H,2)+'" r="4.3" fill="var(--els-link)"/>';
 }
+
+function harmonicMode(){
+ return $("fft-upload-harmonic-mode").value;
+}
+function activeHarmonics(){
+ if(!analysis||!global.SSFFTHarmonics)return null;
+ const manual=harmonicMode()==="manual"?Number($("fft-upload-manual-f0").value):null;
+ const h=global.SSFFTHarmonics.analyzeHarmonics(analysis,{manualF0:manual});
+ return {...h,selected:harmonicMode()==="manual"?h.manual:h.candidate};
+}
+function harmonicExplanation(h){
+ if(!h)return tr("Harmonic analysis unavailable.","고조파 분석 모듈을 사용할 수 없습니다.");
+ if(h.status==="silent")return tr("No substantial FFT energy. Choose a louder or more stable segment.","유의미한 FFT 에너지가 없습니다. 신호가 더 뚜렷한 구간을 선택하세요.");
+ if(harmonicMode()==="manual"){
+  return h.selected&&h.selected.count>=2?
+   tr("Manual f₀ hypothesis: compare the frequencies near integer multiples. This is a test, not proof of musical pitch.","직접 입력한 f₀의 정수배 근처 피크를 비교합니다. 이는 가설 검증이며 실제 음높이의 확정값은 아닙니다."):
+   tr("Enter a positive candidate frequency and look for several matching harmonics.","양수 후보 주파수를 입력하고 일치하는 고조파가 여러 개 있는지 확인하세요.");
+ }
+ if(h.status==="pattern")return tr(
+  h.candidate?.hasFundamental?"Several harmonics support an f₀ candidate; even a strong peak can be an overtone.":"Several harmonics suggest a missing/weak fundamental: the strongest peak is not f₀.",
+  h.candidate?.hasFundamental?"복수 고조파가 f₀ 후보를 지지합니다. 가장 강한 피크는 배음일 수도 있습니다.":"여러 고조파가 기본주파수의 존재를 시사합니다. 가장 강한 피크가 f₀는 아닙니다.");
+ if(h.status==="tentative")return tr("Only a limited pattern matches. Multiple notes, speech noise, or percussion may imitate harmonics; do not claim a definite f₀.","일부 피크만 일치합니다. 다성 음악·음성 잡음·타악기에서도 유사한 패턴이 나타날 수 있으므로 f₀를 확정하지 마세요.");
+ return tr("No reliable harmonic series found. A single tone or noisy/unvoiced segment cannot establish a harmonic fundamental.","충분한 고조파 계열이 없습니다. 단일 정현파나 비주기성·무성음 구간에서는 고조파 기반 f₀를 확정할 수 없습니다.");
+}
+function renderHarmonics(){
+ const h=activeHarmonics();if(!h)return;
+ const manual=harmonicMode()==="manual";
+ $("fft-upload-manual-row").hidden=!manual;
+ $("fft-upload-manual-label").textContent=tr("Candidate f₀ ("+analysis.freqUnit+")","후보 f₀ ("+analysis.freqUnit+")");
+ const chosen=h.selected;
+ const title=chosen?.count>=2 ?
+  tr("f₀ candidate: ","f₀ 후보: ")+fmt(chosen.frequency,analysis.fs?2:5)+" "+analysis.freqUnit+
+  " · "+chosen.count+tr(" matched orders","개 고조파 일치"):
+  tr("No supported f₀ candidate","고조파로 뒷받침되는 f₀ 후보 없음");
+ const className=!manual&&h.status==="pattern"?"ss-fft-harmonic-result is-supported":"ss-fft-harmonic-result";
+ const result=$("fft-upload-harmonic-result");
+ result.className=className;result.textContent=title;
+ const titleEl=document.createElement("strong");titleEl.textContent=title;result.replaceChildren(titleEl);
+ const observations=chosen?.matches||[];
+ const headers=[tr("Order","차수"),tr("Expected","예측 주파수"),tr("Observed","관측 주파수"),tr("Relative A","상대 진폭")];
+ const table=$("fft-upload-harmonic-table");
+ const rows=['<div class="ss-fft-harmonic-row is-header">'+headers.map(x=>"<span>"+safe(x)+"</span>").join("")+"</div>"];
+ for(const m of observations){
+  rows.push('<div class="ss-fft-harmonic-row"><span>'+m.order+'f₀</span><span>'+fmt(m.expected,analysis.fs?1:5)+'</span><span>'+fmt(m.observed,analysis.fs?1:5)+'</span><span>'+fmt(m.relativeAmplitude*100,1)+'%</span></div>');
+ }
+ table.innerHTML=rows.join("");
+ $("fft-upload-harmonic-warning").textContent=harmonicExplanation(h)+"\n"+
+ tr("Harmonics are near 2f₀, 3f₀, ... ; FFT spacing and Window Length limit accuracy. Polyphonic music and unvoiced speech need additional analysis.",
+ "고조파는 2f₀·3f₀ 등 정수배 근처에 나타납니다. FFT 간격과 Window 길이는 정확도를 제한합니다. 다성 음악과 무성음에는 추가 분석이 필요합니다.");
+ const svg=$("fft-upload-spectrum");
+ svg.querySelectorAll(".ss-fft-harmonic-marker,.ss-fft-harmonic-number,.ss-fft-harmonic-f0").forEach(el=>el.remove());
+ if(!chosen||chosen.count<2)return;
+ const ns="http://www.w3.org/2000/svg",left=57,W=850-57-15;
+ function element(tag,attributes,text){
+  const e=document.createElementNS(ns,tag);
+  for(const [k,v]of Object.entries(attributes))e.setAttribute(k,String(v));
+  if(text!==undefined)e.textContent=text;svg.append(e);return e;
+ }
+ // The f0 line is drawn even if the fundamental bin itself is absent.
+ const base=chosen.frequency;
+ for(let order=1;order<=8;order++){
+  const frequency=order*base;if(frequency>analysis.nyquist)break;
+  const x=left+frequency/analysis.nyquist*W;
+  element("line",{class:order===1?"ss-fft-harmonic-f0":"ss-fft-harmonic-marker",x1:x,y1:20,x2:x,y2:260});
+  element("text",{class:"ss-fft-harmonic-number",x:x+3,y:30+(order%2)*14},order===1?"f₀":order+"f₀");
+ }
+}
+function harmonicDemo(){
+ const fs=4096,N=8192,f0=128;
+ // The fundamental is intentionally weak, while orders 2–5 are prominent.
+ const samples=Float64Array.from({length:N},(_,n)=>.08*Math.sin(PI2*f0*n/fs)+
+   .7*Math.sin(PI2*2*f0*n/fs)+.48*Math.sin(PI2*3*f0*n/fs)+
+   .3*Math.sin(PI2*4*f0*n/fs)+.14*Math.sin(PI2*5*f0*n/fs));
+ $("fft-upload-harmonic-mode").value="auto";
+ $("fft-upload-manual-f0").value="";
+ csvText=null;csvFileName="";$("fft-upload-column-row").hidden=true;
+ loadSource({samples,fs,name:tr("Harmonics demo · weak fundamental","고조파 예제 · 약한 기본주파수"),kind:"demo",
+  metadata:tr("f₀ = 128 Hz; strongest component = 256 Hz","f₀ = 128 Hz, 최대 피크 = 256 Hz")});
+}
+
 let source=null,analysis=null,csvText=null,csvFileName="";
 function currentRate(){
  const v=$("fft-upload-fs").value.trim();
@@ -184,6 +264,7 @@ function refresh(){
   $("fft-upload-stats").innerHTML=metrics.map(([name,value])=>'<div class="ss-fft-upload-stat">'+safe(name)+'<strong>'+safe(value)+'</strong></div>').join("");
   $("fft-upload-peaks").innerHTML=analysis.topPeaks.map((p,i)=>
    '<div class="ss-fft-upload-peak"><strong>#'+(i+1)+'</strong><span>k = '+p.bin+'</span><span>'+fmt(p.frequency,analysis.fs?2:5)+' '+analysis.freqUnit+'</span><span>A = '+fmt(p.amplitude,4)+'</span></div>').join("");
+  renderHarmonics();
   $("fft-upload-spectrum-help").textContent=analysis.fs===null?
    tr("Sampling rate unknown: FFT bins are described in cycles/sample. Hz cannot be recovered from sample values alone.","샘플링 주파수를 알 수 없어 cycles/sample 단위로 해석합니다. 표본값만으로 Hz를 결정할 수 없습니다."):
    tr("Known sampling rate: frequency bin k maps to k × fs/N Hz. The original bin spacing is fs/N.","샘플링 주파수가 주어졌으므로 k번째 Bin은 k × fs/N Hz입니다. 원래 Bin 간격은 fs/N입니다.");
@@ -194,13 +275,14 @@ function refresh(){
   $("fft-upload-status").textContent=tr("Ready · processed locally in your browser","준비 완료 · 브라우저 내부에서만 처리");
  }catch(error){
   analysis=null;$("fft-upload-status").textContent=tr("Cannot analyze: ","분석 불가: ")+String(error.message);
-  $("fft-upload-spectrum").replaceChildren();$("fft-upload-stats").replaceChildren();$("fft-upload-peaks").replaceChildren();
+  $("fft-upload-spectrum").replaceChildren();$("fft-upload-stats").replaceChildren();$("fft-upload-peaks").replaceChildren();$("fft-upload-harmonic-result").replaceChildren();$("fft-upload-harmonic-table").replaceChildren();
  }
 }
 function loadSource({samples,fs=null,name="",kind="sensor",metadata=""}){
  if(samples.length<256)throw Error("At least 256 samples are required");
  if(!samples.every(Number.isFinite))throw Error("Data contains non-finite values");
  source={samples,fs,name,kind,metadata};
+ $("fft-upload-harmonic-mode").value="auto";$("fft-upload-manual-f0").value="";
  $("fft-upload-fs").value="";
  $("fft-upload-meta").textContent=name+" · "+samples.length+" "+tr("samples","표본")+(fs?" · fs = "+fmt(fs,2)+" Hz":" · fs = ?")+(metadata?" · "+metadata:"");
  const options=[...$("fft-upload-n").options].filter(opt=>Number(opt.value)<=samples.length);
@@ -257,6 +339,11 @@ function localize(){
  "fft-upload-file-label":["Audio or sensor file","오디오 또는 센서 파일"],
  "fft-upload-file-help":["Audio: WAV, MP3, OGG and browser-supported codecs. Sensor: CSV/TXT with one value column or time,value columns. Maximum 25 MB. Local only.","오디오: WAV·MP3·OGG 등 브라우저 지원 코덱. 센서: 값 한 열 또는 time,value CSV/TXT. 최대 25 MB. 브라우저에서만 처리."],
  "fft-upload-demo":["Load example signal","예제 신호 사용"],
+ "fft-upload-harmonic-demo":["Demo: strongest peak ≠ f₀","예제: 최대 피크 ≠ 기본주파수"],
+ "fft-upload-harmonics-title":["Fundamental vs Harmonics · Investigate","기본주파수와 고조파 · 비교 분석"],
+ "fft-upload-harmonics-help":["A harmonic series has components near f₀, 2f₀, 3f₀… Compare the detected candidate with the strongest spectral peak.","고조파 계열은 f₀, 2f₀, 3f₀… 근처에 성분이 나타납니다. 추정된 f₀ 후보와 최대 크기 피크를 비교하세요."],
+ "fft-upload-harmonic-mode-label":["f₀ hypothesis","f₀ 가설"],
+
  "fft-upload-column-label":["Sensor value column","센서 데이터 열 선택"],
  "fft-upload-fs-label":["Sampling rate fs (Hz) · blank = auto, 0 = unknown","샘플링 주파수 fs (Hz) · 공란=자동, 0=모름"],
  "fft-upload-fs-help":["Audio files provide fs. CSV can infer fs from a uniform time column; otherwise enter it manually, or use 0 for unknown.","오디오에는 fs가 기록됩니다. CSV의 일정한 시간 열로 fs를 추정할 수 있으며, 없으면 직접 입력하거나 0으로 설정하세요."],
@@ -276,6 +363,9 @@ function localize(){
  "fft-upload-home-link":["Part C · All topics","Part C · 전체 목록"]
  };
  for(const[id,[en,ko]]of Object.entries(labels)){const el=$(id);if(el)el.textContent=tr(en,ko)}
+ const options=$("fft-upload-harmonic-mode").options;
+ options[0].textContent=tr("Automatic candidate","자동 후보 추정");
+ options[1].textContent=tr("Specify f₀ candidate","f₀ 후보 직접 입력");
  document.documentElement.lang=mode()==="ko"?"ko":"en";
  if(source){refresh()}else{$("fft-upload-status").textContent=tr("Choose a file or load the example.","파일을 선택하거나 예제를 불러오세요.")}
 }
@@ -286,6 +376,9 @@ function init(){
   catch(error){$("fft-upload-status").textContent=tr("Cannot open file: ","파일을 열 수 없습니다: ")+String(error.message)}
  });
  $("fft-upload-demo").addEventListener("click",demo);
+ $("fft-upload-harmonic-demo").addEventListener("click",harmonicDemo);
+ $("fft-upload-harmonic-mode").addEventListener("change",renderHarmonics);
+ $("fft-upload-manual-f0").addEventListener("input",renderHarmonics);
  $("fft-upload-column").addEventListener("change",useCsvColumn);
  for(const id of ["fft-upload-fs","fft-upload-n","fft-upload-window","fft-upload-location"]){
   $(id).addEventListener("input",refresh);$(id).addEventListener("change",refresh);
