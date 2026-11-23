@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Interactive RC low/high-pass circuits and digital moving-average sensor smoothing.">
+<title>Part B · System Applications | Engineering Learning Studio</title>
+<script>(function(){var v="neutral-dark";try{var t=localStorage.getItem("els-theme-v2");if(["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark"].includes(t))v=t;}catch(e){}document.documentElement.dataset.elsTheme=v;document.documentElement.dataset.theme=["white-clean","warm-neutral"].includes(v)?"light":"dark";document.documentElement.style.colorScheme=["white-clean","warm-neutral"].includes(v)?"only light":"dark";})();</script>
+<link rel="stylesheet" href="../assets/els-theme-v2.css?v=6">
+<link rel="stylesheet" href="../assets/els-typography-standard.css?v=1">
+<link rel="stylesheet" href="./assets/ss-common-header.css?v=20261122-four-controls">
+<link rel="stylesheet" href="../assets/els-header-controls.css?v=1">
+<link rel="stylesheet" href="./assets/ss-app-system-labs.css?v=20261123-a">
+<link rel="stylesheet" href="./assets/ss-applications-math.css?v=3">
+<link rel="stylesheet" href="./assets/ss-responsive-unified.css?v=1">
+<link rel="stylesheet" href="./assets/ss-plot-typography.css?v=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css">
+</head><body>
+<a class="ss-sys-skip" href="#ss-sys-workspace">Skip to interactive graphs</a>
+<header class="ss-common-header ss-sys-header" aria-label="Engineering Learning Studio navigation">
+ <a class="ss-common-home" href="../">← Studio</a>
+ <details class="ss-common-menu"><summary class="ss-common-title">Signals &amp; Systems · Applications <span aria-hidden="true">⌄</span></summary><nav class="ss-common-links" aria-label="Choose chapter"></nav></details>
+ <nav class="ss-four-navigation ss-sys-nav" aria-label="System lab navigation">
+  <a class="ss-chapter-arrow ss-nav-chapter" href="./chapter8.html" aria-label="Previous chapter" title="Previous chapter">⇤</a>
+  <button class="ss-chapter-arrow ss-nav-section" id="ss-sys-prev" type="button" aria-label="Previous system lab">←</button>
+  <button class="ss-chapter-arrow ss-nav-section" id="ss-sys-next" type="button" aria-label="Next system lab">→</button>
+  <a class="ss-chapter-arrow ss-nav-chapter" aria-disabled="true" tabindex="-1" aria-label="Last chapter" title="Last chapter">⇥</a>
+ </nav>
+ <div class="ss-common-actions">
+  <label class="ss-common-language" for="ss-sys-language"><span class="ss-language-icon" aria-hidden="true">🌐</span><select class="ss-common-language-select" id="ss-sys-language" aria-label="Language"><option value="mixed">한/영</option><option value="en">English</option><option value="ko">한국어</option></select></label>
+  <label class="ss-common-theme" for="ss-sys-theme"><select id="ss-sys-theme" data-els-theme-picker aria-label="Theme"><option value="white-clean">White Clean</option><option value="warm-neutral">Warm Neutral</option><option value="warm-dark">Warm Dark</option><option value="navy-dark">Navy Dark</option><option value="neutral-dark">Neutral Dark</option></select></label>
+ </div>
+</header>
+<main class="ss-sys-root" id="ss-sys-root">
+ <section class="ss-sys-intro">
+  <div><span class="ss-sys-kicker"><a href="./applications.html#part-b">APPLICATIONS / PART B · SYSTEMS</a></span>
+   <h1 id="ss-sys-title">RC Filters</h1><p id="ss-sys-subtitle"></p></div>
+  <a class="ss-sys-return" href="./applications.html#part-b" id="ss-sys-return">Back to Applications</a>
+ </section>
+ <nav class="ss-sys-tabs" aria-label="Part B interactive labs">
+  <a href="./applications-system-lab.html?lab=rc" data-system-tab="rc">01 · RC Low-Pass / High-Pass</a>
+  <a href="./applications-system-lab.html?lab=moving-average" data-system-tab="moving-average">02 · Moving Average</a>
+ </nav>
+ <div class="ss-sys-workspace" id="ss-sys-workspace">
+  <aside class="ss-sys-controls" id="ss-sys-controls">
+   <div class="ss-sys-panel-heading"><h2 id="ss-sys-controls-title">Experiment Controls</h2><p id="ss-sys-question"></p></div>
+   <div id="ss-sys-fields" class="ss-sys-fields"></div>
+   <section class="ss-sys-task"><h3 id="ss-sys-try-title">Try this</h3><p id="ss-sys-task"></p></section>
+  </aside>
+  <section class="ss-sys-results" aria-label="Filter results">
+   <div class="ss-sys-tools">
+    <div class="ss-sys-equation" id="ss-sys-equation"></div>
+    <button id="ss-sys-reset" type="button">Reset</button>
+   </div>
+   <div class="ss-sys-metrics" id="ss-sys-metrics"></div>
+   <div class="ss-sys-plots">
+    <article class="ss-sys-plot"><h2 id="ss-sys-plot-title-1">Input and output</h2><div class="ss-sys-legend" id="ss-sys-legend-1"></div><canvas id="ss-sys-canvas-1" role="img" aria-label="Input and output time response"></canvas><p id="ss-sys-note-1"></p></article>
+    <article class="ss-sys-plot"><h2 id="ss-sys-plot-title-2">Frequency response</h2><div class="ss-sys-legend" id="ss-sys-legend-2"></div><canvas id="ss-sys-canvas-2" role="img" aria-label="Filter frequency response"></canvas><p id="ss-sys-note-2"></p></article>
+    <article class="ss-sys-plot"><h2 id="ss-sys-plot-title-3">Step / impulse response</h2><canvas id="ss-sys-canvas-3" role="img" aria-label="Filter step or impulse response"></canvas><p id="ss-sys-note-3"></p></article>
+   </div>
+   <section class="ss-sys-insight" id="ss-sys-insight" aria-live="polite"></section>
+  </section>
+ </div>
+</main>
+<script defer src="../assets/els-language.js?v=1"></script>
+<script defer src="../assets/els-theme-v2.js?v=6"></script>
+<script defer src="./assets/ss-common-header.js?v=applications2"></script>
+<script defer src="../assets/els-header-controls.js?v=1"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js"></script>
+<script defer src="./assets/ss-applications-math.js?v=5"></script>
+<script defer src="./assets/ss-system-lab-core.js?v=20261123-a"></script>
+<script defer src="./assets/ss-app-system-labs.js?v=20261123-a"></script>
+</body></html>
