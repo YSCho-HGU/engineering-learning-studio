@@ -73,14 +73,14 @@ function attrs(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").re
 function graphBase(w,h,{left=55,right=14,top=17,bottom=36}={}){
  return {left,right,top,bottom,W:w-left-right,H:h-top-bottom,w,h};
 }
-function axes(p,{maxY=1,labelX="Time (s)",labelY="",xMax=2,yMax=1}={}){
+function axes(p,{labelX="Time (s)",labelY="",xMax=2,yMin=0,yMax=1}={}){
  const t=[];
  for(let i=0;i<=4;i++){
   const x=p.left+i*p.W/4,y=p.top+i*p.H/4;
   t.push('<line class="ss-stft-grid" x1="'+x+'" y1="'+p.top+'" x2="'+x+'" y2="'+(p.top+p.H)+'"/>');
   t.push('<line class="ss-stft-grid" x1="'+p.left+'" y1="'+y+'" x2="'+(p.left+p.W)+'" y2="'+y+'"/>');
   t.push('<text class="ss-stft-tick" x="'+x+'" y="'+(p.h-15)+'" text-anchor="middle">'+fmt(xMax*i/4,xMax>=10?0:2)+'</text>');
-  t.push('<text class="ss-stft-tick" x="'+(p.left-7)+'" y="'+(y+4)+'" text-anchor="end">'+fmt(yMax*(1-i/4),yMax>=10?0:1)+'</text>');
+  t.push('<text class="ss-stft-tick" x="'+(p.left-7)+'" y="'+(y+4)+'" text-anchor="end">'+fmt(yMax+(yMin-yMax)*i/4,Math.max(Math.abs(yMax),Math.abs(yMin))>=10?0:1)+'</text>');
  }
  t.push('<line class="ss-stft-axis" x1="'+p.left+'" y1="'+p.top+'" x2="'+p.left+'" y2="'+(p.top+p.H)+'"/>');
  t.push('<line class="ss-stft-axis" x1="'+p.left+'" y1="'+(p.top+p.H)+'" x2="'+(p.left+p.W)+'" y2="'+(p.top+p.H)+'"/>');
@@ -96,7 +96,7 @@ function drawTime(a,frame){
  const svg=$("stft-time-plot"),p=graphBase(900,225,{left:58,right:16,top:16,bottom:37}),b=p.top+p.H;
  const x=n=>p.left+n/(a.N-1)*p.W,y=v=>p.top+p.H/2-v*(p.H/2-8);
  const start=a.starts[frame],end=start+a.L-1;
- let markup=axes(p,{xMax:a.duration,yMax:1,labelX:"Time (s)",labelY:"x(t)"});
+ let markup=axes(p,{xMax:a.duration,yMin:-1,yMax:1,labelX:"Time (s)",labelY:"x(t)"});
  markup+='<rect class="ss-stft-window-region" x="'+x(start)+'" y="'+p.top+'" width="'+Math.max(1,x(end)-x(start))+'" height="'+p.H+'"/>';
  markup+='<path class="ss-stft-trace" d="'+linePath(a.samples,x(0),p.top+p.H/2,p.W/(a.N-1),p.H/2-8,Math.max(1,Math.floor(a.N/1600)))+'"/>';
  markup+='<line class="ss-stft-window-edge" x1="'+x(start)+'" y1="'+p.top+'" x2="'+x(start)+'" y2="'+b+'"/>';
