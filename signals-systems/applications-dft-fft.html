@@ -238,7 +238,7 @@ const translations={
 function localize(){
 const mode=language();
 $("butterfly-heading").textContent=L("Radix-2 FFT: reuse smaller transforms","Radix-2 FFT: 작은 변환 결과 재활용");
-$("dft-previous").textContent=L("← Previous · Frequency Bins and Resolution","← 이전 · 주파수 Bin과 분해능");$("dft-contents").textContent=L("Part C · FFT Contents","Part C · FFT 목차");$("dft-next").textContent=L("Next · Chirp and STFT →","다음 · Chirp와 STFT →");
+$("dft-previous").textContent=L("← Previous · Frequency Bins and Resolution","← 이전 · 주파수 Bin과 분해능");$("dft-contents").textContent=L("Part C · FFT Contents","Part C · FFT 목차");$("dft-next").textContent=L("Next · DTMF Mystery Decoder →","다음 · DTMF 비밀 숫자 해독 →");
 $("butterfly-description").textContent=L("An 8-point FFT has three butterfly stages. Inputs appear in bit-reversed order; the stages combine length-2, length-4 and length-8 results.","8점 FFT는 세 단계의 버터플라이 연산으로 구성됩니다. 입력을 비트 반전 순서로 배치하고 2점·4점·8점의 결과를 결합합니다.");
 $("butterfly-note").textContent=L("Each butterfly reuses intermediate complex values rather than separately summing N input terms for every output. This diagram shows the data connections, not every twiddle-factor value.","각 버터플라이는 중간 복소수 계산을 재사용하므로 출력마다 N개의 입력을 독립적으로 더할 필요가 없습니다. 이 그림은 데이터 연결 구조를 보여주며 모든 회전인자 값을 표시하지는 않습니다.");document.documentElement.lang=mode==="en"?"en":"ko";
 document.querySelectorAll("[data-english]").forEach(el=>{el.textContent=L(el.dataset.english,el.dataset.korean)});
