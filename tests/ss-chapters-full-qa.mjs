@@ -76,9 +76,9 @@ for(let chapter=1;chapter<=8;chapter++){
       issues.push({chapter,section:i+1,theme,reason:"theme",state});
    }
   }
-  // Mobile: verify first and last section with usable plot area and no horizontal scrolling.
+  // Mobile: traverse every section at 390px to catch section-specific overflow.
   await page.setViewportSize({width:390,height:844});
-  for(const index of [...new Set([0,count-1])]){
+  for(const index of Array.from({length:count},(_,i)=>i)){
     await page.locator(navSelector[chapter]).nth(index).evaluate(el=>el.click());
     await page.waitForTimeout(100);
     const mobile=await page.evaluate(()=>({
