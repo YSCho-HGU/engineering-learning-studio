@@ -276,3 +276,9 @@ button:disabled{opacity:.55;cursor:default}
 .ss-al-results:has(.ss-al-charts[data-kind="sampling"]) .ss-al-charts{order:3}
 .ss-al-results:has(.ss-al-charts[data-kind="sampling"]) #ss-al-alias-summary{order:4}
 .ss-al-results:has(.ss-al-charts[data-kind="sampling"]) .ss-al-insight{order:5}
+
+/* Sampling lesson prioritizes simultaneous controls and live plots.
+   Place the equation strip and graphs before secondary summaries/metrics. */
+.ss-al-results:has(.ss-al-charts[data-kind="sampling"]) .ss-al-charts{order:1}
+.ss-al-results:has(.ss-al-charts[data-kind="sampling"]) .ss-al-metrics{order:2}
+.ss-al-results:has(.ss-al-charts[data-kind="sampling"]) #ss-al-transport{order:3}
