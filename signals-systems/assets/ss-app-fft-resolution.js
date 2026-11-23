@@ -132,8 +132,40 @@ function run(){
  }
  $("fft-r-observation").textContent=lines.join("\n\n");
  renderQuestion(experiment);
+ renderChallenge(a);
  global.SSMathCore?.queue?.();
 }
+const challengeInstructions={
+ resolution:["Set fs = 256 Hz, N ≥ 128, and the tone separation to 4 Hz. Create an observation with an original FFT-bin spacing of 2 Hz or less.","fs = 256 Hz, N ≥ 128, 두 주파수 간격 = 4 Hz로 맞추세요. 원래 FFT Bin 간격이 2 Hz 이하인 관측을 만드세요."],
+ leakage:["Set fs = 256 Hz, N = 64, offset = 0.35 bins and Hann window. Observe how the tone lies between bin lines while the window reshapes the spectrum.","fs = 256 Hz, N = 64, offset = 0.35 Bin, Hann 창으로 설정하세요. 신호가 Bin 사이에 있고 창에 따라 스펙트럼 형태가 바뀌는지 관찰하세요."],
+ padding:["Use fs = 256 Hz, N = 64 and 4× padding. Make the displayed FFT grid 1 Hz while preserving the original 4 Hz spacing and 250 ms observation.","fs = 256 Hz, N = 64, 영 채우기 4배를 적용하세요. 실제 관측 250 ms와 원래 간격 4 Hz를 유지하면서 표시 격자를 1 Hz로 만드세요."]
+};
+function evaluateChallenge(a){
+ const close=(x,y)=>Math.abs(x-y)<1e-8;
+ if(a.experiment==="resolution")return {ok:a.fs===256&&a.N>=128&&a.separation===4&&a.df<=2,detail:"Δf = "+f(a.df,2)+" Hz · T = "+f(a.duration*1000,1)+" ms · "+f(a.f1,0)+"/"+f(a.f2,0)+" Hz"};
+ if(a.experiment==="leakage")return {ok:a.fs===256&&a.N===64&&close(a.offset,.35)&&a.window==="hann",detail:"Offset = "+f(a.offset,2)+" bin · window = "+a.window+" · f = "+f(a.f1,2)+" Hz"};
+ return {ok:a.fs===256&&a.N===64&&a.padding===4&&close(a.grid,1)&&close(a.df,4)&&close(a.duration,.25),detail:"N = "+a.N+" · M = "+a.M+" · Δf = "+f(a.df,2)+" Hz · grid = "+f(a.grid,2)+" Hz"};
+}
+let challengeStage="",challengeVerified=false;
+function renderChallenge(a){
+ if(challengeStage!==a.experiment){challengeStage=a.experiment;challengeVerified=false}
+ $("fft-r-challenge-title").textContent=tr(["4 · Graph experiment challenge","4 · 그래프 실험 미션"]);
+ $("fft-r-challenge-instruction").textContent=tr(challengeInstructions[a.experiment]);
+ const result=evaluateChallenge(a);
+ if(challengeVerified&&!result.ok)challengeVerified=false;
+ $("fft-r-challenge-measure").textContent=result.detail;
+ $("fft-r-challenge-check").textContent=tr(["Check my experiment","실험 목표 확인"],true);
+ const feedback=$("fft-r-challenge-feedback");
+ if(!challengeVerified){feedback.textContent=tr(["Adjust controls and inspect both plots, then check.","값을 조정해 두 그래프를 관찰한 후 목표를 확인하세요."]);feedback.dataset.result="pending"}
+}
+function checkChallenge(){
+ const a=analyze({experiment:$("fft-r-experiment").value,fs:Number($("fft-r-fs").value),N:Number($("fft-r-n").value),separation:Number($("fft-r-separation").value),offset:Number($("fft-r-offset").value),window:$("fft-r-window").value,padding:Number($("fft-r-padding").value)});
+ const status=evaluateChallenge(a),feedback=$("fft-r-challenge-feedback");
+ challengeVerified=true;
+ feedback.dataset.result=status.ok?"correct":"incorrect";
+ feedback.textContent=status.ok?tr(["Goal achieved. Explain what changed in the graph and why.","목표를 달성했습니다. 그래프에서 달라진 점과 그 이유를 설명해 보세요."]):tr(["Not yet: compare the target with the current values and adjust the controls.","아직 목표에 도달하지 않았습니다. 목표와 현재 값을 비교하고 조절값을 변경하세요."]);
+}
+
 const questions={
  resolution:{
   q:["At fixed fs, doubling the actual number of observed samples N has what effect?","fs가 일정할 때 실제 관측 표본 수 N을 두 배로 늘리면 무엇이 변할까요?"],
@@ -179,6 +211,7 @@ function init(){
  });
  $("fft-r-quiz-answers").addEventListener("change",e=>{quizChoice=e.target.value;$("fft-r-quiz-feedback").textContent="";});
  $("fft-r-quiz-check").addEventListener("click",checkQuestion);
+ $("fft-r-challenge-check").addEventListener("click",checkChallenge);
  global.ELSLanguage?.subscribe?.(()=>{renderLabels();run()});
  renderLabels();run();
 }
