@@ -27,13 +27,17 @@ The main learner question is: *What can we determine from a numeric sample seque
 - A single unit impulse: flat raw `|X[k]|` spectrum; do not label an arbitrary bin as the single dominant tone. One-sided display normalization doubles interior bins.
 - `N=12` arbitrary values: use direct DFT transparently rather than incorrectly claiming radix-2 FFT ran.
 
-## Stage 2 · Distinguish DFT from FFT (planned)
+## Stage 2 · Resolution, leakage and zero padding (interactive now)
+
+The second interactive lab is `signals-systems/applications-fft-resolution.html`, linked from the first FFT lab and the Applications Part C catalog. It compares: two nearby tones with variable N and fs; off-bin tones with Rectangular/Hann windows; 1× versus 4× transform length with the same actual observations. It distinguishes the nominal bin spacing fs/N from the post-padding plotted grid fs/M. Zero padding adds no measured information. Hann lowers sidelobes at the cost of a wider main lobe. Two-tone separation is illustrative rather than guaranteed by bin spacing alone.
+
+## Stage 3 · Distinguish DFT from FFT (planned)
 
 - Why FFT is an algorithm that calculates the DFT, not a different frequency transform.
 - What complex coefficients `X[k]` mean and why magnitude/phase both matter.
 - A small `N=8` manual calculation and simple butterfly visualization (not the first experience).
 
-## Stage 3 · Interpret spectral analysis reliably (planned)
+## Stage 4 · Interpret spectral analysis reliably (planned)
 
 - Observation duration versus bin spacing; distinguish actual frequency resolving power from denser plotting.
 - Spectral leakage: rectangular versus Hann window and coherent versus noncoherent records.
@@ -41,13 +45,13 @@ The main learner question is: *What can we determine from a numeric sample seque
 - Zero padding: smoother frequency sampling of the spectrum without creating new signal information.
 - Difference between choosing a sampling rate at acquisition and merely changing the label of already acquired samples.
 
-## Stage 4 · Time-varying, audio and sensor signals (planned)
+## Stage 5 · Time-varying, audio and sensor signals (planned)
 
 - Full-record FFT versus STFT: why a moving tone's temporal location disappears in a single FFT.
 - Chirp/spectrogram and analysis of sound harmonics.
 - Example sensor measurements, FFT bins, record timing and interference.
 
-## Stage 5 · Image and video (planned)
+## Stage 6 · Image and video (planned)
 
 - 2D image FFT: horizontal/vertical stripes, spatial frequency orientation and magnitude/phase.
 - FFT filtering and reconstruction with a real image.
@@ -60,7 +64,7 @@ The main learner question is: *What can we determine from a numeric sample seque
 - Do not replace valid equations with plain ASCII text and do not interpret unknown units as known.
 - English mode has English only; Mixed mode adds Korean after English; Korean mode uses Korean.
 - Five ELS themes, horizontal-safe formulas, responsive plots, accessible labels and tabular data.
-- Stage 1 is operational; all subsequent Part C modules remain visibly labeled as planned until implemented and tested.
+- Stage 1 and the new Stage 2 interactive lab are operational; remaining Part C modules stay labeled planned until implemented and tested.
 
 ## Acceptance checks
 
