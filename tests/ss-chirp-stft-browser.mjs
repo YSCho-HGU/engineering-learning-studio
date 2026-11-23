@@ -37,6 +37,45 @@ try{
    check(calculations.knownToneBin===8&&near(calculations.knownToneAmplitude,1,1e-9),"Known single-tone FFT incorrect");
    check(calculations.last>calculations.first+100,"Chirp spectrogram does not rise in frequency");
    check(near(calculations.paddedGrid,2)&&calculations.sameWindow&&calculations.sameFrames&&calculations.sameSamples,"Padding modified observation instead of grid");
+   const extended=await page.evaluate(()=>{
+    const api=window.SSChirpSTFT;
+    const rising=api.analyze({shape:"rising"});
+    const falling=api.analyze({shape:"falling"});
+    const stepped=api.analyze({shape:"step"});
+    const base={fs:512,duration:2,f0:20,f1:180,window:"hann",padding:1,shape:"rising"};
+    const [short,long]=api.compareAnalyses(base,"window");
+    const [without,withOverlap]=api.compareAnalyses(base,"overlap");
+    const stepParams={duration:2,f0:20,f1:180,shape:"step"};
+    return {
+      risingPeaks:[rising.peaks[0],rising.peaks.at(-1)],
+      fallingPeaks:[falling.peaks[0],falling.peaks.at(-1)],
+      stepPeaks:[stepped.peaks[0],stepped.peaks.at(-1)],
+      stepFs:[stepped.instantaneousFrequency(.5),stepped.instantaneousFrequency(1.5)],
+      phaseContinuity:Math.abs(api.signalPhase(1-1e-10,stepParams)-api.signalPhase(1+1e-10,stepParams)),
+      window:[short.L,long.L,short.binSpacing,long.binSpacing,short.frameCount,long.frameCount],
+      overlap:[without.L,withOverlap.L,without.H,withOverlap.H,without.frameCount,withOverlap.frameCount,without.binSpacing,withOverlap.binSpacing],
+      sameSamples:short.samples.every((x,i)=>x===long.samples[i])&&without.samples.every((x,i)=>x===withOverlap.samples[i])
+    };
+   });
+   check(extended.risingPeaks[1]>extended.risingPeaks[0]+90,"Rising chirp ridge incorrect");
+   check(extended.fallingPeaks[0]>extended.fallingPeaks[1]+90,"Falling chirp ridge incorrect");
+   check(extended.stepPeaks[0]<40&&extended.stepPeaks[1]>150,"Stepped signal FFT ridge incorrect");
+   check(extended.stepFs[0]===20&&extended.stepFs[1]===180&&extended.phaseContinuity<1e-6,"Stepped phase continuity incorrect");
+   check(JSON.stringify(extended.window)==="[64,256,8,2,61,13]","Short/long window resolution comparison incorrect: "+JSON.stringify(extended.window));
+   check(JSON.stringify(extended.overlap)==="[128,128,128,32,8,29,4,4]"&&extended.sameSamples,"Overlap changed observation or bin spacing");
+   check(await page.locator("#stft-compare-a rect[fill^='rgb']").count()>100,"Comparison A spectrogram missing");
+   check(await page.locator("#stft-compare-b rect[fill^='rgb']").count()>100,"Comparison B spectrogram missing");
+   await page.locator("#stft-compare-kind").selectOption("overlap");
+   check((await page.locator("#stft-compare-a-stats").innerText()).includes("8 frames") &&
+         (await page.locator("#stft-compare-b-stats").innerText()).includes("29 frames"),"Overlap comparison does not reflect frame counts");
+   await page.locator("#stft-compare-kind").selectOption("window");
+   await page.locator("#stft-shape").selectOption("falling");
+   check((await page.locator("#stft-local-help").innerText()).includes("measured local peak"),"Falling chirp local FFT did not redraw");
+   await page.locator("#stft-shape").selectOption("step");
+   const currentModel=await page.locator("#stft-main [data-ss-math][data-ss-math-display='block']").first().getAttribute("data-ss-math");
+   check(currentModel.includes("cases"),"Step signal did not update instantaneous-frequency equation");
+   check(await page.locator("#stft-spectrogram rect[fill^='rgb']").count()>100,"Step spectrogram missing");
+   await page.locator("#stft-shape").selectOption("rising");
    check(await page.locator("#stft-time-plot path.ss-stft-trace").count()===1,"Waveform missing");
    check((await page.locator("#stft-time-plot").textContent()).includes("-1.0"),"Waveform negative-amplitude axis is missing");
    check(await page.locator("#stft-local-plot path.ss-stft-trace").count()===1,"Local FFT missing");
@@ -59,6 +98,8 @@ try{
    for(const language of ["en","ko","mixed"]){
     await page.locator("#stft-language").selectOption(language);
     const title=await page.locator("#stft-title").innerText();
+    const compareLabel=await page.locator("#stft-compare-title").innerText();
+    check(language==="en"?!/[가-힣]/.test(compareLabel):/[가-힣]/.test(compareLabel),"Comparison language failed "+language);
     check(language==="en"?!/[가-힣]/.test(title):/[가-힣]/.test(title),"Language failed "+language);
    }
    for(const theme of ["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark"]){
