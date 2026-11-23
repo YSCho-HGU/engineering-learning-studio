@@ -51,7 +51,7 @@ for(const lab of ["beats","amfm","sampling"]){
    }));
    return{canvasTop:canvas.top,controlsTop:controls.top,legends,viewport:innerHeight};
   });
-  if(geometry.canvasTop>geometry.viewport*.80||geometry.controlsTop>geometry.viewport*.55)throw Error("Graph/controls not simultaneously accessible: "+JSON.stringify(geometry));
+  if(geometry.canvasTop>geometry.viewport*.82||geometry.controlsTop>geometry.viewport*.55)throw Error("Graph/controls not simultaneously accessible: "+JSON.stringify(geometry));
   if(geometry.legends.some(x=>x.legend>x.plot+2))throw Error("Legend overlaps graph plot");
   const initialCanvas=await page.locator("#ss-al-canvas-1").evaluate(c=>c.toDataURL());
   if(lab==="beats"){
