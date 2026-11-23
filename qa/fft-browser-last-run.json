@@ -1,0 +1,18 @@
+{
+  "source_sha": "9aab336ebb60fbe5f00a2afb732be7485bd5e9eb",
+  "workflow": "ss-applications-browser",
+  "tested_at": "2026-11-23T07:56:06.962982+00:00",
+  "fft_browser_outcome": "skipped",
+  "viewport_widths": [
+    1366,
+    390
+  ],
+  "coverage": [
+    "FFT arithmetic",
+    "graph missions",
+    "KaTeX",
+    "language modes",
+    "five themes",
+    "responsive overflow"
+  ]
+}
