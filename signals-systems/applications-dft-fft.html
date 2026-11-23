@@ -79,7 +79,7 @@ main{padding-top:12px}main>h1{font-size:clamp(1.45rem,2.3vw,1.85rem);margin:2px 
 @media(max-width:600px){.butterfly-input-row{grid-template-columns:1fr}.butterfly-stage-buttons{grid-template-columns:1fr 1fr}#butterfly-lab{padding:10px}.butterfly-input-row button{grid-column:auto}.butterfly-values{grid-template-columns:1fr 1.4fr}}
 </style><script src="../assets/els-language.js"></script><script src="./assets/ss-common-header.js"></script><script src="../assets/els-theme-v2.js"></script><link rel="stylesheet" href="./assets/ss-app-fft-path.css?v=20261123-contentqa">
 </head><body><header class="ss-common-header" aria-label="Engineering Learning Studio navigation"><a class="ss-common-home" href="../index.html">← Studio</a><a class="ss-common-home" href="./applications.html#part-c" aria-label="Back to Applications Part C">← Applications · FFT</a><details class="ss-common-menu"><summary class="ss-common-title">Signals &amp; Systems · Applications · DFT vs FFT <span aria-hidden="true">⌄</span></summary><nav class="ss-common-links" aria-label="Choose chapter"></nav></details><div class="ss-common-actions"><label class="ss-common-language" for="dft-language"><span class="ss-language-icon" aria-hidden="true">🌐</span><select class="ss-common-language-select" id="dft-language" aria-label="Language"><option value="mixed">한/영</option><option value="en">English</option><option value="ko">한국어</option></select></label><label class="ss-common-theme" for="dft-theme"><select id="dft-theme" data-els-theme-picker aria-label="Theme"></select></label></div></header>
-<main><nav class="dft-learning-route" aria-label="FFT learning path"><a href="./applications-fft-resolution.html" id="dft-previous">← Previous · Frequency Bins and Resolution</a><a href="./applications.html#part-c" id="dft-contents">Part C · FFT Contents</a><a href="./applications-fft-dtmf.html" id="dft-next">Next · Chirp and STFT →</a></nav><div class="eyebrow">APPLICATIONS / INTERACTIVE LAB</div><h1>DFT vs FFT · Same spectrum, smarter computation</h1><p data-english="Explore a finite record, confirm identical DFT and FFT results, compare computational cost, and inspect audio or sensor readings." data-korean="유한 신호를 통해 DFT·FFT 결과의 일치성과 계산량 차이를 확인하고 음성·센서 데이터에 적용합니다.">Explore a finite record, confirm identical DFT and FFT results, compare computational cost, and inspect audio or sensor readings.</p>
+<main><div class="eyebrow">APPLICATIONS / INTERACTIVE LAB</div><h1>DFT vs FFT · Same spectrum, smarter computation</h1><p data-english="Explore a finite record, confirm identical DFT and FFT results, compare computational cost, and inspect audio or sensor readings." data-korean="유한 신호를 통해 DFT·FFT 결과의 일치성과 계산량 차이를 확인하고 음성·센서 데이터에 적용합니다.">Explore a finite record, confirm identical DFT and FFT results, compare computational cost, and inspect audio or sensor readings.</p>
 <nav class="steps" aria-label="Learning steps"><button data-step="0" aria-current="step">01 · Understand</button><button data-step="1">02 · Observe</button><button data-step="2">03 · Experiment</button><button data-step="3">04 · Discover / Upload</button></nav>
 <section class="learning-guide" aria-labelledby="guide-title"><div class="eyebrow" id="guide-number"></div><h3 id="guide-title"></h3><p id="guide-goal"></p><div class="guide-columns"><div><div class="guide-kicker" id="guide-try-label"></div><p id="guide-task"></p></div><div><div class="guide-kicker" id="guide-question-label"></div><p id="guide-question"></p></div></div><div class="guide-buttons"><button id="guide-reveal" type="button" aria-expanded="false"></button><button id="guide-next" type="button"></button></div><p id="guide-feedback" hidden aria-live="polite"></p></section><section class="card" id="signal-workspace">
 <nav id="intro-path" class="intro-path" aria-label="Understand learning sequence">
@@ -360,7 +360,7 @@ const mode=language();
 $("upload-transfer-intro").textContent=L("This is a quick transfer exercise. Complete the full recording/sensor investigation in the next dedicated lab.","이 단계는 적용을 미리 체험합니다. 실제 음성·센서 데이터에 대한 심화 분석은 별도 실습에서 진행합니다.");
 $("upload-transfer-link").textContent=L("Real Audio & Sensor FFT →","실제 음성·센서 FFT 실습 →");
 $("butterfly-heading").textContent=L("Radix-2 FFT: reuse smaller transforms","Radix-2 FFT: 작은 변환 결과 재활용");
-$("dft-previous").textContent=L("← Previous · Frequency Bins and Resolution","← 이전 · 주파수 Bin과 분해능");$("dft-contents").textContent=L("Part C · FFT Contents","Part C · FFT 목차");$("dft-next").textContent=L("Next · DTMF Mystery Decoder →","다음 · DTMF 비밀 숫자 해독 →");
+
 $("butterfly-description").textContent=L("An 8-point FFT has three butterfly stages. Inputs appear in bit-reversed order; the stages combine length-2, length-4 and length-8 results.","8점 FFT는 세 단계의 버터플라이 연산으로 구성됩니다. 입력을 비트 반전 순서로 배치하고 2점·4점·8점의 결과를 결합합니다.");
 $("butterfly-note").textContent=L("Each butterfly reuses intermediate complex values rather than separately summing N input terms for every output. This diagram shows the data connections, not every twiddle-factor value.","각 버터플라이는 중간 복소수 계산을 재사용하므로 출력마다 N개의 입력을 독립적으로 더할 필요가 없습니다. 이 그림은 데이터 연결 구조를 보여주며 모든 회전인자 값을 표시하지는 않습니다.");document.documentElement.lang=mode==="en"?"en":"ko";
 document.querySelectorAll("[data-english]").forEach(el=>{el.textContent=L(el.dataset.english,el.dataset.korean)});
@@ -728,6 +728,7 @@ $("events-per-rev").addEventListener("input",renderPhysics);
 function describePeaks(amp,fs,N,fromUpload){
  const results=$("peak-results");
  results.replaceChildren();
+ $("sensor-physics").hidden=fromUpload&&upload?.kind==="audio";
  $("peak-heading").textContent=L("Detected frequency components","검출된 주요 주파수 성분");
  const unit=fs>0?"Hz":"cycles/sample",delta=fs>0?fs/N:1/N;
  const max=amp.slice(1).reduce((m,x)=>Math.max(m,x),0);
@@ -748,6 +749,7 @@ function describePeaks(amp,fs,N,fromUpload){
  peaks.sort((a,b)=>b.amp-a.amp);
  updatePhysics(peaks,fs,N);
  const source=fromUpload&&upload?.kind==="audio"?"audio":fromUpload?"sensor":"synthetic";
+ $("sensor-physics").hidden=source==="audio";
  $("peak-explanation").textContent=source==="audio"?
   L("For audio: spectral peaks may indicate tones or harmonics, but the highest peak is not always the fundamental pitch.","오디오에서는 피크가 음높이나 고조파 후보일 수 있지만 가장 큰 피크가 항상 기본주파수는 아닙니다."):
   source==="sensor"?L("For sensor measurements: peaks represent observed periodic components; mechanical causes require independent evidence.","센서 피크는 관측된 주기 성분입니다. 물리적 원인을 판단하려면 추가 근거가 필요합니다."):
