@@ -12,7 +12,8 @@ const cases=[
  "/signals-systems/applications-fft-resolution.html",
  "/signals-systems/applications-chirp-stft.html",
  "/signals-systems/applications-fft-upload.html",
- "/signals-systems/applications-fft-dtmf.html"
+ "/signals-systems/applications-fft-dtmf.html",
+ "/signals-systems/applications-fft-sound-fingerprint.html"
 ];
 const findings=[],results=[];
 await mkdir("qa",{recursive:true});
@@ -24,7 +25,7 @@ for(const route of cases){
   if(!response?.ok())throw Error("HTTP "+response?.status());
   await page.waitForTimeout(350);
   for(const language of ["en","ko","mixed"]){
-   const select=page.locator("#ss-app-language,#ss-al-language,#ss-fft-language,#fft-r-language,#stft-language,#fft-upload-language,#dtmf-language").first();
+   const select=page.locator("#ss-app-language,#ss-al-language,#ss-fft-language,#fft-r-language,#stft-language,#fft-upload-language,#dtmf-language,#finger-language").first();
    if(await select.count()){await select.selectOption(language);await page.waitForTimeout(150)}
    const audit=await page.evaluate(()=>{
      window.SSMathCore?.renderNow?.();
