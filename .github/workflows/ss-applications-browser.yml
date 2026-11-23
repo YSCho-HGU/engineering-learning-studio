@@ -15,6 +15,7 @@ on:
       - 'signals-systems/assets/ss-fft-lab-standard.css'
       - 'tests/ss-applications-math-audit.mjs'
       - 'tests/ss-fft-foundations-browser.mjs'
+      - 'tests/ss-chirp-stft-browser.mjs'
       - 'signals-systems/assets/ss-app-extra-labs.js'
       - 'tests/ss-extra-labs-browser.mjs'
       - 'signals-systems/assets/ss-common-header.js'
@@ -39,6 +40,8 @@ jobs:
           node --check signals-systems/assets/ss-applications-math.js
           node --check signals-systems/assets/ss-app-fft-foundations.js
           node --check signals-systems/assets/ss-app-fft-resolution.js
+          node --check signals-systems/assets/ss-app-chirp-stft.js
+          node --check tests/ss-chirp-stft-browser.mjs
           node --check tests/ss-fft-foundations-browser.mjs
           node --check signals-systems/assets/ss-app-extra-labs.js
           node --check tests/ss-extra-labs-browser.mjs
@@ -64,6 +67,10 @@ jobs:
         id: fft
         continue-on-error: true
         run: node tests/ss-fft-foundations-browser.mjs
+      - name: Check Chirp FFT STFT and Spectrogram calculations and interaction
+        id: stft
+        continue-on-error: true
+        run: node tests/ss-chirp-stft-browser.mjs
       - name: Check mathematical notation across all Applications and language modes
         id: math
         continue-on-error: true
@@ -76,6 +83,7 @@ jobs:
           PRIMARY_RESULT: ${{ steps.primary.outcome }}
           EXTRA_RESULT: ${{ steps.extra.outcome }}
           MATH_RESULT: ${{ steps.math.outcome }}
+          STFT_RESULT: ${{ steps.stft.outcome }}
         run: |
           mkdir -p qa
           python3 - <<'PY'
@@ -88,6 +96,7 @@ jobs:
             "original_labs_outcome":os.environ["PRIMARY_RESULT"],
             "additional_labs_outcome":os.environ["EXTRA_RESULT"],
             "applications_math_outcome":os.environ["MATH_RESULT"],
+            "chirp_stft_outcome":os.environ["STFT_RESULT"],
             "viewport_widths":[1366,390],
             "coverage":["FFT arithmetic","graph missions","KaTeX","language modes","five themes","responsive overflow"]
           }
@@ -116,6 +125,7 @@ jobs:
           EXTRA: ${{ steps.extra.outcome }}
           FFT: ${{ steps.fft.outcome }}
           MATH: ${{ steps.math.outcome }}
+          STFT: ${{ steps.stft.outcome }}
         run: |
-          echo "original=$PRIMARY extra=$EXTRA fft=$FFT math=$MATH"
-          test "$PRIMARY" = success && test "$EXTRA" = success && test "$FFT" = success && test "$MATH" = success
+          echo "original=$PRIMARY extra=$EXTRA fft=$FFT stft=$STFT math=$MATH"
+          test "$PRIMARY" = success && test "$EXTRA" = success && test "$FFT" = success && test "$STFT" = success && test "$MATH" = success
