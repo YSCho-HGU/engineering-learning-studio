@@ -9,12 +9,13 @@ on:
       - 'signals-systems/assets/ss-ch*-prose-math.js'
       - 'signals-systems/assets/ss-foundations-standard.js'
       - 'tests/ss-chapters-math-audit.mjs'
+      - 'tests/ss-chapters-full-qa.mjs'
       - '.github/workflows/ss-chapters-math-audit.yml'
   workflow_dispatch:
 jobs:
   chapters-math:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -24,6 +25,7 @@ jobs:
         run: |
           node --check signals-systems/assets/ss-chapters-math-audit.js
           node --check tests/ss-chapters-math-audit.mjs
+          node --check tests/ss-chapters-full-qa.mjs
       - name: Install Chromium
         run: |
           npm install --no-save @playwright/test
@@ -34,10 +36,14 @@ jobs:
           sleep 2
       - name: Audit chapter math in three language modes
         run: node tests/ss-chapters-math-audit.mjs
+      - name: Full section navigation, math, graph, language and theme QA
+        run: node tests/ss-chapters-full-qa.mjs
       - name: Upload detailed math audit
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: ss-chapters-math-audit
-          path: qa/chapters-math-audit.json
+          path: |
+            qa/chapters-math-audit.json
+            qa/chapters-full-qa.json
           if-no-files-found: ignore
