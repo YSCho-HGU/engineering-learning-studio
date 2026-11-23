@@ -1,0 +1,25 @@
+/* Same KaTeX inline/display conventions as S&S Chapters 5-8.
+ * Scope Applications hub, signal labs, FFT foundation lab and future parts.
+ */
+:is(.ss-app-main,.ss-app-intro,.ss-app-toc,.ss-al-root,.ss-fft-root) .ss-app-inline-math{
+ display:inline-block;vertical-align:-.09em;max-width:100%;margin:0 .025em;
+ line-height:1.38;white-space:nowrap;color:inherit;font-weight:inherit
+}
+:is(.ss-app-main,.ss-app-intro,.ss-app-toc,.ss-al-root,.ss-fft-root) .ss-app-inline-math .katex{
+ font-size:1.07em;line-height:1.4;color:inherit;font-weight:inherit
+}
+:is(.ss-app-main,.ss-app-intro,.ss-app-toc,.ss-al-root,.ss-fft-root) .ss-app-inline-math[data-ss-math-state=error]{
+ border-bottom:2px dotted var(--els-accent,var(--els-link));
+ font-family:"Cambria Math",Georgia,serif
+}
+:is(.ss-app-main,.ss-al-root,.ss-fft-root) :is([data-ss-math-display=block],.ss-al-equation){
+ max-width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;
+ scrollbar-width:thin;font-family:KaTeX_Main,"Cambria Math",Georgia,serif;
+ font-weight:400;line-height:1.55
+}
+:is(.ss-app-main,.ss-al-root,.ss-fft-root) [data-ss-math-display=block] .katex-display{
+ margin:.22em 0;overflow-x:auto;overflow-y:hidden
+}
+:is(.ss-app-topic,.ss-al-insight,.ss-al-guidance,.ss-fft-interpret) .katex{
+ color:inherit
+}
