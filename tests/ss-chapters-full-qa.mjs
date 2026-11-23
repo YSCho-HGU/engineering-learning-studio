@@ -84,6 +84,19 @@ for(let chapter=1;chapter<=8;chapter++){
     const mobile=await page.evaluate(()=>({
       overflow:Math.max(0,document.documentElement.scrollWidth-innerWidth),
       audit:window.SSChaptersMathAudit.audit().passed,
+      mathAncestors:(()=>{
+       const el=[...document.querySelectorAll("main .katex")].find(e=>e.getBoundingClientRect().right>innerWidth+8);
+       if(!el)return[];
+       const chain=[];let node=el;
+       while(node&&node!==document.body&&chain.length<9){
+        const b=node.getBoundingClientRect(),css=getComputedStyle(node);
+        chain.push({tag:node.tagName,cls:typeof node.className==="string"?node.className:"",id:node.id,
+          right:Math.round(b.right),width:Math.round(b.width),scroll:node.scrollWidth,client:node.clientWidth,
+          overflow:css.overflowX});
+        node=node.parentElement;
+       }
+       return chain;
+      })(),
       offenders:[...document.querySelectorAll("body *")].filter(el=>{const b=el.getBoundingClientRect();return b.width>0&&(b.right>innerWidth+7||b.left< -7)}).slice(0,16).map(el=>({tag:el.tagName,id:el.id,cls:typeof el.className==="string"?el.className:"",right:Math.round(el.getBoundingClientRect().right),width:Math.round(el.getBoundingClientRect().width)}))
     }));
     record(index+1,"mixed",null,"mobile",mobile);
