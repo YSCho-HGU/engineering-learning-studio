@@ -153,7 +153,7 @@ function drawMap(a,frame){
 
 /* Fair experiment: same sampled signal and same dB reference in both panels.
  * The two STFT calculations differ ONLY in the property under study. */
-let comparisonCacheKey="",comparisonCache=null;
+let comparisonCacheKey="";
 function compareAnalyses(opts,kind="window"){
  const common={...opts};
  delete common.samples;
@@ -192,7 +192,6 @@ function renderComparison(){
  if(key===comparisonCacheKey)return;
  comparisonCacheKey=key;
  const pair=compareAnalyses(params,kind);
- comparisonCache=pair;
  let maximum=1e-12;
  for(const a of pair)for(const row of a.frames)for(const val of row)if(val>maximum)maximum=val;
  for(let i=0;i<2;i++){
@@ -272,8 +271,6 @@ function setFrame(next){
 }
 function updatePatternText(){
  const shape=$("stft-shape").value;
- const label=$("stft-eq1-label");
- const model=$("stft-insight-title");
  const tex={"rising":"f(t)=f_0+\\frac{f_1-f_0}{T}t","falling":"f(t)=f_1+\\frac{f_0-f_1}{T}t","step":"f(t)=\\begin{cases}f_0,&0\\le t<T/2\\\\f_1,&T/2\\le t\\le T\\end{cases}"};
  const equation=document.querySelector("#stft-main [data-ss-math][data-ss-math-display='block']");
  if(equation&&equation.dataset.ssMath!==tex[shape]){
