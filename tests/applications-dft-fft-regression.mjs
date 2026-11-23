@@ -127,7 +127,7 @@ try{
  expectContains(result,"250.00 Hz","Audio 250 Hz");
  // 750 Hz bin may be smaller, but should be selected as a second local peak.
  expectContains(result,"750.00 Hz","Audio 750 Hz");
- expectContains(result,"For audio","Audio-specific physical interpretation");
+ expectContains(await page.locator("#peak-explanation").innerText(),"For audio","Audio-specific physical interpretation");
  assert.ok(await page.locator("#sensor-physics").isHidden(),"Audio must not display conditional shaft RPM controls");
  console.log("PASS WAV decoder and two audio peaks");
 
