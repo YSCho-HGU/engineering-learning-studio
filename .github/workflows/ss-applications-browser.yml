@@ -17,6 +17,9 @@ on:
       - 'tests/ss-fft-foundations-browser.mjs'
       - 'tests/ss-chirp-stft-browser.mjs'
       - 'tests/ss-fft-upload-browser.mjs'
+      - 'tests/ss-dtmf-decoder-browser.mjs'
+      - 'signals-systems/assets/ss-dtmf-decoder.js'
+      - 'signals-systems/assets/ss-fft-dtmf.css'
       - 'signals-systems/assets/ss-fft-upload.js'
       - 'signals-systems/assets/ss-fft-harmonics.js'
       - 'signals-systems/assets/ss-fft-upload.css'
@@ -49,6 +52,8 @@ jobs:
           node --check signals-systems/assets/ss-fft-harmonics.js
           node --check signals-systems/assets/ss-fft-upload.js
           node --check tests/ss-fft-upload-browser.mjs
+          node --check signals-systems/assets/ss-dtmf-decoder.js
+          node --check tests/ss-dtmf-decoder-browser.mjs
           node --check tests/ss-fft-foundations-browser.mjs
           node --check signals-systems/assets/ss-app-extra-labs.js
           node --check tests/ss-extra-labs-browser.mjs
@@ -82,6 +87,10 @@ jobs:
         id: realfft
         continue-on-error: true
         run: node tests/ss-fft-upload-browser.mjs
+      - name: Check DTMF mystery FFT decoding and challenge learning
+        id: dtmf
+        continue-on-error: true
+        run: node tests/ss-dtmf-decoder-browser.mjs
       - name: Check mathematical notation across all Applications and language modes
         id: math
         continue-on-error: true
@@ -96,6 +105,7 @@ jobs:
           MATH_RESULT: ${{ steps.math.outcome }}
           STFT_RESULT: ${{ steps.stft.outcome }}
           REALFFT_RESULT: ${{ steps.realfft.outcome }}
+          DTMF_RESULT: ${{ steps.dtmf.outcome }}
         run: |
           mkdir -p qa
           python3 - <<'PY'
@@ -110,6 +120,7 @@ jobs:
             "applications_math_outcome":os.environ["MATH_RESULT"],
             "chirp_stft_outcome":os.environ["STFT_RESULT"],
             "real_fft_upload_outcome":os.environ["REALFFT_RESULT"],
+            "dtmf_mystery_outcome":os.environ["DTMF_RESULT"],
             "viewport_widths":[1366,390],
             "coverage":["FFT arithmetic","graph missions","KaTeX","language modes","five themes","responsive overflow"]
           }
@@ -140,6 +151,7 @@ jobs:
           MATH: ${{ steps.math.outcome }}
           STFT: ${{ steps.stft.outcome }}
           REALFFT: ${{ steps.realfft.outcome }}
+          DTMF: ${{ steps.dtmf.outcome }}
         run: |
-          echo "original=$PRIMARY extra=$EXTRA fft=$FFT stft=$STFT realfft=$REALFFT math=$MATH"
-          test "$PRIMARY" = success && test "$EXTRA" = success && test "$FFT" = success && test "$STFT" = success && test "$REALFFT" = success && test "$MATH" = success
+          echo "original=$PRIMARY extra=$EXTRA fft=$FFT stft=$STFT realfft=$REALFFT dtmf=$DTMF math=$MATH"
+          test "$PRIMARY" = success && test "$EXTRA" = success && test "$FFT" = success && test "$STFT" = success && test "$REALFFT" = success && test "$DTMF" = success && test "$MATH" = success
