@@ -63,7 +63,7 @@ for(const route of cases){
      await Promise.resolve();
      const converted=probe.querySelectorAll("[data-ss-math]").length;
      const rendered=probe.querySelectorAll(".katex").length;
-     const plain=probe.textContent.includes("\\frac");
+     const plain=[...probe.childNodes].some(node=>node.nodeType===Node.TEXT_NODE&&node.textContent.includes("\\frac"));
      probe.remove();
      return{converted,rendered,plain};
    });
