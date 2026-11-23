@@ -791,7 +791,25 @@ $("download-wav").addEventListener("click",()=>{
  const url=URL.createObjectURL(new Blob([buf],{type:"audio/wav"})),a=document.createElement("a");
  a.href=url;a.download="dft-fft-synthetic-audio-250-750hz.wav";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
-$("file").addEventListener("change",async()=>{const file=$("file").files?.[0];if(!file)return;try{let data;if(/\.(csv|txt)$/i.test(file.name)||file.type.startsWith("text/"))data=parseCSV(await file.text());else{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw Error("Browser audio decoding unavailable.");const ac=new AC();try{const decoded=await ac.decodeAudioData(await file.arrayBuffer());const arr=new Float64Array(decoded.length);for(let c=0;c<decoded.numberOfChannels;c++){const ch=decoded.getChannelData(c);for(let i=0;i<arr.length;i++)arr[i]+=ch[i]/decoded.numberOfChannels;}data={samples:arr,fs:decoded.sampleRate,kind:"audio"}}finally{await ac.close()}}if(data.samples.length<16)throw Error("At least 16 samples are needed.");upload=data;$("signal").value="upload";$("fs").value=data.fs||"";$("offset").value=0;$("file-info").textContent=file.name+" · "+data.samples.length.toLocaleString()+" samples · "+(data.fs?data.fs.toFixed(2)+" Hz":"sample rate unknown; spectrum in cycles/sample")+". Only the chosen N-sample frame is analyzed.";run();}catch(err){$("file-info").textContent="Unable to read file: "+err.message;}});
+function sourceWavSampleRate(buffer){
+ const view=new DataView(buffer);
+ if(view.byteLength<28)return 0;
+ const word=(at)=>String.fromCharCode(...new Uint8Array(buffer,at,4));
+ if(word(0)!=="RIFF"||word(8)!=="WAVE")return 0;
+ for(let offset=12;offset+8<=view.byteLength;){
+  const size=view.getUint32(offset+4,true);
+  if(word(offset)==="fmt "&&size>=16&&offset+8+size<=view.byteLength){
+   const rate=view.getUint32(offset+12,true);
+   return rate>=3000&&rate<=192000?rate:0;
+  }
+  if(!Number.isFinite(size)||size>view.byteLength-offset-8)break;
+  offset+=8+size+(size%2);
+ }
+ return 0;
+}
+$("file").addEventListener("change",async()=>{const file=$("file").files?.[0];if(!file)return;try{let data;if(/\.(csv|txt)$/i.test(file.name)||file.type.startsWith("text/"))data=parseCSV(await file.text());else{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw Error("Browser audio decoding unavailable.");const bytes=await file.arrayBuffer(),nativeRate=sourceWavSampleRate(bytes);
+let ac;try{ac=new AC(nativeRate?{sampleRate:nativeRate}:undefined)}catch{ac=new AC()}
+try{const decoded=await ac.decodeAudioData(bytes);const arr=new Float64Array(decoded.length);for(let c=0;c<decoded.numberOfChannels;c++){const ch=decoded.getChannelData(c);for(let i=0;i<arr.length;i++)arr[i]+=ch[i]/decoded.numberOfChannels;}data={samples:arr,fs:decoded.sampleRate,kind:"audio"}}finally{await ac.close()}}if(data.samples.length<16)throw Error("At least 16 samples are needed.");upload=data;$("signal").value="upload";$("fs").value=data.fs||"";$("offset").value=0;$("file-info").textContent=file.name+" · "+data.samples.length.toLocaleString()+" samples · "+(data.fs?data.fs.toFixed(2)+" Hz":"sample rate unknown; spectrum in cycles/sample")+". Only the chosen N-sample frame is analyzed.";run();}catch(err){$("file-info").textContent="Unable to read file: "+err.message;}});
 // Keep file controls adjacent to waveform controls and charts, not separated by result cards.
 const setup=$("upload-setup");for(const id of ["upload-description","fixtures-note","upload-controls","upload-frame-note","file-info"]){const node=$(id);if(node)setup.append(node)}
 window.__dftReady=true;setStep(0);localize();run(false);
