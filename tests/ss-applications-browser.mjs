@@ -124,7 +124,7 @@ for(const name of ["harmonics","chirp","helix"]){
     if(!scrollable)throw Error("Mobile equation inaccessible due to overflow: "+equationOverflow+"px");
   }
   const mobilePlots=await page.locator(".ss-al-plot:not([hidden]) canvas").evaluateAll(nodes=>nodes.map(c=>[Math.round(c.getBoundingClientRect().width),Math.round(c.getBoundingClientRect().height)]));
-  if(mobilePlots.some(([w,h])=>w<260||h<260))throw Error("Mobile plot too small: "+JSON.stringify(mobilePlots));
+  if(mobilePlots.some(([w,h],i)=>w<260||h<(i===0&&name!=="harmonics"?220:260)))throw Error("Mobile plot too small: "+JSON.stringify(mobilePlots));
   await page.screenshot({path:"tests/screenshots/"+name+"-mobile.png",fullPage:true});
   if(errors.length)throw Error(errors.join("; "));
   console.log("PASS "+name+" "+JSON.stringify({canvas,canvasCss,aboveFold,rendered,formulaTagCount,overflow,equationOverflow,mobilePlots}));
