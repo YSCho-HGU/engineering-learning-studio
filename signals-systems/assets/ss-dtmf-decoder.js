@@ -54,13 +54,13 @@ function drawWave(){
  const data=synth(current()),N=Number($("dtmf-fft-n").value),start=Math.round((COUNT-N)*Number($("dtmf-start").value)/100),g=axes(850,200,{xMax:460,yMin:-1,yMax:1,xTitle:"Time (ms)",yTitle:"x[n]"});
  const X=n=>g.l+n/(COUNT-1)*g.W,Y=v=>g.t+(1-v)*g.H/2;
  const path=[];for(let n=0;n<COUNT;n+=2)path.push((n?"L":"M")+X(n).toFixed(2)+" "+Y(data[n]).toFixed(2));
- $("dtmf-wave").innerHTML=g.html+'<rect class="ss-dtmf-region" x="'+X(start)+'" y="'+g.t+'" width="'+(X(start+N)-X(start))+'" height="'+g.H+'"/><path class="ss-dtmf-trace" d="'+path.join(" ")+'"/>';
+ $("dtmf-wave").innerHTML=g.html+'<rect class="ss-dtmf-region" x="'+X(start)+'" y="'+g.t+'" width="'+(X(start+N)-X(start))+'" height="'+g.H+'"/><path class="ss-dtmf-trace" fill="none" d="'+path.join(" ")+'"/>';
  $("dtmf-start-value").textContent=(start/8).toFixed(1)+"–"+((start+N)/8).toFixed(1)+" ms";
 }
 function drawSpectrum(){
  const a=st.result,max=Math.max(...a.spectrum,1e-9),g=axes(850,290,{xMax:2000,yMin:0,yMax:max*1.12,xTitle:"Frequency (Hz)",yTitle:"Amplitude"});
  const path=[];for(let k=0;k<=Math.floor(2000/a.delta);k++){const x=g.l+k*a.delta/2000*g.W,y=g.t+g.H*(1-a.spectrum[k]/(max*1.12));path.push((k?"L":"M")+x.toFixed(2)+" "+y.toFixed(2))}
- let out=g.html+'<path class="ss-dtmf-trace" d="'+path.join(" ")+'"/>';
+ let out=g.html+'<path class="ss-dtmf-trace" fill="none" d="'+path.join(" ")+'"/>';
  for(const [p,name,offset] of [[a.low,"Low",18],[a.high,"High",34]]){
   const x=g.l+p.center/2000*g.W;
   out+='<line class="ss-dtmf-peakmark" x1="'+x+'" x2="'+x+'" y1="'+g.t+'" y2="'+(g.t+g.H)+'"/>';
