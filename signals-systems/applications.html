@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="../assets/els-typography-standard.css?v=1">
 <link rel="stylesheet" href="./assets/ss-common-header.css?v=20261122-four-controls">
 <link rel="stylesheet" href="../assets/els-header-controls.css?v=1">
-<link rel="stylesheet" href="./assets/ss-applications-hub.css?v=2">
+<link rel="stylesheet" href="./assets/ss-applications-hub.css?v=20261123-fft-route">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css">
 <link rel="stylesheet" href="./assets/ss-applications-math.css?v=3">
 <link rel="stylesheet" href="./assets/ss-responsive-unified.css?v=1">
@@ -85,7 +85,11 @@
       </section>
       <section class="ss-app-part" id="part-c" data-app-part="c" aria-labelledby="part-c-heading">
         <div class="ss-app-part-head"><div><span class="ss-app-part-kicker">PART C · FFT</span><h2 id="part-c-heading" data-en="FFT &amp; Spectral Applications" data-ko="FFT 및 스펙트럼 응용"></h2></div><span class="ss-app-count" id="part-c-count"></span></div>
-        <p class="ss-app-part-desc" data-en="Begin with an array of sample values: compute the FFT, read bins without a sample rate, then add fs to find Hz. Then explore resolution, leakage, moving-window STFT, spectrograms, audio, images, and video." data-ko="표본 배열에서 FFT를 계산하고, fs가 없을 때 Bin을 읽는 법과 fs가 주어졌을 때 Hz로 해석하는 법부터 학습합니다. 이후 분해능·누설·이동 창 STFT·스펙트로그램·오디오·이미지·동영상으로 확장합니다."></p>
+        <p class="ss-app-part-desc" data-en="A guided FFT-first route: sample data → frequency bins and resolution (including leakage, Hann windows and zero-padding) → DFT versus FFT → DTMF decoding → sound fingerprints → your own audio/sensor records. Chirp/STFT is an optional extension; other modules remain in the roadmap." data-ko="FFT 중심의 연속 학습: 표본 데이터 → 주파수 Bin과 분해능(누설·Hann 창·Zero-padding 포함) → DFT와 FFT → DTMF 해독 → 소리의 주파수 지문 → 실제 음성·센서 데이터. Chirp/STFT는 선택 확장이고 다른 주제는 추후 개발합니다."></p>
+        <div class="ss-app-fft-route">
+          <div><strong data-en="Recommended learning path · 7 available labs" data-ko="권장 학습 경로 · 실행 가능한 실습 7개"></strong><p data-en="Three foundations → three FFT discovery labs → one optional time-frequency extension. Planned modules appear separately, after the working route." data-ko="기초 3개 → FFT 발견 실습 3개 → 선택 확장 1개 순서입니다. 개발 예정 주제는 실습 경로 뒤에 따로 표시됩니다."></p></div>
+          <a href="./applications-fft-lab.html" data-en="Start with FFT samples →" data-ko="샘플 FFT부터 시작 →"></a>
+        </div>
         <div class="ss-app-topic-grid" id="topics-c"></div>
       </section>
       <section class="ss-app-part" id="part-d" data-app-part="d" aria-labelledby="part-d-heading">
@@ -93,7 +97,7 @@
         <p class="ss-app-part-desc" data-en="Study real engineering scenarios from signal model to system response and interpretation." data-ko="신호 모델에서 시스템 응답과 결과 해석까지 실제 공학 사례를 종합적으로 살펴봅니다."></p>
         <div class="ss-app-topic-grid" id="topics-d"></div>
       </section>
-      <p class="ss-app-outro" data-en="All six Part A topics have interactive laboratories: Harmonics, Chirp, Complex Helix, Beats, AM/FM, and Sampling with sine/chirp aliasing. Part C includes FFT from samples, frequency resolution, DFT vs FFT with butterfly and computational-cost comparisons, and audio/sensor exploration. Other FFT and integrated engineering topics remain in development." data-ko="Part A의 여섯 주제(조화파, 처프, 복소지수함수 나선, 맥놀이, AM/FM, 정현파·처프 표본화와 에일리어싱)는 실습을 제공합니다. Part C에서는 표본 FFT·주파수 분해능·DFT와 FFT의 관계(버터플라이·계산량 비교)·음성 및 센서 분석 실습을 제공합니다. 다른 FFT 및 종합 응용 주제는 순차 개발 중입니다."></p>
+      <p class="ss-app-outro" data-en="All six Part A topics have interactive laboratories: Harmonics, Chirp, Complex Helix, Beats, AM/FM, and Sampling with sine/chirp aliasing. Part C organizes 7 interactive FFT lessons into foundations, discovery applications and an optional STFT extension. Windowing and zero-padding are incorporated into existing labs; four standalone modules remain planned." data-ko="Part A의 여섯 주제(조화파, 처프, 복소지수함수 나선, 맥놀이, AM/FM, 정현파·처프 표본화와 에일리어싱)는 실습을 제공합니다. Part C에서는 FFT 기초·발견 응용·선택 STFT로 이어지는 7개의 인터랙티브 실습을 제공합니다. Windowing과 Zero-padding은 기존 실습에 통합했으며 4개 독립 모듈은 개발 예정입니다."></p>
     </main>
   </div>
 </div>
@@ -103,7 +107,7 @@
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js" defer></script>
 <script src="./assets/ss-math-core.js?v=1" defer></script>
 <script src="./assets/ss-applications-math.js?v=5" defer></script>
-<script src="./assets/ss-applications-hub.js?v=20261123-fft-foundations" defer></script>
+<script src="./assets/ss-applications-hub.js?v=20261123-fft-route" defer></script>
 <script src="../assets/els-header-controls.js?v=1" defer></script>
 <script src="./assets/ss-presentation-mode.js?v=1" defer></script>
 </body></html>
