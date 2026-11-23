@@ -43,7 +43,7 @@ try{
    const before=await page.locator("#stft-frame-value").innerText();
    await page.locator("#stft-next").click();
    check(before!==await page.locator("#stft-frame-value").innerText(),"Moving frame failed");
-   await page.locator("#stft-frame").fill("28");
+   await page.locator("#stft-frame").evaluate(el=>{el.value="28";el.dispatchEvent(new Event("input",{bubbles:true}))});
    await page.locator("#stft-frame").dispatchEvent("input");
    await page.locator("#stft-mission-check").click();
    check(await page.locator("#stft-mission-feedback").getAttribute("data-result")==="correct","Graph mission not reachable");
