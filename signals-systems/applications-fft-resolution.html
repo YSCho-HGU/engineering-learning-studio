@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FFT Resolution &amp; Leakage · Engineering Learning Studio</title>
+<script>(function(){let v="neutral-dark";try{const s=localStorage.getItem("els-theme-v2");if(["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark"].includes(s))v=s}catch(_){}document.documentElement.dataset.elsTheme=v;document.documentElement.dataset.theme=["white-clean","warm-neutral"].includes(v)?"light":"dark";document.documentElement.style.colorScheme=["white-clean","warm-neutral"].includes(v)?"only light":"dark"})();</script>
+<link rel="stylesheet" href="../assets/els-theme-v2.css?v=6">
+<link rel="stylesheet" href="../assets/els-typography-standard.css?v=1">
+<link rel="stylesheet" href="./assets/ss-common-header.css?v=20261122-four-controls">
+<link rel="stylesheet" href="../assets/els-header-controls.css?v=1">
+<link rel="stylesheet" href="./assets/ss-formula-standard.css?v=3">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:var(--els-page);color:var(--els-ink);font:16px/1.55 Arial,"Malgun Gothic",sans-serif}
+a{color:var(--els-link)}
+:focus-visible{outline:3px solid var(--els-focus);outline-offset:3px}
+header.ss-common-header{position:sticky;top:0;z-index:80}
+.ss-fft-r-wrap{padding:12px clamp(12px,2vw,30px) 35px}
+.ss-fft-r-intro,.ss-fft-r-controls,.ss-fft-r-card{border:1px solid var(--els-border);background:var(--els-surface);border-radius:12px;padding:14px}
+.ss-fft-r-intro{margin-bottom:10px}
+.ss-fft-r-intro h1{font-size:clamp(22px,2.2vw,30px);margin:0}
+.ss-fft-r-intro p{margin:3px 0;color:var(--els-muted)}
+.ss-fft-r-steps{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.ss-fft-r-steps span{background:var(--els-surface-alt);border:1px solid var(--els-border);border-radius:8px;padding:5px 9px;font-size:13px}
+.ss-fft-r-layout{display:grid;grid-template-columns:minmax(240px,290px) minmax(0,1fr);gap:12px;align-items:start}
+.ss-fft-r-controls{position:sticky;top:62px;display:grid;gap:9px;max-height:calc(100dvh - 73px);overflow:auto}
+.ss-fft-r-controls h2,.ss-fft-r-card h2{font-size:17px;margin:0 0 4px}
+.ss-fft-r-controls label{display:grid;gap:3px;font-weight:700;font-size:13px}
+.ss-fft-r-controls select,.ss-fft-r-controls input{width:100%;min-width:0;border:1px solid var(--els-border);background:var(--els-surface-alt);color:var(--els-ink);border-radius:7px;padding:7px;font-size:14px}
+.ss-fft-r-help{font-size:12px;color:var(--els-muted);margin:0}
+.ss-fft-r-results{display:grid;gap:10px;min-width:0}
+.ss-fft-r-stat{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.ss-fft-r-stat>div{min-width:0;padding:9px;border-radius:9px;background:var(--els-surface-alt);border:1px solid var(--els-border);font-size:12px;color:var(--els-muted)}
+.ss-fft-r-stat strong{display:block;color:var(--els-ink);font-size:19px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.ss-fft-r-graphs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ss-fft-r-card{min-width:0}
+.ss-fft-r-card p{font-size:13px;color:var(--els-muted);margin:5px 0}
+.ss-fft-r-card svg{display:block;width:100%;height:auto;aspect-ratio:620/300}
+.ss-fft-r-card svg .grid{stroke:var(--els-border);stroke-width:1}
+.ss-fft-r-card svg .axis{stroke:var(--els-ink);stroke-width:1}
+.ss-fft-r-card svg .curve{fill:none;stroke:var(--els-link);stroke-width:2.1;stroke-linejoin:round}
+.ss-fft-r-card svg .sample{fill:var(--els-link)}
+.ss-fft-r-card svg .tick{fill:var(--els-muted);font:12px Arial}
+.ss-fft-r-card svg .title{fill:var(--els-ink);font:13px Arial}
+.ss-fft-r-theory{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.ss-fft-r-theory>div{min-width:0;background:var(--els-surface-alt);padding:8px;border-radius:7px;overflow-x:auto}
+.ss-fft-r-theory [data-ss-math]{display:block;min-height:35px}
+.ss-fft-r-theory .katex-display{margin:4px 0;text-align:left}
+#fft-r-observation{white-space:pre-line}
+.ss-fft-r-nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.ss-fft-r-nav a{display:inline-block;border:1px solid var(--els-border);padding:7px 10px;border-radius:8px;text-decoration:none;background:var(--els-surface-alt)}
+@media(max-width:1120px){.ss-fft-r-graphs{grid-template-columns:1fr}}
+@media(max-width:820px){.ss-fft-r-layout{grid-template-columns:1fr}.ss-fft-r-controls{position:static;max-height:none;grid-template-columns:repeat(2,minmax(0,1fr))}.ss-fft-r-controls h2,.ss-fft-r-controls .ss-fft-r-help{grid-column:1/-1}.ss-fft-r-stat{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.ss-fft-r-controls{grid-template-columns:1fr}.ss-fft-r-graphs,.ss-fft-r-theory{grid-template-columns:1fr}.ss-fft-r-wrap{padding:9px}.ss-fft-r-intro{padding:12px}}
+</style>
+</head>
+<body>
+<header class="ss-common-header" aria-label="Engineering Learning Studio navigation">
+<a class="ss-common-home" href="../">← Studio</a>
+<details class="ss-common-menu"><summary class="ss-common-title">Signals &amp; Systems · Applications <span aria-hidden="true">⌄</span></summary><nav class="ss-common-links" aria-label="Choose chapter"></nav></details>
+<div class="ss-common-actions">
+<label class="ss-common-language" for="fft-r-language"><span class="ss-language-icon" aria-hidden="true">🌐</span><select class="ss-common-language-select" id="fft-r-language" aria-label="Language"><option value="mixed">한/영</option><option value="en">English</option><option value="ko">한국어</option></select></label>
+<label class="ss-common-theme"><select data-els-theme-picker aria-label="Theme"><option value="white-clean">White Clean</option><option value="warm-neutral">Warm Neutral</option><option value="warm-dark">Warm Dark</option><option value="navy-dark">Navy Dark</option><option value="neutral-dark">Neutral Dark</option></select></label>
+</div></header>
+<main class="ss-fft-r-wrap">
+<section class="ss-fft-r-intro"><h1 id="fft-r-title"></h1><p id="fft-r-subtitle"></p><nav class="ss-fft-r-steps" id="fft-r-steps" aria-label="Learning path"></nav></section>
+<div class="ss-fft-r-layout">
+<aside class="ss-fft-r-controls" aria-labelledby="fft-r-controls-title">
+<h2 id="fft-r-controls-title"></h2><p id="fft-r-controls-note" class="ss-fft-r-help"></p>
+<label><span id="fft-r-experiment-label"></span><select id="fft-r-experiment"><option value="resolution">1 · Two nearby tones</option><option value="leakage">2 · Off-bin tone</option><option value="padding">3 · Zero padding</option></select></label>
+<label><span id="fft-r-fs-label"></span><select id="fft-r-fs"><option value="256">256 Hz</option><option value="512">512 Hz</option><option value="1024">1024 Hz</option></select></label>
+<label><span id="fft-r-n-label"></span><select id="fft-r-n"><option value="32">32 samples</option><option value="64" selected>64 samples</option><option value="128">128 samples</option><option value="256">256 samples</option></select></label>
+<label><span id="fft-r-separation-label"></span><input id="fft-r-separation" type="range" min="2" max="40" step="1" value="12"><output id="fft-r-separation-output"></output></label>
+<label><span id="fft-r-offset-label"></span><input id="fft-r-offset" type="range" min="0" max="0.5" step="0.05" value="0.35"><output id="fft-r-offset-output"></output></label>
+<label><span id="fft-r-window-label"></span><select id="fft-r-window"><option value="rect">Rectangular</option><option value="hann">Hann</option></select></label>
+<label><span id="fft-r-padding-label"></span><select id="fft-r-padding"><option value="1">No padding</option><option value="4">4× FFT display</option></select></label>
+</aside>
+<div class="ss-fft-r-results">
+<div class="ss-fft-r-stat" id="fft-r-stats" aria-live="polite"></div>
+<div class="ss-fft-r-graphs">
+<section class="ss-fft-r-card"><h2 id="fft-r-time-title"></h2><svg id="fft-r-time" viewBox="0 0 620 300" role="img" aria-label="Windowed time-domain samples"></svg><p id="fft-r-time-note"></p></section>
+<section class="ss-fft-r-card"><h2 id="fft-r-spectrum-title"></h2><svg id="fft-r-spectrum" viewBox="0 0 620 300" role="img" aria-label="FFT magnitude spectrum in hertz"></svg><p id="fft-r-spectrum-note"></p></section>
+</div>
+<section class="ss-fft-r-card"><h2 id="fft-r-theory-title"></h2><div class="ss-fft-r-theory">
+<div><small id="fft-r-eq1-label"></small><div data-ss-math="T=\frac{N}{f_s},\quad \Delta f=\frac{f_s}{N}=\frac{1}{T}" data-ss-math-display="block" data-ss-math-fallback="T=N/fs; Δf=fs/N=1/T"></div></div>
+<div><small id="fft-r-eq2-label"></small><div data-ss-math="\Delta f_{\mathrm{grid}}=\frac{f_s}{M},\quad M\ge N" data-ss-math-display="block" data-ss-math-fallback="FFT grid step = fs/M (M >= N)"></div></div>
+</div><p id="fft-r-theory-note"></p></section>
+<section class="ss-fft-r-card"><h2 id="fft-r-observation-title"></h2><p id="fft-r-observation"></p><nav class="ss-fft-r-nav"><a href="./applications-fft-lab.html" id="fft-r-back"></a><a href="./applications.html#part-c" id="fft-r-next"></a></nav></section>
+</div></div></main>
+<script src="../assets/els-language.js?v=1" defer></script>
+<script src="../assets/els-theme-v2.js?v=6" defer></script>
+<script src="./assets/ss-common-header.js?v=applications2" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js" defer></script>
+<script src="./assets/ss-math-core.js?v=1" defer></script>
+<script src="./assets/ss-app-fft-resolution.js?v=1" defer></script>
+<script src="../assets/els-header-controls.js?v=1" defer></script>
+</body></html>
