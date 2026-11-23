@@ -45,6 +45,13 @@ try{
 
    assert(near(pure.knownFreq,64,1e-9)&&near(pure.amplitude,.8,1e-6),"FFT amplitude/Hz wrong "+JSON.stringify(pure));
    assert(near(pure.inferredFs,512,1e-5)&&pure.noFs&&pure.csvLen===1024,"CSV sampling-rate inference incorrect "+JSON.stringify(pure));
+   const ambiguous=await page.evaluate(()=>{
+    const csv="timestamp,value\n"+Array.from({length:1024},(_,n)=>(1700000000000+n*2)+","+Math.sin(2*Math.PI*64*n/1024)).join("\n");
+    const parsed=window.SSRealFFT.parseCSV(csv);
+    return {fs:parsed.fs,reason:parsed.reason};
+   });
+   assert(ambiguous.fs===null&&ambiguous.reason==="ambiguous-time-unit","Ambiguous timestamp inferred a false Hz scale "+JSON.stringify(ambiguous));
+
    const csv="time_s,value,secondary\n"+Array.from({length:2048},(_,n)=>{
      const f=n<1024?64:96;return(n/512)+","+Math.sin(2*Math.PI*f*n/512)+","+Math.sin(2*Math.PI*40*n/512);
    }).join("\n");
