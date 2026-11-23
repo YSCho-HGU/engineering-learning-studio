@@ -1,7 +1,7 @@
 {
-  "source_sha": "c5898314c35cb56a2ca5e5fe8a4a4ab8dd768284",
+  "source_sha": "8be40014a6a3d6faadc8efb21f6670d162f81bdf",
   "workflow": "ss-applications-browser",
-  "tested_at": "2026-11-23T08:00:28.487563+00:00",
+  "tested_at": "2026-11-23T08:01:38.442168+00:00",
   "fft_browser_outcome": "success",
   "original_labs_outcome": "success",
   "additional_labs_outcome": "failure",
