@@ -270,7 +270,9 @@ function initialize(){
   switchTab(arr[next]);$("tab-"+arr[next]).focus();
  }));
  $("same-run").addEventListener("click",renderSame);
- ["same-signal","same-n","same-fs"].forEach(id=>$(id).addEventListener("change",renderSame));
+ ["same-signal","same-n"].forEach(id=>$(id).addEventListener("change",renderSame));
+ $("same-fs").addEventListener("input",renderSame);
+ $("same-fs").addEventListener("change",renderSame);
  $("butterfly-preset").addEventListener("change",()=>{
   const mode=$("butterfly-preset").value;
   if(mode!=="custom"){$("butterfly-input").value=traceCore.presets[mode].map(x=>Number(x.toFixed(5))).join(",");recalcButterfly()}
