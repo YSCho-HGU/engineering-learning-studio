@@ -56,6 +56,9 @@ try{
    await page.locator("#fft-preset").selectOption("leak");
    const leaked=await page.evaluate(()=>window.SSFFTFoundations.analyze(window.SSFFTFoundations.sampleArray("leak")).bins.filter(x=>x.amplitude>.08).length);
    check(leaked>1,"Non-bin-centered sinusoid should leak across several bins");
+   await page.locator("#fft-preset").selectOption("pulse");
+   check((await page.locator("#fft-metrics").innerText()).includes("Flat"),"An impulse must not be mislabeled as one dominant tone");
+   check((await page.locator("#fft-insight").innerText()).includes("equal"),"Flat raw impulse |X[k]| teaching note missing");
    await page.locator("#fft-preset").selectOption("custom");
    await page.locator("#fft-samples").fill("1, 2, 3");
    await page.locator("#fft-run").click();
@@ -70,6 +73,10 @@ try{
    const math=await page.evaluate(()=>window.SSMathCore?.auditVisible?.());
    check(math?.total>=2,"Shared FFT equation rendering not installed");
    check(math.errors===0&&math.missing===0,"FFT formula renderer reported errors: "+JSON.stringify(math));
+   if(await page.evaluate(()=>!!window.katex?.render)){
+    await page.waitForFunction(()=>window.SSMathCore?.auditVisible?.().rendered===window.SSMathCore?.auditVisible?.().total);
+    check(await page.locator(".ss-fft-equation .katex").count()===2,"FFT definitions did not render as KaTeX");
+   }
    for(const theme of ["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark"]){
     await page.locator('[data-els-theme-picker]').selectOption(theme);
     check(await page.locator("html").getAttribute("data-els-theme")===theme,"Broken theme "+theme);
