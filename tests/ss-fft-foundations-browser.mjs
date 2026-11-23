@@ -44,8 +44,14 @@ try{
    check((await page.locator("#fft-spectrum-note").innerText()).includes("unknown"),"Unknown fs teaching note missing");
    check(await page.locator("#fft-table thead th").count()===4,"Without fs there should be no Hz table column");
    check(await page.locator("#fft-time-plot line.stem").count()===16,"Time-domain sample stems missing");
+   await page.locator("#fft-checkpoint-answer").selectOption("0");
+   await page.locator("#fft-checkpoint-check").click();
+   check(await page.locator("#fft-checkpoint-feedback").getAttribute("data-result")==="correct","Unknown-fs concept check failed");
    await page.locator("#fft-known").check();
    check(!(await page.locator("#fft-fs").isDisabled()),"Known fs field did not activate");
+   await page.locator("#fft-checkpoint-answer").selectOption("1");
+   await page.locator("#fft-checkpoint-check").click();
+   check(await page.locator("#fft-checkpoint-feedback").getAttribute("data-result")==="correct","Known-fs concept check failed");
    check((await page.locator("#fft-table thead").innerText()).includes("f (Hz)"),"Hz table column not enabled");
    check((await page.locator("#fft-metrics").innerText()).includes("1,500"),"Expected k3 => 1500 Hz");
    await page.locator("#fft-fs").fill("16000");
@@ -104,10 +110,22 @@ try{
    check(almost(v.shortDf,4)&&almost(v.longDf,2),"Changing observation N must change nominal bin spacing");
    check(almost(v.shortT,.25)&&almost(v.longT,.5),"Observation time must increase with N");
    check(almost(v.paddedDf,4)&&almost(v.paddedGrid,1)&&almost(v.paddedT,.25)&&v.paddedM===256,"Padding changes only FFT grid, not observation");
+   check(await page.locator("#fft-r-spectrum line.true-frequency-guide").count()===2,"Resolution graph needs two true-frequency guides");
+   check(await page.locator("#fft-r-spectrum line.fft-bin-guide").count()>0,"FFT bin guides missing");
+   await page.locator("#fft-r-quiz-answers").selectOption("0");
+   await page.locator("#fft-r-quiz-check").click();
+   check(await page.locator("#fft-r-quiz-feedback").getAttribute("data-result")==="correct","Resolution understanding check failed");
    await page.locator("#fft-r-experiment").selectOption("leakage");
+   check(await page.locator("#fft-r-spectrum line.true-frequency-guide").count()===1,"Leakage graph requires one true-tone guide");
+   await page.locator("#fft-r-quiz-answers").selectOption("0");
+   await page.locator("#fft-r-quiz-check").click();
+   check(await page.locator("#fft-r-quiz-feedback").getAttribute("data-result")==="correct","Leakage concept check failed");
    await page.locator("#fft-r-window").selectOption("hann");
    await page.locator("#fft-r-experiment").selectOption("padding");
    await page.locator("#fft-r-padding").selectOption("4");
+   await page.locator("#fft-r-quiz-answers").selectOption("1");
+   await page.locator("#fft-r-quiz-check").click();
+   check(await page.locator("#fft-r-quiz-feedback").getAttribute("data-result")==="correct","Zero-padding concept check failed");
    check((await page.locator("#fft-r-stats").innerText()).includes("1 Hz"),"Padding grid metric failed");
    for(const theme of ["white-clean","neutral-dark"]){
      await page.locator('[data-els-theme-picker]').selectOption(theme);
