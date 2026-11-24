@@ -1,0 +1,59 @@
+name: C language controls and content premerge QA
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/els-header-controls.js'
+      - 'assets/els-course-header.css'
+      - 'c-programming/**'
+      - 'tests/c-language-contract.mjs'
+      - 'tests/header-layout-preflight.mjs'
+      - '.github/workflows/c-language-pr-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qa-c-language-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  c-language-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated browser dependencies
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Check JS syntax
+        run: |
+          node --check assets/els-header-controls.js
+          node --check c-programming/c-ss-shell.js
+          node --check c-programming/language.js
+          node --check tests/c-language-contract.mjs
+          node --check tests/header-layout-preflight.mjs
+      - name: Verify all C language modes and nonoverlapping header layout
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8765 --bind 127.0.0.1 > "$RUNNER_TEMP/c-lang-http.log" 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          curl --retry 10 --retry-connrefused --retry-delay 1 -fsS http://127.0.0.1:8765/c-programming/functions/ -o /dev/null
+          node tests/c-language-contract.mjs
+          node tests/header-layout-preflight.mjs
+      - name: Preserve visual QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: c-language-header-check-${{ github.run_id }}
+          path: qa/header-preflight/
+          if-no-files-found: ignore
