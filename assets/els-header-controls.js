@@ -5,6 +5,15 @@
 (function(win,doc){
  "use strict";
  if(win.ELSHeaderControls)return;
+ // Attach the shared stylesheet after legacy course CSS so cascade order is deterministic.
+ // Resolve relative to this script, not the host page (which may be several folders deep).
+ const script=doc.currentScript;
+ if(script?.src&&!doc.querySelector('link[data-els-course-header-css]')){
+   const link=doc.createElement("link");
+   link.rel="stylesheet";link.dataset.elsCourseHeaderCss="";
+   link.href=new URL("./els-course-header.css?v=unified-20261124-r2",script.src).href;
+   doc.head.append(link);
+ }
   // Shared presentation component used by both C and Signals & Systems.
   // Host course owns the navigation destination and its click behavior.
   function makeNavigationArrow({kind="section",direction=1,label="",href=null}={}){
@@ -35,6 +44,18 @@
    const header=scope.querySelector(".ss-common-header,.site-header,body > header");
    if(!header)return;
    header.classList.add("els-course-header");
+   // C creates .els-header-left directly; SS historically has two root siblings.
+   // Normalize both to the same left / center / right structural contract.
+   if(header.classList.contains("ss-common-header")&&!header.querySelector(":scope > .els-header-left")){
+     const home=header.querySelector(":scope > .ss-common-home");
+     const menu=header.querySelector(":scope > .ss-common-menu");
+     if(home&&menu){
+       const left=doc.createElement("div");
+       left.className="els-header-left";
+       header.insertBefore(left,home);
+       left.append(home,menu);
+     }
+   }
    const title=header.querySelector(".ss-common-menu,.brand");
    if(title)title.classList.add("els-course-header-title");
    const actions=header.querySelector(".ss-common-actions,.header-nav");
