@@ -14,10 +14,6 @@ button,select{font:inherit}
 .ss-app-header .ss-common-actions{margin-left:auto!important;display:flex;gap:8px;align-items:center}
 .ss-app-header .ss-common-language-select,.ss-app-header .ss-common-theme select{height:30px;min-height:30px;border:1px solid var(--els-border);border-radius:7px;background:var(--els-surface);color:var(--els-ink);font-size:12px}
 .ss-app-header .ss-common-language{display:flex;gap:5px;align-items:center}
-.ss-app-arrows{display:flex;align-items:center;gap:5px}
-.ss-app-arrows>*{width:34px;height:32px;display:grid;place-items:center;line-height:1;border:1px solid var(--els-border);border-radius:8px;background:var(--els-surface-alt);color:var(--els-ink);cursor:pointer;font-size:18px}
-.ss-app-arrows>*:hover:not(:disabled){border-color:var(--els-link)}
-.ss-app-arrows>button:disabled,.ss-app-arrows>a[aria-disabled=true]{opacity:.42;cursor:default}
 .ss-app-container{width:min(calc(100% - 48px),1370px);margin-inline:auto}
 .ss-app-intro{margin:16px 0 18px;padding:25px 32px;background:var(--els-surface-alt);border:1px solid var(--els-border);border-radius:16px}
 .ss-app-eyebrow{font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--els-link)}
@@ -63,7 +59,7 @@ button,select{font:inherit}
 .ss-app-topic[data-area=fft] .ss-app-status{font-weight:650}
 [data-en][data-ko]{white-space:pre-line}
 @media(max-width:1000px){.ss-app-layout{grid-template-columns:1fr}.ss-app-toc{position:static;max-height:none;display:flex;flex-wrap:wrap;gap:6px;align-items:center}.ss-app-toc h2{flex:0 0 100%}.ss-app-toc a{flex:1 1 180px}.ss-app-back{flex:0 0 100%;display:flex}.ss-app-back a{flex:auto}}
-@media(max-width:670px){.ss-app-container{width:calc(100% - 24px)}.ss-app-intro{padding:20px 17px}.ss-app-layout{gap:12px}.ss-app-part{padding:16px}.ss-app-topic-grid,.ss-app-part:nth-child(3) .ss-app-topic-grid{grid-template-columns:1fr}.ss-app-arrows>*{width:28px;height:29px;font-size:15px}.ss-app-header .ss-common-actions{gap:3px}.ss-app-count{font-size:11px}.ss-app-part-head{flex-wrap:wrap}}
+@media(max-width:670px){.ss-app-container{width:calc(100% - 24px)}.ss-app-intro{padding:20px 17px}.ss-app-layout{gap:12px}.ss-app-part{padding:16px}.ss-app-topic-grid,.ss-app-part:nth-child(3) .ss-app-topic-grid{grid-template-columns:1fr}.ss-app-header .ss-common-actions{gap:3px}.ss-app-count{font-size:11px}.ss-app-part-head{flex-wrap:wrap}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
 /* Available Part A experiments are visibly distinct from curriculum-only topics. */
