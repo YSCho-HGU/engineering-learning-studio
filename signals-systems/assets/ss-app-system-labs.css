@@ -86,7 +86,7 @@ a:hover{text-decoration:underline}
 .ss-sys-circuit .ss-sys-svg-label{fill:var(--els-ink);font-size:17px;font-weight:700;font-family:Arial,"Malgun Gothic",sans-serif}
 .ss-sys-circuit .ss-sys-output-label{fill:var(--ss-trace-coral,var(--els-link))}
 .ss-sys-circuit .ss-sys-svg-muted{fill:var(--els-muted);font-size:13px;font-family:Arial,"Malgun Gothic",sans-serif}
-.ss-sys-voltage-readouts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px}
+.ss-sys-voltage-readouts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:8px}
 .ss-sys-voltage-readouts>div{display:grid;gap:2px;min-width:0;border:1px solid var(--els-border);border-radius:7px;padding:7px 9px;background:var(--els-surface)}
 .ss-sys-voltage-readouts span{font-size:12px;color:var(--els-muted)}
 .ss-sys-voltage-readouts strong{font-size:clamp(13px,1.25vw,16px);font-weight:750;font-variant-numeric:tabular-nums;white-space:nowrap}
