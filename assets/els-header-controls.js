@@ -30,12 +30,73 @@
     element.append(svg);
     return element;
   }
+ // One header factory; courses provide chapter routes and section handlers.
+ // Existing S&S static headers are adopted by mountSlots() to avoid a blank
+ // header before scripts load. Both paths have the identical DOM contract.
+ function createCourseHeader({className="",homeHref="../../",title="",chapterLinks=[],
+   languageId="els-course-language",themeId="els-course-theme"}={}){
+   const create=(tag,cls,content)=>{
+     const node=doc.createElement(tag);
+     if(cls)node.className=cls;
+     if(content!==undefined)node.textContent=content;
+     return node;
+   };
+   const header=create("header","ss-common-header els-course-header "+className);
+   header.setAttribute("aria-label","Engineering Learning Studio navigation");
+   const home=create("a","ss-common-home","← Studio");home.href=homeHref;
+   const menu=create("details","ss-common-menu");
+   const summary=create("summary","ss-common-title",title);
+   summary.setAttribute("aria-label","Choose chapter");
+   const links=create("nav","ss-common-links");
+   links.setAttribute("aria-label","Choose Chapter");
+   for(const item of chapterLinks){
+     const link=create("a","",item.label);
+     link.href=item.href;
+     if(item.current)link.setAttribute("aria-current","page");
+     links.append(link);
+   }
+   menu.append(summary,links);
+   const left=create("div","els-header-left");
+   left.append(home,menu);
+   const navigation=create("nav","ss-four-navigation els-course-header-navigation");
+   navigation.setAttribute("aria-label","Chapter and section navigation");
+   const actions=create("div","ss-common-actions els-course-header-actions");
+   const language=create("label","ss-common-language");
+   language.htmlFor=languageId;
+   const globe=create("span","ss-language-icon","🌐");
+   globe.setAttribute("aria-hidden","true");
+   const languageSelect=create("select","ss-common-language-select");
+   languageSelect.id=languageId;
+   languageSelect.setAttribute("aria-label","Language / 언어");
+   for(const [value,label] of [["mixed","한/영"],["en","English"],["ko","한국어"]]){
+     const option=create("option","",label);option.value=value;languageSelect.append(option);
+   }
+   language.append(globe,languageSelect);
+   const theme=create("label","ss-common-theme");theme.htmlFor=themeId;
+   const themeSelect=create("select","");
+   themeSelect.id=themeId;
+   themeSelect.setAttribute("aria-label","Theme");
+   themeSelect.setAttribute("data-els-theme-picker","");
+   const choices=win.ELSTheme?.choices||[
+     ["white-clean","White Clean"],["warm-neutral","Warm Neutral"],
+     ["warm-dark","Warm Dark"],["navy-dark","Navy Dark"],["neutral-dark","Neutral Dark"]];
+   for(const [value,label] of choices){
+     const option=create("option","",label);option.value=value;themeSelect.append(option);
+   }
+   themeSelect.value=win.ELSTheme?.get?.()||"neutral-dark";
+   themeSelect.addEventListener("change",()=>win.ELSTheme?.set?.(themeSelect.value));
+   theme.append(themeSelect);
+   actions.append(language,theme);
+   header.append(left,navigation,actions);
+   mountSlots(header);
+   return {header,home,menu,summary,links,navigation,actions,languageSelect,themeSelect};
+ }
  // The only layout composer for both courses. It accepts existing
  // navigation nodes so course-specific event listeners and state survive.
  function mountSlots(header){
    if(!header)return;
    header.classList.add("els-course-header");
-   header.dataset.elsHeaderVersion="3";
+   header.dataset.elsHeaderVersion="7";
    if(header.classList.contains("ss-common-header")&&!header.querySelector(":scope > .els-header-left")){
      const home=header.querySelector(":scope > .ss-common-home");
      const menu=header.querySelector(":scope > .ss-common-menu");
@@ -51,7 +112,7 @@
  }
  function normalize(root){
    const scope=root||doc;
-   const header=scope.querySelector(".ss-common-header,.site-header,body > header");
+   const header=scope.querySelector(".ss-common-header");
    if(!header)return;
    mountSlots(header);
    const title=header.querySelector(".ss-common-menu,.brand");
@@ -117,5 +178,5 @@
  }
  function ready(){normalize();win.addEventListener("els:themechange",()=>normalize());}
  if(doc.readyState==="loading")doc.addEventListener("DOMContentLoaded",ready,{once:true});else ready();
- win.ELSHeaderControls=Object.freeze({normalize:()=>normalize(),mountSlots,makeNavigationArrow,themes:win.ELSTheme?.options?.slice()||[]});
+ win.ELSHeaderControls=Object.freeze({normalize:()=>normalize(),mountSlots,createCourseHeader,makeNavigationArrow,themes:win.ELSTheme?.options?.slice()||[]});
 })(window,document);
