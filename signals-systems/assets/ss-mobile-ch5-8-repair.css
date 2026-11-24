@@ -3,16 +3,16 @@
    retain Chapter 4's two-column sidebar contract at 601–780px.
    Header height is synchronized by ss-mobile-ch5-8-repair.js. */
 @media (min-width:601px) and (max-width:780px){
- html.ss5-native body .shell.ss-layout-root{
+ html.ss5-native:not([data-ss-sidebar="collapsed"]) body .shell.ss-layout-root{
   display:grid!important;
   grid-template-columns:var(--ss-sidebar-open,208px) minmax(0,1fr)!important;
   align-items:start!important;
  }
- html.ss5-native body .shell.ss-layout-root > .ss-layout-sidebar{
+ html.ss5-native:not([data-ss-sidebar="collapsed"]) body .shell.ss-layout-root > .ss-layout-sidebar{
   grid-column:1!important;grid-row:1!important;
   width:100%!important;min-width:0!important;
  }
- html.ss5-native body .shell.ss-layout-root > .ss-layout-main{
+ html.ss5-native:not([data-ss-sidebar="collapsed"]) body .shell.ss-layout-root > .ss-layout-main{
   grid-column:2!important;grid-row:1!important;
   min-width:0!important;width:100%!important;
  }
