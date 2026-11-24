@@ -8,7 +8,8 @@
 <link rel="stylesheet" href="../assets/els-typography-standard.css?v=1">
 <link rel="stylesheet" href="./assets/ss-common-header.css?v=20261122-four-controls">
 <link rel="stylesheet" href="../assets/els-header-controls.css?v=1">
-<link rel="stylesheet" href="./assets/ss-app-system-labs.css?v=20261123-a">
+<link rel="stylesheet" href="./assets/ss-trace-palette.css?v=1">
+<link rel="stylesheet" href="./assets/ss-app-system-labs.css?v=20261124-explorer1">
 <link rel="stylesheet" href="./assets/ss-applications-math.css?v=3">
 <link rel="stylesheet" href="./assets/ss-responsive-unified.css?v=1">
 <link rel="stylesheet" href="./assets/ss-plot-typography.css?v=1">
@@ -53,6 +54,67 @@
    <div class="ss-sys-metrics" id="ss-sys-metrics"></div>
    <div class="ss-sys-plots">
     <article class="ss-sys-plot"><h2 id="ss-sys-plot-title-1">Input and output</h2><div class="ss-sys-legend" id="ss-sys-legend-1"></div><canvas id="ss-sys-canvas-1" role="img" aria-label="Input and output time response"></canvas><p id="ss-sys-note-1"></p></article>
+
+    <section class="ss-sys-rc-explorer" id="ss-sys-rc-explorer" aria-labelledby="ss-sys-rc-heading" hidden>
+     <div class="ss-sys-explorer-heading"><h2 id="ss-sys-rc-heading">RC Circuit and Voltage</h2><output id="ss-sys-rc-topology">Low-pass · Vout = VC</output></div>
+     <svg class="ss-sys-circuit" viewBox="0 0 610 223" role="img" aria-labelledby="ss-sys-circuit-title ss-sys-circuit-desc">
+      <title id="ss-sys-circuit-title">Interactive RC circuit</title>
+      <desc id="ss-sys-circuit-desc">The series element and shunt element swap when choosing low-pass or high-pass. The output is measured across the shunt element.</desc>
+      <defs><marker id="ss-sys-signal-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 Z" class="ss-sys-arrowhead"/></marker></defs>
+      <g class="ss-sys-wire">
+       <path d="M55 85 H146 M245 85 H448 V120 M448 175 V198 H55 V163 M55 117 V85"/>
+       <path d="M448 85 H519"/>
+       <path d="M430 198 H466 M436 205 H460 M442 212 H454"/>
+      </g>
+      <circle class="ss-sys-source" cx="55" cy="140" r="23"/>
+      <path class="ss-sys-source-wave" d="M41 140 Q48 125 55 140 T69 140"/>
+      <g class="ss-sys-series-r" id="ss-sys-series-r"><path d="M146 85 l10 -12 l12 24 l12 -24 l12 24 l12 -24 l12 24 l12 -24 l12 12 H245"/></g>
+      <g class="ss-sys-series-c" id="ss-sys-series-c" hidden>
+       <path class="ss-sys-wire" d="M146 85 H181 M209 85 H245"/>
+       <path d="M181 60 V110 M209 60 V110"/>
+      </g>
+      <g class="ss-sys-shunt-c" id="ss-sys-shunt-c">
+       <path class="ss-sys-wire" d="M448 120 V134 M448 150 V175"/>
+       <path d="M420 134 H476 M420 150 H476"/>
+      </g>
+      <g class="ss-sys-shunt-r" id="ss-sys-shunt-r" hidden>
+       <path d="M448 120 l-11 7 l22 8 l-22 8 l22 8 l-22 8 l22 8 l-11 8"/>
+      </g>
+      <circle class="ss-sys-circuit-node" cx="448" cy="85" r="5"/>
+      <circle class="ss-sys-circuit-node" cx="55" cy="85" r="4"/>
+      <path class="ss-sys-signal-direction" d="M90 57 H137" marker-end="url(#ss-sys-signal-arrow)"/>
+      <text class="ss-sys-svg-muted" x="93" y="45" id="ss-sys-direction">Signal</text>
+      <text class="ss-sys-svg-label" x="10" y="68">v_in(t)</text>
+      <text class="ss-sys-svg-label ss-sys-output-label" x="469" y="68" id="ss-sys-output-label">v_out = v_C</text>
+      <text class="ss-sys-svg-label" x="196" y="51" id="ss-sys-series-label">R = 10 kΩ</text>
+      <text class="ss-sys-svg-label" x="479" y="152" id="ss-sys-shunt-label">C = 10 µF</text>
+      <text class="ss-sys-svg-muted" x="17" y="181" id="ss-sys-source-label">Source</text>
+     </svg>
+     <div class="ss-sys-voltage-readouts" id="ss-sys-voltage-readouts" aria-live="off">
+       <div><span>t</span><strong id="ss-sys-v-time">0 s</strong></div>
+       <div><span>v_in(t)</span><strong id="ss-sys-v-in">0 V</strong></div>
+       <div><span>v_R(t)</span><strong id="ss-sys-v-r">0 V</strong></div>
+       <div><span>v_C(t)</span><strong id="ss-sys-v-c">0 V</strong></div>
+     </div>
+     <p class="ss-sys-voltage-balance" id="ss-sys-voltage-balance"></p>
+     <p class="ss-sys-circuit-note" id="ss-sys-circuit-note"></p>
+    </section>
+    <section class="ss-sys-ma-explorer" id="ss-sys-ma-explorer" aria-labelledby="ss-sys-ma-heading" hidden>
+     <div class="ss-sys-explorer-heading"><h2 id="ss-sys-ma-heading">Convolution Inspector</h2><span id="ss-sys-ma-counter" aria-live="polite">Window selection</span></div>
+     <p class="ss-sys-ma-hint" id="ss-sys-ma-hint"></p>
+     <div class="ss-sys-ma-taps" id="ss-sys-ma-taps" aria-label="Convolution terms"></div>
+     <div class="ss-sys-ma-worked">
+      <div class="ss-sys-ma-expression" id="ss-sys-ma-expression"></div>
+      <div class="ss-sys-ma-accumulator" id="ss-sys-ma-accumulator" aria-live="polite"></div>
+     </div>
+     <div class="ss-sys-ma-buttons">
+      <button id="ss-sys-ma-back" type="button">Previous</button>
+      <button id="ss-sys-ma-next" type="button">Next term</button>
+      <button id="ss-sys-ma-show-all" type="button">Show result</button>
+      <button id="ss-sys-ma-restart" type="button">Restart</button>
+     </div>
+     <p class="ss-sys-ma-assumption" id="ss-sys-ma-assumption"></p>
+    </section>
     <article class="ss-sys-plot"><h2 id="ss-sys-plot-title-2">Frequency response</h2><div class="ss-sys-legend" id="ss-sys-legend-2"></div><canvas id="ss-sys-canvas-2" role="img" aria-label="Filter frequency response"></canvas><p id="ss-sys-note-2"></p></article>
     <article class="ss-sys-plot"><h2 id="ss-sys-plot-title-3">Step / impulse response</h2><canvas id="ss-sys-canvas-3" role="img" aria-label="Filter step or impulse response"></canvas><p id="ss-sys-note-3"></p></article>
    </div>
@@ -67,5 +129,6 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js"></script>
 <script defer src="./assets/ss-applications-math.js?v=5"></script>
 <script defer src="./assets/ss-system-lab-core.js?v=20261123-a"></script>
-<script defer src="./assets/ss-app-system-labs.js?v=20261123-a"></script>
+<script defer src="./assets/ss-app-system-labs.js?v=20261124-explorer1"></script>
+<script defer src="./assets/ss-app-system-explorers.js?v=20261124-explorer1"></script>
 </body></html>
