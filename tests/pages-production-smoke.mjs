@@ -12,6 +12,12 @@ const targets = [
   ...cSlugs.map(slug => ({course:"C", chapter:slug, route:`c-programming/${slug}/`})),
   ...Array.from({length:8},(_,i)=>({course:"SS",chapter:String(i+1),route:`signals-systems/chapter${i+1}.html`}))
 ];
+// Release fingerprint: never label a stale Pages publish as a successful UI fix.
+const cssResponse=await fetch(root+"assets/els-course-header.css",{cache:"no-store"});
+assert.equal(cssResponse.status,200,"Published common header CSS was not found");
+const cssBody=await cssResponse.text();
+assert.ok(cssBody.includes("Final shared header contract (2026-11-24)"),
+  "The live Pages site is serving an older shared-header stylesheet; deployment is stale");
 const widths = [390,768,1280];
 const failures = [], results = [];
 const browser = await chromium.launch({headless:true});
