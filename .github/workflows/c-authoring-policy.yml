@@ -27,6 +27,13 @@ on:
       - 'docs/C_PROGRAMMING_AUTHORING_STANDARD.md'
       - '.github/workflows/c-authoring-policy.yml'
   workflow_dispatch:
+permissions:
+  contents: read
+
+concurrency:
+  group: qa-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   authoring-and-c11:
     runs-on: ubuntu-24.04
