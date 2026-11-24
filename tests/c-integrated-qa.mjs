@@ -63,7 +63,7 @@ if(process.env.C_JOURNEY_BROWSER==="1"){
    const errors=[];page.on("pageerror",e=>errors.push(String(e)));page.on("response",r=>{if(r.status()>=400)errors.push("HTTP "+r.status()+" "+r.url())});
    await page.goto("http://127.0.0.1:8876/"+base+kind+"/",{waitUntil:"domcontentloaded"});
    assert(await page.locator("#lesson-nav button").count()===8,kind+" 8 working steps");
-   assert(await page.locator('#lesson-nav details.c-learning-group').count()===3,kind+" grouped learning navigation");
+   assert(JSON.stringify(await page.locator('#lesson-nav details.c-learning-group').evaluateAll(es=>es.map(e=>e.dataset.group)))===JSON.stringify(["core","labs","advanced","challenges"]),kind+" grouped learning navigation");
    assert(!(await page.locator('.course-phase-details').evaluate(el=>el.open)),kind+" roadmap begins collapsed");
    await page.locator('.course-phase-details summary').click();
    assert(await page.locator('.course-phase-details').evaluate(el=>el.open),kind+" roadmap expands on demand");

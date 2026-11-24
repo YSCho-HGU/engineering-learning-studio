@@ -198,7 +198,7 @@
       "title": "AI-Assisted Coding",
       "group": "advanced",
       "url": "./ai-coding/",
-      "published": false,
+      "published": true,
       "kind": "ai-capstone",
       "description": "첫 프로그램 체험, 6개 프로젝트, 기술 스택 선택, AI 개발 과정과 배포·검증",
       "book": "https://docs.google.com/document/d/1hZCdkBpT2eeckfGG9RtxKIyd61xt1LGP/edit"

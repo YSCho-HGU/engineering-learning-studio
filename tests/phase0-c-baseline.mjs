@@ -24,7 +24,9 @@ function readData(slug){
 const catalog=JSON.parse(readFileSync("c-programming/course-catalog.json","utf8"));
 assert(catalog.schemaVersion===1,"catalog-schema");
 assert(catalog.chapters.filter(c=>c.kind!=="ai-capstone").length===18,"catalog-planned-count",String(catalog.chapters.length));
-const published=catalog.chapters.filter(x=>x.published);
+const allPublished=catalog.chapters.filter(x=>x.published);
+const published=allPublished.filter(x=>x.kind!=="ai-capstone");
+assert(allPublished.length===9&&allPublished.some(x=>x.id==="211"),"catalog-published-capstone");
 assert(published.length===8,"catalog-published-count",String(published.length));
 assert(JSON.stringify(published.map(x=>x.id))===JSON.stringify(manifest.publishedUnits.map(x=>x.number)),"catalog-published-ids");
 for(const unit of manifest.publishedUnits){
@@ -74,7 +76,7 @@ try{
   const before=await page.evaluate(keys=>Object.fromEntries(keys.map(k=>[k,localStorage.getItem(k)])),Object.keys(fixture));
   for(const mode of ["mixed","en","ko"]){
    await page.goto(base+"c-programming/",{waitUntil:"load"});
-   assert((await page.locator("#available-chapters .path-card").count())===8,prefix+"-c-home-units-"+mode);
+   assert((await page.locator("#available-chapters .path-card").count())===allPublished.length,prefix+"-c-home-units-"+mode);
    const selected=await page.evaluate(()=>window.ELSLanguage?.get());
    assert(selected===mode,prefix+"-lang-"+mode,String(selected));
    if(mode!=="ko"){

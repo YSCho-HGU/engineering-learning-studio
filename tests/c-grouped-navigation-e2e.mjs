@@ -7,7 +7,7 @@ import {chromium} from "playwright";
 import {readFileSync,mkdirSync,writeFileSync} from "node:fs";
 import {spawn} from "node:child_process";
 const catalog=JSON.parse(readFileSync("c-programming/course-catalog.json","utf8"));
-const entries=catalog.chapters.filter(x=>x.published);
+const entries=catalog.chapters.filter(x=>x.published&&x.kind!=="ai-capstone"); // 211 has separate TOC and browser tests.
 const root=process.env.C_NAV_BASE||"http://127.0.0.1:8791/";
 const out="qa-output/c-navigation";
 mkdirSync(out,{recursive:true});
@@ -26,8 +26,7 @@ try{
   const data=isFile?null:JSON.parse(readFileSync("c-programming/"+slug+"/data.js","utf8").replace(/^\s*window\.C_JOURNEY\s*=\s*/,"").replace(/;\s*$/,""));
   const total=isFile?8:data.lessons.length;
   const optional=isFile||data.coreCount>0&&data.coreCount<total;
-  const expectedGroups=optional?["core","advanced","challenges"]:["core","challenges"];
-  if(isFile)expectedGroups.splice(1,0,"labs");
+  const expectedGroups=optional?["core","labs","advanced","challenges"]:["core","labs","challenges"];
   for(const width of [390,1280])for(const palette of ["neutral-dark","warm-neutral"]){
    const ctx=await browser.newContext({viewport:{width,height:850}});
    await ctx.addInitScript(theme=>{

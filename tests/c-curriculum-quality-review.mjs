@@ -6,7 +6,7 @@ import {readFileSync,existsSync,mkdirSync,writeFileSync} from "node:fs";
 const read=p=>readFileSync(p,"utf8");
 const parse=p=>JSON.parse(read(p).replace(/^\s*window\.C_JOURNEY\s*=\s*/,"").replace(/;\s*$/,""));
 const catalog=JSON.parse(read("c-programming/course-catalog.json"));
-const units=catalog.chapters.filter(c=>c.published);
+const units=catalog.chapters.filter(c=>c.published&&c.kind!=="ai-capstone"); // The capstone is independently audited by c211-*.
 const result={schemaVersion:1,createdAt:new Date().toISOString(),audience:"first-year university",standard:"GCC C11",
  source:"Eight published units and their authored data; this audit does not execute C",
  structural:[],pedagogyFlags:[],units:[],summary:{}};

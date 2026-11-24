@@ -9,7 +9,7 @@ const read=p=>readFileSync(p,"utf8");
 const parse=(path,kind)=>JSON.parse(read(path).replace(new RegExp("^\\s*window\\.C_JOURNEY"+(kind==="en"?"_EN":"")+"\\s*=\\s*"),"").replace(/;\s*$/,""));
 const slugs=["arrays","strings","standard-library","functions","pointer","structure","dynamic-memory"];
 const catalog=JSON.parse(read("c-programming/course-catalog.json"));
-const published=catalog.chapters.filter(x=>x.published);
+const published=catalog.chapters.filter(x=>x.published&&x.kind!=="ai-capstone"); // Legacy C lesson-engine contract; 211 has its own suite.
 const bad=[];
 const ok=(condition,message)=>{if(!condition)bad.push(message)};
 const context=vm.createContext({window:{}});

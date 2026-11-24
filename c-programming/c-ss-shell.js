@@ -5,11 +5,10 @@
 const chapters=[
  ["arrays","13","Arrays"],["strings","13","Strings"],["standard-library","13","Standard Library Functions"],
  ["functions","14","User-Defined Functions"],["pointer","15","Pointers"],["structure","16","Structures"],
- ["file-io","17","File I/O"],["dynamic-memory","18","Dynamic Memory"]
+ ["file-io","17","File I/O"],["dynamic-memory","18","Dynamic Memory"],["ai-coding","21","AI-Assisted Coding"]
 ];
 const path=location.pathname;
-// The capstone preview uses the same shell without changing existing chapter navigation.
-if(path.includes("/ai-coding/"))chapters.push(["ai-coding","21","AI-Assisted Coding"]);
+// Chapter 211 is now listed after the eight original published C units.
 const current=chapters.findIndex(row=>path.includes("/"+row[0]+"/"));
 if(current<0)return;
 const course=chapters[current],root=document.documentElement;

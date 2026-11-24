@@ -25,11 +25,11 @@ const c={
  automaticStatus:cPass?"AUTOMATED_PASS":"BLOCKED_AUTOMATED",
  automatedStatus:cPass?"AUTOMATED_PASS":"BLOCKED_AUTOMATED",
  manualStatus:"PENDING",releaseStatus:cPass?"AUTOMATED_PASS_MANUAL_PENDING":"BLOCKED_AUTOMATED",
- chaptersCount:8,labsCount:8,plannedUnits:catalog.chapters.length,
+ chaptersCount:cUnits.length,labsCount:8,plannedUnits:catalog.chapters.length,
  gates,chapters:cUnits,
  visual:{expected:4*cUnits.length,observed:browser?.c?.chapters?.reduce((n,x)=>n+x.checks,0)||0,
    issues:browser?.failures?.filter(x=>x.id!=="logic-pilot").length??null},
- notes:["PASS applies only to the named, executed checks for eight published C chapters.","Compiler reference output does not verify every possible input or student solution.","Instructor evaluation M1–M3 remains pending."]};
+ notes:["PASS applies only to the named, executed checks for published C units; the AI capstone also has independent stage-level QA.","Compiler reference output does not verify every possible input or student solution.","Instructor evaluation M1–M3 remains pending."]};
 const pilot=browser?.logic?.viewports||[];
 const logicBase=pilot.length===4&&pilot.every(x=>x.status==="PASS");
 const g0=status("G0"),g1=status("G1"),g2=status("G2"),g3=status("G3"),g7=status("G7");

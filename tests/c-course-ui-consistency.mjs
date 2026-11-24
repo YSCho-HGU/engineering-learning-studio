@@ -6,7 +6,7 @@ import {readFileSync} from "node:fs";
 const read=path=>readFileSync(path,"utf8");
 const parse=(path,globalName)=>JSON.parse(read(path).replace(new RegExp("^\\s*window\\."+globalName+"\\s*=\\s*"),"").replace(/;\s*$/,""));
 const catalog=JSON.parse(read("c-programming/course-catalog.json"));
-const slugs=catalog.chapters.filter(c=>c.published&&c.url!=="./file-io/").map(c=>c.url.match(/^\.\/([^/]+)\/$/)?.[1]).filter(Boolean);
+const slugs=catalog.chapters.filter(c=>c.published&&c.kind!=="ai-capstone"&&c.url!=="./file-io/").map(c=>c.url.match(/^\.\/([^/]+)\/$/)?.[1]).filter(Boolean);
 const errors=[],warnings=[];let lessons=0,practices=0;
 const check=(ok,msg)=>{if(!ok)errors.push(msg)};
 for(const slug of slugs){
