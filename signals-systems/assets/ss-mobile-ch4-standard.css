@@ -1,0 +1,110 @@
+/* Signals & Systems Chapters 1–8 · canonical Chapter 4 mobile contract.
+ * One maintained source for the phone/tablet layout.  No lesson, plot
+ * mathematics, learning state, theme, or language semantics are changed.
+ * Loaded LAST on every chapter, after its native/legacy chapter styles.
+ */
+:root{
+ --ss-mobile-panel-gap:12px;
+ --ss-mobile-content-gutter:12px;
+}
+/* Sticky lesson navigation follows the REAL height of the wrapped chapter header.
+ * A shared ResizeObserver sets --ss-layout-header for every chapter. */
+@media(min-width:601px){
+ html .ss-layout-root>.ss-layout-sidebar{
+  top:var(--ss-layout-header,58px)!important;
+  height:calc(100dvh - var(--ss-layout-header,58px))!important;
+  max-height:calc(100dvh - var(--ss-layout-header,58px))!important
+ }
+}
+/* Ch 5 legacy standalone styles forced .shell to display:block at <=780px.
+ * Chapter 4 preserves an open rail to the LEFT on a 768px tablet. */
+@media(min-width:601px) and (max-width:780px){
+ html.ss5-native:not([data-ss-sidebar="collapsed"]) body .shell.ss-layout-root{
+  display:grid!important;
+  grid-template-columns:var(--ss-sidebar-open,208px) minmax(0,1fr)!important;
+  align-items:start!important
+ }
+ html.ss5-native:not([data-ss-sidebar="collapsed"]) body .shell.ss-layout-root>.ss-layout-sidebar{
+  grid-column:1!important;grid-row:1!important;
+  width:100%!important;min-width:0!important
+ }
+ html.ss5-native:not([data-ss-sidebar="collapsed"]) body .shell.ss-layout-root>.ss-layout-main{
+  grid-column:2!important;grid-row:1!important;
+  width:100%!important;min-width:0!important
+ }
+}
+/* Chapter 4 convention: expanded navigation above lesson on a PHONE;
+ * collapsed navigation exactly 52px beside the visible lesson. */
+@media(max-width:600px){
+ html:not([data-ss-sidebar="collapsed"]) body .ss-layout-root{
+  display:block!important;
+  grid-template-columns:minmax(0,1fr)!important
+ }
+ html:not([data-ss-sidebar="collapsed"]) body .ss-layout-root>.ss-layout-sidebar{
+  position:relative!important;top:0!important;
+  width:100%!important;max-width:100%!important;
+  height:auto!important;max-height:205px!important;
+  overflow-x:hidden!important;overflow-y:auto!important
+ }
+ html:not([data-ss-sidebar="collapsed"]) body .ss-layout-root>.ss-layout-main{
+  display:block!important;min-width:0!important;
+  width:100%!important;max-width:100%!important;
+  margin:0!important
+ }
+ html[data-ss-sidebar="collapsed"] body .ss-layout-root{
+  display:grid!important;
+  grid-template-columns:52px minmax(0,1fr)!important;
+  align-items:start!important;column-gap:0!important;
+  min-width:0!important;width:100%!important
+ }
+ html[data-ss-sidebar="collapsed"] body .ss-layout-root>.ss-layout-sidebar{
+  display:block!important;
+  grid-column:1!important;grid-row:1!important;
+  box-sizing:border-box!important;
+  width:52px!important;min-width:0!important;max-width:52px!important;
+  min-height:52px!important
+ }
+ html[data-ss-sidebar="collapsed"] body .ss-layout-root>.ss-layout-main{
+  display:block!important;grid-column:2!important;grid-row:1!important;
+  box-sizing:border-box!important;width:100%!important;
+  min-width:0!important;max-width:100%!important;margin:0!important
+ }
+ /* Uniform Chapter 4 reading gutter, stage separation and responsive charts. */
+ html .ss-layout-main{
+  box-sizing:border-box!important;min-width:0!important
+ }
+ html .ss-layout-main :is(.ss-found-23,#page>.lab,.ss6-control-plot-workspace,
+   .ss7-stage-pair,.ss8-stage-pair){
+  grid-template-columns:minmax(0,1fr)!important;
+  row-gap:var(--ss-mobile-panel-gap)!important;
+  min-width:0!important
+ }
+ html .ss-layout-main :is(.ss-found-controls,.ss-found-observe,
+   .ss5-predict,.ss5-observe,.ss5-followup,.ss6-step-card,
+   .ss7-card,.ss8-card,.plot-card,.figure){
+  box-sizing:border-box!important;min-width:0!important;
+  max-width:100%!important
+ }
+ html.ss5-native #page .plots,
+ html.ss6-compact-workspace .ss6-control-plot-workspace :is(.charts,.ss6-step-graphs),
+ html.ss7-native .ss7-stage-observe .plot-grid,
+ html.ss8-native .ss8-stage-observe .plot-grid{
+  grid-template-columns:minmax(0,1fr)!important;
+  min-width:0!important
+ }
+ html .ss-layout-main :is(canvas,svg){
+  box-sizing:border-box;max-width:100%
+ }
+ html .ss-layout-main :is(.ss-found-instruction,.ss5-predict>p,.ss6-compact-instruction,
+   .ss7-predict-prompt,.ss8-predict-prompt){
+  line-height:1.65!important;overflow-wrap:anywhere
+ }
+ html .ss-layout-main :is(.ss7-key-equation,.ss8-key-equation,.ss6-theory-equation,
+  .ss5-predict .katex-display,.formula .math,.deriv-math,[data-ss-math-display="block"]){
+  box-sizing:border-box;max-width:100%;min-width:0;
+  overflow-x:auto;overflow-y:hidden;scrollbar-width:thin
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html .ss-layout-root{transition:none!important}
+}
