@@ -51,7 +51,7 @@
        arrow.classList.add("els-header-arrow");
      });
    }
-   const language=header.querySelector("#lang,#c-language,.ss-common-language-select,#ss-language-select");
+   const language=header.querySelector("#lang,#c-language,#project-lang,#language,.ss-common-language-select,#ss-language-select,label#c-shared-language select");
    if(language){
      const wrapped=language.closest("label");
      const label=wrapped||header.querySelector('label[for="'+language.id+'"]');
