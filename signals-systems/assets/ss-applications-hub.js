@@ -1,4 +1,4 @@
-/* Applications curriculum catalog: six Part A labs, two Part B labs, seven Part C labs, remaining topics planned. */
+/* Applications curriculum catalog: six Part A labs, three Part B labs, seven Part C labs, remaining topics planned. */
 (()=>{
 "use strict";
 const sections=["a","b","c","d"];
@@ -14,6 +14,7 @@ const topics={
  b:[
   {lab:"rc",en:"RC Low-Pass and High-Pass Filters",ko:"RC 저역통과·고역통과 필터",kind:"Circuits",concept:"Time constant · Cutoff · Frequency response",questionEn:"Why does an RC circuit smooth one input but attenuate another?",questionKo:"RC 회로가 어떤 신호는 평활하고 다른 신호는 감쇠시키는 이유는?",observeEn:"R/C values, step response, amplitude/phase response, and input-output waveforms.",observeKo:"R·C 값·계단응답·진폭/위상 응답·입출력 파형",ch:[2,4,5]},
   {lab:"moving-average",en:"Moving-Average and Sensor Smoothing",ko:"이동평균과 센서 평활화",kind:"Digital filtering",concept:"Discrete convolution · FIR · Noise",questionEn:"Why does a longer averaging window reduce rapid fluctuations but add delay?",questionKo:"평균 구간이 길어지면 빠른 변화는 줄지만 응답이 늦어지는 이유는?",observeEn:"Noisy sensor values, window length, impulse response, and output delay.",observeKo:"잡음 센서값·평균 길이·임펄스 응답·출력 지연",ch:[2,6]},
+  {lab:"compare",href:"./applications-system-compare.html",en:"RC vs Moving Average: Same Input",ko:"RC와 이동평균: 동일 입력 비교",kind:"Digital filtering",concept:"Cutoff · Smoothing · Noise · Delay",questionEn:"Which filter reduces noise with less delay when bandwidth is matched?",questionKo:"차단주파수가 같다면 어느 필터가 더 적은 지연으로 잡음을 줄일까요?",observeEn:"One sampled input, both outputs, matched −3 dB cutoff, white-noise attenuation and low-frequency delay.",observeKo:"동일한 입력, 두 필터 출력, 일치된 −3 dB 차단주파수, 백색잡음 감소 및 저주파 지연",ch:[2,5,6]},
   {en:"Echo, Delay, and Reverberation",ko:"에코·지연·잔향",kind:"Audio systems",concept:"Impulse response · Delay · Convolution",questionEn:"How can a small number of delayed copies model an echo?",questionKo:"지연된 신호의 합으로 에코를 어떻게 모델링할 수 있는가?",observeEn:"Echo amplitude and delay, input/output waveform, impulse response, and listening comparison.",observeKo:"에코 크기·지연 시간·입출력·임펄스 응답·청각 비교",ch:[1,2,4]},
   {en:"Resonance and Band-Pass Selection",ko:"공진과 대역통과 선택",kind:"Frequency-selective systems",concept:"Resonance · Bandwidth · Poles",questionEn:"Why can a system respond strongly to a narrow range of frequencies?",questionKo:"시스템은 특정 주파수 부근에서 왜 크게 반응하는가?",observeEn:"Excitation frequency, resonance peak, bandwidth, and response magnitude.",observeKo:"여기 주파수·공진 피크·대역폭·응답 크기",ch:[4,5,8]},
   {en:"Transient and Control Responses",ko:"과도응답과 제어 시스템",kind:"Dynamics",concept:"Step response · Settling · Overshoot",questionEn:"Why can a fast-responding system overshoot or oscillate?",questionKo:"빠른 시스템이 목표값을 지나치거나 진동하는 이유는?",observeEn:"Step input, settling behavior, damping, and stability intuition.",observeKo:"계단 입력·정착 과정·감쇠·안정성 직관",ch:[2,5,8]},
@@ -124,7 +125,7 @@ function renderSystemsModules(host,data){
  const list=node("div","ss-app-lesson-list ss-app-abd-lab-list");
  ready.forEach((x,i)=>{
   const a=node("a","ss-app-lesson-row ss-app-abd-lab-row");
-  a.href="./applications-system-lab.html?lab="+encodeURIComponent(x.lab);
+  a.href=x.href||"./applications-system-lab.html?lab="+encodeURIComponent(x.lab);
   a.dataset.lab=x.lab;
   a.setAttribute("aria-label",i18n("Open interactive system lab "+(i+1)+": "+x.en,"시스템 실습 "+(i+1)+" 열기: "+x.ko,true));
   a.append(node("span","ss-app-lesson-number",moduleNumber(i)));
@@ -177,7 +178,7 @@ function renderTopics(){
    renderSignalLabs(host,data);return;
   }
   if(part==="b"){
-   document.getElementById("part-b-count").textContent=i18n("2 interactive labs + 4 planned","인터랙티브 실습 2개 + 예정 4개",true);
+   document.getElementById("part-b-count").textContent=i18n("3 interactive labs + 4 planned","인터랙티브 실습 3개 + 예정 4개",true);
    renderSystemsModules(host,data);return;
   }
   document.getElementById("part-"+part+"-count").textContent=data.length+" "+i18n("planned topics","개발 예정 주제",true);
