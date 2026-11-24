@@ -86,8 +86,8 @@ function localize(){
  opts[0].textContent=tr("Near cutoff","차단주파수 근처",true);
  opts[1].textContent=tr("Full band","전체 주파수 대역",true);
  tx("cmp-task-body",
- "Enable cutoff matching, then change M from 5 to 25. Compare noise suppression and low-frequency group delay. Next disable matching and adjust τ directly; finally change fs to observe what physical time each M means.",
- "차단주파수를 맞춘 뒤 M을 5에서 25로 조절하면서 잡음 억제와 저주파 군지연을 비교하세요. 일치 기능을 끄고 τ를 조절한 다음, fs 변경에 따라 M이 나타내는 물리적 시간이 달라짐을 관찰하세요.");
+ "1. Match both cutoffs and compare phase at one frequency. 2. Increase M; watch the group-delay curves and noise ratios. 3. Switch to Full band and find where MA phase becomes undefined.",
+ "1. 차단주파수를 맞추고 같은 주파수에서 위상을 비교합니다. 2. M을 늘려 그룹 지연 곡선과 잡음 감소 비를 관찰합니다. 3. 전체 대역에서 이동평균의 위상이 정의되지 않는 영점을 찾으세요.");
  const names=[["Noisy sensor","잡음 센서"],["Step","계단"],["Pulse","펄스"],["Sine wave","정현파"]];
  Array.from($("cmp-signal").options).forEach((o,i)=>o.textContent=tr(names[i][0],names[i][1],true));
  document.title=tr("RC vs Moving Average","RC와 이동평균 비교",true)+" | Engineering Learning Studio";
