@@ -1,0 +1,165 @@
+/* Engineering Learning Studio — one shared course-header layout.
+   Single source of truth for both C Programming and Signals & Systems.
+   Course-specific scripts retain navigation and content behavior. */
+:root{
+  --els-course-head-height:34px;
+  --els-course-head-radius:8px;
+  --els-course-arrow-size:17px;
+}
+html body > header.els-course-header.ss-common-header:has(.els-course-header-navigation){
+  box-sizing:border-box!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;
+  grid-template-areas:"course-left course-nav course-actions"!important;
+  align-items:center!important;
+  column-gap:12px!important;
+  row-gap:7px!important;
+  width:100%!important;
+  max-width:100%!important;
+  height:auto!important;
+  min-height:56px!important;
+  padding:10px 15px!important;
+  margin:0!important;
+  overflow:visible!important;
+  position:relative!important;
+  isolation:isolate;
+}
+html body > header.els-course-header .els-header-left{
+  grid-area:course-left!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  min-width:0!important;
+  max-width:100%!important;
+  justify-self:stretch!important;
+}
+html body > header.els-course-header .els-header-left > .ss-common-home{
+  flex:0 0 auto!important;
+  white-space:nowrap!important;
+}
+html body > header.els-course-header .els-header-left > .ss-common-menu{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  max-width:100%!important;
+}
+html body > header.els-course-header .els-header-left .ss-common-title{
+  box-sizing:border-box!important;
+  display:flex!important;
+  align-items:center!important;
+  height:var(--els-course-head-height)!important;
+  min-height:var(--els-course-head-height)!important;
+  max-width:100%!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  border-radius:var(--els-course-head-radius)!important;
+}
+html body > header.els-course-header .els-course-header-navigation{
+  grid-area:course-nav!important;
+  position:static!important;
+  inset:auto!important;
+  transform:none!important;
+  display:flex!important;
+  flex-flow:row nowrap!important;
+  align-items:center!important;
+  justify-content:center!important;
+  justify-self:center!important;
+  gap:6px!important;
+  margin:0!important;
+  padding:0!important;
+  width:max-content!important;
+  max-width:100%!important;
+  min-width:0!important;
+  height:auto!important;
+  white-space:nowrap!important;
+  background:transparent!important;
+  border:0!important;
+}
+html body > header.els-course-header .els-course-header-navigation .ss-chapter-arrow{
+  box-sizing:border-box!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 34px!important;
+  width:34px!important;
+  min-width:34px!important;
+  height:34px!important;
+  min-height:34px!important;
+  padding:0!important;
+  border:1px solid var(--els-border,#606660)!important;
+  border-radius:var(--els-course-head-radius)!important;
+  background:var(--els-surface-alt,#303030)!important;
+  color:var(--els-ink,#f1f1f1)!important;
+  font-size:0!important;
+  text-decoration:none!important;
+}
+html body > header.els-course-header .els-course-header-navigation .ss-chapter-arrow svg{
+  display:block!important;
+  width:var(--els-course-arrow-size)!important;
+  height:var(--els-course-arrow-size)!important;
+  flex:none!important;
+  fill:none!important;
+  stroke:currentColor!important;
+  stroke-width:2.15!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+}
+html body > header.els-course-header .els-course-header-navigation .ss-chapter-arrow:is(:hover,:focus-visible){
+  border-color:var(--els-link,#95cbc4)!important;
+}
+html body > header.els-course-header .els-course-header-navigation .ss-chapter-arrow:is(:disabled,[aria-disabled="true"]){
+  opacity:.4!important;
+  pointer-events:none!important;
+}
+html body > header.els-course-header .els-course-header-actions{
+  grid-area:course-actions!important;
+  display:flex!important;
+  flex-flow:row nowrap!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  justify-self:stretch!important;
+  gap:8px!important;
+  min-width:0!important;
+  max-width:100%!important;
+  width:auto!important;
+  margin:0!important;
+}
+html body > header.els-course-header .els-course-header-actions select{
+  box-sizing:border-box!important;
+  height:var(--els-course-head-height)!important;
+  min-height:var(--els-course-head-height)!important;
+  max-width:155px!important;
+  border-radius:var(--els-course-head-radius)!important;
+}
+html body > header.els-course-header :is(a,button,summary,select):focus-visible{
+  outline:2px solid var(--els-focus,#f1d48c)!important;
+  outline-offset:2px!important;
+}
+@media(max-width:1100px){
+  html body > header.els-course-header.ss-common-header:has(.els-course-header-navigation){
+    grid-template-columns:minmax(0,1fr) auto!important;
+    grid-template-areas:"course-left course-actions" "course-nav course-nav"!important;
+  }
+}
+@media(max-width:700px){
+  html body > header.els-course-header.ss-common-header:has(.els-course-header-navigation){
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-areas:"course-left" "course-actions" "course-nav"!important;
+    padding:9px 10px!important;
+  }
+  html body > header.els-course-header .els-header-left{gap:7px!important}
+  html body > header.els-course-header .els-course-header-actions{
+    justify-self:end!important;
+    justify-content:flex-end!important;
+    width:100%!important;
+  }
+  html body > header.els-course-header .els-course-header-actions select{
+    max-width:min(40vw,155px)!important;
+  }
+  html body > header.els-course-header .els-course-header-navigation{
+    width:max-content!important;
+    max-width:100%!important;
+    flex-wrap:nowrap!important;
+  }
+}
