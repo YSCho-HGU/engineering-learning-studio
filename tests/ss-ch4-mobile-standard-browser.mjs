@@ -32,6 +32,7 @@ async function snapshot(page,chapter,width,section){
   const r=el=>{if(!el)return null;const b=el.getBoundingClientRect();return {x:b.left,y:b.top,right:b.right,bottom:b.bottom,w:b.width,h:b.height};};
   const crossed=(a,b)=>!!a&&!!b&&Math.min(a.right,b.right)-Math.max(a.x,b.x)>7&&Math.min(a.bottom,b.bottom)-Math.max(a.y,b.y)>7;
   const lr=r(layout),hr=r(header),sr=r(sidebar),mr=r(main),a=r(main?.querySelector(selectors[0])),b=r(main?.querySelector(selectors[1]));
+  const sideScroll={client:sidebar?.clientHeight||0,content:sidebar?.scrollHeight||0,scrollable:!!sidebar&&sidebar.scrollHeight>sidebar.clientHeight+2};
   const nav=sidebar?.querySelector("nav:has(> button)"),first=nav?.querySelector("button"),badge=first?.querySelector(".num,.ss7-lab-number,.ss8-lab-number");
   const navstyle=nav?getComputedStyle(nav):null,firststyle=first?getComputedStyle(first):null;
   const menu=header?.querySelector(".ss-common-menu>summary");
@@ -41,7 +42,7 @@ async function snapshot(page,chapter,width,section){
    return b.width>50&&b.height>40&&s.display!=="none"&&s.visibility!=="hidden";
   });
   const plotErrors=visiblePlots.filter(el=>{const b=el.getBoundingClientRect();return b.width<80||b.height<55}).map(el=>el.id||el.tagName);
-  return {chapter,width,section,header:hr,sidebar:sr,main:mr,root:lr,controls,
+  return {chapter,width,section,header:hr,sidebar:sr,main:mr,root:lr,controls,sideScroll,
    cssHeader:Number.parseFloat(getComputedStyle(root).getPropertyValue("--ss-layout-header")),
    layoutDisplay:layout?getComputedStyle(layout).display:"",
    gridCols:layout?getComputedStyle(layout).gridTemplateColumns:"",
@@ -88,6 +89,13 @@ function validate(s,baseline){
   check(s.layoutDisplay==="block",name+" expanded phone sidebar must stack");
   check(s.main.y>=s.sidebar.bottom-2,name+" main overlaps expanded nav");
   check(s.main.x>=-1&&s.main.right<=s.width+2,name+" main spills off phone");
+  if(!s.collapsed){
+   check(s.sidebar.h<=120,name+" mobile index exceeds compact 118px contract: "+s.sidebar.h);
+   check(s.sidebar.h>=52,name+" mobile index missing or too short");
+   check(s.main.y<=s.header.bottom+122,name+" lesson starts too far below header");
+   check(s.sideScroll.content>=s.sideScroll.client,name+" index scroll dimensions invalid");
+   check(s.sideScroll.scrollable,name+" expanded index cannot scroll to remaining experiments");
+  }
  }else{
   check(s.layoutDisplay==="grid",name+" tablet sidebar must remain in two columns");
   check(s.main.x>=s.sidebar.right-2,name+" tablet main starts under sidebar");
