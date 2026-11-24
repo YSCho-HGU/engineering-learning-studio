@@ -96,8 +96,9 @@ function validate(s,baseline){
 try{
  for(const width of SIZES){
   const context=await browser.newContext({viewport:{width,height:844},reducedMotion:"reduce"});
+  // The sidebar value must persist across reload. Do not rewrite it in
+  // addInitScript: that would mask persistence bugs and hide the restore button.
   await context.addInitScript(()=>{
-   localStorage.setItem("ss-sidebar-collapsed-v1","0");
    localStorage.setItem("els-language","mixed");
    localStorage.setItem("els-theme-v2","neutral-dark");
   });
@@ -113,6 +114,8 @@ try{
    const pageErrors=[];const handle=e=>pageErrors.push(e.message);
    page.on("pageerror",handle);
    try{
+    // Page already has the Studio origin after the Chapter 4 reference visit.
+    await page.evaluate(()=>localStorage.setItem("ss-sidebar-collapsed-v1","0"));
     await page.goto(BASE+"/signals-systems/chapter"+chapter+".html",{waitUntil:"domcontentloaded"});
     const nav=page.locator(NAV[chapter]);await nav.first().waitFor({timeout:20000});
     await page.waitForTimeout(150);
