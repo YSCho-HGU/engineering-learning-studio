@@ -92,6 +92,7 @@ a:hover{text-decoration:underline}
 .ss-sys-voltage-readouts strong{font-size:clamp(13px,1.25vw,16px);font-weight:750;font-variant-numeric:tabular-nums;white-space:nowrap}
 .ss-sys-voltage-readouts .ss-sys-measured-voltage{border-color:var(--ss-trace-coral,var(--els-link));box-shadow:inset 3px 0 var(--ss-trace-coral,var(--els-link))}
 .ss-sys-voltage-balance{font:700 13px/1.5 "Cambria Math",Arial,"Malgun Gothic",sans-serif;color:var(--els-ink);margin:7px 0 4px;overflow-wrap:anywhere}
+.ss-sys-circuit-principle{font-size:13px;line-height:1.5;color:var(--els-ink);border-left:3px solid var(--els-link);padding-left:9px;margin:8px 0 5px;white-space:pre-line}
 .ss-sys-circuit-note{font-size:12px;line-height:1.5;color:var(--els-muted);margin:5px 0 0;white-space:pre-line}
 /* Moving-average stepper remains compact: tap chips scroll rather than fill the page. */
 .ss-sys-ma-hint{font-size:13px;color:var(--els-muted);margin:0 0 7px;white-space:pre-line}
