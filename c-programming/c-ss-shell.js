@@ -30,53 +30,47 @@ function init(){
  const layout=(fileio||fileioLabs)?wrap:practice?wrap?.querySelector("#practice-root .cp-layout"):fileioTask?wrap?.querySelector(".layout"):wrap?.querySelector(".layout");
  const aside=(fileio||fileioLabs)?wrap?.querySelector(".sidebar"):fileioTask?layout?.querySelector("#task-nav"):practice?layout?.querySelector(".cp-menu"):layout?.querySelector(".side");
  if(!wrap||!layout||!aside||!oldHeader)return;
- if(typeof window.ELSHeaderControls?.makeNavigationArrow!=="function"){
-   console.error("[ELS header] Common navigation component did not load");
+ const controls=window.ELSHeaderControls;
+ if(typeof controls?.createCourseHeader!=="function"){
+   console.error("[ELS header] Common course header component not loaded");
    return;
  }
- const header=el("header","ss-common-header c-ss-header els-course-header");
- header.setAttribute("aria-label","Engineering Learning Studio navigation");
- const home=link("← Studio",nested?"../../../":"../../");
- home.classList.add("ss-common-home");
- header.append(home);
- const menu=el("details","ss-common-menu c-ss-menu"),summary=el("summary","ss-common-title");
- if(course[0]==="ai-coding"){summary.append(el("span","c211-header-prefix","C Programming · "),el("span","c211-header-title","Chapter "+course[1]+" · "+course[2]+" ⌄"))}else summary.textContent="C Programming · Chapter "+course[1]+" · "+course[2]+" ⌄";
- summary.setAttribute("aria-label","Choose C Programming chapter");
- const links=el("nav","ss-common-links");
- links.append(link("C Programming · Course Home",parentPrefix));
- chapters.forEach((entry,i)=>{let a=link("Chapter "+entry[1]+" · "+entry[2],parentPrefix+entry[0]+"/");if(i===current)a.setAttribute("aria-current","page");links.append(a)});
- menu.append(summary,links);
- // Match the S&S static header DOM exactly; no optional shared helper is required.
- const left=el("div","els-header-left");left.append(home,menu);header.append(left);
- const arrows=el("nav","ss-four-navigation c-four-navigation els-course-header-navigation");
- arrows.setAttribute("aria-label","Chapter and section navigation");
+ const parentTitle=course[0]==="ai-coding"?"Chapter "+course[1]+" · "+course[2]:
+   "C Programming · Chapter "+course[1]+" · "+course[2];
+ const entries=[{label:"C Programming · Course Home",href:parentPrefix},
+  ...chapters.map((entry,i)=>({label:"Chapter "+entry[1]+" · "+entry[2],
+    href:parentPrefix+entry[0]+"/",current:i===current}))];
+ const {header,menu,navigation:arrows,languageSelect:select}=controls.createCourseHeader({
+   className:"c-ss-header",homeHref:nested?"../../../":"../../",title:parentTitle,
+   chapterLinks:entries,languageId:"c-language",themeId:"theme"
+ });
  function arrow(title,chapterDelta,sectionDelta){
   const kind=chapterDelta!=null?"chapter":"section",direction=chapterDelta??sectionDelta;
-  const n=window.ELSHeaderControls.makeNavigationArrow({kind,direction,label:title});
-  n.setAttribute("aria-label",title);n.title=title;
-  if(chapterDelta!=null){let index=current+chapterDelta;if(index>=0&&index<chapters.length)n.href=parentPrefix+chapters[index][0]+"/";else{n.setAttribute("aria-disabled","true");n.tabIndex=-1}}
-  else {n.type="button";n.dataset.direction=String(sectionDelta);n.addEventListener("click",()=>{const buttons=[...document.querySelectorAll(fileioTask?"#task-nav button[data-task]":fileioLabs?".side-nav a[data-lab-link]":practice?".cp-menu .cp-nav-item":fileio?"#lesson-nav button[data-nav]":"#lesson-nav button[data-lesson], #lesson-nav a[href^='#lab-']")];const pos=buttons.findIndex(b=>fileioLabs?b.getAttribute("href")===(location.hash||"#write"):fileioTask||practice?b.classList.contains("active"):fileio?b.classList.contains("current"):b.getAttribute("aria-current")==="step");if(pos>=0&&pos+sectionDelta>=0&&pos+sectionDelta<buttons.length){buttons[pos+sectionDelta].click()}refreshArrows()})}
-  arrows.append(n);return n;
+  const n=controls.makeNavigationArrow({kind,direction,label:title});
+  if(chapterDelta!=null){
+   const index=current+chapterDelta;
+   if(index>=0&&index<chapters.length)n.href=parentPrefix+chapters[index][0]+"/";
+   else{n.setAttribute("aria-disabled","true");n.tabIndex=-1}
+  }else{
+   n.dataset.direction=String(sectionDelta);
+   n.addEventListener("click",()=>{
+    const buttons=[...document.querySelectorAll(fileioTask?"#task-nav button[data-task]":
+     fileioLabs?".side-nav a[data-lab-link]":practice?".cp-menu .cp-nav-item":
+     fileio?"#lesson-nav button[data-nav]":"#lesson-nav button[data-lesson], #lesson-nav a[href^='#lab-']")];
+    const pos=buttons.findIndex(b=>fileioLabs?b.getAttribute("href")===(location.hash||"#write"):
+     fileioTask||practice?b.classList.contains("active"):fileio?b.classList.contains("current"):
+     b.getAttribute("aria-current")==="step");
+    if(pos>=0&&pos+sectionDelta>=0&&pos+sectionDelta<buttons.length)
+      buttons[pos+sectionDelta].click();
+    refreshArrows();
+   });
+  }
+  arrows.append(n);
+  return n;
  }
  arrow("Previous chapter",-1,null);
  const previous=arrow("Previous section",null,-1),next=arrow("Next section",null,1);
- arrow("Next chapter",1,null);header.append(arrows);
- const actions=el("div","ss-common-actions");
- const language=el("label","ss-common-language");language.id="c-shared-language";
- const icon=el("span","ss-language-icon","🌐");icon.setAttribute("aria-hidden","true");
- const select=el("select","ss-common-language-select");select.id="c-language";select.setAttribute("aria-label","Language / 언어");
- [["mixed","한/영"],["en","English"],["ko","한국어"]].forEach(([v,t])=>{const o=el("option","",t);o.value=v;select.append(o)});
- language.append(icon,select);actions.append(language);
- const theme=el("label","ss-common-theme"),themeSelect=el("select","");
- themeSelect.id="theme";themeSelect.setAttribute("data-els-theme-picker","");themeSelect.setAttribute("aria-label","Theme");
- const choices=window.ELSTheme?.choices||[["white-clean","White Clean"],["warm-neutral","Warm Neutral"],["warm-dark","Warm Dark"],["navy-dark","Navy Dark"],["neutral-dark","Neutral Dark"]];
- choices.forEach(([value,label])=>{const option=el("option","",label);option.value=value;themeSelect.append(option)});
- themeSelect.value=window.ELSTheme?.get?.()||"neutral-dark";
- themeSelect.addEventListener("change",()=>window.ELSTheme?.set?.(themeSelect.value));
- theme.append(themeSelect);actions.append(theme);actions.classList.add("els-course-header-actions");header.append(actions);
- header.dataset.elsHeaderBuild="v5-20261124";
- // Same slot composer used by every Signals & Systems page.
- window.ELSHeaderControls?.mountSlots?.(header);
+ arrow("Next chapter",1,null);
  oldHeader.replaceWith(header);
  // Move original sidebar, do not clone it: progress, event handlers and lesson IDs remain unchanged.
  const shell=el("div","c-ss-shell"),sideRow=el("div","c-sidebar-topline");
