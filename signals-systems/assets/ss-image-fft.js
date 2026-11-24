@@ -192,7 +192,7 @@ function showMetrics(m){
  const values=[
  [["Dominant peak (u,v)","최대 피크 (u,v)"],"("+m.peak.u+", "+m.peak.v+")"],
  [["Spatial period","공간 주기"],state.kind==="stripes"?(m.N/state.cycles).toFixed(1)+" px":tr("Varies","다양함",true)],
- [["Retained energy","남은 에너지"],m.output.energyPercent.toFixed(1)+"%"],
+ [["Output/input spectral energy","출력/입력 스펙트럼 에너지"],m.output.energyPercent.toFixed(1)+"%"],
  [m.output.maxDifference!==undefined?["Spatial vs FFT2 error","공간/FFT2 오차"]:["RMSE vs clean scene","원본 장면 대비 RMSE"],
   m.output.maxDifference!==undefined?m.output.maxDifference.toExponential(2):
    m.originalRMSE===null?tr("Not available","기준 없음",true):m.originalRMSE.toFixed(3)+" → "+m.filteredRMSE.toFixed(3)]
