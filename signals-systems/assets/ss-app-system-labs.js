@@ -78,6 +78,11 @@ insight("At n="+win.index+", y[n] = ("+terms+") / "+M+" = "+num(win.total,3)+". 
 let frame=0;function render(){if(frame)cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{frame=0;if(kind==="rc")rc();else moving();window.dispatchEvent(new CustomEvent("ss:system-render",{detail:{kind,state:{...state}}}));});}
 window.SSSystemLab={kind,state,render,update(patch){Object.assign(state,patch);controls();render();}};
 function init(){const c=content[kind];label("ss-sys-title",...c.title,true);label("ss-sys-subtitle",...c.sub);label("ss-sys-question",...c.question);label("ss-sys-task",...c.task);
+label("ss-sys-step-1","01 · Observe","01 · 관찰",true);
+label("ss-sys-step-rc","02 · Connect","02 · 회로 연결",true);
+label("ss-sys-step-ma","02 · Calculate","02 · 직접 계산",true);
+label("ss-sys-step-2","03 · Explain","03 · 원리 이해",true);
+label("ss-sys-step-3","04 · Check","04 · 결과 확인",true);
 label("ss-sys-controls-title","Experiment Controls","실습 변수 조절",true);label("ss-sys-try-title","Try this","직접 실험하기",true);label("ss-sys-reset","Reset","초기화",true);label("ss-sys-return","Back to Applications","응용 목차로",true);
 document.title=tr(...c.title,true)+" | Engineering Learning Studio";document.documentElement.lang=lang?.get?.()==="ko"?"ko":"en";
 document.querySelectorAll("[data-system-tab]").forEach(a=>{const rc=a.dataset.systemTab==="rc";a.textContent=tr(rc?"01 · RC Filters":"02 · Moving Average",rc?"01 · RC 필터":"02 · 이동평균",true);if(a.dataset.systemTab===kind)a.setAttribute("aria-current","page");});
