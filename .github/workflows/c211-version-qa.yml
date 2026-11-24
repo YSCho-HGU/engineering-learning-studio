@@ -3,7 +3,7 @@ on:
   push:
     paths:
       - 'c-programming/ai-coding/**'
-      - 'tests/c211-version-*.mjs'
+      - 'tests/c211-*.mjs'
       - '.github/workflows/c211-version-qa.yml'
   workflow_dispatch:
 jobs:
@@ -20,3 +20,11 @@ jobs:
       - run: python3 -m http.server 8765 --bind 127.0.0.1 &
       - run: node tests/c211-toc-browser.mjs
       - run: node tests/c211-version-browser.mjs
+      - run: node tests/c211-experience-browser.mjs
+      - run: node tests/c211-release-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: c211-release-screenshots
+          path: qa-c211-release/
+          if-no-files-found: warn

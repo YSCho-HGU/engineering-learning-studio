@@ -23,8 +23,10 @@ try{
   await page.locator('.c-four-navigation button[data-direction="1"]').click();
   assert.equal(await page.locator("#lesson-nav [aria-current=step] .n").innerText(),"04");
   await page.locator(".c-sidebar-toggle").click();
+  await page.locator("#lesson-nav").waitFor({state:"hidden"});
   assert.equal(await page.locator("#lesson-nav").isVisible(),false);
   await page.locator(".c-sidebar-toggle").click();
+  await page.locator("#lesson-nav").waitFor({state:"visible"});
   assert.equal(await page.locator("#lesson-nav").isVisible(),true);
   await page.locator("#c-language").selectOption("ko");
   assert.match(await page.locator('#lesson-nav details[data-group="core"] summary').innerText(),/핵심 학습/);

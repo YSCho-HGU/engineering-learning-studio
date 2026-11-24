@@ -13,3 +13,7 @@
  :is(.ai-experience,.ai-course) .c-ss-shell>.c-ss-sidebar{height:auto;max-height:38dvh;overflow-y:auto}
  html[data-c-sidebar=collapsed] :is(.ai-experience,.ai-course) .c-ss-shell>.c-ss-sidebar{max-height:none}
 }
+
+/* The mobile grouped-nav rule has greater specificity than the original collapse rule. */
+html[data-c-sidebar="collapsed"] body:is(.ai-experience,.ai-course) .c-ss-shell>.c-ss-sidebar>#lesson-nav.c-grouped-toc{display:none}
+@media(max-width:780px){body:is(.ai-experience,.ai-course) .c-ss-shell>.c-ss-sidebar{max-height:27dvh}}
