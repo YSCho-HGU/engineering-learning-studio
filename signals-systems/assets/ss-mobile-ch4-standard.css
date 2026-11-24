@@ -7,13 +7,6 @@
  --ss-mobile-panel-gap:12px;
  --ss-mobile-content-gutter:12px;
 }
-/* Native Chapters 5–8 carry a more-specific legacy 12px button rule.
- * Keep the Chapter 4 13px navigation typography, 52px targets and 6px rhythm. */
-html:is(.ss5-native,.ss6-compact-workspace,.ss7-native,.ss8-native)
- .ss-layout-root>.ss-layout-sidebar nav>button{
- font-size:13px!important;line-height:1.45!important;
- min-height:52px!important
-}
 
 /* Sticky lesson navigation follows the REAL height of the wrapped chapter header.
  * A shared ResizeObserver sets --ss-layout-header for every chapter. */
