@@ -65,7 +65,7 @@ try{
   await p.locator(".ss-common-language-select").selectOption(lang);
   const title=await p.locator("#topics-a .ss-app-lesson-title").first().innerText();
   assert.ok(lang==="en"?!/[가-힣]/.test(title):/[가-힣]/.test(title),"Part A translation "+lang);
-  const planned=await p.locator("#topics-b .ss-app-abd-planned-tag").first().innerText();
+  const planned=await p.locator("#topics-b .ss-app-abd-planned-tag").first().textContent();
   assert.ok(lang==="en"?/Planned/.test(planned):/개발 예정/.test(planned),"Planned status translation "+lang);
  }
  await p.locator(".ss-common-language-select").selectOption("en");
