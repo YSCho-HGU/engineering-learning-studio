@@ -19,9 +19,8 @@ try{
   const errors=[];page.on("pageerror",e=>errors.push(e.message));
   try{
    await page.goto(base+"/signals-systems/applications.html#part-c",{waitUntil:"domcontentloaded"});
-   const card=page.locator("#topics-c .ss-app-topic").filter({hasText:"Sound Fingerprint"});
-   expect(await card.count()===1,"Sound Fingerprint card missing");
-   expect(await card.locator('a[href="./applications-fft-sound-fingerprint.html"]').count()===1,"Sound Fingerprint link missing");
+   const card=page.locator('#topics-c a.ss-app-lesson-row[href="./applications-fft-sound-fingerprint.html"]');
+   expect(await card.count()===1,"Sound Fingerprint lesson link missing");
    await page.goto(base+"/signals-systems/applications-fft-sound-fingerprint.html",{waitUntil:"domcontentloaded"});
    await page.locator("#finger-spectrum .ss-finger-wave").waitFor({timeout:20000});
    const arithmetic=await page.evaluate(()=>{
@@ -53,7 +52,20 @@ try{
    await page.locator("#finger-guess").selectOption("voice");
    await page.locator("#finger-guess-check").click();
    expect(!(await page.locator("#finger-guess-feedback").innerText()).includes("Correct!"),"Prediction revealed answer prematurely");
-   expect(await page.locator("#finger-reveal-btn").isEnabled(),"Prediction not registered");
+   expect(await page.locator("#finger-reveal-btn").isDisabled(),"Prediction alone should not unlock reveal");
+   const order=await page.evaluate(()=>window.SSSoundFingerprint.state);
+   const h=await page.evaluate(()=>{
+    const api=window.SSSoundFingerprint,selected=api.state.source;
+    const data=api.synth(selected,{f0:Number(document.querySelector("#finger-note").value)});
+    return api.analyze(data,{N:Number(document.querySelector("#finger-fft-length").value),f0:Number(document.querySelector("#finger-note").value)}).dominant.h;
+   });
+   await page.locator("#finger-evidence-choice").selectOption(h===1?"h4":"h1");
+   await page.locator("#finger-evidence-check").click();
+   expect(await page.locator("#finger-reveal-btn").isDisabled(),"Incorrect FFT evidence unlocked reveal");
+   await page.locator("#finger-evidence-choice").selectOption(h===1?"h1":h<=3?"h23":"h4");
+   await page.locator("#finger-evidence-check").click();
+   expect(await page.locator("#finger-evidence-feedback").getAttribute("data-result")==="correct","Correct FFT evidence rejected");
+   expect(await page.locator("#finger-reveal-btn").isEnabled(),"Correct FFT evidence did not unlock reveal");
    await page.locator("#finger-reveal-btn").click();
    expect(await page.locator("#finger-reveal-content").isVisible(),"Comparison not revealed");
    expect(await page.locator("#finger-compare svg").count()===3,"Three spectral fingerprints missing");
