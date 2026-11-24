@@ -95,6 +95,7 @@ function labels(){
  [...$("image-scan-speed").options].forEach((o,i)=>o.textContent=tr(...speedNames[i],true));
  if(scan.timer!==null)$("image-scan-play").textContent=tr("Pause scan","일시정지");
  $("image-input-canvas").setAttribute("aria-label",tr("Input image. In Kernel stage use arrows to move the inspected pixel, Enter to inspect.","입력 이미지입니다. 커널 단계에서 방향키로 선택 위치를 이동하고 Enter로 픽셀을 관찰합니다."));
+ $("image-scan-source").setAttribute("aria-label",tr("Click this preview to choose a new kernel scan region, or move using arrow keys.","이 미리보기를 클릭해 커널 이동 구간을 선택하거나 방향키로 이동하세요."));
  stageLabels();sync();if(result)render(result);
 }
 function stageLabels(){
@@ -455,8 +456,9 @@ function bind(){
   state.probeY=clamp(Math.floor((cy-rect.top)/rect.height*state.N),0,state.N-1);
   stopScan();resetScan(true);interactions++;schedule();
  }
- input.addEventListener("click",e=>setProbeFromPointer(e.clientX,e.clientY,input.getBoundingClientRect()));
- input.addEventListener("keydown",e=>{
+ for(const surface of [input,$("image-scan-source")]){
+ surface.addEventListener("click",e=>setProbeFromPointer(e.clientX,e.clientY,surface.getBoundingClientRect()));
+ surface.addEventListener("keydown",e=>{
   if(state.stage!==3)return;
   if(e.key==="Enter"||e.key===" "){e.preventDefault();stopScan();resetScan(true);interactions++;schedule();return;}
   if(e.key==="ArrowLeft")state.probeX--;else if(e.key==="ArrowRight")state.probeX++;
@@ -465,6 +467,7 @@ function bind(){
   state.probeX=clamp(state.probeX,0,state.N-1);state.probeY=clamp(state.probeY,0,state.N-1);
   stopScan();resetScan(true);interactions++;schedule();
  });
+ }
  const spectrum=$("image-spectrum-canvas");
  spectrum.addEventListener("click",e=>{
   const r=spectrum.getBoundingClientRect(),u=Math.floor((e.clientX-r.left)/r.width*state.N)-state.N/2;
