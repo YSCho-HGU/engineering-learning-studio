@@ -17,7 +17,7 @@ const lessons=[
  {file:"applications-fft-dtmf.html",lang:"dtmf-language",title:"dtmf-title",plots:["dtmf-wave"],step:4,slug:"dtmf"},
  {file:"applications-fft-sound-fingerprint.html",lang:"finger-language",title:"finger-title",plots:["finger-wave","finger-spectrum"],step:5,slug:"sound"},
  {file:"applications-fft-upload.html",lang:"fft-upload-language",title:"fft-upload-title",plots:[],step:6,slug:"upload"},
- {file:"applications-chirp-stft.html",lang:"stft-language",title:"stft-title",plots:["stft-time-plot","stft-global-plot","stft-local-plot","stft-spectrogram"],step:7,slug:"chirp"}
+ {file:"applications-chirp-stft.html",lang:"stft-language",title:"stft-title",plots:["stft-time-plot","stft-global-plot","stft-local-plot","stft-spectrogram"],step:8,slug:"chirp"}
 ];
 function check(condition,message){assert.ok(condition,message);}
 async function svgNonblank(page,id){
