@@ -62,6 +62,7 @@ try {
           const style=getComputedStyle(nav);
           return {
             headerBuild,
+            studioLink:header.querySelector(".ss-common-home")?.getAttribute("href")||null,
             count:arrows.length,
             classes:arrows.map(e=>e.className),
             tags:arrows.map(e=>e.tagName),
@@ -83,6 +84,12 @@ try {
             theme:!!header.querySelector("[data-els-theme-picker]"),
           };
         });
+        if(target.course==="SS"){
+          assert.ok(state.studioLink,id+" missing Studio home link");
+          const resolved=new URL(state.studioLink,root+target.route);
+          assert.equal(resolved.href,new URL(root).href,
+            id+" Studio home must navigate to Engineering Learning Studio root");
+        }
         assert.equal(state.count,4,id+" arrow count");
         assert.ok(state.accessible&&state.visible&&state.sameRow&&state.insideViewport,
           id+" geometry "+JSON.stringify(state));
