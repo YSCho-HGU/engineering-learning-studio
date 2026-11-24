@@ -168,10 +168,21 @@ function renderTopics(){
  sections.forEach(part=>{
   const host=document.getElementById("topics-"+part),data=topics[part];
   if(!host)return;
+  // Replacing translated nodes must not reset a student's open curriculum notes.
+  const openFuture=!!host.querySelector(".ss-app-future")?.open;
+  const openedTopics=new Set(Array.from(host.querySelectorAll(".ss-app-abd-planned[open]"))
+    .map(card=>card.dataset.topic));
+  const restoreDisclosure=()=>{
+   const future=host.querySelector(".ss-app-future");
+   if(future&&openFuture)future.open=true;
+   host.querySelectorAll(".ss-app-abd-planned").forEach(card=>{
+    if(openedTopics.has(card.dataset.topic))card.open=true;
+   });
+  };
   host.replaceChildren();
   if(part==="c"){
    document.getElementById("part-c-count").textContent=i18n("6 core labs + 1 optional","핵심 6개 + 선택 1개",true);
-   renderFFTCompact(host,data);return;
+   renderFFTCompact(host,data);restoreDisclosure();return;
   }
   if(part==="a"){
    document.getElementById("part-a-count").textContent=i18n("6 interactive labs","인터랙티브 실습 6개",true);
@@ -179,10 +190,10 @@ function renderTopics(){
   }
   if(part==="b"){
    document.getElementById("part-b-count").textContent=i18n("3 interactive labs + 4 planned","인터랙티브 실습 3개 + 예정 4개",true);
-   renderSystemsModules(host,data);return;
+   renderSystemsModules(host,data);restoreDisclosure();return;
   }
   document.getElementById("part-"+part+"-count").textContent=data.length+" "+i18n("planned topics","개발 예정 주제",true);
-  renderPlannedModules(host,data,part);
+  renderPlannedModules(host,data,part);restoreDisclosure();
  });
 }
 function selectedPart(){
