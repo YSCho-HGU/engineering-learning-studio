@@ -1,3 +1,4 @@
+@import url("../../assets/els-course-header.css?v=direct-20261124");
 /* Single shared Signals & Systems chapter header: Chapters 5, 6 and integrated 7. */
 .ss-common-header{box-sizing:border-box;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:12px!important;min-height:46px!important;height:46px!important;padding:5px 15px!important;position:relative;z-index:90;overflow:visible!important;border-bottom:1px solid var(--els-border,var(--border,#555));background:var(--els-surface,var(--surface,#202222))!important;color:var(--els-ink,var(--ink,#eee))!important;box-shadow:none}
 .ss-common-header .ss-common-home{font-size:12px;font-weight:750;white-space:nowrap;color:var(--els-link,var(--accent,#6ebac6));text-decoration:none}
