@@ -26,11 +26,22 @@ function buildLinks(nav){
  nav.replaceChildren(fragment);
  nav.dataset.ssLinksBuilt='true';
 }
+function normalizeTitleLabel(title){
+ if(!title||title.querySelector('.ss-common-chapter-label'))return;
+ const texts=Array.from(title.childNodes).filter(n=>n.nodeType===3&&n.textContent.trim());
+ if(!texts.length)return;
+ const label=document.createElement('span');
+ label.className='ss-common-chapter-label';
+ label.textContent=texts.map(n=>n.textContent.trim()).join(' ');
+ title.insertBefore(label,texts[0]);
+ texts.forEach(n=>n.remove());
+}
 function init(){
  const header=document.querySelector('.ss-common-header');
  if(!header)return;
  const menu=header.querySelector('.ss-common-menu');
  const title=header.querySelector('.ss-common-title');
+ normalizeTitleLabel(title);
  const links=header.querySelector('.ss-common-links');
  if(!menu||!title||!links)return;
  buildLinks(links);

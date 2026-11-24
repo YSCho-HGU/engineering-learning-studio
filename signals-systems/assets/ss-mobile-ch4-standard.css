@@ -109,3 +109,18 @@
 @media(prefers-reduced-motion:reduce){
  html .ss-layout-root{transition:none!important}
 }
+/* A single-line flex label stops longer Chapter 8 titles from growing the
+ * header and pushing the first lesson below the fold on narrow phones. */
+html .ss-common-header .ss-common-menu>.ss-common-title>.ss-common-chapter-label{
+ display:block!important;flex:1 1 0!important;
+ min-width:0!important;max-width:100%!important;
+ white-space:nowrap!important;overflow:hidden!important;
+ text-overflow:ellipsis!important;line-height:1.35!important
+}
+@media(max-width:600px){
+ html .ss-common-header .ss-common-menu{min-width:0!important}
+ html .ss-common-header .ss-common-menu>.ss-common-title{
+  min-width:0!important;max-width:100%!important;
+  align-items:center!important
+ }
+}
