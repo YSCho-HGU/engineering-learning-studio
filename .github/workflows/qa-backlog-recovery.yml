@@ -1,6 +1,10 @@
 name: QA backlog recovery - latest run only
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/qa-backlog-recovery.yml'
   workflow_dispatch:
     inputs:
       dry_run:
@@ -36,7 +40,37 @@ jobs:
               'pages-deploy.yml',
               'pages-postdeploy-qa.yml',
               'deploy-owner-worker.yml',
-              'qa-backlog-recovery.yml'
+              'qa-backlog-recovery.yml',
+              'ci-studio.yml',
+              'unified-quality.yml'
+            ]);
+            const retiredWorkflows = new Set([
+              'applications-abd-visual.yml',
+              'applications-dft-fft.yml',
+              'c-authoring-policy.yml',
+              'c-browser-regression.yml',
+              'c-fileio-buffer-browser.yml',
+              'c-fileio-buffer.yml',
+              'c-four-chapters.yml',
+              'c-journey-qa.yml',
+              'c-programming-visual.yml',
+              'c181-browser.yml',
+              'c211-version-qa.yml',
+              'c-language-pr-qa.yml',
+              'els-deduplication.yml',
+              'phase0-c-baseline.yml',
+              'ss-applications-browser.yml',
+              'ss-ch4-mobile-standard.yml',
+              'ss-chapters-math-audit.yml',
+              'ss-header-language-theme.yml',
+              'ss-image-fft.yml',
+              'ss-inquiry-first-six-labs.yml',
+              'ss-partb-student-journeys.yml',
+              'studio-admin.yml',
+              'studio-deployed-smoke.yml',
+              'studio-monorepo-qa.yml',
+              'studio-shared-design-qa.yml',
+              'studio-shared-header.yml'
             ]);
             const statuses = ['queued', 'in_progress', 'pending', 'waiting'];
             const active = new Map();
@@ -66,12 +100,13 @@ jobs:
             const failures = [];
             for (const run of runs) {
               const group = [run.workflow_id, run.head_branch || '_', run.event].join(':');
+              const isRetired = retiredWorkflows.has((run.path || '').split('/').pop());
               const isOldVersion = newestByGroup.get(group) !== run.id;
               const isStale = now - Date.parse(run.created_at) > maxAgeMs;
               // Keep the newest run per workflow/branch/event unless it is
               // already older than any permitted QA runtime.
-              if (!isOldVersion && !isStale) continue;
-              if (isOldVersion) obsolete++;
+              if (!isRetired && !isOldVersion && !isStale) continue;
+              if (isRetired || isOldVersion) obsolete++;
               else stale++;
               core.info(`${dryRun ? 'WOULD CANCEL' : 'CANCEL'} #${run.id} ${run.name} ${run.head_branch} ${run.status} ${isOldVersion ? 'superseded' : 'stale'}`);
               if (dryRun) continue;
@@ -91,6 +126,33 @@ jobs:
               // Avoid GitHub's secondary rate limits from a cancellation burst.
               await new Promise(resolve => setTimeout(resolve, 300));
             }
+            // Follow up standard cancellation with force-cancel only for
+            // retired QA that has remained in progress beyond the safety budget.
+            // This bypasses obsolete always() cleanup steps that can block cancel.
+            if (!dryRun) {
+              await new Promise(resolve => setTimeout(resolve, 12000));
+              for (const run of runs) {
+                if (run.status !== 'in_progress') continue;
+                const file = (run.path || '').split('/').pop();
+                if (!retiredWorkflows.has(file)) continue;
+                if (now - Date.parse(run.created_at) < maxAgeMs) continue;
+                try {
+                  const current = await github.rest.actions.getWorkflowRun({
+                    owner, repo, run_id: run.id
+                  });
+                  if (!['in_progress', 'queued', 'pending'].includes(current.data.status)) continue;
+                  await github.request('POST /repos/{owner}/{repo}/actions/runs/{run_id}/force-cancel', {
+                    owner, repo, run_id: run.id
+                  });
+                  core.info(`Force-cancel requested for retired QA #${run.id}`);
+                } catch (error) {
+                  if (![404, 409].includes(error.status)) {
+                    failed++;
+                    failures.push(`force #${run.id}: ${error.message}`);
+                  }
+                }
+              }
+            }
             const report = [
               '## QA backlog recovery',
               `- Dry run: ${dryRun}`,
@@ -99,7 +161,7 @@ jobs:
               `- Stale (older than 65 minutes): ${stale}`,
               `- Cancellation requests accepted: ${cancelled}`,
               `- API errors: ${failed}`,
-              '- Protected: production Pages, postdeployment QA, Owner Worker, and recovery itself',
+              '- Protected: new scoped CI, full audit, production Pages, postdeployment QA, Owner Worker and recovery',
               '- Latest non-stale run per workflow / branch / event remains active',
               ...failures.map(s => `- Error ${s}`)
             ].join('\n');
