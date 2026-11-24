@@ -146,6 +146,7 @@ function renderWalkthrough(data,scroll){
   strip.append(btn);
  });
  const equation=$("ss-sys-ma-expression"),accumulator=$("ss-sys-ma-accumulator");
+ delete accumulator.dataset.verified;
  if(atStart){
   const fallback="y["+index+"] = (x["+index+"] + ⋯ + x["+(index-M+1)+"]) / "+M;
   renderMath(equation,"y["+index+"]=\\frac{1}{"+M+"}\\sum_{k=0}^{"+(M-1)+"}x["+
