@@ -83,6 +83,10 @@ function rcRender(){
  });
  $("ss-sys-voltage-balance").textContent="v_in(t) = v_R(t) + v_C(t)  →  "+
   fmt(point.x)+" V = "+fmt(vr)+" V + "+fmt(vc)+" V";
+ const reactanceK=1000/(2*Math.PI*s.frequency*s.Cmicro);
+ text("ss-sys-circuit-principle",
+  "At f = "+fmt(s.frequency,1)+" Hz, capacitor reactance |Z_C| ≈ "+fmt(reactanceK,2)+" kΩ versus R = "+fmt(s.Rk,0)+" kΩ. "+(isLow?"Output across C: low frequency passes; high frequency is attenuated.":"Output across R: low frequency is attenuated; high frequency passes."),
+  "f = "+fmt(s.frequency,1)+" Hz에서 커패시터 리액턴스 |Z_C| ≈ "+fmt(reactanceK,2)+" kΩ이고 R = "+fmt(s.Rk,0)+" kΩ입니다. "+(isLow?"C 양단을 측정하므로 저주파는 통과하고 고주파는 감쇠합니다.":"R 양단을 측정하므로 저주파는 감쇠하고 고주파는 통과합니다."));
  text("ss-sys-circuit-note",
  "The arrow indicates the input-to-output signal path (not electron flow). Voltages use the bottom node as reference. Move the time slider or click the waveform to inspect instantaneous values; the frequency gain/phase refer to sinusoidal steady state.",
  "화살표는 전하 이동이 아닌 입력→출력 신호 경로를 뜻합니다. 모든 전압은 아래 기준 노드에 대한 값입니다. 시간 슬라이더 또는 파형 클릭으로 순간 전압을 확인할 수 있으며, 주파수 이득·위상은 정현파 정상상태 기준입니다.");
