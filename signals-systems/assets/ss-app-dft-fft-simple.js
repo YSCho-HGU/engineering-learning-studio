@@ -70,6 +70,7 @@ function attachTranslation(){
  all("#butterfly-preset option").forEach((e,i)=>{e.textContent=L(...labels.presets[i])});
  all("#butterfly-stages button").forEach((b,i)=>{b.textContent=L(...labels.stages[i])});
  document.documentElement.lang=mode==="ko"?"ko":"en";
+ for(const id of ["dft-evidence-feedback","dft-transfer-feedback","dft-speed-feedback"]){if($(id)){ $(id).textContent="";delete $(id).dataset.result;}}
  const options=[
   ["dft-evidence-choice",[["Choose a hypothesis","가설 선택"],["X[k] itself changes","X[k] 자체가 변합니다"],["Only Hz labels and Δf change","Hz 축 및 Δf만 바뀝니다"]]],
   ["dft-transfer-choice",[["Choose a prediction","예측 선택"],["All X[k] = 1 (impulse at n=0)","모든 X[k] = 1 (n=0 임펄스)"],["All X[k] = 0","모든 X[k] = 0"],["Only X[0] is nonzero","X[0]만 0이 아닙니다"]]],
