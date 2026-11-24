@@ -53,6 +53,16 @@ async function test(view,width){
    assert.ok(data.chapterRect,"chapter picker missing");
    assert.ok(Math.abs(data.chapterRect.h-34)<=1.5,"chapter height "+data.chapterRect.h);
    assert.equal(data.arrowRects.length,4,"four navigation arrows");
+   if(width<=1100){
+    assert.ok(data.arrowRects.every(r=>Math.abs(r.y-data.arrowRects[0].y)<2),
+      "mobile/tablet: all four arrows must remain on one row");
+    assert.ok(data.arrowRects[0].x>=0&&data.arrowRects[3].right<=width+2,
+      "mobile/tablet: all four arrows must remain inside the viewport");
+    const center=(data.arrowRects[0].x+data.arrowRects[3].right)/2;
+    assert.ok(Math.abs(center-width/2)<8,"mobile/tablet arrows must be centered");
+   }
+   assert.equal(await page.evaluate(()=>typeof window.ELSHeaderControls?.makeNavigationArrow),"function",
+      "shared header component missing");
    if(width>=1101){const left=data.arrowRects[0].x,right=data.arrowRects[3].right;assert.ok(Math.abs((left+right)/2-(data.headerLeft+data.headerWidth/2))<=2,"arrow group must be geometrically centered");}
    for(const [i,r] of data.arrowRects.entries()){
     assert.ok(Math.abs(r.w-34)<=1.5&&Math.abs(r.h-34)<=1.5,"arrow "+i+" dimensions "+JSON.stringify(r));
