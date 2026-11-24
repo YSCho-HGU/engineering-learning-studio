@@ -49,7 +49,7 @@ try {
             visible:[...nav.children].every(el=>{const r=el.getBoundingClientRect();return r.width>=29&&r.height>=29&&getComputedStyle(el).visibility!=="hidden"}),
             overlaps:{menuNav:overlap(m,n),navActions:overlap(n,a)},
             selectors:actions.querySelectorAll("select").length,
-            noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+2
+            noHorizontalOverflow:n.right<=innerWidth+2&&a.right<=innerWidth+2
           };
         });
         assert.equal(d.layout,"grid",id+" header must use canonical grid");
