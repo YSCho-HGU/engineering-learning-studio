@@ -174,8 +174,43 @@ function init(){
  }
  const crumb=wrap.querySelector(".crumb");if(crumb)crumb.remove();
  const hero=wrap.querySelector(".hero");if(hero)hero.classList.add("c-ss-intro");
- if(fileioLabs){const existing=oldHeader.querySelector("#language-mode");if(existing){existing.hidden=true;existing.setAttribute("aria-hidden","true");existing.tabIndex=-1;header.append(existing)}}
- // The single C language picker is owned by c-programming/language.js.
+ // Each C page keeps its own existing language/content engine.
+ // Journey/practice pages use language.js; Guided Labs reuses its original
+ // #language-mode control; AI-Assisted Coding uses the shared ELSLanguage API.
+ if(fileioLabs){
+   const localPicker=oldHeader.querySelector("#language-mode");
+   if(localPicker){
+     const holder=localPicker.closest("label");
+     if(holder){
+       holder.id="c-shared-language";
+       holder.classList.add("c-native-language");
+       holder.hidden=false;
+       localPicker.hidden=false;
+       localPicker.removeAttribute("aria-hidden");
+       localPicker.removeAttribute("tabindex");
+       header.append(holder);
+       window.ELSLanguage?.bindSelect?.(localPicker);
+     }
+   }
+ }
+ if(course[0]==="ai-coding"){
+   const holder=el("label","c-native-language");
+   holder.id="c-shared-language";
+   const globe=el("span","ss-language-icon","🌐");
+   globe.setAttribute("aria-hidden","true");
+   const choice=el("select","");
+   choice.id="c-ai-language";
+   choice.setAttribute("aria-label","C Programming language");
+   for(const [value,name] of [["mixed","ENG + 한국어"],["en","ENG"],["ko","한국어"]]){
+     const option=el("option","",name);
+     option.value=value;
+     choice.append(option);
+   }
+   holder.append(globe,choice);
+   header.append(holder);
+   window.ELSLanguage?.bindSelect?.(choice);
+ }
+ // Journey and coding-practice pages retain their native picker in language.js.
  function refreshArrows(){const buttons=[...document.querySelectorAll(fileioTask?"#task-nav button[data-task]":fileioLabs?".side-nav a[data-lab-link]":practice?".cp-menu .cp-nav-item":fileio?"#lesson-nav button[data-nav]":"#lesson-nav button[data-lesson], #lesson-nav a[href^='#lab-']")];const idx=buttons.findIndex(b=>fileioLabs?b.getAttribute("href")===(location.hash||"#write"):fileioTask||practice?b.classList.contains("active"):fileio?b.classList.contains("current"):b.getAttribute("aria-current")==="step");previous.disabled=idx<=0;next.disabled=idx<0||idx>=buttons.length-1}
  const nav=(practice||fileioTask)?aside:fileioLabs?aside.querySelector(".side-nav"):aside.querySelector("#lesson-nav");
  if(nav){new MutationObserver(refreshArrows).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:["aria-current","class"]});nav.addEventListener("click",()=>requestAnimationFrame(refreshArrows))}
