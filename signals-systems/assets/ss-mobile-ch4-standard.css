@@ -226,3 +226,52 @@ html .ss-common-header .ss-common-menu>.ss-common-title>.ss-common-chapter-label
   gap:6px 9px!important
  }
 }
+
+/* Q2 · Shared Ch 1-8 phone first-screen contract, 2026-11-24.
+ * The chapter header, compact scrollable index, and lesson surface follow
+ * exactly the same dimensions for foundational and native chapters.
+ * Non-mobile and collapsed-rail contracts remain unchanged. */
+@media(max-width:600px){
+ :root{--ss-mobile-index-max:118px;--ss-mobile-reading-gutter:12px}
+ html:not([data-ss-sidebar="collapsed"]) body .ss-layout-root>.ss-layout-sidebar{
+  box-sizing:border-box!important;
+  max-height:var(--ss-mobile-index-max)!important;
+  width:100%!important;margin:0!important;
+  padding:6px 10px!important;
+  border-bottom:1px solid var(--els-border)!important;
+  scrollbar-width:thin;scroll-padding-top:45px
+ }
+ html:not([data-ss-sidebar="collapsed"]) body .ss-layout-root>.ss-layout-sidebar>.ss-sidebar-topline{
+  min-height:36px!important;
+  margin-bottom:5px!important;
+  padding-bottom:2px!important
+ }
+ html:not([data-ss-sidebar="collapsed"]) body .ss-layout-root>.ss-layout-sidebar nav{
+  margin:0!important;padding:0 0 4px!important;gap:6px!important
+ }
+ html:not([data-ss-sidebar="collapsed"]) body .ss-layout-root>.ss-layout-sidebar nav>button{
+  min-height:52px!important
+ }
+ html body .ss-layout-root>.ss-layout-main{
+  box-sizing:border-box!important;
+  padding-left:var(--ss-mobile-reading-gutter)!important;
+  padding-right:var(--ss-mobile-reading-gutter)!important;
+  padding-top:12px!important;
+  min-width:0!important;
+  overflow-wrap:break-word
+ }
+ html body .ss-layout-root>.ss-layout-main :is(.ss-found-23,#page>.lab,.ss6-control-plot-workspace,.ss7-stage-pair,.ss8-stage-pair){
+  min-width:0!important;
+  column-gap:10px!important;
+  row-gap:10px!important
+ }
+ html body .ss-layout-root>.ss-layout-main :is(.ss-found-23,.ss7-stage-pair,.ss8-stage-pair)>*{
+  min-width:0!important
+ }
+ html body .ss-layout-root>.ss-layout-main :is(canvas,svg){
+  display:block;max-width:100%
+ }
+ html:not([data-ss-sidebar="collapsed"]) body .ss-layout-root>.ss-layout-sidebar :is(.ss-side-toggle,nav>button):focus-visible{
+  outline:3px solid var(--els-focus,var(--els-link))!important;outline-offset:1px!important
+ }
+}
