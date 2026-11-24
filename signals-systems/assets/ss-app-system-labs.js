@@ -5,6 +5,7 @@ const core=window.SSSystemCore,lang=window.ELSLanguage,$=id=>document.getElement
 const kind=new URLSearchParams(location.search).get("lab")==="moving-average"?"moving-average":"rc";
 const defaults=kind==="rc"?{type:"low",shape:"sine",Rk:10,Cmicro:10,frequency:3,noise:.5,probe:330}:{M:7,shape:"trend",noise:.42,index:65};
 const state={...defaults};
+let activeExample=0;
 function tr(en,ko,compact){const m=lang?.get?.()||"mixed";return m==="en"?en:m==="ko"?ko:compact?en+" · "+ko:en+"\n"+ko;}
 function label(id,en,ko,compact){$(id).textContent=tr(en,ko,compact);}
 const num=(v,d=2)=>Number(v).toFixed(d);
@@ -19,15 +20,19 @@ const l=document.createElement("label");l.textContent=tr(en,ko,true);l.htmlFor="
 const el=document.createElement("select");el.id=l.htmlFor;
 opts.forEach(o=>{const t=document.createElement("option");t.value=o[0];t.textContent=tr(o[1],o[2],true);el.append(t);});
 el.value=state[key];el.addEventListener("change",()=>{state[key]=el.value;controls();render();});row.append(l,el);$("ss-sys-fields").append(row);}
+function displayRange(key,unit=""){
+ if(key==="probe"){const model=core.rcSimulate(state);return (model.series[Math.max(0,Math.min(1200,Math.round(state.probe)))].t*1000).toFixed(1)+" ms";}
+ return state[key]+unit;
+}
 function range(key,en,ko,min,max,step,unit=""){const row=document.createElement("div");row.className="ss-sys-field";
 const head=document.createElement("div");head.className="ss-sys-field-head";
 const l=document.createElement("label");l.htmlFor="sys-"+key;l.textContent=tr(en,ko,true);
-const out=document.createElement("output");out.id="out-"+key;out.textContent=state[key]+unit;head.append(l,out);
+const out=document.createElement("output");out.id="out-"+key;out.textContent=displayRange(key,unit);head.append(l,out);
 const el=document.createElement("input");el.id=l.htmlFor;el.type="range";el.min=min;el.max=max;el.step=step;el.value=state[key];
-el.addEventListener("input",()=>{state[key]=Number(el.value);out.textContent=state[key]+unit;render();});row.append(head,el);$("ss-sys-fields").append(row);}
+el.addEventListener("input",()=>{state[key]=Number(el.value);out.textContent=displayRange(key,unit);render();});row.append(head,el);$("ss-sys-fields").append(row);}
 function controls(){$("ss-sys-fields").replaceChildren();
 if(kind==="rc"){select("type","Filter type","필터 종류",[["low","Low-pass","저역통과"],["high","High-pass","고역통과"]]);select("shape","Input signal","입력 신호",[["sine","Sine","정현파"],["square","Square","구형파"],["step","Step","계단"],["sensor","Sensor + ripple","센서 + 리플"]]);
-range("Rk","Resistance R","저항 R",1,100,1," kΩ");range("Cmicro","Capacitance C","커패시턴스 C",1,100,1," µF");range("frequency",state.shape==="step"?"Frequency-response probe":state.shape==="square"?"Square-wave fundamental":state.shape==="sensor"?"Sensor base frequency":"Input frequency",state.shape==="step"?"주파수 응답 관찰점":state.shape==="square"?"구형파 기본주파수":state.shape==="sensor"?"센서 기본주파수":"입력 주파수",.2,20,.2," Hz");if(state.shape==="sensor")range("noise","Ripple strength","리플 강도",0,1,.05);range("probe","Inspect time sample","관찰할 시간 표본",0,1200,1);}
+range("Rk","Resistance R","저항 R",1,100,1," kΩ");range("Cmicro","Capacitance C","커패시턴스 C",1,100,1," µF");range("frequency",state.shape==="step"?"Frequency-response probe":state.shape==="square"?"Square-wave fundamental":state.shape==="sensor"?"Sensor base frequency":"Input frequency",state.shape==="step"?"주파수 응답 관찰점":state.shape==="square"?"구형파 기본주파수":state.shape==="sensor"?"센서 기본주파수":"입력 주파수",.2,20,.2," Hz");if(state.shape==="sensor")range("noise","Ripple strength","리플 강도",0,1,.05);range("probe","Inspect time t","관찰 시간 t",0,1200,1);}
 else{select("shape","Sensor pattern","센서 신호",[["trend","Slow trend","느린 변화"],["step","Step change","계단 변화"],["periodic","Periodic","주기 신호"],["constant","Constant","일정 신호"]]);
 range("M","Window size M","평균 길이 M",1,31,1);range("noise","Noise level","잡음 크기",0,1.2,.05);range("index","Inspect sample n","관찰 표본 n",0,127,1);}}
 function metric(data){const root=$("ss-sys-metrics");root.replaceChildren();data.forEach(([en,ko,value])=>{const b=document.createElement("div");b.className="ss-sys-metric";const s=document.createElement("span");s.textContent=tr(en,ko,true);const strong=document.createElement("strong");strong.textContent=value;b.append(s,strong);root.append(b);});}
@@ -48,6 +53,7 @@ if(opts.cursor!=null){c.strokeStyle=p.accent;c.setLineDash([4,4]);c.beginPath();
 c.restore();}
 function insight(en,ko){const root=$("ss-sys-insight"),h=document.createElement("strong"),p=document.createElement("p");h.textContent=tr("Interpret the result","결과 해석",true);p.textContent=tr(en,ko);root.replaceChildren(h,p);}
 function rc(){const p=colors(),d=core.rcSimulate(state),{tau,cutoff,frequency,frequencyPoint}=d,m=frequencyPoint.mag,phase=frequencyPoint.phase;
+ if($("out-probe"))$("out-probe").textContent=(d.series[Math.max(0,Math.min(1200,Math.round(state.probe)))].t*1000).toFixed(1)+" ms";
 drawMath(state.type==="low"?"H_{LP}(s)=\\frac{1}{1+sRC},\\quad f_c=\\frac{1}{2\\pi RC}":"H_{HP}(s)=\\frac{sRC}{1+sRC},\\quad f_c=\\frac{1}{2\\pi RC}");
 label("ss-sys-plot-title-1","Input and output","입력과 출력");label("ss-sys-plot-title-2","Frequency response |H(jω)|","주파수 응답 |H(jω)|");label("ss-sys-plot-title-3","Unit-step response","단위 계단응답");
 label("ss-sys-note-1","Capacitor = LP; resistor = HP. The simulation includes transients.","커패시터는 LP, 저항은 HP이며 과도응답도 포함됩니다.");
@@ -75,6 +81,29 @@ plot(3,[{color:p.output,stems:true,points:d.impulse.map(v=>[v.n,v.y])}],{xMax:d.
 const terms=win.terms.slice(0,7).map(v=>num(v.x,2)).join(" + ")+(M>7?" + …":"");
 insight("At n="+win.index+", y[n] = ("+terms+") / "+M+" = "+num(win.total,3)+". The linear-phase group delay is (M−1)/2 samples. Noise reduction by 1/√M assumes independent white noise.",
 "n="+win.index+"에서 y[n] = ("+terms+") / "+M+" = "+num(win.total,3)+"입니다. 선형위상 군지연은 (M−1)/2 표본이며 1/√M 잡음 감소는 독립 백색잡음에서 성립합니다.");}
+function setupExamples(){
+ const one=$("ss-sys-demo-one"),two=$("ss-sys-demo-two"),hint=$("ss-sys-demo-hint");
+ label("ss-sys-demo-title","Start with a prepared example","예제로 시작하기",true);
+ if(kind==="rc"){
+  one.textContent=tr("Slow tone","느린 정현파",true);
+  two.textContent=tr("Fast tone","빠른 정현파",true);
+  one.onclick=()=>{Object.assign(state,{type:"low",shape:"sine",Rk:10,Cmicro:10,frequency:.4,probe:330});activeExample=1;controls();render();setupExamples();};
+  two.onclick=()=>{Object.assign(state,{type:"low",shape:"sine",Rk:10,Cmicro:10,frequency:8,probe:330});activeExample=2;controls();render();setupExamples();};
+  hint.textContent=activeExample===1?tr("At f = 0.4 Hz, the LP output follows the input. Compare gain with 8 Hz.","f = 0.4 Hz에서 저역통과 출력이 입력을 따라갑니다. 8 Hz와 이득을 비교하세요."):
+    activeExample===2?tr("Only frequency changed: the same RC circuit now suppresses the faster sine wave.","주파수만 달라졌습니다. 같은 RC 회로가 빠른 정현파를 더 감쇠합니다."):
+    tr("Compare two input frequencies with the same R, C and low-pass circuit.","R·C 및 저역통과 회로를 유지한 채 두 입력 주파수를 비교합니다.");
+ }else{
+  one.textContent=tr("Noisy sensor","잡음 센서",true);
+  two.textContent=tr("Step edge","계단 변화",true);
+  one.onclick=()=>{Object.assign(state,{shape:"trend",M:5,noise:.8,index:65});activeExample=1;controls();render();setupExamples();};
+  two.onclick=()=>{Object.assign(state,{shape:"step",M:21,noise:0,index:55});activeExample=2;controls();render();setupExamples();};
+  hint.textContent=activeExample===1?tr("Click an output sample. Its value comes from the current and 4 past inputs.","출력 표본을 클릭하세요. 현재와 과거 4개 입력의 평균입니다."):
+    activeExample===2?tr("At the step edge, the causal window contains both old and new values; inspect all 21 taps.","계단 경계에서 인과적 평균 구간에 변화 전후 값이 함께 포함됩니다. 21개 항을 살펴보세요."):
+    tr("First see noise reduction, then inspect why a sudden edge becomes gradual.","잡음 감소를 먼저 보고, 갑작스러운 변화가 완만해지는 원인을 확인하세요.");
+ }
+ one.setAttribute("aria-pressed",String(activeExample===1));
+ two.setAttribute("aria-pressed",String(activeExample===2));
+}
 let frame=0;function render(){if(frame)cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{frame=0;if(kind==="rc")rc();else moving();window.dispatchEvent(new CustomEvent("ss:system-render",{detail:{kind,state:{...state}}}));});}
 window.SSSystemLab={kind,state,render,update(patch){Object.assign(state,patch);controls();render();}};
 function init(){const c=content[kind];label("ss-sys-title",...c.title,true);label("ss-sys-subtitle",...c.sub);label("ss-sys-question",...c.question);label("ss-sys-task",...c.task);
@@ -90,8 +119,8 @@ $("ss-sys-prev").disabled=kind==="rc";$("ss-sys-next").disabled=false;
 $("ss-sys-prev").onclick=()=>{if(kind!=="rc")location.href="./applications-system-lab.html?lab=rc";};
 $("ss-sys-next").onclick=()=>{location.href=kind==="rc"?"./applications-system-lab.html?lab=moving-average":"./applications-system-compare.html";};
 $("ss-sys-tab-compare").textContent=tr("03 · Compare Filters","03 · 필터 비교",true);
-controls();render();}
-$("ss-sys-reset").addEventListener("click",()=>{Object.assign(state,defaults);controls();render();});
+setupExamples();controls();render();}
+$("ss-sys-reset").addEventListener("click",()=>{Object.assign(state,defaults);activeExample=0;controls();render();setupExamples();});
 lang?.subscribe?.(init);window.addEventListener("els:themechange",render);window.addEventListener("resize",render);
 if(window.ResizeObserver){let lastWidth=0;new ResizeObserver(entries=>{const width=Math.round(entries[0].contentRect.width);if(width!==lastWidth){lastWidth=width;render();}}).observe($("ss-sys-workspace"));}init();
 })();
