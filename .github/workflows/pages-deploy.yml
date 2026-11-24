@@ -1,0 +1,62 @@
+name: Studio Pages - production
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - '404.html'
+      - '.nojekyll'
+      - 'assets/**'
+      - 'shared/**'
+      - 'c-programming/**'
+      - 'signals-systems/**'
+      - 'admin/**'
+      - 'progress/**'
+      - 'textbook-viewer/**'
+      - '.github/workflows/pages-deploy.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: studio-pages-production
+  cancel-in-progress: false
+jobs:
+  publish:
+    name: Validate and deploy static Studio
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check static entrypoints and header JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s index.html
+          test -s c-programming/index.html
+          test -s c-programming/arrays/index.html
+          test -s signals-systems/index.html
+          test -s signals-systems/chapter2.html
+          test -s assets/els-course-header.css
+          test -s assets/els-header-controls.js
+          test -s c-programming/c-ss-shell.js
+          test -s signals-systems/assets/ss-common-header.js
+          node --check assets/els-header-controls.js
+          node --check c-programming/c-ss-shell.js
+          node --check signals-systems/assets/ss-common-header.js
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Package the site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
