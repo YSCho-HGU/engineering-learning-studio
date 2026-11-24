@@ -15,7 +15,7 @@ const themes=["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark
 const failures=[];
 async function test(view,width){
  const context=await browser.newContext({viewport:{width,height:900}});
- await context.addInitScript(()=>{localStorage.setItem("els-language","en");localStorage.setItem("els-theme-v2","neutral-dark");localStorage.setItem("els-header-test-preserve","keep");});
+ await context.addInitScript(()=>{if(!sessionStorage.getItem("els-header-contract-initialized")){localStorage.setItem("els-language","en");localStorage.setItem("els-theme-v2","neutral-dark");localStorage.setItem("els-header-test-preserve","keep");sessionStorage.setItem("els-header-contract-initialized","1");}});
  const page=await context.newPage(),errors=[];
  page.on("pageerror",e=>errors.push(e.message));
  try{
