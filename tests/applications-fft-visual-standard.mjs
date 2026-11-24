@@ -39,6 +39,7 @@ try{
   await p.goto(pathToFileURL(path.join(root,"signals-systems",file)).href,{waitUntil:"domcontentloaded"});
   await p.locator("#ss-fft-path").waitFor({state:"visible"});
   await p.locator(cardSelector).first().waitFor({state:"visible"});
+  if(file==="applications-fft-image.html")await p.locator(".ss-image-advanced summary").click(); // Optional math is intentionally collapsed until requested.
   assert.equal(await p.locator('link[href*="ss-app-fft-visual-standard.css"]').count(),1,slug+": shared stylesheet not linked");
   assert.ok(await p.locator("header.ss-common-header").isVisible(),slug+": standard header missing");
   const mathElement=p.locator(mathSelector).first();
