@@ -1,3 +1,4 @@
+@import url("../assets/els-header-controls.css?v=shared-mobile-20261124");
 /* C Programming — shared Signals & Systems Chapter 5 geometry.
    Coordinates only; lesson data, model calculations and saved student work untouched. */
 :root{--c-sidebar-width:272px;--c-sidebar-rail:52px;--c-header-height:46px}
@@ -198,3 +199,23 @@ html[data-c-sidebar=collapsed] .c-sidebar-caption{display:none}
 .c-ss-content details.c-guided-code-example>p{font-size:15px;white-space:pre-line;line-height:1.75}
 .c-ss-content details.c-guided-code-example>pre{max-width:100%;overflow-x:auto;margin:12px 0 4px}
 .c-ss-workspace .c-ss-content :is(.cp-task-desc,#task-desc){white-space:pre-line;line-height:1.75}
+
+
+/* Shared header controls, including SVG arrow geometry, used by C and SS. */
+@media(min-width:1101px){
+ body.c-ss-course>.c-ss-header{position:sticky}
+ .c-ss-header .c-four-navigation{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0!important;z-index:3}
+ .c-ss-header .ss-common-menu{max-width:calc(50% - 104px)}
+ .c-ss-header .ss-common-actions{margin-left:auto;max-width:calc(50% - 104px)}
+}
+@media(max-width:1100px){
+ body.c-ss-course>.c-ss-header{flex-wrap:wrap;justify-content:space-between}
+ .c-ss-header .c-four-navigation{box-sizing:border-box;order:3;flex:1 1 100%;width:100%;min-width:0;max-width:100%;display:flex;flex-flow:row nowrap;align-items:center;justify-content:center;gap:clamp(5px,2vw,10px);margin:3px 0 0!important}
+ .c-ss-header .c-four-navigation .els-header-arrow{flex:0 0 34px}
+ .c-ss-header .ss-common-actions{margin-left:auto}
+}
+@media(max-width:620px){
+ .c-ss-header .ss-common-menu{min-width:0;max-width:calc(100% - 105px)}
+ .c-ss-header .ss-common-actions{order:2;width:100%;justify-content:flex-end}
+ .c-ss-header .c-four-navigation{order:3;flex:0 0 100%;white-space:nowrap}
+}
