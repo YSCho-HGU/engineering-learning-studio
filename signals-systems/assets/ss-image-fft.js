@@ -77,6 +77,7 @@ const filters=[["none","No filter","필터 없음"],["kernel","3×3 spatial kern
 const defaults={stage:1,kind:"stripes",N:256,cycles:8,angle:0,filter:"none",radius:22,notchU:12,notchV:7,notchRadius:2.5,view:"magnitude",kernel:"box",probeX:82,probeY:106};
 const state={...defaults};let bitmap=null,dirty=true,base=null,result=null,scheduled=0,interactions=0;
 const scan={anchorX:state.probeX,anchorY:state.probeY,progress:0,timer:null};
+let noiseHint=false;
 function feedback(message="",status=""){const el=$("image-feedback");el.textContent=message;if(status)el.dataset.result=status;else delete el.dataset.result;}
 function labels(){
  for(const [id,[en,ko]]of Object.entries(words))set(id,en,ko);
@@ -118,6 +119,8 @@ function sync(){
  $("image-angle-field").hidden=state.kind!=="stripes";
  $("image-kernel-panel").hidden=state.stage!==3;
  $("image-kernel-bridge").hidden=state.stage!==3||state.filter!=="kernel";
+ $("image-noise-hint").hidden=state.stage!==4||state.kind!=="noise";
+ $("image-noise-hint").textContent=noiseHint?tr("Hide noise-peak clue","잡음 피크 힌트 숨기기"):tr("Need a hint? Highlight the noise peaks","힌트: 잡음 피크 위치 표시");
  $("image-radius-field").hidden=!["low","high"].includes(state.filter);
  $("image-notch-radius-field").hidden=state.filter!=="notch";
  set("image-notch-hint",state.filter==="notch"?
@@ -276,10 +279,20 @@ function renderScan(m){
  }
  space.append(fragSpace);freq.append(fragFFT);
  $("image-scan-counter").textContent=scan.progress+" / 25";
+ if(scan.progress>=3)$("image-kernel-evidence").dataset.scanned="true";else delete $("image-kernel-evidence").dataset.scanned;
  if(scan.timer===null)$("image-scan-play").textContent=tr("Play scan","자동 이동");
  showRaster("image-input-canvas",m.input.pixels,N);
  showKernelInspector(m);
  showRaster("image-output-canvas",m.output.pixels,N);
+ showRaster("image-scan-source",m.input.pixels,N);
+ showRaster("image-scan-fft",m.output.pixels,N);
+ const preview=$("image-scan-source"),pc=preview.getContext("2d"),scale=preview.width/N;
+ pc.save();pc.strokeStyle="#f4aa62";pc.lineWidth=2.5;
+ pc.strokeRect((state.probeX-1.5)*scale,(state.probeY-1.5)*scale,3*scale,3*scale);
+ pc.restore();
+ const other=$("image-scan-fft"),oc=other.getContext("2d"),ss=other.width/N;
+ oc.save();oc.strokeStyle="#7ad9be";oc.lineWidth=2.5;
+ oc.strokeRect(state.probeX*ss,state.probeY*ss,Math.max(ss,2),Math.max(ss,2));oc.restore();
  const cv=$("image-output-canvas"),ctx=cv.getContext("2d"),size=cv.width/N;
  ctx.save();ctx.lineWidth=2.5;ctx.strokeStyle="#7ad9be";
  ctx.strokeRect(state.probeX*size,state.probeY*size,Math.max(size,2),Math.max(size,2));
@@ -315,9 +328,41 @@ function showKernelInspector(m){
  ctx.strokeRect(x-1.5*scale,y-1.5*scale,3*scale,3*scale);
  ctx.beginPath();ctx.arc(x+.5*scale,y+.5*scale,Math.max(3,scale),0,2*Math.PI);ctx.stroke();ctx.restore();
 }
+function liveObservation(m){
+ let en,ko;
+ if(state.stage===1){
+  const x=Math.abs(m.peak.u),y=Math.abs(m.peak.v);
+  en="Measured peak |u|="+x+", |v|="+y+" bins. More cycles → peaks farther from DC.";
+  ko="측정 피크 |u|="+x+", |v|="+y+" Bin. 반복 횟수가 늘면 DC에서 멀어집니다.";
+ }else if(state.stage===2){
+  en="Checkerboard edges repeat in both directions: compare its multiple harmonic peaks with a smooth cosine stripe.";
+  ko="체커보드 경계는 두 방향으로 반복됩니다. 여러 고조파 피크를 정현파 줄무늬와 비교하세요.";
+ }else if(state.stage===3){
+  en="Same image, same circular boundary: max |spatial−FFT2| = "+(m.output.maxDifference??0).toExponential(2)+". Observe how 3×3 turns into FFT2 multiplication.";
+  ko="같은 영상·순환 경계에서 최대 |공간−FFT2| = "+(m.output.maxDifference??0).toExponential(2)+". 3×3 가중합이 FFT2 곱셈과 연결됩니다.";
+ }else if(m.originalRMSE!==null){
+  const reduction=m.originalRMSE>0?Math.max(0,100*(1-m.filteredRMSE/m.originalRMSE)):0;
+  en="Periodic noise RMSE: "+m.originalRMSE.toFixed(3)+" → "+m.filteredRMSE.toFixed(3)+" ("+reduction.toFixed(1)+"% lower).";
+  ko="주기적 잡음 RMSE: "+m.originalRMSE.toFixed(3)+" → "+m.filteredRMSE.toFixed(3)+" ("+reduction.toFixed(1)+"% 감소).";
+ }else{
+  en="Choose a bright symmetric peak. Reconstruction changes when both conjugate components are attenuated.";
+  ko="대칭 밝은 피크를 선택하세요. 켤레 주파수 쌍을 감쇠시키면 복원 결과가 달라집니다.";
+ }
+ set("image-live-observation",en,ko);
+}
+function showNoiseHint(m){
+ if(!noiseHint||state.stage!==4||state.kind!=="noise")return;
+ const cv=$("image-spectrum-canvas"),ctx=cv.getContext("2d"),N=m.N;
+ ctx.save();ctx.strokeStyle="#ffcb71";ctx.lineWidth=3;
+ for(const sign of [1,-1]){
+  const x=(.5+sign*12/N)*cv.width,y=(.5+sign*7/N)*cv.height;
+  ctx.beginPath();ctx.arc(x,y,Math.max(8,cv.width*3/N),0,Math.PI*2);ctx.stroke();
+ }
+ ctx.restore();
+}
 function render(m){
  showRaster("image-input-canvas",m.input.pixels,m.N);
- showSpectrum(m);showMask(m);showKernelInspector(m);
+ showSpectrum(m);showNoiseHint(m);showMask(m);showKernelInspector(m);
  showRaster("image-output-canvas",m.output.pixels,m.N,state.filter==="high"?.5:0);
  if(state.stage===3&&state.filter==="kernel")renderScan(m);
  set("image-view-note-4",state.filter==="high"?
@@ -326,10 +371,10 @@ function render(m){
   state.filter==="high"?
   "고역통과 결과에서 0은 중간 회색으로 표시합니다.":
   "IFFT2는 크기와 위상을 포함한 복소 스펙트럼 전체로 복원합니다.");
- showMetrics(m);
+ showMetrics(m);liveObservation(m);
 }
 function chooseStage(stage){
- stopScan();state.stage=clamp(Number(stage),1,4);
+ stopScan();noiseHint=false;state.stage=clamp(Number(stage),1,4);
  if(state.stage===1)Object.assign(state,{kind:"stripes",cycles:8,angle:0,filter:"none",view:"magnitude"});
  if(state.stage===2)Object.assign(state,{kind:"checker",cycles:8,filter:"none",view:"magnitude"});
  if(state.stage===3)Object.assign(state,{kind:"scene",filter:"kernel",kernel:"box",probeX:82,probeY:106,view:"magnitude"});
@@ -373,7 +418,7 @@ async function loadImage(file){
  }catch(e){$("image-status").textContent=tr("Could not read image.","이미지를 읽을 수 없습니다.");}
 }
 function reset(){
- stopScan();Object.assign(state,defaults);if(bitmap?.close)bitmap.close();bitmap=null;dirty=true;
+ stopScan();noiseHint=false;Object.assign(state,defaults);if(bitmap?.close)bitmap.close();bitmap=null;dirty=true;
  $("image-upload").value="";$("image-preset").querySelector('[value="upload"]')?.remove();
  interactions=0;scan.anchorX=state.probeX;scan.anchorY=state.probeY;resetScan(false);feedback();$("image-prediction").value="";$("image-explanation").textContent="";$("image-status").textContent="";
  labels();schedule();
@@ -428,6 +473,7 @@ function bind(){
   else if(e.key==="ArrowUp")v--;else if(e.key==="ArrowDown")v++;else return;
   e.preventDefault();selectPeak(u,v);
  });
+ $("image-noise-hint").addEventListener("click",()=>{noiseHint=!noiseHint;sync();schedule();});
  $("image-check").addEventListener("click",check);
  $("image-reset").addEventListener("click",reset);
  $("image-export").addEventListener("click",()=>{
