@@ -81,9 +81,10 @@ function init(){const c=content[kind];label("ss-sys-title",...c.title,true);labe
 label("ss-sys-controls-title","Experiment Controls","실습 변수 조절",true);label("ss-sys-try-title","Try this","직접 실험하기",true);label("ss-sys-reset","Reset","초기화",true);label("ss-sys-return","Back to Applications","응용 목차로",true);
 document.title=tr(...c.title,true)+" | Engineering Learning Studio";document.documentElement.lang=lang?.get?.()==="ko"?"ko":"en";
 document.querySelectorAll("[data-system-tab]").forEach(a=>{const rc=a.dataset.systemTab==="rc";a.textContent=tr(rc?"01 · RC Filters":"02 · Moving Average",rc?"01 · RC 필터":"02 · 이동평균",true);if(a.dataset.systemTab===kind)a.setAttribute("aria-current","page");});
-$("ss-sys-prev").disabled=kind==="rc";$("ss-sys-next").disabled=kind==="moving-average";
+$("ss-sys-prev").disabled=kind==="rc";$("ss-sys-next").disabled=false;
 $("ss-sys-prev").onclick=()=>{if(kind!=="rc")location.href="./applications-system-lab.html?lab=rc";};
-$("ss-sys-next").onclick=()=>{if(kind==="rc")location.href="./applications-system-lab.html?lab=moving-average";};
+$("ss-sys-next").onclick=()=>{location.href=kind==="rc"?"./applications-system-lab.html?lab=moving-average":"./applications-system-compare.html";};
+$("ss-sys-tab-compare").textContent=tr("03 · Compare Filters","03 · 필터 비교",true);
 controls();render();}
 $("ss-sys-reset").addEventListener("click",()=>{Object.assign(state,defaults);controls();render();});
 lang?.subscribe?.(init);window.addEventListener("els:themechange",render);window.addEventListener("resize",render);
