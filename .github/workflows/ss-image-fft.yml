@@ -13,6 +13,10 @@ on:
       - 'tests/image-fft-browser.mjs'
       - '.github/workflows/ss-image-fft.yml'
   workflow_dispatch:
+concurrency:
+  group: qa-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   image-fft:
     runs-on: ubuntu-24.04

@@ -26,6 +26,10 @@ on:
       - 'tests/ss-chapters-full-qa.mjs'
       - '.github/workflows/ss-chapters-math-audit.yml'
   workflow_dispatch:
+concurrency:
+  group: qa-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   chapters-math:
     runs-on: ubuntu-latest
