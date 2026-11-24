@@ -41,9 +41,10 @@ function preview(host,i){
 }
 function gallery(root){
  heading(root,"Create your first app","나만의 첫 프로그램 만들기","Try a working project first. Choose just one — no new language or installation is required.","먼저 완성된 프로그램을 실행해 보세요. 하나만 선택하면 됩니다. 새로운 언어나 설치가 필요하지 않습니다.");
+ const quick=add(root,"div",undefined,"row");link(quick,"Start here: Reaction Time V1","여기서 시작: 반응속도 V1","./projects/versions/01-reaction-time/v1.html");link(quick,"Choose another project","다른 프로젝트 선택","./projects/versions/");add(root,"p",P("One working first version is enough. Later versions are optional.","V1 하나만 성공해도 충분합니다. 다음 버전은 선택입니다."),"muted");
  const tiles=add(root,"div",undefined,"tiles");
  projects.forEach((v,i)=>{const a=add(tiles,"a",undefined,"tile");a.href="./projects/"+v[0];a.dataset.project=String(i+1);preview(a,i);add(a,"p","PROJECT "+String(i+1).padStart(2,"0"),"eyebrow");add(a,"h3",B(v[1],v[2]));add(a,"p",P(v[3],v[4]));add(a,"p",v[5],"muted");add(a,"span",B("Try it →","체험하기 →"),"action")});
- link(root,"Explore all 30 runnable V1–V5 stages","6개 프로젝트 V1~V5 실행 버전","./projects/versions/");
+ 
  add(root,"h2",B("Your first 10 minutes","첫 10분"));
  steps(root,[["Try","체험","Open Reaction Time or choose another project. Change something and observe the result.","반응속도 게임 또는 원하는 프로그램을 열고 직접 조작해 보세요."],["Create","만들기","Copy Step 1 into your available AI coding tool. Ask for one self-contained HTML file. Save it as index.html in a new folder; open in a browser.","Step 1을 사용할 수 있는 AI 코딩 도구에 복사하세요. 단일 HTML 파일을 요청하고 새 폴더의 index.html로 저장하여 브라우저에서 실행하세요."],["Make it yours","내 것으로","Change one color, rule or feature; run it again. No need to understand every line yet.","색상이나 규칙, 기능을 한 가지 바꾸고 다시 실행하세요. 지금은 모든 코드를 이해할 필요가 없습니다."]]);
  add(root,"p",P("The demos run locally in your browser. Copying a prompt does not call an AI service. Use synthetic data, not credentials or personal records.","이 예제는 브라우저에서 직접 동작합니다. Prompt 복사는 AI 서비스 호출이 아닙니다. 비밀번호나 개인정보 대신 가상 데이터를 사용하세요."),"hint");
