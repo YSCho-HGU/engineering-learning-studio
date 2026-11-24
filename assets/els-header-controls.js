@@ -93,7 +93,7 @@
        language.setAttribute("aria-label","Select language / 언어 선택");
      }
    }
-   for(const select of header.querySelectorAll('[data-els-theme-picker],#theme-select,#theme')){
+   for(const select of header.querySelectorAll('select[data-els-theme-picker],select#theme-select,select#theme')){
      select.setAttribute("data-els-theme-picker","");
      select.setAttribute("aria-label","Theme / 화면 테마");
      if(win.ELSTheme&&typeof win.ELSTheme.get==="function"){
