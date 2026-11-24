@@ -5,6 +5,31 @@
 (function(win,doc){
  "use strict";
  if(win.ELSHeaderControls)return;
+  // Shared presentation component used by both C and Signals & Systems.
+  // Host course owns the navigation destination and its click behavior.
+  function makeNavigationArrow({kind="section",direction=1,label="",href=null}={}){
+    const element=doc.createElement(kind==="chapter"?"a":"button");
+    element.className="els-header-arrow ss-chapter-arrow ss-nav-"+kind;
+    element.setAttribute("aria-label",label);
+    element.title=label;
+    if(kind==="section")element.type="button";
+    if(href!==null&&kind==="chapter")element.setAttribute("href",href);
+    const svg=doc.createElementNS("http://www.w3.org/2000/svg","svg");
+    svg.setAttribute("viewBox","0 0 24 24");
+    svg.setAttribute("focusable","false");
+    svg.setAttribute("aria-hidden","true");
+    const path=doc.createElementNS("http://www.w3.org/2000/svg","path");
+    const left=direction<0;
+    path.setAttribute("d",left?"M15 5l-7 7 7 7":"M9 5l7 7-7 7");
+    svg.append(path);
+    if(kind==="chapter"){
+      const bar=doc.createElementNS("http://www.w3.org/2000/svg","path");
+      bar.setAttribute("d",left?"M5 5v14":"M19 5v14");
+      svg.append(bar);
+    }
+    element.append(svg);
+    return element;
+  }
  function normalize(root){
    const scope=root||doc;
    const header=scope.querySelector(".ss-common-header,.site-header,body > header");
@@ -51,5 +76,5 @@
  }
  function ready(){normalize();win.addEventListener("els:themechange",()=>normalize());}
  if(doc.readyState==="loading")doc.addEventListener("DOMContentLoaded",ready,{once:true});else ready();
- win.ELSHeaderControls=Object.freeze({normalize:()=>normalize(),themes:win.ELSTheme?.options?.slice()||[]});
+ win.ELSHeaderControls=Object.freeze({normalize:()=>normalize(),makeNavigationArrow,themes:win.ELSTheme?.options?.slice()||[]});
 })(window,document);
