@@ -1,5 +1,5 @@
 /* Part C · Lesson 07. Shared Studio palette, header, FFT picker, and accessibility rules. */
-:root{--img-panel-pad:13px}
+:root{--img-panel-pad:14px}
 html,body{max-width:100%;min-width:0}
 .ss-image-skip{position:absolute;left:12px;top:-250px;z-index:120;background:var(--els-surface);color:var(--els-ink);padding:9px;border-radius:8px}
 .ss-image-skip:focus{top:58px}
@@ -23,7 +23,7 @@ html,body{max-width:100%;min-width:0}
 .ss-image-field{display:grid;gap:5px;min-width:0}
 .ss-image-field label{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;font-weight:700;line-height:1.35}
 .ss-image-field output{font-size:12px;color:var(--els-link);font-variant-numeric:tabular-nums;white-space:nowrap}
-.ss-image-root select,.ss-image-root input[type=file]{width:100%;min-width:0;min-height:37px;border:1px solid var(--els-border);border-radius:8px;background:var(--els-surface-alt);color:var(--els-ink);font:13px Arial,"Malgun Gothic",sans-serif;padding:6px 9px}
+.ss-image-root select,.ss-image-root input[type=file]{width:100%;min-width:0;min-height:40px;border:1px solid var(--els-border);border-radius:8px;background:var(--els-surface-alt);color:var(--els-ink);font:13px Arial,"Malgun Gothic",sans-serif;padding:6px 9px}
 .ss-image-root input[type=range]{width:100%;min-width:0;accent-color:var(--els-link);cursor:pointer}
 .ss-image-root input[type=file]{height:auto;font-size:11px}
 .ss-image-rule{height:1px;background:var(--els-border)}
@@ -41,7 +41,7 @@ html,body{max-width:100%;min-width:0}
 .ss-image-step-counter{flex:0 0 auto;font-size:12px;color:var(--els-muted);border:1px solid var(--els-border);border-radius:7px;padding:4px 7px}
 .ss-image-views{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;min-width:0}
 .ss-image-view{display:grid;gap:6px;align-content:start;padding:10px}
-.ss-image-view h3{font-size:13px;line-height:1.4;margin:0;font-weight:750}
+.ss-image-view h3{font-size:16px;line-height:1.4;margin:0;font-weight:750}
 .ss-image-view canvas{display:block;width:100%;max-width:100%;aspect-ratio:1 / 1;height:auto;image-rendering:auto;background:#181818;border-radius:7px}
 .ss-image-view canvas[role=button]{cursor:crosshair}
 .ss-image-view p{font-size:11px;line-height:1.45;color:var(--els-muted);margin:0;min-height:2.9em}
@@ -65,7 +65,7 @@ html,body{max-width:100%;min-width:0}
 .ss-image-advanced summary{cursor:pointer;font-size:13px;font-weight:750;color:var(--els-ink)}
 .ss-image-advanced-body{display:grid;gap:10px;padding-top:10px}
 .ss-image-advanced-body p{font-size:13px;color:var(--els-muted);line-height:1.6;margin:0}
-.ss-image-formulas{display:grid;gap:10px;padding:12px;background:var(--els-surface);border:1px solid var(--els-border);border-radius:7px;font-size:15px;overflow-x:auto}
+.ss-image-formulas{display:grid;gap:10px;padding:12px;background:var(--els-surface);border:1px solid var(--els-border);border-radius:7px;font-size:16px;overflow-x:auto}
 .ss-image-formulas>div{min-width:0;overflow-x:auto;white-space:nowrap}
 .ss-image-advanced .ss-image-field{max-width:350px}
 [hidden]{display:none!important}
@@ -73,4 +73,5 @@ html,body{max-width:100%;min-width:0}
 @media(min-width:1750px){.ss-image-layout{grid-template-columns:310px minmax(0,1fr)}}
 @media(max-width:1100px){.ss-image-layout{grid-template-columns:minmax(240px,275px) minmax(0,1fr)}.ss-image-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:860px){.ss-image-layout{grid-template-columns:1fr}.ss-image-controls{position:static;max-height:none;overflow:visible}.ss-image-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.ss-image-views{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:720px){.ss-image-panel{padding:12px}.ss-image-view h3{font-size:15px}}
 @media(max-width:530px){.ss-image-steps{gap:5px}.ss-image-stage{padding:7px;gap:6px}.ss-image-stage strong{font-size:11px}.ss-image-views{grid-template-columns:1fr}.ss-image-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.ss-image-intro h1{font-size:23px}.ss-image-discovery-heading{flex-wrap:wrap}.ss-image-view canvas{width:min(100%,370px);margin-inline:auto}}
