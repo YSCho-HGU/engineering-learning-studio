@@ -18,8 +18,9 @@
 <script defer src="./assets/ss-app-dft-fft-core.js?v=1"></script>
 <script defer src="./assets/ss-app-fft-butterfly-core.js?v=20261123-numeric"></script>
 <script defer src="./assets/ss-app-fft-path.js?v=20261123-picker1"></script>
-<script defer src="./assets/ss-app-dft-fft-simple.js?v=1"></script>
+<script defer src="./assets/ss-app-dft-fft-simple.js?v=20261124-inquiry1"></script>
 <link rel="stylesheet" href="./assets/ss-app-fft-visual-standard.css?v=20261123-v1">
+<link rel="stylesheet" href="./assets/ss-app-inquiry.css?v=20261124-inquiry1">
 </head>
 <body>
 <a class="dft-skip" href="#dft-main">Skip to FFT experiment</a>
@@ -66,7 +67,14 @@
   </div>
   <div class="dft-explain">
    <div class="dft-formula" id="same-formula">X[k] = Σ x[n] e^(−j2πkn/N)</div>
-   <p id="same-discovery">The FFT produces the same complex DFT coefficients within floating-point precision. It is an algorithm, not a new transform.</p>
+   <p id="same-discovery">The FFT computes the same X[k]; changing fs relabels frequency in Hz, not the coefficients.</p>
+   <div class="ss-c-reason" id="dft-evidence">
+    <h3 id="dft-evidence-title">Predict · What changes when fs doubles?</h3>
+    <label for="dft-evidence-choice" id="dft-evidence-prompt">Keep the sample sequence and N fixed. Which claim is correct?</label>
+    <select id="dft-evidence-choice"><option value="">Choose a hypothesis</option><option value="coefficients">Complex X[k] values change</option><option value="labels">Only the Hz labels and bin spacing change</option></select>
+    <button type="button" id="dft-evidence-test">Test with identical samples</button>
+    <p class="ss-c-reason-feedback" id="dft-evidence-feedback" role="status"></p>
+   </div>
   </div>
   <details class="dft-optional"><summary id="same-table-toggle">Inspect complex coefficients X[k]</summary>
    <div class="dft-table-scroll"><table><thead><tr><th>k</th><th id="same-th-dft">Direct DFT</th><th id="same-th-fft">FFT</th><th id="same-th-error">|Error|</th></tr></thead><tbody id="same-rows"></tbody></table></div>
@@ -109,6 +117,13 @@
   </div>
   <div class="dft-verified" id="butterfly-proof" hidden>
    <h3 id="butterfly-proof-title">Final verification: FFT = DFT</h3>
+   <div class="ss-c-reason" id="dft-transfer">
+    <h3 id="dft-transfer-title">Apply · What if x[n] is an impulse?</h3>
+    <label for="dft-transfer-choice" id="dft-transfer-question">Predict all eight FFT coefficients before running the example.</label>
+    <select id="dft-transfer-choice"><option value="">Choose a prediction</option><option value="flat">All X[k] = 1 for an impulse at n=0</option><option value="zero">All X[k] = 0</option><option value="peak">Only X[0] is nonzero</option></select>
+    <button type="button" id="dft-transfer-test">Run the impulse experiment</button>
+    <p class="ss-c-reason-feedback" id="dft-transfer-feedback" role="status"></p>
+   </div>
    <p id="butterfly-proof-error"></p>
    <details class="dft-optional"><summary id="butterfly-proof-toggle">Compare all 8 coefficients</summary>
     <div class="dft-table-scroll"><table><thead><tr><th>k</th><th>FFT X[k]</th><th>Direct DFT X[k]</th><th>|Error|</th></tr></thead><tbody id="butterfly-proof-rows"></tbody></table></div>
@@ -133,7 +148,14 @@
   </div>
   <div class="dft-explain">
    <div class="dft-formula" id="speed-formula">Direct DFT: O(N²)  |  FFT: O(N log₂ N)</div>
-   <p id="speed-discovery">FFT reuses partial transforms. The chart shows growth rates, not exact instruction counts. Measured times depend on the browser and device.</p>
+   <p id="speed-discovery">The FFT reuses partial transforms. Measured times depend on the device; asymptotic complexity describes growth, not a guaranteed runtime ratio.</p>
+   <div class="ss-c-reason" id="dft-speed-predict">
+    <h3 id="dft-speed-predict-title">Apply · Doubling N</h3>
+    <label for="dft-speed-choice" id="dft-speed-question">If N doubles, how does the direct DFT operation count change approximately?</label>
+    <select id="dft-speed-choice"><option value="">Choose a prediction</option><option value="two">About 2×</option><option value="four">About 4×</option><option value="eight">About 8×</option></select>
+    <button type="button" id="dft-speed-check">Check with the complexity model</button>
+    <p class="ss-c-reason-feedback" id="dft-speed-feedback" role="status"></p>
+   </div>
   </div>
  </section>
  <div class="dft-related"><span id="related-label">Review related lessons:</span>
