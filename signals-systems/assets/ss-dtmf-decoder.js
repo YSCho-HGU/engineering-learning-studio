@@ -198,7 +198,7 @@ function init(){
  });
  $("dtmf-evidence-check").addEventListener("click",validateEvidence);
  $("dtmf-check").addEventListener("click",check);$("dtmf-next").addEventListener("click",next);
- W.ELSLanguage?.subscribe?.(localize);newMystery();localize();W.SSMathCore?.renderNow?.();
+ W.ELSLanguage?.subscribe?.(()=>{localize();$("dtmf-evidence-feedback").textContent="";delete $("dtmf-evidence-feedback").dataset.result;});newMystery();localize();W.SSMathCore?.renderNow?.();
 }
 W.SSDTMF=Object.freeze({tones,synth,fft,analyze,get state(){return{index:st.index,length:st.secret.length,correct:st.correct,attempts:st.tries,done:st.done}},get result(){return st.result}});
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
