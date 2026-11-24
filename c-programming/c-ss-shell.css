@@ -1,7 +1,7 @@
 @import url("../assets/els-header-controls.css?v=shared-mobile-20261124");
 /* C Programming — shared Signals & Systems Chapter 5 geometry.
    Coordinates only; lesson data, model calculations and saved student work untouched. */
-:root{--c-sidebar-width:272px;--c-sidebar-rail:52px;--c-header-height:46px}
+:root{--c-sidebar-width:272px;--c-sidebar-rail:52px;--c-header-height:56px}
 html,body{min-width:0}
 body.c-ss-course{margin:0;background:var(--els-page,#101010);color:var(--els-ink,#f0f0ed)}
 body.c-ss-course>.ss-common-header{
