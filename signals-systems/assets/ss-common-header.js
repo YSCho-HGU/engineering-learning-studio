@@ -56,8 +56,25 @@ function init(){
   arrows.setAttribute('aria-label','Chapter and section navigation');
   const make=(kind,direction,glyph,label)=>{
    const factory=window.ELSHeaderControls?.makeNavigationArrow;
-   if(typeof factory!=="function")throw new Error("Shared ELS header component not loaded");
-   const el=factory({kind,direction,label});
+   // A missing shared adapter must never remove the chapter navigation.
+   // This SVG-only fallback is used solely when a late or failed asset load occurs.
+   const el=typeof factory==="function"
+     ?factory({kind,direction,label})
+     :(()=>{
+       const item=document.createElement(kind==="chapter"?"a":"button");
+       item.className="els-header-arrow ss-chapter-arrow ss-nav-"+kind;
+       item.setAttribute("aria-label",label);item.title=label;
+       if(kind==="section")item.type="button";
+       const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+       svg.setAttribute("viewBox","0 0 24 24");svg.setAttribute("aria-hidden","true");
+       const stroke=document.createElementNS("http://www.w3.org/2000/svg","path");
+       stroke.setAttribute("d",direction<0?"M15 5l-7 7 7 7":"M9 5l7 7-7 7");svg.append(stroke);
+       if(kind==="chapter"){
+         const bar=document.createElementNS("http://www.w3.org/2000/svg","path");
+         bar.setAttribute("d",direction<0?"M5 5v14":"M19 5v14");svg.append(bar);
+       }
+       item.append(svg);return item;
+     })();
    if(kind==='section')el.dataset.ssSectionDirection=String(direction);
    else{
     const target=chapterNumber+direction;
