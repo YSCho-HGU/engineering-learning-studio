@@ -12,6 +12,7 @@ on:
       - 'signals-systems/assets/ss-common-header.css'
       - 'assets/els-header-controls.css'
       - 'assets/els-header-controls.js'
+      - 'assets/els-course-header.css'
       - 'signals-systems/assets/ss-common-header.css'
       - 'signals-systems/assets/ss-common-header.js'
       - 'tests/studio-header-contract-e2e.mjs'
@@ -27,6 +28,7 @@ on:
       - 'signals-systems/assets/ss-common-header.js'
       - 'signals-systems/assets/ss-common-header.css'
       - 'assets/els-header-controls.*'
+      - 'assets/els-course-header.css'
       - 'c-programming/c-ss-shell.*'
       - 'signals-systems/assets/ss-common-header.*'
       - 'tests/studio-header-contract-e2e.mjs'
@@ -51,3 +53,10 @@ jobs:
         run: node tests/studio-header-inventory.mjs
       - name: Run cross-course responsive header contract
         run: node tests/studio-header-contract-e2e.mjs
+      - name: Upload representative C and SS header screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shared-header-render-check
+          path: qa/header-screenshots/*.png
+          if-no-files-found: ignore
