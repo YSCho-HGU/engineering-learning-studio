@@ -35,7 +35,7 @@ try{
    await page.goto(base+"/signals-systems/applications-fft-image.html",{waitUntil:"domcontentloaded"});
    await page.waitForFunction(()=>window.SSImageFFTApp?.result?.output?.pixels?.length===65536,null,{timeout:20000});
    check(await page.locator("#ss-fft-path").isVisible(),"Missing common FFT module selector");
-   check((await page.locator("#ss-fft-path [aria-current=page] .ss-fft-path-number").innerText())==="07","Module picker not on 07");
+   check((await page.locator("#ss-fft-path [aria-current=page] .ss-fft-path-number").textContent())==="07","Module picker not on 07");
    check(await page.locator("header.ss-common-header").isVisible(),"Standard header missing");
    const canvases=["image-input-canvas","image-spectrum-canvas","image-mask-canvas","image-output-canvas"];
    for(const id of canvases){
