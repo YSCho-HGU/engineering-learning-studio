@@ -150,26 +150,31 @@ html body > header.ss-common-header.els-course-header :is(a,button,select,summar
   outline:2px solid var(--els-focus,#f2cc82)!important;
   outline-offset:2px!important;
 }
-/* C uses one native language picker immediately after the navigation.
-   S&S retains its existing right-hand language/theme pair unchanged. */
-html body > header.ss-common-header.els-course-header.c-ss-header {
+/* Shared C / S&S language control: same size, position and label treatment.
+   mountSlots moves the existing S&S select; nothing is duplicated. */
+html body > header.ss-common-header.els-course-header:has(> .els-course-language-slot) {
   grid-template-columns:max-content max-content max-content minmax(0,1fr)!important;
   grid-template-areas:"left navigation language actions"!important;
 }
-html body > header.ss-common-header.els-course-header.c-ss-header > .c-native-language {
+html body > header.ss-common-header.els-course-header > .els-course-language-slot {
   grid-area:language!important;
   display:inline-flex!important;
   align-items:center!important;
+  justify-self:start!important;
   gap:6px!important;
   min-width:0!important;
   white-space:nowrap!important;
   color:var(--els-ink,#eee)!important;
+  margin:0!important;padding:0!important;
+  border:0!important;background:transparent!important;
+  border-radius:0!important;
+  font:600 12px/1.2 system-ui,"Malgun Gothic",sans-serif!important;
 }
-html body > header.ss-common-header.els-course-header.c-ss-header > .c-native-language select {
+html body > header.ss-common-header.els-course-header > .els-course-language-slot select {
   box-sizing:border-box!important;
-  min-width:118px!important;
-  max-width:148px!important;
+  min-width:118px!important;max-width:148px!important;
   height:var(--els-course-control-size)!important;
+  min-height:var(--els-course-control-size)!important;
   padding:3px 8px!important;
   border:1px solid var(--els-border,#555)!important;
   border-radius:8px!important;
@@ -177,10 +182,13 @@ html body > header.ss-common-header.els-course-header.c-ss-header > .c-native-la
   color:var(--els-ink,#eee)!important;
   font:600 12px/1.2 system-ui,"Malgun Gothic",sans-serif!important;
 }
-
-/* Give the C language selector its own track on narrow laptop widths. */
+/* Overview has no section arrows; keep its language and theme adjacent. */
+html body > header.ss-common-header.els-course-header:not(:has(> nav.ss-four-navigation)):has(> .els-course-language-slot) {
+  grid-template-columns:minmax(0,1fr) max-content max-content!important;
+  grid-template-areas:"left language actions"!important;
+}
 @media(max-width:900px) {
-  html body > header.ss-common-header.els-course-header.c-ss-header {
+  html body > header.ss-common-header.els-course-header:has(> nav.ss-four-navigation):has(> .els-course-language-slot) {
     grid-template-columns:max-content max-content minmax(0,1fr)!important;
     grid-template-areas:"left left actions" "navigation language ."!important;
   }
@@ -210,11 +218,15 @@ html body > header.ss-common-header.els-course-header.c-ss-header > .c-native-la
   html body > header.ss-common-header.els-course-header > .ss-common-actions {
     justify-self:end!important;
   }
-  html body > header.ss-common-header.els-course-header.c-ss-header {
+  html body > header.ss-common-header.els-course-header:has(> nav.ss-four-navigation):has(> .els-course-language-slot) {
     grid-template-columns:max-content minmax(0,1fr)!important;
     grid-template-areas:"left left" "navigation language" "actions actions"!important;
   }
-  html body > header.ss-common-header.els-course-header.c-ss-header > .c-native-language {
+  html body > header.ss-common-header.els-course-header > .els-course-language-slot {
     justify-self:end!important;
+  }
+  html body > header.ss-common-header.els-course-header:not(:has(> nav.ss-four-navigation)):has(> .els-course-language-slot) {
+    grid-template-columns:minmax(0,1fr) auto!important;
+    grid-template-areas:"left left" "language actions"!important;
   }
 }

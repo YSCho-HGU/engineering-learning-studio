@@ -128,8 +128,8 @@ function init(){
  const languagePicker=header.querySelector('.ss-common-language-select');
  if(languagePicker){
   for(const option of languagePicker.options){
-   if(option.value==='mixed')option.textContent='한/영';
-   if(option.value==='en')option.textContent='English';
+   if(option.value==='mixed')option.textContent='ENG + 한국어';
+   if(option.value==='en')option.textContent='ENG';
    if(option.value==='ko')option.textContent='한국어';
   }
   languagePicker.setAttribute('aria-label','언어 선택 / Select language');

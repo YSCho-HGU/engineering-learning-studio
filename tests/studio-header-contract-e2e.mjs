@@ -118,6 +118,30 @@ async function test(view,width){
    assert.equal(data.arrowTargets[3],ch===8?"./applications.html":"./chapter"+(ch+1)+".html","next chapter target");
    assert.equal(data.arrowDisabled[0],ch===1,"first chapter boundary");}
   }
+  // Cross-course header contract: one picker, same visible labels and
+  // geometry, with Studio navigation returning to the integrated portal.
+  if(view.startsWith("signals-systems/")||cViews.includes(view)){
+    const parity=await page.evaluate(()=>{
+      const header=document.querySelector("body > header.ss-common-header.els-course-header");
+      const slot=header?.querySelector(":scope > .els-course-language-slot");
+      const select=slot?.querySelector("select");
+      const home=header?.querySelector(".ss-common-home");
+      const theme=header?.querySelector(".ss-common-actions [data-els-theme-picker]");
+      const nav=header?.querySelector(":scope > nav.ss-four-navigation");
+      const rect=x=>{if(!x)return null;const r=x.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,height:r.height}};
+      return {count:header?.querySelectorAll(".ss-common-language-select,#c-shared-language select").length||0,
+        labels:[...select?.options||[]].map(o=>o.textContent.trim()),
+        href:home?.href,slot:rect(slot),select:rect(select),nav:rect(nav),theme:rect(theme),
+        overflow:document.documentElement.scrollWidth-innerWidth};
+    });
+    assert.equal(parity.count,1,"one language select per course header");
+    assert.deepEqual(parity.labels,["ENG + 한국어","ENG","한국어"],"same C and S&S language options");
+    assert.ok(parity.select&&Math.abs(parity.select.height-34)<=1.5,"shared language picker height");
+    assert.equal(parity.href,base,"Studio link must open integrated Studio Home");
+    assert.ok(parity.overflow<=3,"course header overflow");
+    if(parity.nav&&width>=1101)assert.ok(parity.slot.left>=parity.nav.right-2,"picker after arrows");
+    if(parity.theme&&width>=1101)assert.ok(parity.theme.left>=parity.slot.right-2,"theme after picker");
+  }
   // Check the actual selected theme stays synchronized between DOM, picker, storage.
   // Keep representative visual evidence for human inspection in CI artifacts.
   if(["c-programming/functions/","signals-systems/chapter5.html"].includes(view)){
