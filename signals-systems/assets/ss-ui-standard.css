@@ -24,9 +24,7 @@
   position:sticky!important;
   top:0!important;
   z-index:90!important;
-  height:var(--ss-ui-header-height)!important;
-  min-height:var(--ss-ui-header-height)!important;
-  padding:5px 15px!important;
+  /* Header height, wrapping and padding are owned by ss-common-header.css. */
   border-bottom:1px solid var(--els-border,#8a9b9b)!important;
   background:var(--els-surface,#fff)!important;
   color:var(--els-ink,#22313a)!important;
