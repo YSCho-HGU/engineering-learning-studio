@@ -184,3 +184,14 @@ html body.c-ss-course > header.els-course-header.ss-common-header{
    z-index:5!important;
  }
 }
+
+/* 2026-11-24 navigation geometry correction: true viewport-centered group.
+   Both C and SS retain a full-width header while side groups differ in width. */
+@media(min-width:1101px){
+ html body > header.els-course-header.ss-common-header .els-course-header-navigation{
+   left:50vw!important;
+   right:auto!important;
+   justify-self:auto!important;
+   transform:translate(-50%,-50%)!important;
+ }
+}
