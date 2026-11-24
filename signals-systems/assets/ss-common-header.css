@@ -1,216 +1,76 @@
-/* Single shared Signals & Systems chapter header: Chapters 5, 6 and integrated 7. */
-.ss-common-header{box-sizing:border-box;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:12px!important;min-height:46px!important;height:46px!important;padding:5px 15px!important;position:relative;z-index:90;overflow:visible!important;border-bottom:1px solid var(--els-border,var(--border,#555));background:var(--els-surface,var(--surface,#202222))!important;color:var(--els-ink,var(--ink,#eee))!important;box-shadow:none}
-.ss-common-header .ss-common-home{font-size:12px;font-weight:750;white-space:nowrap;color:var(--els-link,var(--accent,#6ebac6));text-decoration:none}
-.ss-common-header .ss-common-menu{position:relative;flex:0 1 auto;min-width:0;max-width:min(65vw,620px)}
-.ss-common-header .ss-common-title{display:flex;align-items:center;gap:6px;cursor:pointer;list-style:none;font-size:13px;font-weight:750;line-height:1.3;white-space:normal;color:inherit}
-.ss-common-header .ss-common-title::-webkit-details-marker{display:none}
-.ss-common-header .ss-common-title:focus-visible{outline:2px solid var(--els-accent,var(--accent,#0e8491));outline-offset:4px}
-.ss-common-header .ss-common-links{position:absolute;top:calc(100% + 12px);left:0;z-index:999;display:grid;gap:2px;width:max-content;min-width:min(350px,calc(100vw - 24px));max-width:calc(100vw - 24px);max-height:min(65vh,500px);overflow-y:auto;padding:8px;border:1px solid var(--els-border,var(--border,#777));border-radius:8px;box-shadow:0 12px 32px #0005;background:var(--els-surface,var(--surface,#222));color:var(--els-ink,var(--ink,#eee))}
-.ss-common-header .ss-common-links a{display:block;padding:9px 12px;border-radius:5px;text-decoration:none;white-space:normal;line-height:1.4;color:inherit}
-.ss-common-header .ss-common-links a:hover,.ss-common-header .ss-common-links a:focus-visible{background:var(--els-accent,var(--accent,#0e8491));color:#fff}
-.ss-common-header .ss-common-links a[aria-current="page"]{font-weight:750;text-decoration:underline}
-.ss-common-header .ss-common-actions{margin-left:auto;display:flex;align-items:center;justify-content:flex-end;gap:10px;flex:0 0 auto}
-.ss-common-header .ss-common-actions label,.ss-common-header .ss-common-actions .theme-picker{display:flex;align-items:center;gap:5px;margin:0;padding:0;min-width:0;font-size:11px;font-weight:600;white-space:nowrap;color:inherit}
-.ss-common-header .ss-common-actions select{width:auto;max-width:158px;min-height:30px;font-size:11px;padding:3px 6px;border:1px solid var(--els-border,var(--border,#777));border-radius:7px;background:var(--els-surface,var(--surface,#222));color:var(--els-ink,var(--ink,#eee))}
-@media(max-width:700px){.ss-common-header{height:auto!important;min-height:46px!important;flex-wrap:wrap!important;gap:6px!important;padding:7px 9px!important}.ss-common-header .ss-common-menu{flex:1 1 calc(100% - 95px);max-width:calc(100% - 95px)}.ss-common-header .ss-common-actions{width:100%;margin-left:auto;justify-content:flex-end}.ss-common-header .ss-common-actions label{font-size:11px}}
-
-
-/* Accessible shared chapter chooser, all themes including Neutral Dark.
- * No white-on-light-accent combinations; keyboard and pointer states identical. */
-html .ss-common-header .ss-common-links{
- isolation:isolate!important;
- background:var(--els-surface)!important;
- color:var(--els-ink)!important;
- border-color:var(--els-border)!important;
+/* S&S header details only. Shared geometry and all four navigation arrows
+   are exclusively defined in ../../assets/els-course-header.css. */
+.ss-common-header {
+  z-index:90;
+  border-bottom:1px solid var(--els-border,var(--border,#555));
+  background:var(--els-surface,var(--surface,#202222));
+  color:var(--els-ink,var(--ink,#eee));
+  box-shadow:none;
 }
-html .ss-common-header .ss-common-links a{
- background:transparent!important;color:var(--els-ink)!important;
- font-size:13px!important;line-height:1.55!important;font-weight:600!important;
- text-decoration:none!important;
- min-height:39px!important;
+.ss-common-header .ss-common-home {
+  font-size:12px;font-weight:750;white-space:nowrap;
+  color:var(--els-link,var(--accent,#6ebac6));text-decoration:none;
 }
-html .ss-common-header .ss-common-links a:is(:hover,:focus-visible){
- background:var(--els-surface-alt)!important;color:var(--els-ink)!important;
- outline:2px solid var(--els-focus)!important;outline-offset:-2px!important;
+.ss-common-header .ss-common-menu {position:relative;min-width:0;}
+.ss-common-header .ss-common-title {font-size:13px;font-weight:750;line-height:1.3;color:inherit;cursor:pointer;list-style:none;}
+.ss-common-header .ss-common-title::-webkit-details-marker {display:none;}
+.ss-common-header .ss-common-links {
+  position:absolute;top:calc(100% + 9px);left:0;z-index:999;
+  display:none;gap:2px;
+  width:max-content;min-width:min(350px,calc(100vw - 24px));max-width:calc(100vw - 24px);
+  max-height:min(65vh,500px);overflow-y:auto;
+  padding:8px;border:1px solid var(--els-border);border-radius:8px;
+  box-shadow:0 12px 32px #0005;background:var(--els-surface);color:var(--els-ink);
 }
-html .ss-common-header .ss-common-links a[aria-current="page"]{
- background:var(--els-info-bg)!important;color:var(--els-info-ink)!important;
- border-left:3px solid var(--els-link)!important;
- padding-left:9px!important;text-decoration:none!important;font-weight:800!important;
+.ss-common-header .ss-common-menu[open] > .ss-common-links {display:grid;}
+.ss-common-header .ss-common-links a {
+  display:block;min-height:39px;padding:9px 12px;border-radius:5px;
+  font-size:13px;font-weight:600;line-height:1.5;text-decoration:none;color:var(--els-ink);
 }
-html .ss-common-header .ss-common-links a[aria-current="page"]:is(:hover,:focus-visible){
- background:var(--els-info-bg)!important;color:var(--els-info-ink)!important;
+.ss-common-header .ss-common-links a:is(:hover,:focus-visible) {
+  background:var(--els-surface-alt);outline:2px solid var(--els-focus);outline-offset:-2px;
 }
-html .ss-common-header .ss-common-title{
- color:var(--els-ink)!important;font-size:13px!important
+.ss-common-header .ss-common-links a[aria-current="page"] {
+  background:var(--els-info-bg);color:var(--els-info-ink);
+  border-left:3px solid var(--els-link);padding-left:9px;font-weight:800;
 }
-html .ss-common-header .ss-common-actions :is(select,option){
- color:var(--els-ink)!important;background:var(--els-surface)!important;
+.ss-common-header .ss-common-menu > summary.ss-common-title {
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  box-sizing:border-box;width:100%;min-height:34px;
+  margin:0;padding:4px 12px;
+  border:1px solid var(--els-border);border-radius:8px;
+  background:var(--els-surface-alt);color:var(--els-ink);
+  cursor:pointer;
 }
-
-/* Chapter-level navigation lives in the common header, after chapter title and to the right of center. */
-.ss-common-header .ss-chapter-arrows{
- display:flex!important;flex:0 0 auto!important;align-items:center!important;
- gap:7px!important;margin-left:auto!important;margin-right:12px!important;
- background:transparent!important;border:0!important;padding:0!important;
+.ss-common-header .ss-common-menu > summary.ss-common-title:is(:hover,:focus-visible),
+.ss-common-header .ss-common-menu[open] > summary.ss-common-title {
+  border-color:var(--els-link);
 }
-.ss-common-header .ss-chapter-arrow{
- box-sizing:border-box!important;display:grid!important;place-items:center!important;
- width:34px!important;height:30px!important;border:1px solid var(--els-border)!important;
- border-radius:7px!important;background:var(--els-surface-alt)!important;
- color:var(--els-ink)!important;font:800 19px/1 Arial,sans-serif!important;text-decoration:none!important;
+.ss-common-header .ss-common-menu > summary.ss-common-title > span[aria-hidden="true"] {display:none;}
+.ss-common-header .ss-common-menu > summary.ss-common-title::after {
+  content:"";display:block;flex:0 0 8px;width:8px;height:8px;
+  border-right:2px solid currentColor;border-bottom:2px solid currentColor;
+  transform:translateY(-2px) rotate(45deg);
 }
-.ss-common-header .ss-chapter-arrow:is(:hover,:focus-visible){
- border-color:var(--els-link)!important;outline-offset:2px!important;
+.ss-common-header .ss-common-menu[open] > summary.ss-common-title::after {transform:translateY(2px) rotate(225deg);}
+.ss-common-header .ss-common-actions :is(.ss-common-language,.ss-common-theme) {
+  display:inline-flex;align-items:center;gap:5px;min-width:0;margin:0;padding:0;
+  font-size:12px;font-weight:650;color:var(--els-ink);
 }
-.ss-common-header .ss-chapter-arrow[aria-disabled="true"]{
- opacity:.35!important;pointer-events:none!important;
+.ss-common-header .ss-common-actions select {
+  box-sizing:border-box;height:34px;min-height:34px;
+  padding:3px 9px;border:1px solid var(--els-border);border-radius:8px;
+  font:600 12px/1.2 system-ui,"Malgun Gothic",sans-serif;
+  background:var(--els-surface);color:var(--els-ink);
 }
-.ss-common-header:has(.ss-chapter-arrows) .ss-common-actions{
- margin-left:0!important;
-}
-@media(max-width:700px){
- .ss-common-header .ss-chapter-arrows{margin-left:auto!important;margin-right:5px!important}
- .ss-common-header .ss-chapter-arrow{width:30px!important}
-}
-
-/* The chapter title is a complete dropdown trigger, not a tiny chevron target. */
-.ss-common-header .ss-common-menu{
- flex:0 1 auto!important;min-width:0!important;
-}
-html .ss-common-header .ss-common-menu > summary.ss-common-title{
- box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:space-between!important;
- gap:14px!important;min-height:34px!important;width:100%!important;
- margin:0!important;padding:5px 12px!important;
- border:1px solid var(--els-border)!important;border-radius:8px!important;
- background:var(--els-surface-alt)!important;color:var(--els-ink)!important;
- cursor:pointer!important;white-space:normal!important;
- transition:border-color .15s ease,background-color .15s ease!important;
-}
-html .ss-common-header .ss-common-menu > summary.ss-common-title:hover,
-html .ss-common-header .ss-common-menu[open] > summary.ss-common-title{
- border-color:var(--els-link)!important;background:var(--els-info-bg)!important;
-}
-html .ss-common-header .ss-common-menu > summary.ss-common-title:focus-visible{
- outline:2px solid var(--els-focus)!important;outline-offset:2px!important;
-}
-.ss-common-header .ss-common-menu > summary.ss-common-title > span[aria-hidden="true"]{
- display:none!important;
-}
-.ss-common-header .ss-common-menu > summary.ss-common-title::after{
- content:""!important;display:block!important;flex:0 0 8px!important;
- width:8px!important;height:8px!important;border-right:2px solid currentColor!important;
- border-bottom:2px solid currentColor!important;transform:translateY(-2px) rotate(45deg)!important;
- opacity:.95!important;transition:transform .15s ease!important;
-}
-.ss-common-header .ss-common-menu[open] > summary.ss-common-title::after{
- transform:translateY(2px) rotate(225deg)!important;
-}
-
-/* 2026-11-22: One compact language/theme and four-arrow header on all chapters. */
-html .ss-common-header .ss-common-actions{
- display:flex!important;align-items:center!important;gap:9px!important;
- margin-left:0!important;min-width:0!important;flex:0 0 auto!important
-}
-html .ss-common-header .ss-common-actions :is(.ss-common-language,.ss-common-theme){
- display:inline-flex!important;align-items:center!important;gap:5px!important;
- min-width:0!important;margin:0!important;padding:0!important;
- font-size:12px!important;font-weight:650!important;color:var(--els-ink)!important;
- background:transparent!important;border:0!important
-}
-html .ss-common-header .ss-common-actions .ss-common-language select{
- min-width:82px!important;max-width:112px!important
-}
-html .ss-common-header .ss-common-actions .ss-common-theme select{
- min-width:110px!important;max-width:145px!important
-}
-html .ss-common-header .ss-four-navigation{
- display:flex!important;align-items:center!important;justify-content:flex-end!important;
- gap:5px!important;margin:0 7px 0 auto!important;
- min-width:0!important;flex:0 0 auto!important;padding:0!important;
- background:none!important;border:0!important;
-}
-html .ss-common-header .ss-four-navigation .ss-chapter-arrow{
- display:grid!important;place-items:center!important;box-sizing:border-box!important;
- width:32px!important;min-width:32px!important;height:32px!important;
- padding:0!important;margin:0!important;border:1px solid var(--els-border)!important;
- border-radius:8px!important;text-decoration:none!important;
- background:var(--els-surface-alt)!important;color:var(--els-ink)!important;
- font:750 20px/1 Arial,sans-serif!important;cursor:pointer!important
-}
-html .ss-common-header .ss-four-navigation .ss-nav-chapter{
- font-size:22px!important;background:var(--els-surface)!important;
- border-color:var(--els-link)!important
-}
-html .ss-common-header .ss-four-navigation .ss-nav-section{
- font-size:19px!important
-}
-html .ss-common-header .ss-four-navigation .ss-chapter-arrow:is(:hover,:focus-visible){
- border-color:var(--els-link)!important;outline-offset:2px!important;
- background:var(--els-info-bg)!important
-}
-html .ss-common-header .ss-four-navigation .ss-chapter-arrow:is(:disabled,[aria-disabled="true"]){
- opacity:.38!important;cursor:default!important;pointer-events:none!important
-}
-html .ss-common-header .ss-common-menu{
- min-width:0!important;max-width:min(46vw,520px)!important;flex:0 1 auto!important
-}
-html .ss-common-header .ss-common-title{
- max-width:100%!important
-}
-@media(max-width:950px){
- html .ss-common-header{height:auto!important;min-height:46px!important;flex-wrap:wrap!important}
- html .ss-common-header .ss-common-menu{max-width:calc(100% - 110px)!important}
- html .ss-common-header .ss-four-navigation{margin-left:auto!important}
- html .ss-common-header .ss-common-actions{width:auto!important;margin-left:0!important}
-}
-@media(max-width:620px){
- html .ss-common-header .ss-four-navigation{order:2!important;margin-left:auto!important}
- html .ss-common-header .ss-common-actions{order:3!important;width:100%!important;justify-content:flex-end!important}
-}
-
-/* 2026-11-22: focus ring clearance at the top of every chapter header. */
-html .ss-common-header{
- height:auto!important;min-height:58px!important;
- padding-top:10px!important;padding-bottom:10px!important;
- overflow:visible!important;
-}
-html .ss-common-header :is(select,button,a,summary):focus-visible{
- outline-offset:2px!important;
-}
-@media(max-width:950px){html .ss-common-header{min-height:58px!important;padding-top:10px!important;padding-bottom:10px!important}}
-
-/* Unified 34px chapter, language and theme controls; compact 30px navigation. */
-html .ss-common-header .ss-common-menu > summary.ss-common-title{height:34px!important;min-height:34px!important;padding:4px 12px!important}
-html .ss-common-header .ss-common-actions select{box-sizing:border-box!important;height:34px!important;min-height:34px!important;padding:3px 9px!important;line-height:1.2!important;border-radius:8px!important}
-html .ss-common-header .ss-four-navigation .ss-chapter-arrow{width:30px!important;min-width:30px!important;height:30px!important;font-size:17px!important;line-height:1!important}
-html .ss-common-header .ss-four-navigation .ss-nav-chapter{font-size:18px!important}
-html .ss-common-header .ss-four-navigation .ss-nav-section{font-size:16px!important}
-
-/* Readable English-first bilingual instructional copy. */
-html .ss-i18n-mixed-paragraph{white-space:pre-line!important;line-height:1.65!important}
-
-/* Data-model language views: English-first explanatory paragraphs remain legible. */
-html[data-els-language="mixed"] .ss-layout-main :is(p,.desc,.notice,.insight,.smallnote,.guide-check,.step p,.answer,.ss5-flow-label){white-space:pre-line}
-
-
-/* Mobile chapter chooser must remain within the viewport, independent of
-   variable-width chapter labels or the parent heading alignment. */
-@media(max-width:700px){
-  html .ss-common-header .ss-common-menu .ss-common-links{
-    position:fixed!important;
-    top:52px!important;
-    left:12px!important;
-    right:12px!important;
-    width:auto!important;
-    min-width:0!important;
-    max-width:calc(100vw - 24px)!important;
-    box-sizing:border-box!important;
-    overflow-x:hidden!important;
+.ss-common-header .ss-common-actions .ss-common-language select {min-width:82px;max-width:112px;}
+.ss-common-header .ss-common-actions .ss-common-theme select {min-width:110px;max-width:145px;}
+.ss-i18n-mixed-paragraph {white-space:pre-line;line-height:1.65;}
+html[data-els-language="mixed"] .ss-layout-main :is(p,.desc,.notice,.insight,.smallnote,.guide-check,.step p,.answer,.ss5-flow-label) {white-space:pre-line;}
+@media(max-width:700px) {
+  .ss-common-header .ss-common-menu .ss-common-links {
+    position:fixed;top:52px;left:12px;right:12px;
+    width:auto;min-width:0;max-width:calc(100vw - 24px);overflow-x:hidden;
   }
-  html .ss-common-header .ss-common-menu .ss-common-links a{
-    max-width:100%!important;
-    box-sizing:border-box!important;
-    overflow-wrap:anywhere!important;
-  }
+  .ss-common-header .ss-common-links a {overflow-wrap:anywhere;}
 }
