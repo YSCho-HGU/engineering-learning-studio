@@ -50,15 +50,17 @@ function init(){
  const chapterNumber=chapterMatch?Number(chapterMatch[1]):0;
  if(chapterNumber){
   const existing=header.querySelector('.ss-chapter-arrows');
-  if(existing)existing.remove();
-  const arrows=document.createElement('nav');
+  // Reuse semantic HTML navigation: never remove working arrows during hydration.
+  const arrows=existing||document.createElement('nav');
+  let arrowIndex=0;
   arrows.className='ss-chapter-arrows ss-four-navigation';
   arrows.setAttribute('aria-label','Chapter and section navigation');
   const make=(kind,direction,glyph,label)=>{
    const factory=window.ELSHeaderControls?.makeNavigationArrow;
    // A missing shared adapter must never remove the chapter navigation.
    // This SVG-only fallback is used solely when a late or failed asset load occurs.
-   const el=typeof factory==="function"
+   const preserved=existing?.children[arrowIndex++];
+   const el=preserved || (typeof factory==="function"
      ?factory({kind,direction,label})
      :(()=>{
        const item=document.createElement(kind==="chapter"?"a":"button");
@@ -74,7 +76,7 @@ function init(){
          bar.setAttribute("d",direction<0?"M5 5v14":"M19 5v14");svg.append(bar);
        }
        item.append(svg);return item;
-     })();
+     })());
    if(kind==='section')el.dataset.ssSectionDirection=String(direction);
    else{
     const target=chapterNumber+direction;
