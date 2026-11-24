@@ -26,12 +26,22 @@ const words={
  "image-view-note-1":["Grayscale intensity at pixel coordinates (x,y).","픽셀 좌표 (x,y)의 흑백 밝기 값입니다."],
  "image-view-note-2":["Centered log magnitude; click a peak to remove its conjugate pair.","중심 이동 로그 크기 스펙트럼입니다. 피크를 클릭하면 켤레 주파수 쌍이 제거됩니다."],
  "image-view-note-3":["Bright passes; dark attenuates. Kernel display shows normalized |H[u,v]|.","밝은 영역은 통과하고 어두운 영역은 감쇠합니다. 커널은 정규화된 |H[u,v]|을 보여줍니다."],
- "image-kernel-title":["How does a 3×3 kernel transform one pixel?","3×3 커널은 한 픽셀을 어떻게 바꿀까요?"],
+ "image-kernel-title":["Move a 3×3 kernel · Compare two calculations","3×3 커널 이동 · 두 가지 계산 비교"],
+ "image-kernel-kicker":["ONE PIXEL AT A TIME → SAME IMAGE","한 픽셀씩 계산 → 동일한 이미지"],
  "image-kernel-choice-label":["Choose a kernel","커널 선택"],
- "image-kernel-intro":["Select Box, Gaussian or Sharpen, then click an input pixel. Pixel intensities are normalized to 0–1; displayed values are rounded.","평균·가우시안·선명화 커널을 선택하고 입력 픽셀을 클릭하세요. 밝기 값은 0~1로 정규화하며 화면에서는 반올림해 표시합니다."],
+ "image-kernel-intro":["Press Next pixel or Play scan. Watch the 3×3 neighborhood slide across a 5×5 region. Click the input image to choose another region.","다음 픽셀 또는 자동 이동을 누르세요. 3×3 이웃 영역이 5×5 구간을 이동합니다. 입력 이미지를 클릭하면 다른 영역을 선택합니다."],
  "image-kernel-patch-label":["3×3 neighboring pixels","주변 3×3 픽셀"],
  "image-kernel-weight-label":["3×3 kernel weights","3×3 커널 가중치"],
- "image-kernel-link":["This is the 2D extension of Part B’s moving average. Circular convolution in space equals complex FFT2 multiplication: G = FFT2(I) × FFT2(h).","Part B의 이동평균을 2차원으로 확장한 것입니다. 공간 영역의 순환 컨벌루션은 복소 FFT2 곱셈과 같습니다: G = FFT2(I) × FFT2(h)."],
+ "image-kernel-link":["Part B's moving average extends to 2D: with the SAME circular boundary rule, the weighted sum equals FFT2(I) × FFT2(h) followed by IFFT2. For a tiny 3×3 kernel, direct spatial filtering can be faster—FFT is not automatically faster.","Part B의 이동평균을 2차원으로 확장한 것입니다. 동일한 순환 경계 조건에서는 공간 가중합과 FFT2(I) × FFT2(h)를 IFFT2한 값이 일치합니다. 단, 작은 3×3 커널에서는 직접 공간 필터가 더 빠를 수 있습니다. FFT가 항상 빠른 것은 아닙니다."],
+ "image-scan-play":["Play scan","자동 이동"],"image-scan-next":["Next pixel","다음 픽셀"],
+ "image-scan-restart":["Restart 5×5","5×5 다시 시작"],
+ "image-scan-speed-label":["Scan speed","이동 속도"],
+ "image-spatial-heading":["A · Spatial convolution","A · 공간 컨벌루션"],
+ "image-spatial-help":["The kernel slides over 3×3 input pixels and computes ONE output at a time.","커널이 3×3 입력 영역을 이동하면서 출력 픽셀을 한 개씩 계산합니다."],
+ "image-fft-heading":["B · FFT2 × H → IFFT2","B · FFT2 × H → IFFT2"],
+ "image-fft-help":["FFT2 uses all rows and columns, multiplies the complex kernel response, then reconstructs the ENTIRE image.","행과 열에 FFT2를 적용하고 복소 커널 응답을 곱한 뒤 전체 이미지에 IFFT2를 적용합니다."],
+ "image-spatial-local-label":["5×5 pixels revealed in scan order","이동 순서대로 완성되는 5×5 출력"],
+ "image-fft-local-label":["Same 5×5 pixels already computed by IFFT2","IFFT2에서 한꺼번에 계산된 같은 5×5 출력"],
  "image-reason-title":["Predict → Observe → Explain","예측 → 관찰 → 설명"],
  "image-check":["Verify with evidence","근거로 확인"],"image-next":["Next discovery","다음 발견"],
  "image-advanced-title":["How 2D FFT works · Advanced","2D FFT 계산 원리 · 심화"],
@@ -52,9 +62,9 @@ const exercises={
  explain:["Unlike a sinusoidal grating, a checkerboard contains multiple harmonics on both spatial axes.","정현파 줄무늬와 달리 체커보드는 두 공간 축에 여러 고조파 성분이 존재합니다."]},
  3:{title:["How does a pixel kernel become a frequency filter?","픽셀 커널은 어떻게 주파수 필터가 될까요?"],
  hint:["Click a pixel in the input image. Compare its 3×3 neighborhood, Box/Gaussian/Sharpen weights, and the FFT-derived filter response. Change kernels.","입력 이미지의 픽셀을 클릭하세요. 주변 3×3 값과 평균·가우시안·선명화 가중치, FFT로 계산한 필터 응답을 비교하고 커널을 바꿔 보세요."],
- q:["Which kernel smooths a local image region?","주변 밝기 변화를 부드럽게 하는 커널은?"],
- a:[["The Box or Gaussian averaging kernel","평균 또는 가우시안 가중 평균 커널"],["The Sharpen kernel with negative neighbor weights","이웃 픽셀에 음수 가중치를 주는 선명화 커널"]],
- explain:["An averaging kernel combines neighbors with positive weights that add to one. Sharpen emphasizes local differences. With the same periodic boundary rule, spatial 3×3 convolution and multiplication by FFT2(kernel) produce the SAME output.","평균 커널은 양수 가중치를 합계 1이 되도록 주변에 적용합니다. 선명화 커널은 국소적인 차이를 강조합니다. 같은 주기적 경계 규칙을 쓰면 공간 3×3 컨벌루션과 FFT2(커널) 곱셈은 같은 결과를 냅니다."]},
+ q:["Why can the spatial scan and the FFT method produce the same pixel values?","공간 커널 이동과 FFT 방법이 동일한 픽셀값을 만드는 이유는?"],
+ a:[["Convolution theorem + matching circular boundaries","컨벌루션 정리와 동일한 순환 경계 조건"],["Because FFT discards phase and uses only magnitude","FFT가 위상을 버리고 크기만 사용하기 때문"]],
+ explain:["The convolution theorem connects a pixel's weighted neighborhood to complex spectrum multiplication. The identical result depends on using the same circular boundary rule, including at image edges. Observe at least three successive pixels before concluding; FFT is not always faster for small kernels.","컨벌루션 정리는 국소 픽셀 가중합을 복소 스펙트럼 곱셈과 연결합니다. 영상 경계를 포함해 순환 경계 규칙이 같아야 결과가 일치합니다. 연속된 픽셀 세 개 이상을 확인하세요. 작은 커널에서 FFT가 반드시 더 빠른 것은 아닙니다."]},
  4:{title:["Can an FFT remove periodic image noise?","FFT로 주기적 이미지 잡음을 제거할 수 있을까요?"],
  hint:["Find bright peaks around (±12, ±7). Click either peak; the symmetric notch pair filters the image before IFFT.","(±12, ±7) 근처 밝은 피크 중 하나를 클릭하세요. 대칭 Notch 쌍이 적용되고 IFFT로 복원됩니다."],
  q:["Why reject both opposite peaks?","왜 서로 반대쪽 피크 두 개를 제거할까요?"],
@@ -66,6 +76,7 @@ const kernelChoices=[["Box average","3×3 평균"],["Gaussian blur","가우시�
 const filters=[["none","No filter","필터 없음"],["kernel","3×3 spatial kernel (FFT equivalent)","3×3 공간 커널 (FFT로 동일 계산)"],["low","Gaussian low-pass","가우시안 저역통과"],["high","Gaussian high-pass","가우시안 고역통과"],["notch","Symmetric notch reject","대칭 Notch 제거"]];
 const defaults={stage:1,kind:"stripes",N:256,cycles:8,angle:0,filter:"none",radius:22,notchU:12,notchV:7,notchRadius:2.5,view:"magnitude",kernel:"box",probeX:82,probeY:106};
 const state={...defaults};let bitmap=null,dirty=true,base=null,result=null,scheduled=0,interactions=0;
+const scan={anchorX:state.probeX,anchorY:state.probeY,progress:0,timer:null};
 function feedback(message="",status=""){const el=$("image-feedback");el.textContent=message;if(status)el.dataset.result=status;else delete el.dataset.result;}
 function labels(){
  for(const [id,[en,ko]]of Object.entries(words))set(id,en,ko);
@@ -103,6 +114,7 @@ function sync(){
  $("image-cycles-field").hidden=!["stripes","checker"].includes(state.kind);
  $("image-angle-field").hidden=state.kind!=="stripes";
  $("image-kernel-panel").hidden=state.stage!==3;
+ $("image-kernel-bridge").hidden=state.stage!==3||state.filter!=="kernel";
  $("image-radius-field").hidden=!["low","high"].includes(state.filter);
  $("image-notch-radius-field").hidden=state.filter!=="notch";
  set("image-notch-hint",state.filter==="notch"?
@@ -240,6 +252,7 @@ function render(m){
  showRaster("image-input-canvas",m.input.pixels,m.N);
  showSpectrum(m);showMask(m);showKernelInspector(m);
  showRaster("image-output-canvas",m.output.pixels,m.N,state.filter==="high"?.5:0);
+ if(state.stage===3&&state.filter==="kernel")renderScan(m);
  set("image-view-note-4",state.filter==="high"?
   "Signed high-pass: zero is displayed as middle gray.":
   "IFFT2 uses the entire complex filtered spectrum.",
@@ -249,18 +262,21 @@ function render(m){
  showMetrics(m);
 }
 function chooseStage(stage){
- state.stage=clamp(Number(stage),1,4);
+ stopScan();state.stage=clamp(Number(stage),1,4);
  if(state.stage===1)Object.assign(state,{kind:"stripes",cycles:8,angle:0,filter:"none",view:"magnitude"});
  if(state.stage===2)Object.assign(state,{kind:"checker",cycles:8,filter:"none",view:"magnitude"});
  if(state.stage===3)Object.assign(state,{kind:"scene",filter:"kernel",kernel:"box",probeX:82,probeY:106,view:"magnitude"});
  if(state.stage===4)Object.assign(state,{kind:"noise",filter:"none",notchU:12,notchV:7,notchRadius:2.5,view:"magnitude"});
  $("image-prediction").value="";$("image-explanation").textContent="";feedback();
- interactions=0;dirty=true;stageLabels();sync();schedule();
+ interactions=0;dirty=true;resetScan(false);stageLabels();sync();schedule();
 }
 function check(){
  const answer=$("image-prediction").value,e=exercises[state.stage];
  if(!answer){feedback(tr("Choose an answer first.","먼저 답을 선택하세요."),"retry");return;}
  if(!interactions){feedback(tr("Explore at least one variable or FFT peak first.","변수나 FFT 피크를 먼저 조작하세요."),"retry");return;}
+ if(state.stage===3&&(state.filter!=="kernel"||scan.progress<3)){
+  feedback(tr("First calculate at least 3 neighboring pixels in the spatial scan, then compare the matching FFT values.","먼저 공간 커널을 최소 3개 픽셀에 이동하여 계산하고 해당 FFT 결과와 비교하세요."),"retry");return;
+ }
  if(state.stage===4&&state.filter!=="notch"){feedback(tr("Select a bright FFT peak and apply its mirrored notch.","밝은 피크를 선택해 대칭 Notch를 적용하세요."),"retry");return;}
  const correct=answer==="a";
  feedback(correct?tr("Your observation supports this conclusion.","관찰 결과가 이 결론을 뒷받침합니다."):tr("Change the conditions and reconsider the result.","조건을 바꿔 결과를 다시 해석하세요."),correct?"correct":"retry");
@@ -290,9 +306,9 @@ async function loadImage(file){
  }catch(e){$("image-status").textContent=tr("Could not read image.","이미지를 읽을 수 없습니다.");}
 }
 function reset(){
- Object.assign(state,defaults);if(bitmap?.close)bitmap.close();bitmap=null;dirty=true;
+ stopScan();Object.assign(state,defaults);if(bitmap?.close)bitmap.close();bitmap=null;dirty=true;
  $("image-upload").value="";$("image-preset").querySelector('[value="upload"]')?.remove();
- interactions=0;feedback();$("image-prediction").value="";$("image-explanation").textContent="";$("image-status").textContent="";
+ interactions=0;resetScan(false);feedback();$("image-prediction").value="";$("image-explanation").textContent="";$("image-status").textContent="";
  labels();schedule();
 }
 function bind(){
@@ -301,13 +317,13 @@ function bind(){
  for(const [id,field,event,convert]of [
   ["image-preset","kind","change",String],["image-size","N","change",Number],
   ["image-cycles","cycles","input",Number],["image-angle","angle","input",Number]
- ])$(id).addEventListener(event,e=>{state[field]=convert(e.target.value);invalid();});
+ ])$(id).addEventListener(event,e=>{state[field]=convert(e.target.value);stopScan();resetScan(false);invalid();});
  for(const [id,field,event,convert]of [
   ["image-filter","filter","change",String],["image-radius","radius","input",Number],
   ["image-notch-radius","notchRadius","input",Number]
- ])$(id).addEventListener(event,e=>{state[field]=convert(e.target.value);interactions++;sync();schedule();});
+ ])$(id).addEventListener(event,e=>{state[field]=convert(e.target.value);stopScan();resetScan(false);interactions++;sync();schedule();});
  $("image-kernel-choice").addEventListener("change",e=>{
-  state.kernel=e.target.value;state.filter="kernel";interactions++;sync();schedule();
+  stopScan();state.kernel=e.target.value;state.filter="kernel";resetScan(false);interactions++;sync();schedule();
  });
  $("image-spectrum-view").addEventListener("change",e=>{state.view=e.target.value;schedule();});
  $("image-upload").addEventListener("change",e=>{void loadImage(e.target.files[0]);});
@@ -316,17 +332,17 @@ function bind(){
   if(state.stage!==3)return;
   state.probeX=clamp(Math.floor((cx-rect.left)/rect.width*state.N),0,state.N-1);
   state.probeY=clamp(Math.floor((cy-rect.top)/rect.height*state.N),0,state.N-1);
-  interactions++;schedule();
+  stopScan();resetScan(true);interactions++;schedule();
  }
  input.addEventListener("click",e=>setProbeFromPointer(e.clientX,e.clientY,input.getBoundingClientRect()));
  input.addEventListener("keydown",e=>{
   if(state.stage!==3)return;
-  if(e.key==="Enter"||e.key===" "){e.preventDefault();interactions++;schedule();return;}
+  if(e.key==="Enter"||e.key===" "){e.preventDefault();stopScan();resetScan(true);interactions++;schedule();return;}
   if(e.key==="ArrowLeft")state.probeX--;else if(e.key==="ArrowRight")state.probeX++;
   else if(e.key==="ArrowUp")state.probeY--;else if(e.key==="ArrowDown")state.probeY++;else return;
   e.preventDefault();
   state.probeX=clamp(state.probeX,0,state.N-1);state.probeY=clamp(state.probeY,0,state.N-1);
-  interactions++;schedule();
+  stopScan();resetScan(true);interactions++;schedule();
  });
  const spectrum=$("image-spectrum-canvas");
  spectrum.addEventListener("click",e=>{
