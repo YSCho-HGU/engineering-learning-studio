@@ -3,7 +3,7 @@
 "use strict";
 const core=window.SSSystemCore,lang=window.ELSLanguage,$=id=>document.getElementById(id);
 const kind=new URLSearchParams(location.search).get("lab")==="moving-average"?"moving-average":"rc";
-const defaults=kind==="rc"?{type:"low",shape:"sine",Rk:10,Cmicro:10,frequency:3,noise:.5}:{M:7,shape:"trend",noise:.42,index:65};
+const defaults=kind==="rc"?{type:"low",shape:"sine",Rk:10,Cmicro:10,frequency:3,noise:.5,probe:330}:{M:7,shape:"trend",noise:.42,index:65};
 const state={...defaults};
 function tr(en,ko,compact){const m=lang?.get?.()||"mixed";return m==="en"?en:m==="ko"?ko:compact?en+" · "+ko:en+"\n"+ko;}
 function label(id,en,ko,compact){$(id).textContent=tr(en,ko,compact);}
@@ -13,7 +13,7 @@ const content={
  rc:{title:["RC Low-Pass and High-Pass","RC 저역통과·고역통과"],sub:["Change the time constant and frequency to see what passes through.","시정수와 주파수를 조절하여 필터의 동작을 관찰합니다."],question:["Does the circuit pass slow and fast signals equally?","회로는 느린 신호와 빠른 신호를 똑같이 통과시킬까요?"],task:["Sweep the input frequency across the cutoff, then switch Low-pass and High-pass.","입력 주파수를 차단주파수 전후로 바꾸고 저역·고역통과 출력을 비교하세요."]},
  "moving-average":{title:["Moving Average and Sensor Smoothing","이동평균과 센서 평활화"],sub:["Observe a causal FIR filter and inspect convolution sample by sample.","인과적 FIR의 평활화와 컨벌루션을 표본 단위로 관찰합니다."],question:["Why does averaging remove noise but blur sudden changes?","평균은 잡음을 줄이면서 갑작스러운 변화를 왜 흐리게 할까요?"],task:["Select Step, increase M from 3 to 21, and inspect a sample during the transition.","Step을 선택하고 M을 3에서 21로 증가한 후 전이 구간의 표본을 관찰하세요."]}
 };
-function colors(){const s=getComputedStyle(document.documentElement);const get=(k,v)=>s.getPropertyValue(k).trim()||v;return {input:"#289bc0",output:"#de8a37",ideal:"#7cae76",muted:get("--els-muted","#9ba4a0"),grid:get("--els-border","#56605a"),accent:get("--els-link","#a9cbb4")};}
+function colors(){const s=getComputedStyle(document.documentElement);const get=(k,v)=>s.getPropertyValue(k).trim()||v;return {input:get("--ss-trace-teal","#289bc0"),output:get("--ss-trace-coral","#de8a37"),ideal:get("--ss-trace-gold","#7cae76"),muted:get("--els-muted","#9ba4a0"),grid:get("--ss-plot-grid",get("--els-border","#56605a")),accent:get("--els-link","#a9cbb4")};}
 function select(key,en,ko,opts){const row=document.createElement("div");row.className="ss-sys-field";
 const l=document.createElement("label");l.textContent=tr(en,ko,true);l.htmlFor="sys-"+key;
 const el=document.createElement("select");el.id=l.htmlFor;
@@ -27,7 +27,7 @@ const el=document.createElement("input");el.id=l.htmlFor;el.type="range";el.min=
 el.addEventListener("input",()=>{state[key]=Number(el.value);out.textContent=state[key]+unit;render();});row.append(head,el);$("ss-sys-fields").append(row);}
 function controls(){$("ss-sys-fields").replaceChildren();
 if(kind==="rc"){select("type","Filter type","필터 종류",[["low","Low-pass","저역통과"],["high","High-pass","고역통과"]]);select("shape","Input signal","입력 신호",[["sine","Sine","정현파"],["square","Square","구형파"],["step","Step","계단"],["sensor","Sensor + ripple","센서 + 리플"]]);
-range("Rk","Resistance R","저항 R",1,100,1," kΩ");range("Cmicro","Capacitance C","커패시턴스 C",1,100,1," µF");range("frequency","Input frequency","입력 주파수",.2,20,.2," Hz");if(state.shape==="sensor")range("noise","Ripple strength","리플 강도",0,1,.05);}
+range("Rk","Resistance R","저항 R",1,100,1," kΩ");range("Cmicro","Capacitance C","커패시턴스 C",1,100,1," µF");range("frequency","Input frequency","입력 주파수",.2,20,.2," Hz");if(state.shape==="sensor")range("noise","Ripple strength","리플 강도",0,1,.05);range("probe","Inspect time sample","관찰할 시간 표본",0,1200,1);}
 else{select("shape","Sensor pattern","센서 신호",[["trend","Slow trend","느린 변화"],["step","Step change","계단 변화"],["periodic","Periodic","주기 신호"],["constant","Constant","일정 신호"]]);
 range("M","Window size M","평균 길이 M",1,31,1);range("noise","Noise level","잡음 크기",0,1.2,.05);range("index","Inspect sample n","관찰 표본 n",0,127,1);}}
 function metric(data){const root=$("ss-sys-metrics");root.replaceChildren();data.forEach(([en,ko,value])=>{const b=document.createElement("div");b.className="ss-sys-metric";const s=document.createElement("span");s.textContent=tr(en,ko,true);const strong=document.createElement("strong");strong.textContent=value;b.append(s,strong);root.append(b);});}
@@ -56,7 +56,7 @@ label("ss-sys-note-3","Response shown versus normalized time t/τ.","정규화 �
 metric([["Time constant τ","시정수 τ",num(tau*1000,1)+" ms"],["Cutoff frequency","차단주파수",num(cutoff)+" Hz"],["Gain at input","입력 이득",num(m,3)+" ×"],["Phase at input","입력 위상",num(phase,1)+"°"],["f / cutoff","f / 차단주파수",num(frequency/cutoff,2)+" ×"]]);
 legend("ss-sys-legend-1",[["Input","입력",p.input],["Output","출력",p.output]]);legend("ss-sys-legend-2",[["Magnitude","크기",p.output],["Current frequency","현재 주파수",p.accent]]);
 const full=Math.max(1.15,...d.series.map(v=>Math.abs(v.x),Math.abs(v.y)))*1.08;
-plot(1,[{color:p.input,points:d.series.map(v=>[v.t,v.x])},{color:p.output,points:d.series.map(v=>[v.t,v.y])}],{xMax:d.duration,yMin:-full,yMax:full,xLabel:"t (s)"});
+plot(1,[{color:p.input,points:d.series.map(v=>[v.t,v.x])},{color:p.output,points:d.series.map(v=>[v.t,v.y])}],{xMax:d.duration,yMin:-full,yMax:full,xLabel:"t (s)",cursor:d.series[Math.max(0,Math.min(1200,state.probe))].t});
 const maxf=Math.max(20,4*cutoff,1.3*frequency),pts=Array.from({length:250},(_,i)=>maxf*i/249);
 plot(2,[{color:p.output,points:pts.map(f=>[f,core.rcFrequency(tau,f,state.type).mag])},{color:p.accent,points:[[frequency,0],[frequency,m]],dash:[4,4]}],{xMax:maxf,yMax:1.05,xLabel:"f (Hz)"});
 plot(3,[{color:p.output,points:d.step.map(v=>[v.x,v.y])}],{xMax:6,yMax:1.05,xLabel:"t / τ"});
@@ -75,7 +75,8 @@ plot(3,[{color:p.output,stems:true,points:d.impulse.map(v=>[v.n,v.y])}],{xMax:d.
 const terms=win.terms.slice(0,7).map(v=>num(v.x,2)).join(" + ")+(M>7?" + …":"");
 insight("At n="+win.index+", y[n] = ("+terms+") / "+M+" = "+num(win.total,3)+". The linear-phase group delay is (M−1)/2 samples. Noise reduction by 1/√M assumes independent white noise.",
 "n="+win.index+"에서 y[n] = ("+terms+") / "+M+" = "+num(win.total,3)+"입니다. 선형위상 군지연은 (M−1)/2 표본이며 1/√M 잡음 감소는 독립 백색잡음에서 성립합니다.");}
-let frame=0;function render(){if(frame)cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{frame=0;if(kind==="rc")rc();else moving();});}
+let frame=0;function render(){if(frame)cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{frame=0;if(kind==="rc")rc();else moving();window.dispatchEvent(new CustomEvent("ss:system-render",{detail:{kind,state:{...state}}}));});}
+window.SSSystemLab={kind,state,render,update(patch){Object.assign(state,patch);controls();render();}};
 function init(){const c=content[kind];label("ss-sys-title",...c.title,true);label("ss-sys-subtitle",...c.sub);label("ss-sys-question",...c.question);label("ss-sys-task",...c.task);
 label("ss-sys-controls-title","Experiment Controls","실습 변수 조절",true);label("ss-sys-try-title","Try this","직접 실험하기",true);label("ss-sys-reset","Reset","초기화",true);label("ss-sys-return","Back to Applications","응용 목차로",true);
 document.title=tr(...c.title,true)+" | Engineering Learning Studio";document.documentElement.lang=lang?.get?.()==="ko"?"ko":"en";
