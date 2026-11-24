@@ -8,6 +8,7 @@ const modules=[
  {file:"applications-fft-dtmf.html",en:"DTMF Decoder",ko:"DTMF 해독"},
  {file:"applications-fft-sound-fingerprint.html",en:"Sound Fingerprint",ko:"소리의 주파수 지문"},
  {file:"applications-fft-upload.html",en:"Real Audio & Sensor FFT",ko:"실제 음성·센서 FFT"},
+ {file:"applications-fft-image.html",en:"2D Image FFT Discovery",ko:"2D 이미지 FFT 발견"},
  {file:"applications-chirp-stft.html",en:"Chirp & STFT",ko:"Chirp · STFT",optional:true}
 ];
 const filename=decodeURIComponent(location.pathname.split("/").pop()||"");
@@ -42,7 +43,7 @@ function render(){
  const summary=document.createElement("summary");
  summary.className="ss-fft-path-summary";
  const caption=document.createElement("span");caption.className="ss-fft-path-meta";
- caption.textContent=modules[current].optional?local("OPTIONAL EXTENSION","선택 확장"):local("FFT APPLICATIONS · "+String(current+1).padStart(2,"0")+" / 06","FFT 실습 · "+String(current+1).padStart(2,"0")+" / 06");
+ caption.textContent=modules[current].optional?local("OPTIONAL EXTENSION","선택 확장"):local("FFT APPLICATIONS · "+String(current+1).padStart(2,"0")+" / 07","FFT 실습 · "+String(current+1).padStart(2,"0")+" / 07");
  const title=document.createElement("span");
  title.className="ss-fft-path-current";title.textContent=local(modules[current].en,modules[current].ko);
  const textGroup=document.createElement("span");textGroup.className="ss-fft-path-selector-label";textGroup.append(caption,title);
@@ -51,9 +52,9 @@ function render(){
  summary.setAttribute("aria-label",local("Choose FFT module. Current: "+modules[current].en,"FFT 실습 선택. 현재: "+modules[current].ko));
  const menu=document.createElement("div");menu.className="ss-fft-path-menu";
  const heading=document.createElement("p");heading.className="ss-fft-path-menu-heading";heading.textContent=local("FFT Fundamentals & Discovery","FFT 핵심 기초 · 발견 실습");menu.append(heading);
- modules.slice(0,6).forEach((m,i)=>menu.append(menuItem(m,i)));
+ modules.slice(0,7).forEach((m,i)=>menu.append(menuItem(m,i)));
  const optional=document.createElement("p");optional.className="ss-fft-path-menu-heading ss-fft-path-menu-optional";optional.textContent=local("Optional Extension","선택 확장");
- menu.append(optional,menuItem(modules[6],6));
+ menu.append(optional,menuItem(modules[7],7));
  menu.append(link("./applications.html#part-c",local("View all FFT contents","FFT 전체 목차 보기"),"ss-fft-path-all"));
  dropdown.append(summary,menu);
  const controls=document.createElement("div");controls.className="ss-fft-path-actions";
