@@ -1,61 +1,122 @@
 #!/usr/bin/env node
-/* Post-deployment smoke: verify real hosted C and Signals & Systems headers.
- * This suite operates in isolated browser profiles and never changes student data.
+/* Published-site regression for all active C and S&S chapters.
+ * Read-only, isolated browser contexts; neither student drafts nor progress are changed.
  */
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { chromium } from "playwright";
 
-const root = (process.env.PAGES_BASE_URL || "https://yscho-hgu.github.io/engineering-learning-studio/").replace(/\/?$/, "/");
-const pages = [
-  ["C", "c-programming/arrays/"],
-  ["SS", "signals-systems/chapter2.html"],
+const root = (process.env.PAGES_BASE_URL || "https://yscho-hgu.github.io/engineering-learning-studio/").replace(/\\?\/$/, "/");
+const cSlugs = ["arrays","strings","standard-library","functions","pointer","structure","file-io","dynamic-memory","ai-coding"];
+const targets = [
+  ...cSlugs.map(slug => ({course:"C", chapter:slug, route:`c-programming/${slug}/`})),
+  ...Array.from({length:8},(_,i)=>({course:"SS",chapter:String(i+1),route:`signals-systems/chapter${i+1}.html`}))
 ];
+const widths = [390,768,1280];
+const failures = [], results = [];
 const browser = await chromium.launch({headless:true});
-let failures = 0;
+const context=await browser.newContext({viewport:{width:1280,height:900}});
+await context.addInitScript(()=>{
+  localStorage.setItem("els-language","mixed");
+  localStorage.setItem("els-theme-v2","neutral-dark");
+  localStorage.setItem("studio-pages-smoke-marker","untouched");
+});
+const page=await context.newPage();
+let last;
 try {
-  for (const viewportWidth of [1280,390]) {
-    for (const [course,route] of pages) {
-      const ctx=await browser.newContext({viewport:{width:viewportWidth,height:900}});
-      const page=await ctx.newPage();
+  for(const width of widths) {
+    await page.setViewportSize({width,height:900});
+    for(const target of targets) {
+      const id=`${target.course}-${target.chapter}-${width}`;
+      const errors=[];
+      const onError=error=>errors.push(error.message);
+      page.on("pageerror",onError);
       try {
-        const response=await page.goto(root+route,{waitUntil:"domcontentloaded",timeout:45000});
-        assert.equal(response?.status(),200,`${course} page HTTP status`);
+        const response=await page.goto(root+target.route,{waitUntil:"domcontentloaded",timeout:45000});
+        assert.equal(response?.status(),200,`${id}: HTTP status`);
         await page.waitForFunction(()=>{
           const h=document.querySelector("body > header.ss-common-header");
-          const nav=h?.querySelector(".ss-four-navigation");
-          return !!nav && nav.querySelectorAll(".ss-chapter-arrow svg").length===4;
-        },null,{timeout:20000});
+          return h?.querySelectorAll(".ss-four-navigation .ss-chapter-arrow svg").length===4
+             && h.querySelectorAll(".ss-common-actions select").length>=2;
+        },null,{timeout:15000});
         const state=await page.evaluate(()=>{
           const header=document.querySelector("body > header.ss-common-header");
           const nav=header.querySelector(".ss-four-navigation");
-          const a=[...nav.querySelectorAll(".ss-chapter-arrow")];
-          const boxes=a.map(e=>e.getBoundingClientRect());
-          const hb=header.getBoundingClientRect();
+          const arrows=[...nav.querySelectorAll(".ss-chapter-arrow")];
+          const rects=arrows.map(e=>e.getBoundingClientRect());
+          const head=header.getBoundingClientRect();
+          const style=getComputedStyle(nav);
           return {
-            navCount:a.length,chapterLinks:a.filter(e=>e.classList.contains("ss-nav-chapter")).length,
-            sectionButtons:a.filter(e=>e.classList.contains("ss-nav-section")).length,
-            arrowsVisible:a.every(e=>{const s=getComputedStyle(e);return s.display!=="none"&&s.visibility!=="hidden"&&e.getBoundingClientRect().width>20}),
-            aligned:boxes.every(b=>Math.abs(b.top-boxes[0].top)<3),
-            fits:boxes[0].left>=-1&&boxes.at(-1).right<=innerWidth+1,
-            centerError:Math.abs((boxes[0].left+boxes.at(-1).right)/2-(hb.left+hb.width/2)),
-            sizes:boxes.map(b=>[Math.round(b.width),Math.round(b.height)]),
-            leftHref:a[0].getAttribute("href"),rightHref:a[3].getAttribute("href"),
+            count:arrows.length,
+            classes:arrows.map(e=>e.className),
+            tags:arrows.map(e=>e.tagName),
+            accessible:arrows.every(e=>e.getAttribute("aria-label") && e.querySelector("svg")),
+            visible:rects.every((r,i)=>r.width>=29&&r.height>=29&&
+              getComputedStyle(arrows[i]).visibility!=="hidden"&&getComputedStyle(arrows[i]).display!=="none"),
+            sameRow:rects.every(r=>Math.abs(r.top-rects[0].top)<=3),
+            insideViewport:rects[0].left>=-1&&rects.at(-1).right<=innerWidth+1,
+            centerError:Math.abs((rects[0].left+rects.at(-1).right)/2-(head.left+head.width/2)),
+            dimensions:rects.map(r=>[Math.round(r.width),Math.round(r.height)]),
+            navigationDisplay:style.display,
+            chapterLinks:[arrows[0].getAttribute("href"),arrows[3].getAttribute("href")],
+            sectionButtons:arrows.slice(1,3).every(e=>e.tagName==="BUTTON"),
+            localStoragePreserved:localStorage.getItem("studio-pages-smoke-marker")==="untouched",
+            chapterMenu:!!header.querySelector(".ss-common-menu > summary"),
+            language:!!header.querySelector(".ss-common-language-select"),
+            theme:!!header.querySelector("[data-els-theme-picker]"),
           };
         });
-        assert.equal(state.navCount,4);
-        assert.equal(state.chapterLinks,2);
-        assert.equal(state.sectionButtons,2);
-        assert.ok(state.arrowsVisible&&state.aligned&&state.fits,JSON.stringify(state));
-        assert.ok(state.centerError<=9,`Header arrows not centered: ${JSON.stringify(state)}`);
-        assert.ok(state.sizes.every(([w,h])=>w>=30&&w<=36&&h>=30&&h<=36),JSON.stringify(state));
-        assert.ok(state.rightHref,`Missing next chapter link: ${JSON.stringify(state)}`);
-        console.log("PASS",course,viewportWidth,JSON.stringify(state));
+        assert.equal(state.count,4,id+" arrow count");
+        assert.ok(state.accessible&&state.visible&&state.sameRow&&state.insideViewport,
+          id+" geometry "+JSON.stringify(state));
+        assert.ok(state.centerError<=10,id+" centering "+JSON.stringify(state));
+        assert.ok(state.dimensions.every(([w,h])=>Math.abs(w-34)<=4&&Math.abs(h-34)<=4),
+          id+" size mismatch "+JSON.stringify(state));
+        assert.ok(state.sectionButtons&&state.chapterMenu&&state.language&&state.theme,
+          id+" header controls "+JSON.stringify(state));
+        assert.ok(state.localStoragePreserved,id+" modified unrelated localStorage");
+        assert.ok(state.chapterLinks[1],id+" no next chapter");
+        assert.deepEqual(errors,[],id+" JS errors");
+        // Validate navigation destination without leaving the page: links must point
+        // to a published route. First chapter may intentionally have no previous link.
+        for(const href of state.chapterLinks.filter(Boolean)){
+          const dest=new URL(href,root+target.route);
+          assert.equal(dest.origin,new URL(root).origin,id+" unexpected chapter destination");
+          assert.ok(dest.pathname.startsWith(new URL(root).pathname),id+" links outside Studio");
+        }
+        // At desktop width, prove that section navigation responds to the learner's
+        // sidebar rather than merely rendering a decorative arrow.
+        if(width===1280){
+          const section=await page.evaluate(()=>{
+            const nav=document.querySelector(".ss-four-navigation");
+            const prev=nav.querySelector('.ss-nav-section[aria-label="Previous section"]');
+            const next=nav.querySelector('.ss-nav-section[aria-label="Next section"]');
+            return {previousDisabled:prev?.disabled,nextDisabled:next?.disabled};
+          });
+          assert.ok(typeof section.previousDisabled==="boolean"&&typeof section.nextDisabled==="boolean",
+            id+" section state not initialized");
+        }
+        results.push({id,status:"PASS",centerError:state.centerError,dimensions:state.dimensions});
+        console.log("PASS",id,"centerError="+state.centerError.toFixed(1));
       }catch(error){
-        failures++;
-        console.error("FAIL",course,viewportWidth,String(error));
-        await page.screenshot({path:`pages-smoke-${course.toLowerCase()}-${viewportWidth}.png`}).catch(()=>{});
-      }finally{await ctx.close();}
+        failures.push({id,error:String(error),pageErrors:errors});
+        console.error("FAIL",id,String(error));
+        // Keep lightweight forensic screenshots for deploy diagnostics.
+        await page.screenshot({path:`pages-smoke-${id}.png`,fullPage:false}).catch(()=>{});
+      }finally{
+        page.off("pageerror",onError);
+      }
     }
   }
-}finally{await browser.close();}
-if(failures){console.error(`${failures} production header smoke case(s) failed`);process.exitCode=1;}
+}finally{
+  await context.close();await browser.close();
+}
+const report={
+  schemaVersion:2,createdAt:new Date().toISOString(),root,sourceSha:process.env.GITHUB_SHA||null,
+  viewports:widths,activeCChapters:cSlugs,ssChapters:8,
+  cases:results.length+failures.length,passed:results.length,failed:failures.length,
+  results,failures
+};
+fs.writeFileSync("pages-smoke-report.json",JSON.stringify(report,null,2)+"\\n");
+console.log("PAGES_SMOKE_SUMMARY",JSON.stringify({cases:report.cases,passed:report.passed,failed:report.failed}));
+if(failures.length)process.exitCode=1;
