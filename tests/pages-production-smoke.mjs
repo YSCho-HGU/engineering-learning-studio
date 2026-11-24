@@ -10,7 +10,8 @@ const root = (process.env.PAGES_BASE_URL || "https://yscho-hgu.github.io/enginee
 const cSlugs = ["arrays","strings","standard-library","functions","pointer","structure","file-io","dynamic-memory","ai-coding"];
 const targets = [
   ...cSlugs.map(slug => ({course:"C", chapter:slug, route:`c-programming/${slug}/`})),
-  ...Array.from({length:8},(_,i)=>({course:"SS",chapter:String(i+1),route:`signals-systems/chapter${i+1}.html`}))
+  ...Array.from({length:8},(_,i)=>({course:"SS",chapter:String(i+1),route:`signals-systems/chapter${i+1}.html`})),
+  {course:"SS",chapter:"applications",route:"signals-systems/applications.html"}
 ];
 // Release fingerprint: never label a stale Pages publish as a successful UI fix.
 const cssResponse=await fetch(root+"assets/els-course-header.css",{cache:"no-store"});
@@ -89,7 +90,8 @@ try {
         assert.ok(state.sectionButtons&&state.chapterMenu&&state.language&&state.theme,
           id+" header controls "+JSON.stringify(state));
         assert.ok(state.localStoragePreserved,id+" modified unrelated localStorage");
-        if(target.course!=="C"||target.chapter!=="ai-coding")
+        if(!((target.course==="C"&&target.chapter==="ai-coding") ||
+          (target.course==="SS"&&target.chapter==="applications")))
           assert.ok(state.chapterLinks[1],id+" no next chapter");
         assert.deepEqual(errors,[],id+" JS errors");
         // Validate navigation destination without leaving the page: links must point
