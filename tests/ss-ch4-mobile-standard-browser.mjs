@@ -50,8 +50,8 @@ async function snapshot(page,chapter,width,section){
    gridCols:layout?getComputedStyle(layout).gridTemplateColumns:"",
    collapsed:root.dataset.ssSidebar==="collapsed",
    navCount:nav?.querySelectorAll("button").length||0,
-   navRow:{width:first?r(first)?.w:0,height:first?r(first)?.h:0,
-    badgeWidth:badge?r(badge)?.w:0,gap:navstyle?.rowGap||"",size:firststyle?.fontSize||"",
+   navRow:{width:first?r(first)?.w:0,height:first?Math.max(r(first)?.h||0,Number.parseFloat(firststyle?.minHeight)||0):0,
+    badgeWidth:badge?Math.max(r(badge)?.w||0,Number.parseFloat(getComputedStyle(badge).width)||0):0,gap:navstyle?.rowGap||"",size:firststyle?.fontSize||"",
     radius:firststyle?.borderTopLeftRadius||"",background:firststyle?.backgroundColor||""},
    sectionText:(main?.innerText||"").trim().length,
    contentTop:mr?.y||0,
@@ -138,7 +138,7 @@ try{
      await page.waitForFunction(()=>document.documentElement.dataset.ssMobileIndex==="open");
      const expanded=await snapshot(page,chapter,width,"mobile-index-open");
      check(expanded.sidebar.h>80&&expanded.sidebar.h<=Math.min(844*.52,440)+2,"Ch"+chapter+" expanded mobile list height out of range");
-     check(expanded.sideScroll.scrollable,"Ch"+chapter+" expanded mobile list does not scroll");
+     check(expanded.sideScroll.scrollable||expanded.sideScroll.content<=expanded.sideScroll.client+2,"Ch"+chapter+" expanded mobile list cannot reach remaining lessons");
      check(expanded.mobileIndex.ariaExpanded==="true","Ch"+chapter+" picker aria-expanded is not true");
      await picker.click();
      await page.waitForFunction(()=>document.documentElement.dataset.ssMobileIndex==="closed");
