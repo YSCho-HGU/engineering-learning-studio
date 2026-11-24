@@ -62,6 +62,14 @@ async function test(view,width){
   if(view.startsWith("signals-systems/chapter")||cViews.includes(view)){
    assert.equal(data.headerVersion,"3","shared header composer version");
    assert.equal(data.headerDisplay,"grid","shared layout must be grid");
+   const canonicalCss=await page.evaluate(()=>{
+    const styles=[...document.styleSheets];
+    return styles.some(sheet=>[...(() => {
+      try{return sheet.cssRules}catch{return []}
+    })()].some(rule=>rule.href?.includes("els-course-header.css"))) ||
+      styles.some(sheet=>sheet.href?.includes("els-course-header.css"));
+   });
+   assert.ok(canonicalCss,"canonical els-course-header.css must be imported directly by course CSS");
    assert.ok(data.chapterRect,"chapter picker missing");
    assert.ok(Math.abs(data.chapterRect.h-34)<=1.5,"chapter height "+data.chapterRect.h);
    assert.equal(data.arrowRects.length,4,"four navigation arrows");
