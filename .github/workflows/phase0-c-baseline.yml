@@ -15,6 +15,13 @@ on:
       - 'tests/phase0-storage-scan.mjs'
       - 'docs/phase0/c-storage-baseline.json'
       - '.github/workflows/phase0-c-baseline.yml'
+permissions:
+  contents: read
+
+concurrency:
+  group: qa-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   baseline:
     runs-on: ubuntu-24.04
