@@ -33,6 +33,8 @@ async function snapshot(page,chapter,width,section){
   const crossed=(a,b)=>!!a&&!!b&&Math.min(a.right,b.right)-Math.max(a.x,b.x)>7&&Math.min(a.bottom,b.bottom)-Math.max(a.y,b.y)>7;
   const lr=r(layout),hr=r(header),sr=r(sidebar),mr=r(main),a=r(main?.querySelector(selectors[0])),b=r(main?.querySelector(selectors[1]));
   const sideScroll={client:sidebar?.clientHeight||0,content:sidebar?.scrollHeight||0,scrollable:!!sidebar&&sidebar.scrollHeight>sidebar.clientHeight+2};
+  const mobileToggle=sidebar?.querySelector(".ss-mobile-index-toggle");
+  const mobileIndex={state:root.dataset.ssMobileIndex||"",buttonVisible:!!mobileToggle&&getComputedStyle(mobileToggle).display!=="none",ariaExpanded:mobileToggle?.getAttribute("aria-expanded")};
   const nav=sidebar?.querySelector("nav:has(> button)"),first=nav?.querySelector("button"),badge=first?.querySelector(".num,.ss7-lab-number,.ss8-lab-number");
   const navstyle=nav?getComputedStyle(nav):null,firststyle=first?getComputedStyle(first):null;
   const menu=header?.querySelector(".ss-common-menu>summary");
@@ -42,7 +44,7 @@ async function snapshot(page,chapter,width,section){
    return b.width>50&&b.height>40&&s.display!=="none"&&s.visibility!=="hidden";
   });
   const plotErrors=visiblePlots.filter(el=>{const b=el.getBoundingClientRect();return b.width<80||b.height<55}).map(el=>el.id||el.tagName);
-  return {chapter,width,section,header:hr,sidebar:sr,main:mr,root:lr,controls,sideScroll,
+  return {chapter,width,section,header:hr,sidebar:sr,main:mr,root:lr,controls,sideScroll,mobileIndex,
    cssHeader:Number.parseFloat(getComputedStyle(root).getPropertyValue("--ss-layout-header")),
    layoutDisplay:layout?getComputedStyle(layout).display:"",
    gridCols:layout?getComputedStyle(layout).gridTemplateColumns:"",
@@ -90,11 +92,13 @@ function validate(s,baseline){
   check(s.main.y>=s.sidebar.bottom-2,name+" main overlaps expanded nav");
   check(s.main.x>=-1&&s.main.right<=s.width+2,name+" main spills off phone");
   if(!s.collapsed){
-   check(s.sidebar.h<=120,name+" mobile index exceeds compact 118px contract: "+s.sidebar.h);
+   check(s.sidebar.h<=66,name+" closed mobile lesson picker exceeds 64px: "+s.sidebar.h);
+   check(s.mobileIndex.buttonVisible&&s.mobileIndex.ariaExpanded==="false",name+" mobile lesson toggle missing/incorrect");
+   check(s.mobileIndex.state==="closed",name+" mobile list should start closed");
    check(s.sidebar.h>=52,name+" mobile index missing or too short");
    check(s.main.y<=s.header.bottom+122,name+" lesson starts too far below header");
    check(s.sideScroll.content>=s.sideScroll.client,name+" index scroll dimensions invalid");
-   check(s.sideScroll.scrollable,name+" expanded index cannot scroll to remaining experiments");
+   // The closed picker intentionally hides scrolling; expanding is tested separately.
   }
  }else{
   check(s.layoutDisplay==="grid",name+" tablet sidebar must remain in two columns");
@@ -127,6 +131,18 @@ try{
     await page.goto(BASE+"/signals-systems/chapter"+chapter+".html",{waitUntil:"domcontentloaded"});
     const nav=page.locator(NAV[chapter]);await nav.first().waitFor({timeout:20000});
     await page.waitForTimeout(150);
+    if(width<=600){
+     const picker=page.locator(".ss-mobile-index-toggle").first();
+     check(await picker.isVisible(),"Ch"+chapter+" "+width+"px mobile lesson picker missing");
+     await picker.click();
+     await page.waitForFunction(()=>document.documentElement.dataset.ssMobileIndex==="open");
+     const expanded=await snapshot(page,chapter,width,"mobile-index-open");
+     check(expanded.sidebar.h>80&&expanded.sidebar.h<=Math.min(844*.52,440)+2,"Ch"+chapter+" expanded mobile list height out of range");
+     check(expanded.sideScroll.scrollable,"Ch"+chapter+" expanded mobile list does not scroll");
+     check(expanded.mobileIndex.ariaExpanded==="true","Ch"+chapter+" picker aria-expanded is not true");
+     await picker.click();
+     await page.waitForFunction(()=>document.documentElement.dataset.ssMobileIndex==="closed");
+    }
     const count=await nav.count();
     check(count>=4&&count<35,"Ch"+chapter+" invalid count "+count);
     const selected=width===390?Array.from({length:count},(_,i)=>i):[0,Math.floor(count/2),count-1];
@@ -134,6 +150,19 @@ try{
      await nav.nth(index).evaluate(el=>el.click());
      await page.waitForTimeout(75);
      const sample=await snapshot(page,chapter,width,index+1);
+     if(width<=600){
+      const proximity=await page.evaluate(selectors=>{
+       const left=document.querySelector(selectors[0]),right=document.querySelector(selectors[1]),plot=right?.querySelector("canvas,svg");
+       if(!left||!right)return {available:false};
+       const a=left.getBoundingClientRect(),b=right.getBoundingClientRect(),p=plot?.getBoundingClientRect();
+       return {available:true,changeH:a.height,between:b.top-a.bottom,observeW:b.width,plotW:p?.width||0,plotH:p?.height||0,viewport:innerHeight};
+      },PAIRS[chapter]);
+      check(proximity.available,"Ch"+chapter+" missing Change/Observe panels");
+      check(proximity.changeH<=Math.max(195,844*.30),"Ch"+chapter+" Change controls too tall for a mobile graph comparison: "+proximity.changeH);
+      check(proximity.between<=24,"Ch"+chapter+" Change/Observe too far apart: "+proximity.between);
+      check(proximity.observeW>=250,"Ch"+chapter+" Observe panel too narrow: "+proximity.observeW);
+      samples.push({chapter,width,section:index+1,proximity});
+     }
      if(index===0)await page.screenshot({path:"qa/ss-ch4-mobile-standard/ch"+chapter+"-"+width+"-initial.png",fullPage:false,animations:"disabled"});
      validate(sample,reference);
      samples.push({chapter,width,section:index+1,plots:sample.plotCount,overflow:sample.overflow,headerH:Math.round(sample.header.h)});
