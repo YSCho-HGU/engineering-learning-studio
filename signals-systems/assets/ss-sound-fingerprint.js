@@ -13,7 +13,7 @@ const profiles={
 };
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),fmt=(n,d=1)=>Number(n).toFixed(d);
 const mode=()=>W.ELSLanguage?.get?.()||"mixed",tr=(en,ko)=>mode()==="en"?en:mode()==="ko"?ko:en+"\n"+ko;
-let order=["guitar","voice","piano"],selected=0,revealed=false,recordings={},audio=null,analyzed=null,attempts=0,studentPrediction=null;
+let order=["guitar","voice","piano"],selected=0,revealed=false,recordings={},audio=null,analyzed=null,attempts=0,studentPrediction=null,evidenceVerified=false;
 const reverse=()=>order[selected],name=type=>tr(type==="piano"?"Piano-like":type==="guitar"?"Guitar-like":"Voice-like",type==="piano"?"피아노 유사":type==="guitar"?"기타 유사":"목소리 유사");
 function synth(type,{f0=220}={}){
  if(!profiles[type])throw Error("Unsupported model");
@@ -154,12 +154,35 @@ async function play(type){
 function evaluateGuess(){
  const val=$("finger-guess").value;
  if(!val){$("finger-guess-feedback").textContent=tr("Choose an instrument/voice hypothesis first.","먼저 악기 또는 목소리 후보를 선택하세요.");return}
- attempts++;studentPrediction={type:val,source:reverse(),letter:LETTERS[selected]};
- $("finger-reveal-btn").disabled=false;
- $("finger-guess-feedback").textContent=tr("Prediction saved. Observe the FFT, then reveal to check.","예측을 저장했습니다. FFT를 관찰한 뒤 정체를 공개해 확인하세요.");
+ attempts++;studentPrediction={type:val,source:reverse(),letter:LETTERS[selected]};evidenceVerified=false;
+ $("finger-reveal-btn").disabled=true;$("finger-evidence-choice").value="";
+ $("finger-evidence-feedback").textContent="";
+ $("finger-guess-feedback").textContent=tr("Prediction saved. Inspect its strongest FFT harmonic and verify the evidence before revealing.","예측이 저장됐습니다. FFT의 가장 강한 고조파를 찾고 근거를 검증한 뒤 정체를 공개하세요.");
+}
+function checkEvidence(){
+ const output=$("finger-evidence-feedback");
+ if(!studentPrediction){
+  output.dataset.result="retry";output.textContent=tr("Save an A/B/C prediction first.","먼저 A/B/C에 대한 예측을 저장하세요.");return;
+ }
+ if(reverse()!==studentPrediction.source){
+  output.dataset.result="retry";output.textContent=tr("Return to your predicted sound "+studentPrediction.letter+" to inspect its FFT.","예측한 "+studentPrediction.letter+" 소리로 돌아가 FFT를 확인하세요.");return;
+ }
+ const chosen=$("finger-evidence-choice").value;
+ if(!chosen){
+  output.dataset.result="retry";output.textContent=tr("Select a harmonic range from the observed FFT.","관찰한 FFT에서 고조파 범위를 선택하세요.");return;
+ }
+ const h=currentAnalysis(studentPrediction.source).dominant.h;
+ const expected=h===1?"h1":h<=3?"h23":"h4";
+ evidenceVerified=chosen===expected;
+ output.dataset.result=evidenceVerified?"correct":"retry";
+ output.textContent=evidenceVerified?tr("Supported by the FFT: the dominant harmonic has order h="+h+". Now reveal and compare all three sources.",
+  "FFT 근거 확인: 가장 큰 고조파는 h="+h+"입니다. 이제 정체를 공개하고 세 소리를 비교하세요."):
+  tr("Reinspect the tallest FFT harmonic; its order h is shown in the readout. Revise your observation.",
+  "FFT에서 가장 높은 고조파 피크를 다시 살펴보세요. h 값은 측정 정보에도 표시됩니다. 선택을 수정하세요.");
+ $("finger-reveal-btn").disabled=!evidenceVerified;
 }
 function reveal(){
- if(!studentPrediction)return;
+ if(!studentPrediction||!evidenceVerified)return;
  revealed=true;$("finger-reveal-content").hidden=false;$("finger-reveal-btn").disabled=true;
  renderCompare();
  const correct=studentPrediction.type===studentPrediction.source;
@@ -168,7 +191,8 @@ function reveal(){
  $("finger-guess-feedback").dataset.result=correct?"correct":"wrong";
 }
 function reset(){
- revealed=false;selected=0;attempts=0;studentPrediction=null;$("finger-reveal-content").hidden=true;$("finger-reveal-btn").disabled=true;
+ revealed=false;selected=0;attempts=0;studentPrediction=null;evidenceVerified=false;$("finger-reveal-content").hidden=true;$("finger-reveal-btn").disabled=true;
+ $("finger-evidence-choice").value="";$("finger-evidence-feedback").textContent="";delete $("finger-evidence-feedback").dataset.result;
  $("finger-guess").value="";$("finger-quiz").value="";$("finger-guess-feedback").textContent="";$("finger-quiz-feedback").textContent="";
  render();
 }
@@ -220,6 +244,9 @@ function localize(){
  "finger-wave-title":["Selected waveform","선택한 시간 파형"],"finger-spectrum-title":["Actual FFT magnitude","실제 FFT 크기"],
  "finger-reveal-title":["3 · Reveal the Sound Fingerprints","3 · 소리의 주파수 지문 공개"],
  "finger-reveal-help":["First predict; then reveal the identities and compare relative harmonic magnitudes using the SAME FFT length and window.","먼저 예상한 뒤 정체를 공개하세요. 동일한 FFT 길이와 Window로 계산한 고조파 상대 크기를 비교합니다."],
+"finger-evidence-title":["3 · Support your claim with FFT evidence","3 · FFT의 근거로 가설을 뒷받침하기"],
+ "finger-evidence-label":["Which harmonic range contains the dominant FFT peak of your predicted sound?","예측한 소리에서 FFT의 가장 큰 피크는 몇 번째 고조파 부근인가요?"],
+ "finger-evidence-check":["Verify spectral evidence","스펙트럼 근거 확인"],
  "finger-reveal-btn":["Reveal Fingerprints","주파수 지문 공개"],
  "finger-conclude-title":["4 · Explain the Discovery","4 · 발견한 원리 설명"],
  "finger-conclude-explain":["The fundamental primarily sets perceived pitch for harmonic tones; the harmonic balance, spectral envelope, onset and decay help shape timbre. This FFT uses one observation window and does not capture every temporal characteristic.","고조파 신호에서 기본주파수는 음높이와 밀접하며, 고조파 진폭·스펙트럼 포락선·어택과 감쇠는 음색에 영향을 줍니다. 이 FFT는 하나의 관측 구간만 분석하므로 모든 시간적 특징을 보여주지는 않습니다."],
@@ -236,6 +263,8 @@ function localize(){
  ["Only the overall volume matters","전체 음량만 중요합니다"]]]
  ];
  for(const [id,options]of selects)[...$(id).options].forEach((o,i)=>o.textContent=tr(...options[i]));
+ const evidenceOptions=[["Choose a range","범위 선택"],["Fundamental h = 1","기본주파수 h = 1"],["Harmonics h = 2–3","고조파 h = 2–3"],["Higher harmonics h ≥ 4","고조파 h ≥ 4"]];
+ [...$("finger-evidence-choice").options].forEach((option,i)=>option.textContent=tr(...evidenceOptions[i]));
  document.documentElement.lang=mode()==="ko"?"ko":"en";
  if(analyzed)render();
 }
@@ -244,7 +273,11 @@ function init(){
  for(let i=0;i<3;i++){
   $("finger-play-"+LETTERS[i].toLowerCase()).addEventListener("click",()=>{selected=i;render();play(reverse())});
  }
- for(const id of ["finger-note","finger-fft-length","finger-window","finger-position"])$(id).addEventListener("input",render);
+ for(const id of ["finger-note","finger-fft-length","finger-window","finger-position"])$(id).addEventListener("input",()=>{
+  if(!revealed){evidenceVerified=false;$("finger-reveal-btn").disabled=true;}
+  render();
+ });
+ $("finger-evidence-check").addEventListener("click",checkEvidence);
  $("finger-guess-check").addEventListener("click",evaluateGuess);
  $("finger-reveal-btn").addEventListener("click",reveal);
  $("finger-quiz-check").addEventListener("click",()=>{
