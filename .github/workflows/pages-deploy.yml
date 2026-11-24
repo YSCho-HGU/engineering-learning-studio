@@ -14,6 +14,7 @@ on:
       - 'progress/**'
       - 'textbook-viewer/**'
       - '.github/workflows/pages-deploy.yml'
+      - 'tests/pages-production-smoke.mjs'
   workflow_dispatch:
 permissions:
   contents: read
@@ -60,3 +61,33 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Prepare deployed-site browser verification
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated Playwright Chromium
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Verify deployed C and S&S header navigation
+        env:
+          PAGES_BASE_URL: ${{ steps.deployment.outputs.page_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            if node tests/pages-production-smoke.mjs; then
+              echo "Production C / SS navigation verification passed" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then sleep 12; fi
+          done
+          echo "::error::Pages deployed, but published C / SS navigation smoke failed"
+          exit 1
+      - name: Preserve browser smoke failures
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pages-production-header-smoke-${{ github.run_id }}
+          path: pages-smoke-*.png
+          if-no-files-found: ignore
