@@ -1,4 +1,4 @@
-/** Visual contract QA for all 7 FFT Applications — Chromium and screenshot evidence. */
+/** Visual contract QA for all 8 FFT Applications — Chromium and screenshot evidence. */
 import {chromium} from "playwright";
 import assert from "node:assert/strict";
 import {mkdir} from "node:fs/promises";
@@ -14,6 +14,7 @@ const modules=[
  ["applications-fft-dtmf.html",".ss-dtmf-panel","#dtmf-wave",".ss-dtmf-formulas>div",null],
  ["applications-fft-sound-fingerprint.html",".ss-finger-card","#finger-wave",".ss-finger-math>div",null],
  ["applications-fft-upload.html",".ss-fft-upload-panel","#fft-upload-wave",".ss-fft-upload-formulas>div",null],
+ ["applications-fft-image.html",".ss-image-panel","#image-input-canvas","#image-formula-1",".ss-image-views"],
  ["applications-chirp-stft.html",".ss-stft-card","#stft-time-plot",".ss-stft-formulas>div",".ss-stft-pair"]
 ];
 const chartHeadings={
@@ -23,6 +24,7 @@ const chartHeadings={
  "applications-fft-dtmf.html":"#dtmf-wave-title",
  "applications-fft-sound-fingerprint.html":"#finger-wave-title",
  "applications-fft-upload.html":"#fft-upload-step1",
+ "applications-fft-image.html":".ss-image-view h3",
  "applications-chirp-stft.html":"#stft-time-title"
 };
 const cssNumber=s=>parseFloat(s)||0;
@@ -107,12 +109,12 @@ try{
   measurements.push({module:slug,view:"390px mobile dark",...mobile});
   await p.screenshot({path:path.join(output,String(idx+1).padStart(2,"0")+"-"+slug+"-mobile.png"),fullPage:true,animations:"disabled"});
   assert.equal(await p.locator(".katex-error").count(),0,slug+": rendered invalid KaTeX");
-  console.log("PASS visual standard "+(idx+1)+"/7 "+slug+": cards, controls, graph, equation, themes, desktop/mobile");
+  console.log("PASS visual standard "+"(idx+1)+"/8 "+slug+": cards, controls, graph, equation, themes, desktop/mobile");
  }
  assert.equal(allErrors.length,0,"Uncaught JS exceptions: "+allErrors.join(" | "));
  const fs=await import("node:fs/promises");
  await fs.writeFile(path.join(output,"measured-layout.json"),JSON.stringify(measurements,null,2));
- console.log("PASS all 7 FFT visual contracts, 21 screenshots and geometry measurements");
+ console.log("PASS all 8 FFT visual contracts, 24 screenshots and geometry measurements");
 }catch(e){
  try{await p.screenshot({path:path.join(output,"failure.png"),fullPage:true})}catch{}
  throw e;
