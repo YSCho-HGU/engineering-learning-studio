@@ -9,7 +9,7 @@ const chapters=[
 ];
 const path=location.pathname;
 // The capstone preview uses the same shell without changing existing chapter navigation.
-if(path.includes("/ai-coding/"))chapters.push(["ai-coding","21","AI-Native Software Development"]);
+if(path.includes("/ai-coding/"))chapters.push(["ai-coding","21","AI-Assisted Coding"]);
 const current=chapters.findIndex(row=>path.includes("/"+row[0]+"/"));
 if(current<0)return;
 const course=chapters[current],root=document.documentElement;

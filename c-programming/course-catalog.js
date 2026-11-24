@@ -34,7 +34,7 @@ const descriptionsEn={
  "161":"Structs and typedefs, member access, record arrays, function parameters and copying · 6 core + 2 optional steps",
  "171":"Streams, file open/read/write, EOF, error handling and sensor logs · prioritize coding P1–P2",
  "181":"malloc/free, pointers and dynamic arrays · 4 core + 4 optional steps",
- "211":"Vibe coding, coding agents, specification, Git, independent tests, security and a sensor dashboard project"
+ "211":"Six hands-on projects, technology stack selection, AI-assisted development, deployment and verification"
 };
 let catalogCache=null;
 const english=()=>window.CCourseI18n?.get()==="en";

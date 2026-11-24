@@ -119,3 +119,5 @@ for(const width of [390,1280]){
 await browser.close();
 if(problems.length){console.error(problems.join('\n'));process.exit(1)}
 console.log('PASS: chronological cards, 181 heap state, pointer addresses, leak cleanup, playback and P1-P3 hints at 390/1280px.');
+
+await import('./c211-experience-browser.mjs');

@@ -195,12 +195,12 @@
     {
       "id": "211",
       "chapter": 21,
-      "title": "AI-Native Software Development",
+      "title": "AI-Assisted Coding",
       "group": "advanced",
       "url": "./ai-coding/",
       "published": false,
       "kind": "ai-capstone",
-      "description": "C 기반 Vibe Coding, Coding Agent, 명세·Git·검증·보안과 센서 데이터 프로젝트",
+      "description": "첫 프로그램 체험, 6개 프로젝트, 기술 스택 선택, AI 개발 과정과 배포·검증",
       "book": "https://docs.google.com/document/d/1hZCdkBpT2eeckfGG9RtxKIyd61xt1LGP/edit"
     }
   ]
