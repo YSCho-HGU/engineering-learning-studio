@@ -51,3 +51,11 @@ Some path overlap is intentional: focused file I/O QA and broader C integration 
 ## Scope of Logic Design
 
 Logic Design is not yet a published Studio course. The unified C browser test and G6 required evidence gate now exclude the earlier Logic Design prototype, and QA summaries mark that course `NOT_RUN` rather than failing the C quality gate.
+
+## Full production header regression (2026-11-24)
+
+After production publication, `tests/pages-production-smoke.mjs` now checks all nine active C chapter entrypoints and S&S Chapters 1–8 (17 pages) at desktop, tablet, and mobile viewports of 1280, 768, and 390 pixels (51 cases). Checks include status 200, navigation SVG count, semantic chapter/section controls, theme/language dropdowns, arrow visibility, 34px geometry, centered group, viewport overflow, same-row grouping, and safe in-Studio chapter links. On 1280px, when a sidebar has two or more sections, it also checks that the Next Section button is enabled, clicks it, and checks for the next active sidebar item when active state is available. All tests use an isolated browser profile.
+
+The deployment workflow records the machine-readable `pages-smoke-report.json` and failure screenshots as a GitHub Actions artifact, even when checks fail. A deployment is not marked verified solely because `actions/deploy-pages` returned a URL.
+
+**Verification state:** Source code and workflow wiring have been inspected. An actual completed Pages workflow run and browser report have not yet been retrieved through the connected GitHub interface. Live production success therefore remains unverified until the new workflow runs and its 51-case report passes.
