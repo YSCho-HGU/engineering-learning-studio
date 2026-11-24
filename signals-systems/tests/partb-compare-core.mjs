@@ -34,6 +34,28 @@ for(const shape of ["sensor","step","pulse","sine"]){
  assert.ok(d.items.every(p=>Number.isFinite(p.x)&&Number.isFinite(p.rc)&&Number.isFinite(p.ma)));checks++;
  assert.ok(d.stepHalfMA!==null&&d.stepHalfRC!==null);checks++;
 }
+// Phase and group-delay invariants: analytic slopes must match finite differences.
+for(const fs of [25,50,100]){
+ for(const M of [2,3,5,9,17,31]){
+  const d=c.run({fs,M,match:true,shape:"sine",noise:.1});
+  for(const f of [0.1*d.cutoffMA,0.5*d.cutoffMA,d.cutoffMA]){
+   const p=c.responsePoint(d.alpha,M,fs,f);
+   assert.ok(Number.isFinite(p.rcPhase)&&Number.isFinite(p.maPhase));checks++;
+   assert.ok(near(p.maDelay,d.groupDelayMA,1e-10),"MA linear-phase group delay");checks++;
+   const h=fs*1e-6;
+   const pl=c.responsePoint(d.alpha,M,fs,f-h),pr=c.responsePoint(d.alpha,M,fs,f+h);
+   const numericalRC=-(pr.rcPhase-pl.rcPhase)*Math.PI/180/(4*Math.PI*h);
+   const numericalMA=-(pr.maPhase-pl.maPhase)*Math.PI/180/(4*Math.PI*h);
+   assert.ok(near(numericalRC,p.rcDelay,1e-7),"RC group delay equals negative phase slope");checks++;
+   assert.ok(near(numericalMA,p.maDelay,1e-7),"MA group delay equals negative phase slope");checks++;
+  }
+  const zero=c.responsePoint(d.alpha,M,fs,fs/M);
+  assert.equal(zero.maPhase,null,"MA phase undefined at zero");checks++;
+  assert.equal(zero.maDelay,null,"MA delay undefined at zero");checks++;
+  assert.ok(d.spectrum.some(v=>v.maPhase===null),"Null inserted in spectrum");checks++;
+ }
+}
+
 const identity=c.run({fs:50,M:1,match:true,shape:"sensor",noise:.2});
 assert.equal(identity.cutoffMA,null);assert.equal(identity.match,false);
 assert.ok(identity.items.every(p=>near(p.x,p.ma)));checks+=2;
