@@ -62,7 +62,7 @@ assert.match(hub,/renderSystemsModules/);
 assert.match(hub,/applications-system-lab\.html\?lab=/);
 assert.match(page,/ss-common-header/);assert.match(page,/data-els-theme-picker/);
 assert.match(page,/ss-app-system-labs\.js/);assert.match(page,/ss-system-lab-core\.js/);
-assert.match(ui,/ss-sys-canvas-1/);assert.match(ui,/ss-sys-canvas-3/);
+assert.match(ui,/ss-sys-canvas-/);assert.match(page,/ss-sys-canvas-1/);assert.match(page,/ss-sys-canvas-3/);
 assert.match(ui,/lang\?\.subscribe/);assert.match(ui,/els:themechange/);
 const explorer=read("assets/ss-app-system-explorers.js");
 assert.match(page,/ss-sys-rc-explorer/);assert.match(page,/ss-sys-ma-explorer/);
