@@ -1,7 +1,7 @@
 /*
  * Applications Part A / B / D visual standard.
  * Mirrors the verified FFT visual rhythm without modifying Part C or Chapters 1-8.
- * A = interactive canvas labs; B = two live system labs plus planned topics; D = planned topics.
+ * A = interactive canvas labs; B = three live system labs plus planned topics; D = planned topics.
  */
 .ss-app-container,
 main.ss-al-root{
@@ -244,11 +244,11 @@ main.ss-al-root .ss-al-plot canvas{
  .ss-app-abd-disclosure{transition:none}
 }
 
-/* Part B uses identical finished-lab cards for its two available system lessons. */
+/* Part B uses identical finished-lab cards for its three system lessons. */
 #topics-b .ss-app-abd-lab-list{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--app-ui-gap)}
 #topics-b .ss-app-abd-lab-row{padding:var(--app-ui-inner);min-height:76px;text-decoration:none}
 #topics-b .ss-app-abd-lab-row:hover,#topics-b .ss-app-abd-lab-row:focus-visible{border-color:var(--els-link);background:var(--els-surface);text-decoration:none}
 #topics-b .ss-app-abd-lab-row .ss-app-lesson-number{border:1px solid var(--els-border);background:var(--els-surface)}
 #topics-b .ss-app-future{margin-top:12px}
 #topics-b .ss-app-future-topics{margin-top:12px}
-@media(min-width:980px){#topics-b .ss-app-abd-lab-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:980px){#topics-b .ss-app-abd-lab-list{grid-template-columns:repeat(2,minmax(0,1fr))}#topics-b .ss-app-abd-lab-row[data-lab='compare']{grid-column:1/-1}}
