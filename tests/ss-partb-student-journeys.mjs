@@ -57,7 +57,20 @@ try{
    await page.locator("#sys-type").selectOption("high");
    await sleep(120);
    assertThat(await page.evaluate(()=>window.SSSystemLab.state.type==="high"),"RC type state did not switch");
-   assertThat((await page.locator("#ss-sys-output-label").textContent()).includes("v_R"),"RC output measurement did not move to resistor");
+   try{
+    await page.waitForFunction(()=>document.getElementById("ss-sys-output-label")?.textContent.includes("v_R"),null,{timeout:4000});
+   }catch(e){
+    const visual=await page.evaluate(()=>({
+     type:window.SSSystemLab?.state?.type,
+     measured:document.getElementById("ss-sys-output-label")?.textContent,
+     circuit:document.getElementById("ss-sys-rc-topology")?.textContent,
+     rHidden:document.getElementById("ss-sys-series-r")?.hasAttribute("hidden"),
+     cHidden:document.getElementById("ss-sys-series-c")?.hasAttribute("hidden"),
+     voltage:document.getElementById("ss-sys-v-out")?.textContent,
+     canvasWidth:document.getElementById("ss-sys-canvas-1")?.width
+    }));
+    throw Error("RC output measurement did not move to resistor: "+JSON.stringify({visual,errors}));
+   }
    await checkLayout(page,"RC",scenario);
    await shots(page,"rc-"+viewport.width);
    scenario.steps.push({name:"RC: slow vs fast, topology, measured time",slowGain,fastGain,status:"PASS"});
