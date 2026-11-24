@@ -208,3 +208,21 @@ html .ss-common-header .ss-common-menu>.ss-common-title>.ss-common-chapter-label
  html.ss7-native .ss7-stage-observe #plots,
  html.ss8-native .ss8-stage-observe #plots{margin-top:0!important}
 }
+
+/* Chapter 5's Change/Predict rail is named .panel, not .controls. */
+@media(max-width:600px){
+ html.ss5-native #page>.lab>.panel{
+  position:sticky!important;top:6px!important;z-index:5!important;
+  max-height:min(28dvh,188px)!important;overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  margin:0!important;padding:9px 11px!important;
+  border:1px solid var(--els-border,#777)!important;
+  background:var(--els-surface,#20252b)!important;
+  box-shadow:0 4px 12px #0002!important
+ }
+ html.ss5-native #page>.lab>.panel>.ss5-predict{margin-bottom:7px!important}
+ html.ss5-native #page>.lab>.panel .controlgrid{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:6px 9px!important
+ }
+}
