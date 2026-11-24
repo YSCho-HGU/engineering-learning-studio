@@ -31,10 +31,10 @@ async function test(view,width){
  try{
   const response=await page.goto(base+view,{waitUntil:"domcontentloaded",timeout:12000});
   assert.equal(response?.status(),200,"HTTP 200");
-  await page.waitForFunction(()=>window.ELSTheme&&window.ELSHeaderControls,{timeout:perPageTimeoutMs});
+  await page.waitForFunction(()=>window.ELSTheme&&window.ELSHeaderControls,undefined,{timeout:perPageTimeoutMs});
   if(view.startsWith("signals-systems/chapter")||cViews.includes(view)){
-   await page.waitForFunction(()=>document.querySelector("body > header.els-course-header .els-course-header-navigation")?.children.length===4,{timeout:perPageTimeoutMs});
-   await page.waitForFunction(()=>getComputedStyle(document.querySelector("body > header.els-course-header")).display==="grid",{timeout:perPageTimeoutMs});
+   await page.waitForFunction(()=>document.querySelector("body > header.els-course-header .els-course-header-navigation")?.children.length===4,undefined,{timeout:perPageTimeoutMs});
+   await page.waitForFunction(()=>getComputedStyle(document.querySelector("body > header.els-course-header")).display==="grid",undefined,{timeout:perPageTimeoutMs});
   }
   const data=await page.evaluate(()=>{
    const header=document.querySelector(".ss-common-header,.site-header,body > header");
@@ -126,10 +126,10 @@ async function test(view,width){
    await page.screenshot({path:"qa/header-screenshots/"+key+"-"+width+".png",fullPage:false});
   }
   await page.locator("[data-els-theme-picker]").selectOption("warm-neutral");
-  await page.waitForFunction(()=>document.documentElement.dataset.elsTheme==="warm-neutral",{timeout:perPageTimeoutMs});
+  await page.waitForFunction(()=>document.documentElement.dataset.elsTheme==="warm-neutral",undefined,{timeout:perPageTimeoutMs});
   assert.equal(await page.evaluate(()=>localStorage.getItem("els-theme-v2")),"warm-neutral");
   await page.reload({waitUntil:"domcontentloaded"});
-  await page.waitForFunction(()=>window.ELSHeaderControls&&window.ELSTheme,{timeout:perPageTimeoutMs});
+  await page.waitForFunction(()=>window.ELSHeaderControls&&window.ELSTheme,undefined,{timeout:perPageTimeoutMs});
   assert.equal(await page.locator("[data-els-theme-picker]").inputValue(),"warm-neutral","theme persisted after reload");
   assert.ok(data.horizontalOverflow<=3,"page horizontal overflow "+data.horizontalOverflow);
   assert.deepEqual(errors,[],"runtime errors");
@@ -138,6 +138,7 @@ async function test(view,width){
 }
 try{
  let stoppedEarly=false;
+ let completedViews=0;
  testViews: for(const width of [390,768,1280])for(const view of pages){
   if(failures.length>=maxFailures || Date.now()-startTime>=maxRunMs){
    stoppedEarly=true;
@@ -145,11 +146,12 @@ try{
   }
   try{await test(view,width)}
   catch(e){failures.push({view,width,error:e.message});console.error("FAIL "+width+"px "+view+": "+e.message);}
+  completedViews++;
  }
  if(stoppedEarly){
   failures.push({view:"remaining views",width:0,error:"QA safety budget reached; remaining views were not executed"});
   console.error("Stopped header QA early to avoid monopolizing a hosted runner.");
  }
- console.log("Header QA checked "+(pages.length*3-(stoppedEarly?1:0))+" planned viewports; failures="+failures.length);
+ console.log("Header QA checked "+completedViews+" / "+(pages.length*3)+" planned viewports; failures="+failures.length);
  assert.deepEqual(failures,[],"Shared header regression failures");
 }finally{await browser.close();server.kill();}
