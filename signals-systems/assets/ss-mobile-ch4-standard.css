@@ -124,3 +124,23 @@ html .ss-common-header .ss-common-menu>.ss-common-title>.ss-common-chapter-label
   align-items:center!important
  }
 }
+/* The chapter selector must be one 34px control on every small phone.
+ * A long localized Chapter 8 name must not create a fourth header row. */
+@media(max-width:600px){
+ html .ss-common-header>.ss-common-menu{
+  height:34px!important;min-height:34px!important;max-height:34px!important;
+  align-self:center!important;min-width:0!important;overflow:visible!important
+ }
+ html .ss-common-header>.ss-common-menu>summary.ss-common-title{
+  box-sizing:border-box!important;
+  display:flex!important;align-items:center!important;
+  width:100%!important;height:34px!important;
+  min-height:34px!important;max-height:34px!important;
+  min-width:0!important;max-width:100%!important;
+  white-space:nowrap!important;overflow:hidden!important;
+  text-overflow:ellipsis!important;line-height:1.2!important
+ }
+ html .ss-common-header>.ss-common-menu>summary.ss-common-title>.ss-common-chapter-label{
+  height:auto!important;max-height:25px!important;line-height:1.25!important
+ }
+}

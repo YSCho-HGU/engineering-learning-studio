@@ -73,7 +73,7 @@ function validate(s,baseline){
  check(s.navRow.height>=52,name+" navigation tap target too small");
  check(s.navRow.radius===baseline.navRow.radius,name+" sidebar card corner differs from Chapter4");
  if(!String(s.section).startsWith("theme-"))check(s.navRow.background===baseline.navRow.background,name+" sidebar surface differs from Chapter4");
- check(Math.abs(s.header.h-baseline.header.h)<=18,name+" header differs too much from Chapter4");
+ check(Math.abs(s.header.h-baseline.header.h)<=18,name+" header differs from Chapter4: "+Math.round(s.header.h)+"px vs "+Math.round(baseline.header.h)+"px");
  for(const c of s.controls){
   if(!c.rect||c.rect.w<2)continue;
   check(c.rect.x>=-3&&c.rect.right<=s.width+3,name+" header control clipped: "+c.name);
@@ -126,6 +126,7 @@ try{
      await nav.nth(index).evaluate(el=>el.click());
      await page.waitForTimeout(75);
      const sample=await snapshot(page,chapter,width,index+1);
+     if(index===0)await page.screenshot({path:"qa/ss-ch4-mobile-standard/ch"+chapter+"-"+width+"-initial.png",fullPage:false,animations:"disabled"});
      validate(sample,reference);
      samples.push({chapter,width,section:index+1,plots:sample.plotCount,overflow:sample.overflow,headerH:Math.round(sample.header.h)});
     }
