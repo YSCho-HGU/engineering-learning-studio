@@ -1,7 +1,7 @@
 /* Engineering Learning Studio course header — canonical geometry.
    Both C Programming and S&S use the same left / navigation / actions DOM.
    All earlier conflicting grid / flex / absolute overrides were removed.
-   Version: els-header-v9-compact-adjacent-20261124 */
+   Version: els-header-v10-c-single-language-20261124 */
 :root {
   --els-course-control-size:34px;
   --els-course-header-gap:8px;
@@ -150,6 +150,34 @@ html body > header.ss-common-header.els-course-header :is(a,button,select,summar
   outline:2px solid var(--els-focus,#f2cc82)!important;
   outline-offset:2px!important;
 }
+/* C uses one native language picker immediately after the navigation.
+   S&S retains its existing right-hand language/theme pair unchanged. */
+html body > header.ss-common-header.els-course-header.c-ss-header {
+  grid-template-columns:max-content max-content max-content minmax(0,1fr)!important;
+  grid-template-areas:"left navigation language actions"!important;
+}
+html body > header.ss-common-header.els-course-header.c-ss-header > .c-native-language {
+  grid-area:language!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  min-width:0!important;
+  white-space:nowrap!important;
+  color:var(--els-ink,#eee)!important;
+}
+html body > header.ss-common-header.els-course-header.c-ss-header > .c-native-language select {
+  box-sizing:border-box!important;
+  min-width:118px!important;
+  max-width:148px!important;
+  height:var(--els-course-control-size)!important;
+  padding:3px 8px!important;
+  border:1px solid var(--els-border,#555)!important;
+  border-radius:8px!important;
+  background:var(--els-surface,#202020)!important;
+  color:var(--els-ink,#eee)!important;
+  font:600 12px/1.2 system-ui,"Malgun Gothic",sans-serif!important;
+}
+
 /* Compact responsive arrangement; never overlay the navigation on menus. */
 @media(max-width:800px) {
   html body > header.ss-common-header.els-course-header {
@@ -162,6 +190,10 @@ html body > header.ss-common-header.els-course-header :is(a,button,select,summar
   html body > header.ss-common-header.els-course-header > nav.ss-four-navigation.els-course-header-navigation {
     justify-self:start!important;
   }
+  html body > header.ss-common-header.els-course-header.c-ss-header {
+    grid-template-columns:max-content max-content minmax(0,1fr)!important;
+    grid-template-areas:"left left actions" "navigation language ."!important;
+  }
 }
 @media(max-width:640px) {
   html body > header.ss-common-header.els-course-header {
@@ -173,6 +205,13 @@ html body > header.ss-common-header.els-course-header :is(a,button,select,summar
     max-width:calc(100vw - 105px)!important;
   }
   html body > header.ss-common-header.els-course-header > .ss-common-actions {
+    justify-self:end!important;
+  }
+  html body > header.ss-common-header.els-course-header.c-ss-header {
+    grid-template-columns:max-content minmax(0,1fr)!important;
+    grid-template-areas:"left left" "navigation language" "actions actions"!important;
+  }
+  html body > header.ss-common-header.els-course-header.c-ss-header > .c-native-language {
     justify-self:end!important;
   }
 }
