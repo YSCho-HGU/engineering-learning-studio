@@ -44,19 +44,18 @@ function init(){
  menu.append(summary,links);header.append(menu);
  const arrows=el("nav","ss-four-navigation c-four-navigation els-course-header-navigation");
  arrows.setAttribute("aria-label","Chapter and section navigation");
- function arrow(symbol,title,chapterDelta,sectionDelta){
+ function arrow(title,chapterDelta,sectionDelta){
   const factory=window.ELSHeaderControls?.makeNavigationArrow;
-  let n=typeof factory==="function"
-   ?factory({kind:chapterDelta!=null?"chapter":"section",direction:chapterDelta??sectionDelta,label:title})
-   :(chapterDelta!=null?el("a","ss-chapter-arrow",symbol):el("button","ss-chapter-arrow",symbol));
+  if(typeof factory!=="function")throw new Error("Shared ELS header component is missing");
+  const n=factory({kind:chapterDelta!=null?"chapter":"section",direction:chapterDelta??sectionDelta,label:title});
   n.setAttribute("aria-label",title);n.title=title;
   if(chapterDelta!=null){let index=current+chapterDelta;if(index>=0&&index<chapters.length)n.href=parentPrefix+chapters[index][0]+"/";else{n.setAttribute("aria-disabled","true");n.tabIndex=-1}}
   else {n.type="button";n.dataset.direction=String(sectionDelta);n.addEventListener("click",()=>{const buttons=[...document.querySelectorAll(fileioTask?"#task-nav button[data-task]":fileioLabs?".side-nav a[data-lab-link]":practice?".cp-menu .cp-nav-item":fileio?"#lesson-nav button[data-nav]":"#lesson-nav button[data-lesson], #lesson-nav a[href^='#lab-']")];const pos=buttons.findIndex(b=>fileioLabs?b.getAttribute("href")===(location.hash||"#write"):fileioTask||practice?b.classList.contains("active"):fileio?b.classList.contains("current"):b.getAttribute("aria-current")==="step");if(pos>=0&&pos+sectionDelta>=0&&pos+sectionDelta<buttons.length){buttons[pos+sectionDelta].click()}refreshArrows()})}
   arrows.append(n);return n;
  }
- arrow("⇤","Previous chapter",-1,null);
- const previous=arrow("←","Previous section",null,-1),next=arrow("→","Next section",null,1);
- arrow("⇥","Next chapter",1,null);header.append(arrows);
+ arrow("Previous chapter",-1,null);
+ const previous=arrow("Previous section",null,-1),next=arrow("Next section",null,1);
+ arrow("Next chapter",1,null);header.append(arrows);
  const actions=el("div","ss-common-actions");
  const language=el("label","ss-common-language");language.id="c-shared-language";
  const icon=el("span","ss-language-icon","🌐");icon.setAttribute("aria-hidden","true");
