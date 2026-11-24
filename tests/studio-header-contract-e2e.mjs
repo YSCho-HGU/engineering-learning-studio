@@ -96,7 +96,7 @@ async function test(view,width){
     const geometry=await page.evaluate(()=>{
      const header=document.querySelector("body > .c-ss-header");
      const left=header?.querySelector(".els-header-left");
-     return {display:header?getComputedStyle(header).display:null,area:left?getComputedStyle(left).gridArea:null,nav:!!header?.querySelector(".c-four-navigation")};
+     return {display:header?getComputedStyle(header).display:null,area:left?getComputedStyle(left).gridArea:null,nav:!!header?.querySelector(".ss-four-navigation.els-course-header-navigation")};
     });
     assert.equal(geometry.display,"grid","C shared header must use canonical grid");
     assert.equal(geometry.area,"left","C chapter/home group must occupy shared left slot");
