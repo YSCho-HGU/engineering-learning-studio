@@ -275,3 +275,53 @@ html .ss-common-header .ss-common-menu>.ss-common-title>.ss-common-chapter-label
   outline:3px solid var(--els-focus,var(--els-link))!important;outline-offset:1px!important
  }
 }
+
+/* Phone lesson picker: closed by default, open on demand. Ch 1-8. */
+html .ss-mobile-index-toggle,html .ss-mobile-current-lesson{display:none!important}
+@media(max-width:600px){
+ html:not([data-ss-sidebar="collapsed"]) body .ss-layout-root>.ss-layout-sidebar{
+  max-height:64px!important;overflow:hidden!important;padding:7px 10px!important
+ }
+ html:not([data-ss-sidebar="collapsed"]) .ss-layout-sidebar>.ss-sidebar-topline{
+  position:relative!important;top:auto!important;display:flex!important;
+  gap:6px!important;min-height:40px!important;margin:0!important;padding:0!important
+ }
+ html:not([data-ss-sidebar="collapsed"]) .ss-layout-sidebar>.ss-sidebar-topline>.ss-sidebar-chapter-label{display:none!important}
+ html:not([data-ss-sidebar="collapsed"]) .ss-layout-sidebar>.ss-sidebar-topline>.ss-mobile-current-lesson:not([hidden]){
+  display:block!important;flex:1 1 0!important;min-width:0!important;
+  overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+  line-height:40px!important;font-size:13px!important;font-weight:700!important;color:var(--els-ink)!important
+ }
+ html:not([data-ss-sidebar="collapsed"]) .ss-layout-sidebar>.ss-sidebar-topline>.ss-mobile-index-toggle:not([hidden]){
+  display:block!important;flex:0 0 auto!important;height:40px!important;min-height:40px!important;
+  padding:5px 9px!important;border:1px solid var(--els-border)!important;border-radius:8px!important;
+  background:var(--els-surface-alt)!important;color:var(--els-ink)!important;font-size:12px!important;font-weight:750!important
+ }
+ html:not([data-ss-sidebar="collapsed"]) .ss-layout-sidebar .ss-mobile-index-toggle:focus-visible{
+  outline:3px solid var(--els-focus,var(--els-link))!important;outline-offset:2px!important
+ }
+ html[data-ss-mobile-index="closed"]:not([data-ss-sidebar="collapsed"]) .ss-layout-sidebar nav{display:none!important;visibility:hidden!important}
+ html[data-ss-mobile-index="open"]:not([data-ss-sidebar="collapsed"]) body .ss-layout-root>.ss-layout-sidebar{
+  max-height:min(52dvh,440px)!important;overflow-y:auto!important;scrollbar-width:thin!important
+ }
+ html[data-ss-mobile-index="open"]:not([data-ss-sidebar="collapsed"]) .ss-layout-sidebar>.ss-sidebar-topline{
+  position:sticky!important;top:0!important;z-index:3!important;margin-bottom:8px!important;background:var(--els-surface)!important
+ }
+ html[data-ss-mobile-index="open"]:not([data-ss-sidebar="collapsed"]) .ss-layout-sidebar>.ss-sidebar-topline>.ss-mobile-current-lesson{display:none!important}
+ html[data-ss-mobile-index="open"]:not([data-ss-sidebar="collapsed"]) .ss-layout-sidebar>.ss-sidebar-topline>.ss-mobile-index-toggle{margin-left:auto!important}
+}
+/* Actual controls on the two previously unmatched chapter groups. */
+@media(max-width:600px){
+ html.ss-foundations-standard .ss-found-23>.ss-found-controls,
+ html.ss6-compact-workspace .ss6-control-plot-workspace>.ss6-step-controls{
+  position:sticky!important;top:6px!important;z-index:5!important;
+  max-height:min(26dvh,180px)!important;overflow-y:auto!important;
+  overscroll-behavior:contain!important;margin:0!important;padding:9px 11px!important;
+  border:1px solid var(--els-border)!important;background:var(--els-surface)!important
+ }
+ html.ss-foundations-standard .ss-found-23,
+ html.ss6-compact-workspace .ss6-control-plot-workspace,
+ html.ss5-native #page>.lab,
+ html.ss7-native .ss7-stage-pair,
+ html.ss8-native .ss8-stage-pair{row-gap:8px!important}
+}
