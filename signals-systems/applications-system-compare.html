@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Compare analog RC and causal moving-average filtering on exactly the same sampled signal, with matched cutoff frequency, noise reduction and delay.">
+<title>RC vs Moving Average · Engineering Learning Studio</title>
+<script>(function(){var t="neutral-dark";try{var saved=localStorage.getItem("els-theme-v2");if(["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark"].includes(saved))t=saved;}catch(_){}document.documentElement.dataset.elsTheme=t;document.documentElement.dataset.theme=["white-clean","warm-neutral"].includes(t)?"light":"dark";document.documentElement.style.colorScheme=["white-clean","warm-neutral"].includes(t)?"only light":"dark";})();</script>
+<link rel="stylesheet" href="../assets/els-theme-v2.css?v=6">
+<link rel="stylesheet" href="../assets/els-typography-standard.css?v=1">
+<link rel="stylesheet" href="./assets/ss-common-header.css?v=20261122-four-controls">
+<link rel="stylesheet" href="../assets/els-header-controls.css?v=1">
+<link rel="stylesheet" href="./assets/ss-trace-palette.css?v=1">
+<link rel="stylesheet" href="./assets/ss-app-system-labs.css?v=20261124-explorer1">
+<link rel="stylesheet" href="./assets/ss-system-compare.css?v=1">
+<link rel="stylesheet" href="./assets/ss-applications-math.css?v=3">
+<link rel="stylesheet" href="./assets/ss-responsive-unified.css?v=1">
+<link rel="stylesheet" href="./assets/ss-plot-typography.css?v=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css">
+</head><body>
+<a class="ss-sys-skip" href="#cmp-workspace">Skip to comparisons</a>
+<header class="ss-common-header ss-sys-header" aria-label="Engineering Learning Studio navigation">
+ <a class="ss-common-home" href="../">← Studio</a>
+ <details class="ss-common-menu"><summary class="ss-common-title">Signals &amp; Systems · Applications <span aria-hidden="true">⌄</span></summary><nav class="ss-common-links" aria-label="Choose chapter"></nav></details>
+ <nav class="ss-four-navigation ss-sys-nav" aria-label="System application lesson navigation">
+  <a class="ss-chapter-arrow ss-nav-chapter" href="./chapter8.html" aria-label="Previous chapter" title="Previous chapter">⇤</a>
+  <a class="ss-chapter-arrow ss-nav-section" href="./applications-system-lab.html?lab=moving-average" aria-label="Previous lab: Moving Average" title="Previous lab">←</a>
+  <a class="ss-chapter-arrow ss-nav-section" aria-disabled="true" tabindex="-1" aria-label="Last Part B lab" title="Last Part B lab">→</a>
+  <a class="ss-chapter-arrow ss-nav-chapter" aria-disabled="true" tabindex="-1" aria-label="Last chapter" title="Last chapter">⇥</a>
+ </nav>
+ <div class="ss-common-actions">
+  <label class="ss-common-language" for="cmp-language"><span class="ss-language-icon" aria-hidden="true">🌐</span>
+   <select class="ss-common-language-select" id="cmp-language" aria-label="Language"><option value="mixed">한/영</option><option value="en">English</option><option value="ko">한국어</option></select>
+  </label>
+  <label class="ss-common-theme" for="cmp-theme"><select id="cmp-theme" data-els-theme-picker aria-label="Theme">
+   <option value="white-clean">White Clean</option><option value="warm-neutral">Warm Neutral</option><option value="warm-dark">Warm Dark</option><option value="navy-dark">Navy Dark</option><option value="neutral-dark">Neutral Dark</option>
+  </select></label>
+ </div>
+</header>
+<main class="ss-sys-root ss-compare-root" id="cmp-main">
+ <section class="ss-sys-intro" aria-labelledby="cmp-title">
+  <div><span class="ss-sys-kicker"><a href="./applications.html#part-b">APPLICATIONS / PART B · SYSTEMS</a></span>
+   <h1 id="cmp-title">RC vs Moving Average</h1><p id="cmp-subtitle"></p></div>
+  <a class="ss-sys-return" href="./applications.html#part-b" id="cmp-return">Back to Applications</a>
+ </section>
+ <nav class="ss-sys-tabs" aria-label="Part B interactive labs">
+  <a href="./applications-system-lab.html?lab=rc" id="cmp-tab-rc">01 · RC Filter</a>
+  <a href="./applications-system-lab.html?lab=moving-average" id="cmp-tab-ma">02 · Moving Average</a>
+  <a href="./applications-system-compare.html" id="cmp-tab-compare" aria-current="page">03 · Compare Both Filters</a>
+ </nav>
+ <div class="ss-sys-workspace" id="cmp-workspace">
+  <aside class="ss-sys-controls cmp-controls" aria-label="Shared signal and filter parameters">
+   <div class="ss-sys-panel-heading"><h2 id="cmp-control-title">One input · two filters</h2><p id="cmp-control-intro"></p></div>
+   <div class="ss-sys-fields">
+    <div class="ss-sys-field"><label for="cmp-signal" id="cmp-label-signal">Input signal</label>
+     <select id="cmp-signal"><option value="sensor">Noisy sensor</option><option value="step">Step</option><option value="pulse">Pulse</option><option value="sine">Sine wave</option></select>
+    </div>
+    <div class="ss-sys-field"><label for="cmp-fs" id="cmp-label-fs">Sampling rate</label>
+     <select id="cmp-fs"><option value="25">25 samples/s</option><option value="50">50 samples/s</option><option value="100">100 samples/s</option></select>
+    </div>
+    <div class="ss-sys-field"><div class="ss-sys-field-head"><label for="cmp-noise" id="cmp-label-noise">Added noise</label><output for="cmp-noise" id="cmp-noise-value">0.30</output></div>
+     <input id="cmp-noise" type="range" min="0" max=".8" step=".05" value=".3">
+    </div>
+   </div>
+   <div class="cmp-separator"></div>
+   <div class="ss-sys-fields">
+    <div class="ss-sys-field"><div class="ss-sys-field-head"><label for="cmp-M" id="cmp-label-M">MA window M</label><output for="cmp-M" id="cmp-M-value">9</output></div>
+     <input id="cmp-M" type="range" min="1" max="31" step="1" value="9">
+    </div>
+    <label class="cmp-match" for="cmp-match">
+     <input id="cmp-match" type="checkbox" checked>
+     <span id="cmp-match-label">Match both filters at the −3 dB cutoff</span>
+    </label>
+    <div class="ss-sys-field"><div class="ss-sys-field-head"><label for="cmp-tau" id="cmp-label-tau">RC time constant τ</label><output for="cmp-tau" id="cmp-tau-value">0.090 s</output></div>
+     <input id="cmp-tau" type="range" min=".01" max=".75" step=".005" value=".09">
+    </div>
+    <p class="cmp-param-note" id="cmp-match-note"></p>
+   </div>
+   <div class="cmp-actions"><button type="button" id="cmp-reset">Reset</button></div>
+   <section class="ss-sys-task"><h3 id="cmp-task-title">Try this</h3><p id="cmp-task-body"></p></section>
+  </aside>
+  <section class="ss-sys-results cmp-results" aria-label="Filter comparison results">
+   <div class="ss-sys-tools">
+    <div class="ss-sys-equation cmp-equations"><span id="cmp-eq-rc"></span><span id="cmp-eq-ma"></span></div>
+   </div>
+   <div class="cmp-metric-grid" id="cmp-metrics" aria-live="off"></div>
+   <div class="cmp-plots">
+    <article class="ss-sys-plot cmp-plot cmp-primary"><h2 id="cmp-title-time">The same input, two filtered outputs</h2>
+     <div class="ss-sys-legend" id="cmp-legend-time"></div><canvas id="cmp-time" role="button" tabindex="0" aria-label="Time graph. Click or use arrow keys to select a sample."></canvas>
+     <p id="cmp-time-note"></p>
+     <div class="cmp-probe" id="cmp-probe" aria-live="off"></div>
+    </article>
+    <article class="ss-sys-plot cmp-plot"><h2 id="cmp-title-frequency">Frequency response</h2>
+     <div class="ss-sys-legend" id="cmp-legend-frequency"></div><canvas id="cmp-frequency" role="img" aria-label="RC and Moving Average magnitude responses"></canvas>
+     <p id="cmp-frequency-note"></p>
+    </article>
+    <article class="ss-sys-plot cmp-plot"><h2 id="cmp-title-step">Step response and lag</h2>
+     <div class="ss-sys-legend" id="cmp-legend-step"></div><canvas id="cmp-step" role="img" aria-label="RC and Moving Average unit step responses"></canvas>
+     <p id="cmp-step-note"></p>
+    </article>
+   </div>
+   <section class="ss-sys-insight cmp-insight"><strong id="cmp-insight-title">What did you discover?</strong><p id="cmp-insight-body"></p></section>
+   <details class="cmp-model-notes"><summary id="cmp-model-summary">About the models and a fair comparison</summary>
+    <div id="cmp-model-body"></div>
+   </details>
+  </section>
+ </div>
+</main>
+<script defer src="../assets/els-language.js?v=1"></script>
+<script defer src="../assets/els-theme-v2.js?v=6"></script>
+<script defer src="./assets/ss-common-header.js?v=applications2"></script>
+<script defer src="../assets/els-header-controls.js?v=1"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js"></script>
+<script defer src="./assets/ss-applications-math.js?v=5"></script>
+<script defer src="./assets/ss-system-compare-core.js?v=1"></script>
+<script defer src="./assets/ss-system-compare.js?v=1"></script>
+</body></html>
