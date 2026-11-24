@@ -1,0 +1,78 @@
+name: Studio Pages - postdeploy QA
+on:
+  workflow_run:
+    workflows: ["Studio Pages - production"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: studio-postdeploy-qa-${{ github.event.workflow_run.head_sha || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  browser-qa:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout the exact published commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install test-only Playwright and Chromium
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+
+      - name: Verify header geometry against local checkout
+        id: local
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8765 --bind 127.0.0.1 > "$RUNNER_TEMP/studio-http.log" 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          curl --retry 10 --retry-connrefused --retry-delay 1 -fsS http://127.0.0.1:8765/index.html -o /dev/null
+          node tests/header-layout-preflight.mjs
+
+      - name: Verify live Pages files, deployment SHA, and all chapter headers
+        id: live
+        continue-on-error: true
+        env:
+          GITHUB_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+          PAGES_BASE_URL: https://yscho-hgu.github.io/engineering-learning-studio/
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/pages-production-smoke.mjs
+
+      - name: Upload complete browser QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: studio-postdeploy-header-qa-${{ github.run_id }}
+          path: |
+            qa/header-preflight/
+            pages-smoke-report.json
+            pages-smoke-*.png
+          if-no-files-found: ignore
+
+      - name: Report results without blocking the production deployment
+        if: always()
+        shell: bash
+        run: |
+          echo "Local layout QA: ${{ steps.local.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Published site and commit QA: ${{ steps.live.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          test "${{ steps.local.outcome }}" = success
+          test "${{ steps.live.outcome }}" = success
