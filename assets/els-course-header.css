@@ -168,3 +168,19 @@ html body > header.els-course-header :is(a,button,summary,select):focus-visible{
 html body.c-ss-course > header.els-course-header.ss-common-header{
   position:sticky!important;top:0!important;
 }
+
+/* Desktop: the navigation group is anchored to the true header midpoint,
+   independent of unequal side content. Grid still owns the other slots. */
+@media(min-width:1101px){
+ html body > header.els-course-header.ss-common-header:has(.els-course-header-navigation){
+   position:relative!important;
+ }
+ html body > header.els-course-header .els-course-header-navigation{
+   position:absolute!important;
+   left:50%!important;
+   top:50%!important;
+   transform:translate(-50%,-50%)!important;
+   margin:0!important;
+   z-index:5!important;
+ }
+}
