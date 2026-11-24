@@ -213,3 +213,30 @@ html body.c-ss-course > header.els-course-header.ss-common-header{
    margin-left:auto!important;
  }
 }
+
+/* Shared SS navigation appearance for C: chapter jumps visually distinct from section steps. */
+html body > header.els-course-header.ss-common-header .els-course-header-navigation .ss-nav-chapter {
+  background:var(--els-surface,#252525)!important;
+  border-color:var(--els-link,#95cbc4)!important;
+}
+html body > header.els-course-header.ss-common-header .els-course-header-navigation .ss-nav-section {
+  background:var(--els-surface-alt,#303030)!important;
+  border-color:var(--els-border,#606660)!important;
+}
+html body > header.els-course-header.ss-common-header .els-course-header-navigation .ss-chapter-arrow {
+  width:34px!important;min-width:34px!important;height:34px!important;min-height:34px!important;
+  border-radius:8px!important;gap:0!important;
+}
+html body > header.els-course-header.ss-common-header .els-course-header-navigation .ss-chapter-arrow svg {
+  width:17px!important;height:17px!important;display:block!important;
+}
+@media(min-width:1101px){
+ html body.c-ss-course > header.els-course-header.ss-common-header{
+   position:sticky!important;top:0!important;
+ }
+ html body.c-ss-course > header.els-course-header.ss-common-header > .els-course-header-navigation{
+   position:absolute!important;left:50%!important;top:50%!important;right:auto!important;
+   transform:translate(-50%,-50%)!important;
+   margin:0!important;
+ }
+}
