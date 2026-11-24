@@ -62,6 +62,7 @@ try {
           const gap=d.nav.left-d.menu.right;
           assert.ok(gap>=0&&gap<=25,id+" arrows must directly follow chooser; gap="+gap);
           assert.ok(d.menu.width<=390,id+" chooser unexpectedly wide "+JSON.stringify(d));
+          assert.ok(d.menu.width>=180,id+" chooser unexpectedly collapsed "+JSON.stringify(d));
           assert.ok(Math.abs(d.nav.top-d.menu.top)<=12,id+" controls not on same row");
           assert.ok(d.actions.left>=d.nav.right+3,id+" right-side controls collision");
         }
