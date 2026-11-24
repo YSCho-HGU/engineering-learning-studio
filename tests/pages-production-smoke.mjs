@@ -16,7 +16,7 @@ const targets = [
 const cssResponse=await fetch(root+"assets/els-course-header.css",{cache:"no-store"});
 assert.equal(cssResponse.status,200,"Published common header CSS was not found");
 const cssBody=await cssResponse.text();
-assert.ok(cssBody.includes("Final shared header contract (2026-11-24)"),
+assert.ok(cssBody.includes("els-header-v5-20261124"),
   "The live Pages site is serving an older shared-header stylesheet; deployment is stale");
 const widths = [390,768,1280];
 const failures = [], results = [];
@@ -47,12 +47,14 @@ try {
         },null,{timeout:15000});
         const state=await page.evaluate(()=>{
           const header=document.querySelector("body > header.ss-common-header");
+          const headerBuild=header.classList.contains("els-course-header")&&!!header.querySelector(":scope > .els-header-left");
           const nav=header.querySelector(".ss-four-navigation");
           const arrows=[...nav.querySelectorAll(".ss-chapter-arrow")];
           const rects=arrows.map(e=>e.getBoundingClientRect());
           const head=header.getBoundingClientRect();
           const style=getComputedStyle(nav);
           return {
+            headerBuild,
             count:arrows.length,
             classes:arrows.map(e=>e.className),
             tags:arrows.map(e=>e.tagName),
