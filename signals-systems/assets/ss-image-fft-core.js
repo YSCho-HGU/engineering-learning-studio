@@ -161,8 +161,68 @@ function rmse(actual,expected){
  for(let i=0;i<actual.length;i++)s+=(actual[i]-expected[i])**2;
  return Math.sqrt(s/actual.length);
 }
+
+/* Finite-support 3×3 kernels. All boundaries use wrap-around samples.
+ * The shifted impulse kernel is at offsets -1..+1 modulo N so that
+ * frequency multiplication equals spatial CIRCULAR convolution exactly.
+ */
+const KERNELS=Object.freeze({
+ box:Object.freeze([1,1,1,1,1,1,1,1,1].map(v=>v/9)),
+ gaussian:Object.freeze([1,2,1,2,4,2,1,2,1].map(v=>v/16)),
+ sharpen:Object.freeze([0,-1,0,-1,5,-1,0,-1,0])
+});
+function kernelWeights(name){
+ const weights=KERNELS[name];
+ if(!weights)throw Error("Unknown spatial kernel");
+ return weights;
+}
+function spatialConvolution(pixels,N,name){
+ sizeCheck(N);
+ if(pixels.length!==N*N)throw Error("Invalid image dimensions");
+ const weights=kernelWeights(name),output=new Float64Array(N*N);
+ for(let y=0;y<N;y++)for(let x=0;x<N;x++){
+  let sum=0;
+  for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+   const ix=(x-dx+N)%N,iy=(y-dy+N)%N;
+   sum+=weights[(dy+1)*3+(dx+1)]*pixels[iy*N+ix];
+  }
+  output[y*N+x]=sum;
+ }
+ return output;
+}
+function kernelProbe(pixels,N,name,x,y){
+ const weights=kernelWeights(name),items=[],px=((Math.round(x)%N)+N)%N,py=((Math.round(y)%N)+N)%N;
+ let sum=0;
+ for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+  const ix=(px-dx+N)%N,iy=(py-dy+N)%N;
+  const pixel=pixels[iy*N+ix],weight=weights[(dy+1)*3+(dx+1)],contribution=pixel*weight;
+  items.push({x:ix,y:iy,pixel,weight,contribution});
+  sum+=contribution;
+ }
+ return {x:px,y:py,items,sum};
+}
+function applyKernelFFT(spectrum,pixels,N,kernel="box"){
+ const weights=kernelWeights(kernel),impulse=new Float64Array(N*N);
+ for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+  const x=(dx+N)%N,y=(dy+N)%N;
+  impulse[y*N+x]=weights[(dy+1)*3+(dx+1)];
+ }
+ const response=forward(impulse,N);
+ const real=new Float64Array(N*N),imag=new Float64Array(N*N);
+ let before=0,after=0;
+ for(let i=0;i<real.length;i++){
+  const ar=spectrum.real[i],ai=spectrum.imag[i],br=response.real[i],bi=response.imag[i];
+  real[i]=ar*br-ai*bi;imag[i]=ar*bi+ai*br;
+  before+=ar*ar+ai*ai;after+=real[i]*real[i]+imag[i]*imag[i];
+ }
+ const restored=inverse({real,imag},N),spatial=spatialConvolution(pixels,N,kernel);
+ let maxDifference=0;
+ for(let i=0;i<spatial.length;i++)maxDifference=Math.max(maxDifference,Math.abs(spatial[i]-restored.pixels[i]));
+ return {...restored,real,imag,kernelSpectrum:response,spatialPixels:spatial,
+  maxDifference,energyPercent:before?after/before*100:0};
+}
 root.SSImageFFTCore=Object.freeze({
  forward,inverse,transform2D,fft1d,synth,scene,maskAt,applyMask,dominant,
- frequencyAt,spatialIndex,shiftedToIndex,rmse
+ frequencyAt,spatialIndex,shiftedToIndex,rmse,spatialConvolution,kernelWeights,kernelProbe,applyKernelFFT
 });
 })(typeof window!=="undefined"?window:globalThis);
