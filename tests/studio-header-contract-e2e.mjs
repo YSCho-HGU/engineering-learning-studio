@@ -8,9 +8,12 @@ const server=spawn("python3",["-m","http.server",String(port),"--bind","127.0.0.
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 await sleep(1300);
 const browser=await chromium.launch({headless:true});
+const cModules=["arrays","strings","standard-library","functions","pointer","structure","file-io","dynamic-memory","ai-coding"];
+const cViews=cModules.flatMap(slug=>["c-programming/"+slug+"/",...(slug==="ai-coding"?[]:["c-programming/"+slug+"/practice/"])]);
+cViews.push("c-programming/file-io/core-labs/","c-programming/ai-coding/toolkit.html");
 const pages=["","c-programming/","signals-systems/index.html#overview","signals-systems/index.html#map",
  ...Array.from({length:8},(_,i)=>"signals-systems/chapter"+(i+1)+".html"),
- "signals-systems/applications.html","signals-systems/applications-fft-image.html"];
+ ...cViews,"signals-systems/applications.html","signals-systems/applications-fft-image.html"];
 const themes=["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark"];
 const failures=[];
 async function test(view,width){
@@ -49,7 +52,7 @@ async function test(view,width){
    assert.ok(rect,name+" missing");
    assert.ok(Math.abs(rect.h-34)<=1.5,name+" height "+rect.h);
   }
-  if(view.startsWith("signals-systems/chapter")){
+  if(view.startsWith("signals-systems/chapter")||cViews.includes(view)){
    assert.ok(data.chapterRect,"chapter picker missing");
    assert.ok(Math.abs(data.chapterRect.h-34)<=1.5,"chapter height "+data.chapterRect.h);
    assert.equal(data.arrowRects.length,4,"four navigation arrows");
@@ -69,10 +72,10 @@ async function test(view,width){
     assert.ok(data.arrowSvgs[i]>=1,"arrow "+i+" must be SVG");
     assert.ok(data.arrowLabels[i],"accessible arrow label "+i);
    }
-   const ch=Number(view.match(/chapter(\d+)/)[1]);
+   if(view.startsWith("signals-systems/chapter")){const ch=Number(view.match(/chapter(\d+)/)[1]);
    assert.equal(data.arrowTargets[0],ch===1?null:"./chapter"+(ch-1)+".html","previous chapter target");
    assert.equal(data.arrowTargets[3],ch===8?"./applications.html":"./chapter"+(ch+1)+".html","next chapter target");
-   assert.equal(data.arrowDisabled[0],ch===1,"first chapter boundary");
+   assert.equal(data.arrowDisabled[0],ch===1,"first chapter boundary");}
   }
   // Check the actual selected theme stays synchronized between DOM, picker, storage.
   await page.locator("[data-els-theme-picker]").selectOption("warm-neutral");
