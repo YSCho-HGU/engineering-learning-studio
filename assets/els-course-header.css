@@ -33,7 +33,7 @@ html body > header.ss-common-header.els-course-header > .els-header-left {
   display:flex!important;
   flex:0 0 auto!important;
   min-width:0!important;
-  max-width:calc(100% - 370px)!important;
+  max-width:min(48vw,475px)!important;
   align-items:center!important;
   gap:10px!important;
 }
