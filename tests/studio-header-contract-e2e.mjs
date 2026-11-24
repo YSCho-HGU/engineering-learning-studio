@@ -36,7 +36,7 @@ async function test(view,width){
     arrowLabels:arrows.map(x=>x.getAttribute("aria-label")),
     arrowTargets:arrows.map(x=>x.getAttribute("href")),
     arrowDisabled:arrows.map(x=>x.getAttribute("aria-disabled")==="true"),
-    headerRight:header?rect(header).right:0,
+    headerRight:header?rect(header).right:0,headerLeft:header?rect(header).x:0,headerWidth:header?rect(header).w:0,
     horizontalOverflow:document.documentElement.scrollWidth-window.innerWidth,
     preserved:localStorage.getItem("els-header-test-preserve")};
   });
@@ -53,6 +53,7 @@ async function test(view,width){
    assert.ok(data.chapterRect,"chapter picker missing");
    assert.ok(Math.abs(data.chapterRect.h-34)<=1.5,"chapter height "+data.chapterRect.h);
    assert.equal(data.arrowRects.length,4,"four navigation arrows");
+   if(width>=1101){const left=data.arrowRects[0].x,right=data.arrowRects[3].right;assert.ok(Math.abs((left+right)/2-(data.headerLeft+data.headerWidth/2))<=2,"arrow group must be geometrically centered");}
    for(const [i,r] of data.arrowRects.entries()){
     assert.ok(Math.abs(r.w-34)<=1.5&&Math.abs(r.h-34)<=1.5,"arrow "+i+" dimensions "+JSON.stringify(r));
     assert.ok(data.arrowSvgs[i]>=1,"arrow "+i+" must be SVG");
