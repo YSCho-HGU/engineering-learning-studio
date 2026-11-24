@@ -61,7 +61,7 @@ label("ss-sys-note-2","Linear frequency axis; input frequency shown by vertical 
 label("ss-sys-note-3","Response shown versus normalized time t/τ.","정규화 시간 t/τ 기준 응답입니다.");
 metric([["Time constant τ","시정수 τ",num(tau*1000,1)+" ms"],["Cutoff frequency","차단주파수",num(cutoff)+" Hz"],["Gain at input","입력 이득",num(m,3)+" ×"],["Phase at input","입력 위상",num(phase,1)+"°"],["f / cutoff","f / 차단주파수",num(frequency/cutoff,2)+" ×"]]);
 legend("ss-sys-legend-1",[["Input","입력",p.input],["Output","출력",p.output]]);legend("ss-sys-legend-2",[["Magnitude","크기",p.output],["Current frequency","현재 주파수",p.accent]]);
-const full=Math.max(1.15,...d.series.map(v=>Math.abs(v.x),Math.abs(v.y)))*1.08;
+const full=Math.max(1.15,...d.series.flatMap(v=>[Math.abs(v.x),Math.abs(v.y)]))*1.08;
 plot(1,[{color:p.input,points:d.series.map(v=>[v.t,v.x])},{color:p.output,points:d.series.map(v=>[v.t,v.y])}],{xMax:d.duration,yMin:-full,yMax:full,xLabel:"t (s)",cursor:d.series[Math.max(0,Math.min(1200,state.probe))].t});
 const maxf=Math.max(20,4*cutoff,1.3*frequency),pts=Array.from({length:250},(_,i)=>maxf*i/249);
 plot(2,[{color:p.output,points:pts.map(f=>[f,core.rcFrequency(tau,f,state.type).mag])},{color:p.accent,points:[[frequency,0],[frequency,m]],dash:[4,4]}],{xMax:maxf,yMax:1.05,xLabel:"f (Hz)"});
