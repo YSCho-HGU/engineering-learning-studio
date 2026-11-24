@@ -179,10 +179,13 @@ function displayNames(){
  for(let i=0;i<3;i++)$("ss-al-plot-title-"+(i+1)).textContent=txt(...plotHeaders[i],true);
  $("ss-al-third").hidden=false;$("ss-al-charts").dataset.kind=lab;
  $("ss-al-insight").textContent=txt(...md.insight);
- const guidance=$("ss-al-guidance");clear(guidance);
- dom("strong",null,txt("Try this sequence","탐구 순서",true),guidance);
- const list=dom("ol",null,null,guidance);
- for(const [en,ko] of md.notes)dom("li",null,txt(en,ko),list);
+ const guidance=$("ss-al-guidance");
+ if(!window.SSApplicationsInquiry?.renderSignal?.({lab,state,host:guidance,apply:patch=>{
+  stopAudio(true);Object.assign(state,patch);renderControls();displayNames();change();
+ }})){
+  clear(guidance);dom("strong",null,txt("Try this sequence","탐구 순서",true),guidance);
+  const list=dom("ol",null,null,guidance);for(const [en,ko] of md.notes)dom("li",null,txt(en,ko),list);
+ }
  renderFormula();
 }
 function renderFormula(){
@@ -671,7 +674,7 @@ function change(){
  stopAudio(true);audio.buffer=null;
  if(lab==="sampling")audio.duration=state.T;
  if(lab==="amfm"||lab==="sampling")renderFormula();
- drawSoon();
+ drawSoon();window.SSApplicationsInquiry?.refresh?.(lab,state);
 }
 async function testAudioOutput(){
  const Ctx=window.AudioContext||window.webkitAudioContext;
@@ -823,7 +826,7 @@ function init(){
  $("ss-al-reset").addEventListener("click",()=>{
   stopAudio(true);
   Object.keys(initial).forEach(key=>state[key]=initial[key]);fftCache=null;audio.buffer=null;audio.offset=0;audio.duration=lab==="sampling"?state.T:2;audio.signal="ct";audio.error="";
-  displayNames();renderControls();drawSoon();
+  window.SSApplicationsInquiry?.reset?.(lab);displayNames();renderControls();drawSoon();
  });
  {
   $("ss-al-seek").addEventListener("input",e=>seek(Number(e.target.value)/1000*audio.duration));
