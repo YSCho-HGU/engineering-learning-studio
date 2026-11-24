@@ -29,40 +29,7 @@
   background:var(--els-surface,#fff)!important;
   color:var(--els-ink,#22313a)!important;
 }
-/* Shared navigation tabs: do not alter chapter-specific click handlers. */
-:is(html.ss5-native .tabs button,
-    html.ss6-compact-workspace .sidebar .nav button,
-    html.ss7-native #ss7-lesson-nav button,
-    html.ss8-native #nav button){
-  display:flex!important;
-  align-items:center!important;
-  gap:8px!important;
-  min-height:47px!important;
-  padding:8px 10px!important;
-  border:1px solid transparent!important;
-  border-radius:var(--ss-ui-nav-radius)!important;
-  background:transparent!important;
-  color:var(--els-ink,#22313a)!important;
-  /* Canonical 13px font and 1.45 leading are owned by ss-sidebar-layout.css. */
-  text-align:left!important;
-  box-shadow:none!important;
-}
-:is(html.ss5-native .tabs button,
-    html.ss6-compact-workspace .sidebar .nav button,
-    html.ss7-native #ss7-lesson-nav button,
-    html.ss8-native #nav button):hover{
-  background:var(--els-surface-alt,#ebf0f1)!important;
-  border-color:var(--els-border,#adbcbc)!important;
-}
-:is(html.ss5-native .tabs button.on,
-    html.ss6-compact-workspace .sidebar .nav button.active,
-    html.ss7-native #ss7-lesson-nav button[aria-current="true"],
-    html.ss8-native #nav button[aria-current="true"]){
-  background:var(--els-surface-alt,#e8f0f0)!important;
-  border-color:var(--els-link,var(--els-accent,#157487))!important;
-  box-shadow:inset 3px 0 var(--els-link,var(--els-accent,#157487))!important;
-  font-weight:800!important;
-}
+/* Sidebar navigation card rules moved to sole owner ss-sidebar-layout.css. */
 /* Navigation number badges, independent from learning step numbers. */
 :is(html.ss5-native .tabs .num,
     html.ss6-compact-workspace .sidebar .nav .num,
@@ -168,12 +135,6 @@ html.ss8-native .ss8-stage-index{
 }
 /* Match the shared chapter menu on smaller screens without hiding controls. */
 @media(max-width:780px){
-  :is(html.ss5-native .tabs button,
-      html.ss6-compact-workspace .sidebar .nav button,
-      html.ss7-native #ss7-lesson-nav button){
-    min-height:40px!important;
-    padding:6px 9px!important;
-  }
   :is(html.ss5-native .ss5-flow-label,
       html.ss6-compact-workspace .ss6-step-card h3,
       html.ss7-native .ss7-stage-head){
