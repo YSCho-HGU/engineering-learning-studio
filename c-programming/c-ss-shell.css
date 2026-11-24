@@ -19,9 +19,6 @@ body.c-ss-course>.ss-common-header{
 .c-ss-header .ss-common-menu[open] .ss-common-links{display:grid;gap:3px}
 .c-ss-header .ss-common-links a{display:block;padding:10px 9px;border-radius:6px;font-size:13px;line-height:1.45}
 .c-ss-header .ss-common-links a:hover,.c-ss-header .ss-common-links a[aria-current=page]{background:var(--els-surface-alt);color:var(--els-link)}
-.c-ss-header .ss-four-navigation{display:flex;align-items:center;gap:5px;margin-inline:auto}
-.c-ss-header .ss-chapter-arrow{box-sizing:border-box;display:grid;place-items:center;min-width:34px;width:34px;height:34px;border:1px solid var(--els-border);border-radius:8px;background:var(--els-surface-alt);color:var(--els-ink);font-size:18px;font-weight:800;cursor:pointer;text-decoration:none}
-.c-ss-header .ss-chapter-arrow:is(:disabled,[aria-disabled=true]){opacity:.33;cursor:default;pointer-events:none}
 .c-ss-header .ss-common-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
 .c-ss-header .ss-common-language{display:inline-flex;align-items:center;gap:5px}
 .c-ss-header .ss-common-language select,.c-ss-header .ss-common-theme select{
@@ -88,8 +85,7 @@ html[data-c-sidebar=collapsed] .c-sidebar-caption{display:none}
  .c-ss-shell>.c-ss-workspace{grid-column:1}
  html[data-c-sidebar=collapsed] .c-ss-shell{grid-template-columns:1fr}
  .c-ss-header{flex-wrap:wrap}
- .c-ss-header .ss-four-navigation{margin-left:0}
- .c-ss-header .ss-common-actions{margin-left:auto}
+  .c-ss-header .ss-common-actions{margin-left:auto}
  .c-ss-content .hero{grid-template-columns:1fr}
 }
 @media(max-width:520px){
