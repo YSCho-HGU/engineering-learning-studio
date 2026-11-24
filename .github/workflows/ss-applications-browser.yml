@@ -80,6 +80,10 @@ jobs:
         run: |
           python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/ss-applications-server.log 2>&1 &
           sleep 2
+      - name: Check RC circuit and moving-average walkthrough interactions
+        id: partb
+        continue-on-error: true
+        run: node tests/ss-partb-system-browser.mjs
       - name: Check original Harmonics, Chirp and Helix labs
         id: primary
         continue-on-error: true
@@ -108,10 +112,6 @@ jobs:
         id: fingerprint
         continue-on-error: true
         run: node tests/ss-sound-fingerprint-browser.mjs
-      - name: Check RC circuit and moving-average walkthrough interactions
-        id: partb
-        continue-on-error: true
-        run: node tests/ss-partb-system-browser.mjs
       - name: Check mathematical notation across all Applications and language modes
         id: math
         continue-on-error: true
