@@ -73,6 +73,7 @@ a:hover{text-decoration:underline}
  background:var(--els-surface);border-radius:7px;padding:4px 8px
 }
 /* A single simple circuit replaces diagrams of imaginary current flow. Arrow = signal path. */
+.ss-sys-circuit-frame{max-width:100%;overflow-x:auto;scrollbar-width:thin;border-radius:8px}
 .ss-sys-circuit{display:block;width:100%;height:auto;max-height:237px;background:var(--els-surface);border-radius:8px}
 .ss-sys-circuit :is(.ss-sys-wire,.ss-sys-series-r,.ss-sys-series-c,.ss-sys-shunt-r,.ss-sys-shunt-c){
  fill:none;stroke:var(--els-ink);stroke-width:3.1;stroke-linecap:round;stroke-linejoin:round
@@ -129,6 +130,7 @@ a:hover{text-decoration:underline}
  .ss-sys-ma-worked{grid-template-columns:1fr}
 }
 @media(max-width:720px){
+ .ss-sys-circuit{min-width:530px;min-height:190px}
  .ss-sys-voltage-readouts{grid-template-columns:repeat(2,minmax(0,1fr))}
  .ss-sys-circuit{max-height:none}
  .ss-sys-rc-explorer,.ss-sys-ma-explorer{padding:10px}
