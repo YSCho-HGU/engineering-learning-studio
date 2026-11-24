@@ -1,103 +1,121 @@
-/* Engineering Learning Studio — one shared course-header layout.
-   Single source of truth for both C Programming and Signals & Systems.
-   Course-specific scripts retain navigation and content behavior. */
-:root{
-  --els-course-head-height:34px;
-  --els-course-head-radius:8px;
-  --els-course-arrow-size:17px;
+/* Engineering Learning Studio course header — canonical geometry.
+   Both C Programming and S&S use the same left / navigation / actions DOM.
+   All earlier conflicting grid / flex / absolute overrides were removed.
+   Version: els-header-v5-20261124 */
+:root {
+  --els-course-control-size:34px;
+  --els-course-header-gap:10px;
 }
-html body > header.els-course-header.ss-common-header:has(.els-course-header-navigation){
+html body > header.ss-common-header.els-course-header {
   box-sizing:border-box!important;
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;
-  grid-template-areas:"course-left course-nav course-actions"!important;
+  display:flex!important;
   align-items:center!important;
-  column-gap:12px!important;
-  row-gap:7px!important;
+  flex-wrap:nowrap!important;
+  justify-content:flex-start!important;
+  gap:var(--els-course-header-gap)!important;
   width:100%!important;
   max-width:100%!important;
-  height:auto!important;
   min-height:56px!important;
-  padding:10px 15px!important;
+  height:auto!important;
+  padding:9px 13px!important;
   margin:0!important;
   overflow:visible!important;
   position:relative!important;
   isolation:isolate;
 }
-html body > header.els-course-header .els-header-left{
-  grid-area:course-left!important;
+html body.c-ss-course > header.ss-common-header.els-course-header {
+  position:sticky!important;
+  top:0!important;
+}
+html body > header.ss-common-header.els-course-header > .els-header-left {
   display:flex!important;
+  flex:1 1 0!important;
+  min-width:0!important;
   align-items:center!important;
   gap:10px!important;
-  min-width:0!important;
-  max-width:100%!important;
-  justify-self:stretch!important;
 }
-html body > header.els-course-header .els-header-left > .ss-common-home{
+html body > header.ss-common-header.els-course-header > .els-header-left > .ss-common-home {
   flex:0 0 auto!important;
   white-space:nowrap!important;
 }
-html body > header.els-course-header .els-header-left > .ss-common-menu{
-  flex:1 1 auto!important;
+html body > header.ss-common-header.els-course-header > .els-header-left > .ss-common-menu {
+  flex:0 1 auto!important;
   min-width:0!important;
-  max-width:100%!important;
+  max-width:min(42vw,520px)!important;
 }
-html body > header.els-course-header .els-header-left .ss-common-title{
+html body > header.ss-common-header.els-course-header .ss-common-menu > summary.ss-common-title {
   box-sizing:border-box!important;
   display:flex!important;
   align-items:center!important;
-  height:var(--els-course-head-height)!important;
-  min-height:var(--els-course-head-height)!important;
-  max-width:100%!important;
   min-width:0!important;
+  min-height:var(--els-course-control-size)!important;
+  height:var(--els-course-control-size)!important;
+  padding:4px 10px!important;
+  border-radius:8px!important;
   overflow:hidden!important;
-  text-overflow:ellipsis!important;
   white-space:nowrap!important;
-  border-radius:var(--els-course-head-radius)!important;
+  text-overflow:ellipsis!important;
 }
-html body > header.els-course-header .els-course-header-navigation{
-  grid-area:course-nav!important;
+html body > header.ss-common-header.els-course-header > .ss-common-actions {
+  display:flex!important;
+  flex:1 1 0!important;
+  min-width:0!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:8px!important;
+  margin:0!important;
+}
+html body > header.ss-common-header.els-course-header > .ss-common-actions select {
+  box-sizing:border-box!important;
+  height:var(--els-course-control-size)!important;
+  min-height:var(--els-course-control-size)!important;
+  border-radius:8px!important;
+}
+html body > header.ss-common-header.els-course-header > nav.ss-four-navigation.els-course-header-navigation {
+  display:flex!important;
   position:static!important;
   inset:auto!important;
-  transform:none!important;
-  display:flex!important;
-  flex-flow:row nowrap!important;
+  flex:0 0 auto!important;
   align-items:center!important;
   justify-content:center!important;
-  justify-self:center!important;
   gap:6px!important;
-  margin:0!important;
-  padding:0!important;
+  order:0!important;
   width:max-content!important;
-  max-width:100%!important;
   min-width:0!important;
   height:auto!important;
-  white-space:nowrap!important;
+  padding:0!important;
+  margin:0!important;
+  transform:none!important;
   background:transparent!important;
   border:0!important;
+  visibility:visible!important;
+  opacity:1!important;
+  z-index:2!important;
 }
-html body > header.els-course-header .els-course-header-navigation .ss-chapter-arrow{
+html body > header.ss-common-header.els-course-header > nav.ss-four-navigation .ss-chapter-arrow {
   box-sizing:border-box!important;
   display:inline-flex!important;
   align-items:center!important;
   justify-content:center!important;
-  flex:0 0 34px!important;
-  width:34px!important;
-  min-width:34px!important;
-  height:34px!important;
-  min-height:34px!important;
+  flex:0 0 var(--els-course-control-size)!important;
+  width:var(--els-course-control-size)!important;
+  min-width:var(--els-course-control-size)!important;
+  height:var(--els-course-control-size)!important;
+  min-height:var(--els-course-control-size)!important;
+  max-height:var(--els-course-control-size)!important;
+  border-radius:8px!important;
+  border:1px solid var(--els-border,#555)!important;
+  background:var(--els-surface-alt,#282828)!important;
+  color:var(--els-ink,#eee)!important;
   padding:0!important;
-  border:1px solid var(--els-border,#606660)!important;
-  border-radius:var(--els-course-head-radius)!important;
-  background:var(--els-surface-alt,#303030)!important;
-  color:var(--els-ink,#f1f1f1)!important;
-  font-size:0!important;
+  margin:0!important;
   text-decoration:none!important;
+  font-size:0!important;
 }
-html body > header.els-course-header .els-course-header-navigation .ss-chapter-arrow svg{
+html body > header.ss-common-header.els-course-header > nav.ss-four-navigation .ss-chapter-arrow svg {
   display:block!important;
-  width:var(--els-course-arrow-size)!important;
-  height:var(--els-course-arrow-size)!important;
+  width:17px!important;
+  height:17px!important;
   flex:none!important;
   fill:none!important;
   stroke:currentColor!important;
@@ -105,187 +123,62 @@ html body > header.els-course-header .els-course-header-navigation .ss-chapter-a
   stroke-linecap:round!important;
   stroke-linejoin:round!important;
 }
-html body > header.els-course-header .els-course-header-navigation .ss-chapter-arrow:is(:hover,:focus-visible){
-  border-color:var(--els-link,#95cbc4)!important;
+html body > header.ss-common-header.els-course-header > nav.ss-four-navigation .ss-nav-chapter {
+  background:var(--els-surface,#202020)!important;
+  border-color:var(--els-link,#7ac3c5)!important;
 }
-html body > header.els-course-header .els-course-header-navigation .ss-chapter-arrow:is(:disabled,[aria-disabled="true"]){
-  opacity:.4!important;
+html body > header.ss-common-header.els-course-header > nav.ss-four-navigation .ss-chapter-arrow:is(:disabled,[aria-disabled="true"]) {
+  opacity:.38!important;
   pointer-events:none!important;
+  cursor:default!important;
 }
-html body > header.els-course-header .els-course-header-actions{
-  grid-area:course-actions!important;
-  display:flex!important;
-  flex-flow:row nowrap!important;
-  align-items:center!important;
-  justify-content:flex-end!important;
-  justify-self:stretch!important;
-  gap:8px!important;
-  min-width:0!important;
-  max-width:100%!important;
-  width:auto!important;
-  margin:0!important;
-}
-html body > header.els-course-header .els-course-header-actions select{
-  box-sizing:border-box!important;
-  height:var(--els-course-head-height)!important;
-  min-height:var(--els-course-head-height)!important;
-  max-width:155px!important;
-  border-radius:var(--els-course-head-radius)!important;
-}
-html body > header.els-course-header :is(a,button,summary,select):focus-visible{
-  outline:2px solid var(--els-focus,#f1d48c)!important;
+html body > header.ss-common-header.els-course-header :is(a,button,select,summary):focus-visible {
+  outline:2px solid var(--els-focus,#f2cc82)!important;
   outline-offset:2px!important;
 }
-@media(max-width:1100px){
-  html body > header.els-course-header.ss-common-header:has(.els-course-header-navigation){
+@media(min-width:1101px) {
+  html body > header.ss-common-header.els-course-header > nav.ss-four-navigation.els-course-header-navigation {
+    position:absolute!important;
+    left:50%!important;
+    top:50%!important;
+    transform:translate(-50%,-50%)!important;
+  }
+  html body > header.ss-common-header.els-course-header > .els-header-left {
+    padding-right:104px!important;
+  }
+  html body > header.ss-common-header.els-course-header > .ss-common-actions {
+    padding-left:104px!important;
+  }
+}
+@media(max-width:1100px) {
+  html body > header.ss-common-header.els-course-header {
+    display:grid!important;
     grid-template-columns:minmax(0,1fr) auto!important;
-    grid-template-areas:"course-left course-actions" "course-nav course-nav"!important;
+    grid-template-areas:"left actions" "navigation navigation"!important;
+    row-gap:7px!important;
+  }
+  html body > header.ss-common-header.els-course-header > .els-header-left {grid-area:left!important;padding:0!important}
+  html body > header.ss-common-header.els-course-header > .ss-common-actions {grid-area:actions!important;padding:0!important}
+  html body > header.ss-common-header.els-course-header > nav.ss-four-navigation.els-course-header-navigation {
+    grid-area:navigation!important;
+    position:static!important;
+    justify-self:center!important;
+    transform:none!important;
+    margin:0!important;
   }
 }
-@media(max-width:700px){
-  html body > header.els-course-header.ss-common-header:has(.els-course-header-navigation){
+@media(max-width:640px) {
+  html body > header.ss-common-header.els-course-header {
     grid-template-columns:minmax(0,1fr)!important;
-    grid-template-areas:"course-left" "course-actions" "course-nav"!important;
-    padding:9px 10px!important;
+    grid-template-areas:"left" "actions" "navigation"!important;
+    padding:8px!important;
   }
-  html body > header.els-course-header .els-header-left{gap:7px!important}
-  html body > header.els-course-header .els-course-header-actions{
-    justify-self:end!important;
-    justify-content:flex-end!important;
+  html body > header.ss-common-header.els-course-header > .els-header-left > .ss-common-menu {
+    flex:1 1 auto!important;
+    max-width:calc(100vw - 100px)!important;
+  }
+  html body > header.ss-common-header.els-course-header > .ss-common-actions {
     width:100%!important;
+    justify-self:end!important;
   }
-  html body > header.els-course-header .els-course-header-actions select{
-    max-width:min(40vw,155px)!important;
-  }
-  html body > header.els-course-header .els-course-header-navigation{
-    width:max-content!important;
-    max-width:100%!important;
-    flex-wrap:nowrap!important;
-  }
-}
-
-/* Retain the C learning shell's sticky header behavior. */
-html body.c-ss-course > header.els-course-header.ss-common-header{
-  position:sticky!important;top:0!important;
-}
-
-/* Desktop: the navigation group is anchored to the true header midpoint,
-   independent of unequal side content. Grid still owns the other slots. */
-@media(min-width:1101px){
- html body > header.els-course-header.ss-common-header:has(.els-course-header-navigation){
-   position:relative!important;
- }
- html body > header.els-course-header .els-course-header-navigation{
-   position:absolute!important;
-   left:50%!important;
-   top:50%!important;
-   transform:translate(-50%,-50%)!important;
-   margin:0!important;
-   z-index:5!important;
- }
-}
-
-/* 2026-11-24 navigation geometry correction: true viewport-centered group.
-   Both C and SS retain a full-width header while side groups differ in width. */
-@media(min-width:1101px){
- html body > header.els-course-header.ss-common-header .els-course-header-navigation{
-   left:50vw!important;
-   right:auto!important;
-   justify-self:auto!important;
-   transform:translate(-50%,-50%)!important;
- }
-}
-
-/* Progressive enhancement: SS static header must work visually before JS starts.
-   The four arrows are never dependent on successful DOM normalization. */
-@media(min-width:1101px){
- html body > header.ss-common-header:not(.els-course-header):has(> .ss-four-navigation){
-   display:flex!important;align-items:center!important;position:relative!important;
-   min-height:56px!important;padding:10px 15px!important;
- }
- html body > header.ss-common-header:not(.els-course-header) > .ss-four-navigation{
-   display:flex!important;visibility:visible!important;
-   position:absolute!important;top:50%!important;left:50vw!important;
-   transform:translate(-50%,-50%)!important;
-   margin:0!important;z-index:5!important;
- }
- html body > header.ss-common-header:not(.els-course-header) > .ss-common-actions{
-   margin-left:auto!important;
- }
-}
-
-/* Shared SS navigation appearance for C: chapter jumps visually distinct from section steps. */
-html body > header.els-course-header.ss-common-header .els-course-header-navigation .ss-nav-chapter {
-  background:var(--els-surface,#252525)!important;
-  border-color:var(--els-link,#95cbc4)!important;
-}
-html body > header.els-course-header.ss-common-header .els-course-header-navigation .ss-nav-section {
-  background:var(--els-surface-alt,#303030)!important;
-  border-color:var(--els-border,#606660)!important;
-}
-html body > header.els-course-header.ss-common-header .els-course-header-navigation .ss-chapter-arrow {
-  width:34px!important;min-width:34px!important;height:34px!important;min-height:34px!important;
-  border-radius:8px!important;gap:0!important;
-}
-html body > header.els-course-header.ss-common-header .els-course-header-navigation .ss-chapter-arrow svg {
-  width:17px!important;height:17px!important;display:block!important;
-}
-@media(min-width:1101px){
- html body.c-ss-course > header.els-course-header.ss-common-header{
-   position:sticky!important;top:0!important;
- }
- html body.c-ss-course > header.els-course-header.ss-common-header > .els-course-header-navigation{
-   position:absolute!important;left:50%!important;top:50%!important;right:auto!important;
-   transform:translate(-50%,-50%)!important;
-   margin:0!important;
- }
-}
-
-/* Final shared header contract (2026-11-24): direct, stable placement.
-   Does not require JS normalization or width-balanced title/actions. */
-@media (min-width:1101px){
- html body > header.ss-common-header:has(> .ss-four-navigation),
- html body > header.ss-common-header.els-course-header:has(> .els-course-header-navigation){
-   box-sizing:border-box!important;position:relative!important;
-   display:flex!important;align-items:center!important;
-   min-height:56px!important;overflow:visible!important;
- }
- html body > header.ss-common-header > .ss-four-navigation,
- html body > header.ss-common-header > .els-course-header-navigation{
-   position:absolute!important;left:50%!important;right:auto!important;top:50%!important;
-   transform:translate(-50%,-50%)!important;
-   display:flex!important;visibility:visible!important;
-   margin:0!important;padding:0!important;
-   justify-content:center!important;align-items:center!important;
-   width:max-content!important;z-index:50!important;
- }
- html body > header.ss-common-header > .els-header-left{
-   display:flex!important;align-items:center!important;gap:10px!important;
-   margin-right:auto!important;min-width:0!important;
- }
- html body > header.ss-common-header > .ss-common-actions{
-   display:flex!important;margin-left:auto!important;align-items:center!important;
- }
-}
-html body > header.ss-common-header .ss-four-navigation{
- visibility:visible!important;opacity:1!important;
-}
-html body > header.ss-common-header .ss-four-navigation .ss-chapter-arrow{
- display:inline-flex!important;align-items:center!important;justify-content:center!important;
- flex:0 0 34px!important;width:34px!important;min-width:34px!important;
- height:34px!important;min-height:34px!important;max-height:34px!important;
- padding:0!important;border-radius:8px!important;
-}
-html body > header.ss-common-header .ss-four-navigation .ss-chapter-arrow svg{
- display:block!important;width:17px!important;height:17px!important;
- fill:none!important;stroke:currentColor!important;stroke-width:2.15!important;
- stroke-linecap:round!important;stroke-linejoin:round!important;
-}
-html body > header.ss-common-header .ss-four-navigation .ss-nav-chapter{
- background:var(--els-surface,#252525)!important;
- border-color:var(--els-link,#95cbc4)!important;
-}
-html body > header.ss-common-header .ss-four-navigation .ss-nav-section{
- background:var(--els-surface-alt,#303030)!important;
- border-color:var(--els-border,#606660)!important;
 }
