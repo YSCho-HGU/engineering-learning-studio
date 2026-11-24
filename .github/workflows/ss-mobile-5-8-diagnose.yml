@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: '22'
       - run: |
-          npm install --no-save --no-package-lock playwright@1.56.1
+          npm install --no-save --no-package-lock @playwright/test
           npx playwright install chromium
       - run: |
           python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/site.log 2>&1 &
