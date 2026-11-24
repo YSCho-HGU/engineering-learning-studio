@@ -39,8 +39,8 @@ try{
    }));
    check(Math.abs(hp.output-hp.resistor)<.004,"RC high-pass output must equal resistor voltage");
    await range(page,"sys-Rk",25);
-   check((await page.locator("#ss-sys-series-label").innerText()).includes("25")===false,"Series label should show capacitance in high-pass mode");
-   check((await page.locator("#ss-sys-shunt-label").innerText()).includes("25"),"RC resistance label did not update");
+   check((await page.locator("#ss-sys-series-label").textContent()).includes("25")===false,"Series label should show capacitance in high-pass mode");
+   check((await page.locator("#ss-sys-shunt-label").textContent()).includes("25"),"RC resistance label did not update");
    const cursorBefore=await page.locator("#sys-probe").inputValue();
    const chart=page.locator("#ss-sys-canvas-1");await chart.scrollIntoViewIfNeeded();const rect=await chart.boundingBox();
    check(!!rect,"RC chart not visible");
