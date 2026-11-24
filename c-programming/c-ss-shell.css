@@ -20,8 +20,7 @@ body.c-ss-course>.ss-common-header{
 .c-ss-header .ss-common-links a{display:block;padding:10px 9px;border-radius:6px;font-size:13px;line-height:1.45}
 .c-ss-header .ss-common-links a:hover,.c-ss-header .ss-common-links a[aria-current=page]{background:var(--els-surface-alt);color:var(--els-link)}
 .c-ss-header .ss-common-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
-.c-ss-header .ss-common-language{display:inline-flex;align-items:center;gap:5px}
-.c-ss-header .ss-common-language select,.c-ss-header .ss-common-theme select{
+.c-ss-header .ss-common-theme select{
  box-sizing:border-box;min-height:34px;height:34px;padding:4px 8px;
  color:var(--els-ink);background:var(--els-surface);border:1px solid var(--els-border);border-radius:8px;font:600 12px/1.2 Arial,"Malgun Gothic",sans-serif
 }
