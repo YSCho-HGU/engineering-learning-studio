@@ -40,10 +40,10 @@ try {
           const actions=header.querySelector(":scope > .ss-common-actions");
           const rect=e=>{const r=e.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};
           const a=rect(actions),m=rect(menu),n=rect(nav);
-          const native=header.querySelector(":scope > .c-native-language");
-          const shared=header.querySelector(":scope > .els-course-language-slot");
-          const l=shared?rect(shared):null;
-          const labels=[...shared?.querySelectorAll("option")||[]].map(x=>x.textContent.trim());
+          const native=header.querySelector(".ss-common-actions > .c-native-language");
+          const language=header.querySelector(".ss-common-actions > .ss-common-language");
+          const l=language?rect(language):null;
+          const labels=[...language?.querySelectorAll("option")||[]].map(x=>x.textContent.trim());
           const overlap=(x,y)=>Math.max(0,Math.min(x.right,y.right)-Math.max(x.left,y.left))*
               Math.max(0,Math.min(x.bottom,y.bottom)-Math.max(x.top,y.top));
           return {
@@ -55,24 +55,24 @@ try {
               navLanguage:l?overlap(n,l):0,languageActions:l?overlap(l,a):0},
             selectors:actions.querySelectorAll("select").length,
             nativeCLanguage:!!document.querySelector("#c-shared-language select"),
-            duplicatedCLanguage:!!header.querySelector(".ss-common-actions .ss-common-language-select"),
-            sharedLanguageCount:header.querySelectorAll(":scope > .els-course-language-slot select").length,
+            duplicatedCLanguage:!!header.querySelector(".ss-common-actions .ss-common-language-select") && !!native,
+            rightLanguageCount:actions.querySelectorAll(".ss-common-language select").length,
             noHorizontalOverflow:n.right<=innerWidth+2&&a.right<=innerWidth+2&&(!l||l.right<=innerWidth+2)
           };
         });
         assert.equal(d.layout,"grid",id+" header must use canonical grid");
         assert.equal(d.arrowCount,4,id+" four controls");
         assert.ok(d.visible,id+" arrows not visible "+JSON.stringify(d));
-        assert.equal(d.selectors,1,id+" right actions must contain theme only");
-        assert.equal(d.sharedLanguageCount,1,id+" exactly one aligned language picker");
-        assert.deepEqual(d.labels,["ENG + 한국어","ENG","한국어"],id+" consistent language choices");
+        assert.equal(d.selectors,2,id+" S&S-style right area contains language and theme");
+        assert.equal(d.rightLanguageCount,1,id+" exactly one language picker");
+        assert.deepEqual(d.labels,["한/영","English","한국어"],id+" preserve S&S language labels");
         if(target.name==="c-pointers")
           assert.ok(d.nativeCLanguage&&!d.duplicatedCLanguage,id+" C native picker must be unique");
-        else assert.ok(!d.duplicatedCLanguage,id+" S&S picker must not remain in actions");
+        else assert.ok(!d.nativeCLanguage,id+" S&S must retain its own original picker");
         assert.equal(d.overlaps.menuNav,0,id+" chooser/arrows overlapping "+JSON.stringify(d));
         assert.equal(d.overlaps.navActions,0,id+" arrows/preferences overlapping "+JSON.stringify(d));
         assert.equal(d.overlaps.navLanguage,0,id+" arrows/language overlapping "+JSON.stringify(d));
-        assert.equal(d.overlaps.languageActions,0,id+" C language/theme overlapping "+JSON.stringify(d));
+        assert.ok(d.language?.left>=d.actions.left-2&&d.language?.right<=d.actions.right+2,id+" language must be INSIDE actions "+JSON.stringify(d));
         assert.ok(d.noHorizontalOverflow,id+" viewport overflow "+JSON.stringify(d));
         if(width>900){
           const gap=d.nav.left-d.menu.right;

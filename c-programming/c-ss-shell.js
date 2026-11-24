@@ -73,7 +73,7 @@ function init(){
  arrow("Next chapter",1,null);
  // One C language controller in every course header. The selected mode is
  // always owned by ELSLanguage; only instructional rendering is course-specific.
- const nativeLanguage=el("label","c-native-language");
+ const nativeLanguage=el("label","c-native-language ss-common-language");
  nativeLanguage.id="c-shared-language";
  const globe=el("span","ss-language-icon","🌐");
  globe.setAttribute("aria-hidden","true");
@@ -82,7 +82,7 @@ function init(){
  const languagePicker=reusedLabPicker||el("select","");
  if(!reusedLabPicker)languagePicker.id="c-course-language";
  languagePicker.setAttribute("aria-label","C Programming language");
- const options=[["mixed","ENG + 한국어"],["en","ENG"],["ko","한국어"]];
+ const options=[["mixed","한/영"],["en","English"],["ko","한국어"]];
  if(reusedLabPicker){
    for(const [value,label] of options){
      const option=Array.from(languagePicker.options).find(x=>x.value===value);
@@ -95,7 +95,7 @@ function init(){
    }
  }
  nativeLanguage.append(languagePicker);
- header.insertBefore(nativeLanguage,header.querySelector(":scope > .ss-common-actions"));
+ header.querySelector(":scope > .ss-common-actions").prepend(nativeLanguage);
  // Guided Labs already binds #language-mode and subscribes to ELSLanguage.
  // Moving that existing node preserves its listener. Other C modules bind once.
  if(!reusedLabPicker)window.ELSLanguage?.bindSelect?.(languagePicker);

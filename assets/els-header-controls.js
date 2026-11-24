@@ -112,34 +112,7 @@
      }
    }
    header.querySelector(".ss-four-navigation")?.classList.add("els-course-header-navigation");
-   const actions=header.querySelector(":scope > .ss-common-actions");
-   actions?.classList.add("els-course-header-actions");
-   // Keep exactly one language select per course. Move S&S's existing node,
-   // retaining its ELSLanguage listeners and saved user preference.
-   const language=header.querySelector(":scope > .c-native-language")||
-     actions?.querySelector(":scope > label.ss-common-language")||
-     header.querySelector(":scope > .els-course-language-slot");
-   if(language){
-     language.classList.add("els-course-language-slot");
-     if(language.parentElement===actions)header.insertBefore(language,actions);
-     // Overview uses #ss-language-select, while chapters use a different ID.
-     // Normalize option *labels* here without touching values or event handlers.
-     for(const option of language.querySelectorAll("select option")){
-       if(option.value==="mixed")option.textContent="ENG + 한국어";
-       else if(option.value==="en")option.textContent="ENG";
-       else if(option.value==="ko")option.textContent="한국어";
-     }
-   }
-   // On GitHub Pages the S&S "Studio" button always targets the shared portal.
-   if(win.location.pathname.includes("/signals-systems/")){
-     const home=header.querySelector(".ss-common-home");
-     if(home){
-       home.href=win.location.hostname.endsWith(".github.io")?
-         "https://yscho-hgu.github.io/engineering-learning-studio/":
-         new URL("../",win.location.href).href;
-       home.setAttribute("aria-label","Studio Home");
-     }
-   }
+   header.querySelector(".ss-common-actions")?.classList.add("els-course-header-actions");
  }
  function normalize(root){
    const scope=root||doc;

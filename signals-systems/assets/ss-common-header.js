@@ -39,6 +39,15 @@ function normalizeTitleLabel(title){
 function init(){
  const header=document.querySelector('.ss-common-header');
  if(!header)return;
+ // Always return to the integrated portal from S&S, including its original
+ // standalone GitHub Pages site; do not alter header layout or language state.
+ const studioLink=header.querySelector('.ss-common-home');
+ if(studioLink){
+  studioLink.href=location.hostname.endsWith('.github.io')?
+   'https://yscho-hgu.github.io/engineering-learning-studio/':
+   new URL('../',location.href).href;
+  studioLink.setAttribute('aria-label','Studio Home');
+ }
  const menu=header.querySelector('.ss-common-menu');
  const title=header.querySelector('.ss-common-title');
  normalizeTitleLabel(title);
@@ -128,8 +137,8 @@ function init(){
  const languagePicker=header.querySelector('.ss-common-language-select');
  if(languagePicker){
   for(const option of languagePicker.options){
-   if(option.value==='mixed')option.textContent='ENG + 한국어';
-   if(option.value==='en')option.textContent='ENG';
+   if(option.value==='mixed')option.textContent='한/영';
+   if(option.value==='en')option.textContent='English';
    if(option.value==='ko')option.textContent='한국어';
   }
   languagePicker.setAttribute('aria-label','언어 선택 / Select language');

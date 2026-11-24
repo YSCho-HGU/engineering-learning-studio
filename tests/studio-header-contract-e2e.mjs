@@ -118,29 +118,35 @@ async function test(view,width){
    assert.equal(data.arrowTargets[3],ch===8?"./applications.html":"./chapter"+(ch+1)+".html","next chapter target");
    assert.equal(data.arrowDisabled[0],ch===1,"first chapter boundary");}
   }
-  // Cross-course header contract: one picker, same visible labels and
-  // geometry, with Studio navigation returning to the integrated portal.
+  // The S&S header is the reference: language and theme are neighbors
+  // in the right-hand actions. C must follow it without extra pickers.
   if(view.startsWith("signals-systems/")||cViews.includes(view)){
     const parity=await page.evaluate(()=>{
       const header=document.querySelector("body > header.ss-common-header.els-course-header");
-      const slot=header?.querySelector(":scope > .els-course-language-slot");
-      const select=slot?.querySelector("select");
+      const actions=header?.querySelector(":scope > .ss-common-actions");
+      const language=actions?.querySelector(":scope > .ss-common-language");
+      const select=language?.querySelector("select");
       const home=header?.querySelector(".ss-common-home");
-      const theme=header?.querySelector(".ss-common-actions [data-els-theme-picker]");
+      const theme=actions?.querySelector("[data-els-theme-picker]");
       const nav=header?.querySelector(":scope > nav.ss-four-navigation");
-      const rect=x=>{if(!x)return null;const r=x.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,height:r.height}};
-      return {count:header?.querySelectorAll(":scope > .els-course-language-slot select").length||0,
+      const rect=x=>{if(!x)return null;const r=x.getBoundingClientRect();return{left:r.left,right:r.right,top:r.top,bottom:r.bottom,height:r.height}};
+      return {count:actions?.querySelectorAll(".ss-common-language select").length||0,
+        actionSelects:actions?.querySelectorAll("select").length||0,
+        extra:header?.querySelectorAll(":scope > .c-native-language,:scope > .els-course-language-slot").length||0,
         labels:[...select?.options||[]].map(o=>o.textContent.trim()),
-        href:home?.href,slot:rect(slot),select:rect(select),nav:rect(nav),theme:rect(theme),
+        href:home?.href,language:rect(language),select:rect(select),
+        actions:rect(actions),nav:rect(nav),theme:rect(theme),
         overflow:document.documentElement.scrollWidth-innerWidth};
     });
-    assert.equal(parity.count,1,"one language select per course header");
-    assert.deepEqual(parity.labels,["ENG + 한국어","ENG","한국어"],"same C and S&S language options");
-    assert.ok(parity.select&&Math.abs(parity.select.height-34)<=1.5,"shared language picker height");
-    assert.equal(parity.href,base,"Studio link must open integrated Studio Home");
-    assert.ok(parity.overflow<=3,"course header overflow");
-    if(parity.nav&&width>=1101)assert.ok(parity.slot.left>=parity.nav.right-2,"picker after arrows");
-    if(parity.theme&&width>=1101)assert.ok(parity.theme.left>=parity.slot.right-2,"theme after picker");
+    assert.equal(parity.count,1,"one language picker inside right actions");
+    assert.equal(parity.actionSelects,2,"language and theme both in right actions");
+    assert.equal(parity.extra,0,"no separate language track or duplicate picker");
+    assert.deepEqual(parity.labels,["한/영","English","한국어"],"S&S reference language choices");
+    assert.ok(parity.select&&Math.abs(parity.select.height-34)<=1.5,"picker height");
+    assert.equal(parity.href,base,"Studio links to integrated Studio Home");
+    assert.ok(parity.overflow<=3,"header overflow");
+    if(parity.nav&&width>=1101)assert.ok(parity.actions.left>=parity.nav.right-2,"preferences to right of arrows");
+    if(parity.theme&&width>=1101)assert.ok(parity.theme.left>=parity.language.right-2,"theme follows language");
   }
   // Check the actual selected theme stays synchronized between DOM, picker, storage.
   // Keep representative visual evidence for human inspection in CI artifacts.
