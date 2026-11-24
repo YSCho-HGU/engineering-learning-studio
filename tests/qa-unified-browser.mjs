@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* Dedicated unified browser checks for C's eight published units and Logic Design pilot.
+/* Dedicated unified browser checks for published C units (Logic Design not yet released).
    Isolated browser contexts; never reads actual student data. */
 import {chromium} from "playwright";
 import {readFileSync,mkdirSync,writeFileSync} from "node:fs";
@@ -14,7 +14,7 @@ if(!process.env.QA_BASE){
  await new Promise(r=>setTimeout(r,1000));
 }
 const browser=await chromium.launch({headless:true});
-const failures=[],chapters=[],pilot=[];
+const failures=[],chapters=[];
 const widths=[390,1280],themes=["neutral-dark","warm-neutral"];
 function issue(id,message){failures.push({id,message})}
 function check(ok,id,message){if(!ok)issue(id,message)}
@@ -47,42 +47,11 @@ try{
   }
   chapters.push({id,title:c.title,url:slug,checks:tests,passed,status:passed===tests?"PASS":"FAIL",issues:failures.filter(f=>f.id===id).slice(0,8)});
  }
- for(const width of widths)for(const theme of themes){
-  const ctx=await browser.newContext({viewport:{width,height:860}});
-  await ctx.addInitScript(t=>localStorage.setItem("els-theme-v2",t),theme);
-  const page=await ctx.newPage(),errors=[];page.on("pageerror",e=>errors.push(String(e)));
-  let ok=false;
-  try{
-   await page.goto(base,{waitUntil:"load",timeout:45000});
-   await page.locator("#gate-type").waitFor();
-   const results=[];
-   for(const gate of ["AND","OR","XOR","NAND","NOR"]){
-    await page.locator("#gate-type").selectOption(gate);
-    for(let a=0;a<=1;a++)for(let b=0;b<=1;b++){
-     const actual=await page.evaluate(({a,b})=>{
-       for(const [id,value] of [["a",a],["b",b]]){
-         const node=document.getElementById(id);
-         if(Number(node.textContent.match(/[01]/)?.[0])!==value)node.click();
-       }
-       return document.getElementById("out").textContent.trim();
-     },{a,b});
-     const ref={AND:a&b,OR:a|b,XOR:a^b,NAND:1-(a&b),NOR:1-(a|b)}[gate];
-     results.push({gate,a,b,expected:ref,actual,pass:actual==="Y = "+ref});
-    }
-   }
-   const display=await page.evaluate(()=>({theme:document.documentElement.dataset.elsTheme,overflow:document.documentElement.scrollWidth>innerWidth+8}));
-   ok=results.every(x=>x.pass)&&display.theme===theme&&!display.overflow&&!errors.length;
-   if(!ok)issue("logic-pilot",width+"px "+theme+": "+JSON.stringify({wrong:results.filter(x=>!x.pass),display,errors}));
-   pilot.push({width,theme,combinations:results.length,status:ok?"PASS":"FAIL"});
-   await page.screenshot({path:outdir+"/logic-"+theme+"-"+width+".png",fullPage:false});
-  }catch(e){issue("logic-pilot",width+"px "+theme+": "+String(e));pilot.push({width,theme,status:"FAIL"})}
-  await ctx.close();
- }
 }finally{await browser.close();if(server)server.kill()}
 const report={schemaVersion:1,createdAt:new Date().toISOString(),c:{chapters,planned:catalog.chapters.length,published:published.length,
  screenshotMatrix:widths.length*themes.length*published.length},
- logic:{kind:"prototype",truthTableTypes:5,truthTableCases:20,viewports:pilot,formalCourseStatus:"NOT_RUN"},
+ logic:{kind:"not-in-scope",viewports:[],formalCourseStatus:"NOT_RUN"},
  status:failures.length?"FAIL":"PASS",failures};
 writeFileSync(outdir+"/browser-results.json",JSON.stringify(report,null,2)+"\n");
-console.log(JSON.stringify({status:report.status,cChapters:chapters.length,cViews:report.c.screenshotMatrix,logicCases:20,logicViews:pilot.length,failures:failures.slice(0,8)},null,2));
+console.log(JSON.stringify({status:report.status,cChapters:chapters.length,cViews:report.c.screenshotMatrix,logicCases:0,logicViews:0,failures:failures.slice(0,8)},null,2));
 if(failures.length)process.exitCode=1;
