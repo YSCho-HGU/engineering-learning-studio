@@ -30,6 +30,10 @@ function init(){
  const layout=(fileio||fileioLabs)?wrap:practice?wrap?.querySelector("#practice-root .cp-layout"):fileioTask?wrap?.querySelector(".layout"):wrap?.querySelector(".layout");
  const aside=(fileio||fileioLabs)?wrap?.querySelector(".sidebar"):fileioTask?layout?.querySelector("#task-nav"):practice?layout?.querySelector(".cp-menu"):layout?.querySelector(".side");
  if(!wrap||!layout||!aside||!oldHeader)return;
+ if(typeof window.ELSHeaderControls?.makeNavigationArrow!=="function"){
+   console.error("[ELS header] Common navigation component did not load");
+   return;
+ }
  const header=el("header","ss-common-header c-ss-header els-course-header");
  header.setAttribute("aria-label","Engineering Learning Studio navigation");
  const home=link("← Studio",nested?"../../../":"../../");
@@ -47,19 +51,8 @@ function init(){
  const arrows=el("nav","ss-four-navigation c-four-navigation els-course-header-navigation");
  arrows.setAttribute("aria-label","Chapter and section navigation");
  function arrow(title,chapterDelta,sectionDelta){
-  const factory=window.ELSHeaderControls?.makeNavigationArrow;
   const kind=chapterDelta!=null?"chapter":"section",direction=chapterDelta??sectionDelta;
-  // Keep the C course usable even when the shared presentation asset is stale or unavailable.
-  const fallback=()=>{
-   const node=el(kind==="chapter"?"a":"button","els-header-arrow ss-chapter-arrow ss-nav-"+kind);
-   const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
-   svg.setAttribute("viewBox","0 0 24 24");svg.setAttribute("aria-hidden","true");
-   const path=document.createElementNS("http://www.w3.org/2000/svg","path");
-   path.setAttribute("d",direction<0?"M15 5l-7 7 7 7":"M9 5l7 7-7 7");svg.append(path);
-   if(kind==="chapter"){const bar=document.createElementNS("http://www.w3.org/2000/svg","path");bar.setAttribute("d",direction<0?"M5 5v14":"M19 5v14");svg.append(bar)}
-   node.append(svg);return node;
-  };
-  const n=typeof factory==="function"?factory({kind,direction,label:title}):fallback();
+  const n=window.ELSHeaderControls.makeNavigationArrow({kind,direction,label:title});
   n.setAttribute("aria-label",title);n.title=title;
   if(chapterDelta!=null){let index=current+chapterDelta;if(index>=0&&index<chapters.length)n.href=parentPrefix+chapters[index][0]+"/";else{n.setAttribute("aria-disabled","true");n.tabIndex=-1}}
   else {n.type="button";n.dataset.direction=String(sectionDelta);n.addEventListener("click",()=>{const buttons=[...document.querySelectorAll(fileioTask?"#task-nav button[data-task]":fileioLabs?".side-nav a[data-lab-link]":practice?".cp-menu .cp-nav-item":fileio?"#lesson-nav button[data-nav]":"#lesson-nav button[data-lesson], #lesson-nav a[href^='#lab-']")];const pos=buttons.findIndex(b=>fileioLabs?b.getAttribute("href")===(location.hash||"#write"):fileioTask||practice?b.classList.contains("active"):fileio?b.classList.contains("current"):b.getAttribute("aria-current")==="step");if(pos>=0&&pos+sectionDelta>=0&&pos+sectionDelta<buttons.length){buttons[pos+sectionDelta].click()}refreshArrows()})}
