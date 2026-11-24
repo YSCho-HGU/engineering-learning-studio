@@ -41,7 +41,9 @@ function init(){
  const links=el("nav","ss-common-links");
  links.append(link("C Programming · Course Home",parentPrefix));
  chapters.forEach((entry,i)=>{let a=link("Chapter "+entry[1]+" · "+entry[2],parentPrefix+entry[0]+"/");if(i===current)a.setAttribute("aria-current","page");links.append(a)});
- menu.append(summary,links);header.append(menu);
+ menu.append(summary,links);
+ // Match the S&S static header DOM exactly; no optional shared helper is required.
+ const left=el("div","els-header-left");left.append(home,menu);header.append(left);
  const arrows=el("nav","ss-four-navigation c-four-navigation els-course-header-navigation");
  arrows.setAttribute("aria-label","Chapter and section navigation");
  function arrow(title,chapterDelta,sectionDelta){
@@ -78,7 +80,8 @@ function init(){
  choices.forEach(([value,label])=>{const option=el("option","",label);option.value=value;themeSelect.append(option)});
  themeSelect.value=window.ELSTheme?.get?.()||"neutral-dark";
  themeSelect.addEventListener("change",()=>window.ELSTheme?.set?.(themeSelect.value));
- theme.append(themeSelect);actions.append(theme);header.append(actions);
+ theme.append(themeSelect);actions.append(theme);actions.classList.add("els-course-header-actions");header.append(actions);
+ header.dataset.elsHeaderBuild="v5-20261124";
  // Same slot composer used by every Signals & Systems page.
  window.ELSHeaderControls?.mountSlots?.(header);
  oldHeader.replaceWith(header);
