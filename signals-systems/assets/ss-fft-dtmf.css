@@ -46,3 +46,10 @@
 html[data-ss-presentation=on] .ss-dtmf-layout{grid-template-columns:minmax(260px,23%) minmax(0,1fr)}
 @media(max-width:900px){.ss-dtmf-layout,html[data-ss-presentation=on] .ss-dtmf-layout{grid-template-columns:minmax(0,1fr)}.ss-dtmf-controls{position:static;max-height:none;overflow:visible}.ss-dtmf-formulas{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:600px){.ss-dtmf-root{padding:9px}.ss-dtmf-peak strong{font-size:16px}.ss-dtmf-map-cell{font-size:11px;padding:6px 2px}}
+/* The FFT action is primary; advanced controls stay available without obscuring discovery. */
+.ss-dtmf-options{border:1px solid var(--els-border);border-radius:8px;padding:8px;background:var(--els-surface-alt)}
+.ss-dtmf-options summary{font-size:13px;font-weight:750;line-height:1.45;cursor:pointer;color:var(--els-ink)}
+.ss-dtmf-options[open] .ss-dtmf-control-group{margin-top:10px}
+.ss-dtmf-map-cell.ss-dtmf-map-evidence{border-color:var(--els-link);box-shadow:inset 0 -3px var(--els-link);color:var(--els-ink);font-weight:800}
+#dtmf-evidence{margin:9px 0 13px}
+#dtmf-evidence .ss-c-reason-feedback{margin:0;color:var(--els-ink)}
