@@ -83,7 +83,7 @@ async function test(view,width){
      return {display:header?getComputedStyle(header).display:null,area:left?getComputedStyle(left).gridArea:null,nav:!!header?.querySelector(".c-four-navigation")};
     });
     assert.equal(geometry.display,"grid","C shared header must use three-slot grid");
-    assert.equal(geometry.area,"left","C chapter/home group must occupy left slot");
+    assert.equal(geometry.area,"course-left","C chapter/home group must occupy shared left slot");
     assert.ok(geometry.nav,"C center navigation missing");
    }
    for(const [i,r] of data.arrowRects.entries()){
