@@ -3,6 +3,12 @@ on:
   push:
     paths:
       - 'signals-systems/assets/ss-app-fft-visual-standard.css'
+      - 'signals-systems/assets/ss-image-fft.js'
+      - 'signals-systems/assets/ss-image-fft-core.js'
+      - 'signals-systems/assets/ss-image-fft.css'
+      - 'signals-systems/applications-fft-image.html'
+      - 'tests/image-fft-core-invariants.mjs'
+      - 'tests/image-fft-browser.mjs'
       - 'tests/applications-fft-visual-standard.mjs'
       - 'tests/applications-fft-six-browser-regression.mjs'
       - 'signals-systems/assets/ss-app-fft-butterfly-core.js'
@@ -31,6 +37,12 @@ on:
   pull_request:
     paths:
       - 'signals-systems/assets/ss-app-fft-visual-standard.css'
+      - 'signals-systems/assets/ss-image-fft.js'
+      - 'signals-systems/assets/ss-image-fft-core.js'
+      - 'signals-systems/assets/ss-image-fft.css'
+      - 'signals-systems/applications-fft-image.html'
+      - 'tests/image-fft-core-invariants.mjs'
+      - 'tests/image-fft-browser.mjs'
       - 'tests/applications-fft-visual-standard.mjs'
       - 'tests/applications-fft-six-browser-regression.mjs'
       - 'signals-systems/assets/ss-app-fft-butterfly-core.js'
@@ -71,6 +83,8 @@ jobs:
           node-version: '22'
       - name: Verify numeric 8-point FFT butterfly stages
         run: node tests/fft-butterfly-invariants.mjs
+      - name: Verify 2D FFT kernels and image reconstruction
+        run: node tests/image-fft-core-invariants.mjs
       - name: Check mathematical FFT content invariants
         run: node tests/fft-content-invariants.mjs
       - name: Install Korean fonts for visual QA
@@ -87,7 +101,7 @@ jobs:
         run: node tests/applications-fft-path-regression.mjs
       - name: Verify other six FFT Applications in Chromium
         run: node tests/applications-fft-six-browser-regression.mjs
-      - name: Verify shared FFT visual standards across 7 modules
+      - name: Verify shared FFT visual standards across 8 modules
         run: node tests/applications-fft-visual-standard.mjs
       - name: Preserve FFT browser source snapshot for offline visual diagnosis
         if: always()
@@ -113,11 +127,11 @@ jobs:
             tests/applications-dft-fft-regression.mjs
           if-no-files-found: error
           retention-days: 7
-      - name: Archive 7 FFT visual QA views and computed layout measurements
+      - name: Archive 8 FFT visual QA views and computed layout measurements
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: fft-seven-visual-standard-screenshots
+          name: fft-eight-visual-standard-screenshots
           path: artifacts/fft-visual-standard-qa/*
           if-no-files-found: warn
           retention-days: 14
