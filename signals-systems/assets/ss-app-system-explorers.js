@@ -73,6 +73,7 @@ function rcRender(){
         "C를 직렬, R을 접지에 연결하고 R 양단 전압을 출력으로 측정합니다.");
  $("ss-sys-v-time").textContent=point.t<1?fmt(point.t*1000,1)+" ms":fmt(point.t,3)+" s";
  $("ss-sys-v-in").textContent=fmt(point.x)+" V";
+ $("ss-sys-v-out").textContent=fmt(point.y)+" V";
  $("ss-sys-v-r").textContent=fmt(vr)+" V";
  $("ss-sys-v-c").textContent=fmt(vc)+" V";
  const measured=isLow?"C":"R";
@@ -176,7 +177,7 @@ function renderWalkthrough(data,scroll){
  text("ss-sys-ma-assumption",
   "Causal FIR: h[k] = 1/M for 0 ≤ k < M. For n < 0 the input is zero-padded. The complete sum uses every term, including those outside the visible plot before n=0.",
   "인과적 FIR: 0 ≤ k < M에서 h[k] = 1/M입니다. n < 0인 표본은 0으로 채웁니다. 전체 합산에는 경계 밖의 0 표본까지 모두 포함합니다.");
- if(scroll&&activeChip)activeChip.scrollIntoView({behavior:"instant",block:"nearest",inline:"nearest"});
+ if(scroll&&activeChip)activeChip.scrollIntoView({behavior:"auto",block:"nearest",inline:"nearest"});
 }
 function onModelUpdate(event){
  if(event?.detail?.kind!==lab.kind)return;
