@@ -3,6 +3,7 @@
 import assert from "node:assert/strict";
 import {spawn} from "node:child_process";
 import {chromium} from "playwright";
+import {mkdir} from "node:fs/promises";
 const port=8798,base="http://127.0.0.1:"+port+"/";
 const server=spawn("python3",["-m","http.server",String(port),"--bind","127.0.0.1"],{stdio:"ignore"});
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
@@ -25,6 +26,10 @@ async function test(view,width){
   const response=await page.goto(base+view,{waitUntil:"domcontentloaded",timeout:45000});
   assert.equal(response?.status(),200,"HTTP 200");
   await page.waitForFunction(()=>window.ELSTheme&&window.ELSHeaderControls,{timeout:20000});
+  if(view.startsWith("signals-systems/chapter")||cViews.includes(view)){
+   await page.waitForFunction(()=>document.querySelector("body > header.els-course-header .els-course-header-navigation")?.children.length===4,{timeout:20000});
+   await page.waitForFunction(()=>getComputedStyle(document.querySelector("body > header.els-course-header")).display==="grid",{timeout:20000});
+  }
   const data=await page.evaluate(()=>{
    const header=document.querySelector(".ss-common-header,.site-header,body > header");
    const lang=header?.querySelector("#lang,#c-language,.ss-common-language-select,#ss-language-select");
@@ -40,6 +45,8 @@ async function test(view,width){
     arrowTargets:arrows.map(x=>x.getAttribute("href")),
     arrowDisabled:arrows.map(x=>x.getAttribute("aria-disabled")==="true"),
     headerRight:header?rect(header).right:0,headerLeft:header?rect(header).x:0,headerWidth:header?rect(header).w:0,
+    headerVersion:header?.dataset.elsHeaderVersion,
+    headerDisplay:header?getComputedStyle(header).display:null,
     horizontalOverflow:document.documentElement.scrollWidth-window.innerWidth,
     preserved:localStorage.getItem("els-header-test-preserve")};
   });
@@ -53,6 +60,8 @@ async function test(view,width){
    assert.ok(Math.abs(rect.h-34)<=1.5,name+" height "+rect.h);
   }
   if(view.startsWith("signals-systems/chapter")||cViews.includes(view)){
+   assert.equal(data.headerVersion,"3","shared header composer version");
+   assert.equal(data.headerDisplay,"grid","shared layout must be grid");
    assert.ok(data.chapterRect,"chapter picker missing");
    assert.ok(Math.abs(data.chapterRect.h-34)<=1.5,"chapter height "+data.chapterRect.h);
    assert.equal(data.arrowRects.length,4,"four navigation arrows");
@@ -88,6 +97,12 @@ async function test(view,width){
    assert.equal(data.arrowDisabled[0],ch===1,"first chapter boundary");}
   }
   // Check the actual selected theme stays synchronized between DOM, picker, storage.
+  // Keep representative visual evidence for human inspection in CI artifacts.
+  if(["c-programming/functions/","signals-systems/chapter5.html"].includes(view)){
+   await mkdir("qa/header-screenshots",{recursive:true});
+   const key=view.startsWith("c-programming")?"c-functions":"ss-chapter5";
+   await page.screenshot({path:"qa/header-screenshots/"+key+"-"+width+".png",fullPage:false});
+  }
   await page.locator("[data-els-theme-picker]").selectOption("warm-neutral");
   await page.waitForFunction(()=>document.documentElement.dataset.elsTheme==="warm-neutral");
   assert.equal(await page.evaluate(()=>localStorage.getItem("els-theme-v2")),"warm-neutral");
