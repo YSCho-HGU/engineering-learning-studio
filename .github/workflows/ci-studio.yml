@@ -104,10 +104,15 @@ jobs:
                 if (/^tests\/ss-(chapters|ch4|responsive|plot|header|sidebar)/.test(p)) flags.chapters = true;
                 if (/^tests\/(studio|els|header)/.test(p)) flags.shared = true;
                 if (/^tests\/studio-admin/.test(p)) flags.admin = true;
+                if (p.includes('ss-theme') || p.includes('ss-math')) flags.chapters = true;
               } else if (p.startsWith('github-owner-worker/') || p.startsWith('admin/')) {
                 flags.admin = true;
               } else if (p.startsWith('assets/') || p.startsWith('shared/') || p === 'index.html') {
                 flags.shared = true;
+                if (p.startsWith('assets/els-theme') || p.startsWith('assets/els-language') ||
+                    p.startsWith('assets/els-typography')) {
+                  flags.c = true; flags.chapters = true; flags.apps = true;
+                }
               } else if (p.startsWith('progress/')) {
                 flags.c = true; flags.shared = true;
               }
@@ -132,20 +137,31 @@ jobs:
       - name: Run C content, integrity and GCC C11
         shell: bash
         run: |
-          set -euo pipefail
-          node tests/c-site-integrity.mjs
-          node tests/c-authoring-policy.mjs
-          node tests/c-course-ui-consistency.mjs
-          node tests/c-content-pedagogy-contract.mjs
-          node tests/c-advanced-review.mjs
-          node tests/c-fileio-mini-lab.mjs
-          node tests/c-fileio-ui.mjs
-          node tests/c-practice-guides.mjs
-          node tests/textbook-viewer.mjs
-          node tests/c-learning-map-contract.mjs
-          node tests/c211-version-static.mjs
-          node tests/phase0-storage-scan.mjs
-          node tests/c-course-gcc.mjs
+          set -uo pipefail
+          failures=0
+          run_case() {
+            echo "::group::$*"
+            if "$@"; then status=0; else status=$?; fi
+            echo "::endgroup::"
+            if [ "$status" -ne 0 ]; then
+              echo "::error::Failed ($status): $*"
+              failures=$((failures+1))
+            fi
+          }
+          run_case node tests/c-site-integrity.mjs
+          run_case node tests/c-authoring-policy.mjs
+          run_case node tests/c-course-ui-consistency.mjs
+          run_case node tests/c-content-pedagogy-contract.mjs
+          run_case node tests/c-advanced-review.mjs
+          run_case node tests/c-fileio-mini-lab.mjs
+          run_case node tests/c-fileio-ui.mjs
+          run_case node tests/c-practice-guides.mjs
+          run_case node tests/textbook-viewer.mjs
+          run_case node tests/c-learning-map-contract.mjs
+          run_case node tests/c211-version-static.mjs
+          run_case node tests/phase0-storage-scan.mjs
+          run_case node tests/c-course-gcc.mjs
+          if [ "$failures" -ne 0 ]; then echo "$failures test(s) failed"; exit 1; fi
 
   c-browser:
     name: C browser, chapters and student journeys
@@ -175,22 +191,34 @@ jobs:
       - name: Run C browser, chapters and student journeys
         shell: bash
         run: |
-          set -euo pipefail
-          node tests/c-browser-regression.mjs
-          node tests/c-four-chapters-browser.mjs
-          node tests/c-fileio-buffer-browser.mjs
-          node tests/c-fileio-core-browser.mjs
-          node tests/c-fileio-ux-browser.mjs
-          node tests/c-programming-visual.mjs
-          node tests/c181-browser.mjs
-          node tests/c211-toc-browser.mjs
-          node tests/c211-version-browser.mjs
-          node tests/c211-experience-browser.mjs
-          node tests/c211-release-browser.mjs
-          node tests/c-journey-qa.mjs
-          node tests/c-integrated-qa.mjs
-          node tests/c-grouped-navigation-e2e.mjs
-          node tests/phase0-c-baseline.mjs
+          set -uo pipefail
+          failures=0
+          run_case() {
+            echo "::group::$*"
+            if "$@"; then status=0; else status=$?; fi
+            echo "::endgroup::"
+            if [ "$status" -ne 0 ]; then
+              echo "::error::Failed ($status): $*"
+              failures=$((failures+1))
+            fi
+          }
+          run_case node tests/c-browser-regression.mjs
+          run_case node tests/c-four-chapters-browser.mjs
+          run_case node tests/c-fileio-buffer-browser.mjs
+          run_case node tests/c-fileio-core-browser.mjs
+          run_case node tests/c-fileio-ux-browser.mjs
+          run_case node tests/c-programming-visual.mjs
+          run_case node tests/c181-browser.mjs
+          run_case node tests/c211-toc-browser.mjs
+          run_case node tests/c211-version-browser.mjs
+          run_case node tests/c211-experience-browser.mjs
+          run_case node tests/c211-release-browser.mjs
+          run_case node tests/c-journey-qa.mjs
+          run_case node tests/c-integrated-qa.mjs
+          run_case node tests/c-grouped-navigation-e2e.mjs
+          run_case node tests/phase0-c-baseline.mjs
+          run_case node tests/els-theme-qa.mjs
+          if [ "$failures" -ne 0 ]; then echo "$failures test(s) failed"; exit 1; fi
       - name: Preserve browser evidence on failure or full manual audit
         if: ${{ failure() || github.event_name == 'workflow_dispatch' }}
         uses: actions/upload-artifact@v4
@@ -231,17 +259,28 @@ jobs:
       - name: Run S&S chapters math, language and responsive
         shell: bash
         run: |
-          set -euo pipefail
-          node signals-systems/tests/ss-data-language-contract.mjs
-          node signals-systems/tests/theme-contrast-audit.mjs
-          node signals-systems/tests/ss-theme-qa.mjs
-          node tests/ss-chapters-math-audit.mjs
-          node tests/ss-chapters-full-qa.mjs
-          node tests/ss-responsive-unified-browser.mjs
-          node tests/ss-plot-typography-browser.mjs
-          node tests/ss-ch4-mobile-standard-browser.mjs
-          node tests/ss-header-language-theme-e2e.mjs
-          node tests/ss-sidebar-ch4-standard-e2e.mjs
+          set -uo pipefail
+          failures=0
+          run_case() {
+            echo "::group::$*"
+            if "$@"; then status=0; else status=$?; fi
+            echo "::endgroup::"
+            if [ "$status" -ne 0 ]; then
+              echo "::error::Failed ($status): $*"
+              failures=$((failures+1))
+            fi
+          }
+          run_case node signals-systems/tests/ss-data-language-contract.mjs
+          run_case node signals-systems/tests/theme-contrast-audit.mjs
+          run_case node signals-systems/tests/ss-theme-qa.mjs
+          run_case node tests/ss-chapters-math-audit.mjs
+          run_case node tests/ss-chapters-full-qa.mjs
+          run_case node tests/ss-responsive-unified-browser.mjs
+          run_case node tests/ss-plot-typography-browser.mjs
+          run_case node tests/ss-ch4-mobile-standard-browser.mjs
+          run_case node tests/ss-header-language-theme-e2e.mjs
+          run_case node tests/ss-sidebar-ch4-standard-e2e.mjs
+          if [ "$failures" -ne 0 ]; then echo "$failures test(s) failed"; exit 1; fi
       - name: Preserve browser evidence on failure or full manual audit
         if: ${{ failure() || github.event_name == 'workflow_dispatch' }}
         uses: actions/upload-artifact@v4
@@ -270,14 +309,25 @@ jobs:
       - name: Run Applications FFT numerical and Part B contracts
         shell: bash
         run: |
-          set -euo pipefail
-          node tests/fft-butterfly-invariants.mjs
-          node tests/fft-content-invariants.mjs
-          node tests/image-fft-core-invariants.mjs
-          node signals-systems/tests/partb-system-labs.mjs
-          node signals-systems/tests/partb-compare-core.mjs
-          node --check signals-systems/assets/ss-applications-hub.js
-          node --check signals-systems/assets/ss-image-fft-core.js
+          set -uo pipefail
+          failures=0
+          run_case() {
+            echo "::group::$*"
+            if "$@"; then status=0; else status=$?; fi
+            echo "::endgroup::"
+            if [ "$status" -ne 0 ]; then
+              echo "::error::Failed ($status): $*"
+              failures=$((failures+1))
+            fi
+          }
+          run_case node tests/fft-butterfly-invariants.mjs
+          run_case node tests/fft-content-invariants.mjs
+          run_case node tests/image-fft-core-invariants.mjs
+          run_case node signals-systems/tests/partb-system-labs.mjs
+          run_case node signals-systems/tests/partb-compare-core.mjs
+          run_case node --check signals-systems/assets/ss-applications-hub.js
+          run_case node --check signals-systems/assets/ss-image-fft-core.js
+          if [ "$failures" -ne 0 ]; then echo "$failures test(s) failed"; exit 1; fi
 
   apps-labs:
     name: Applications inquiry, original labs and Part B browser
@@ -309,15 +359,26 @@ jobs:
       - name: Run Applications inquiry, original labs and Part B browser
         shell: bash
         run: |
-          set -euo pipefail
-          node tests/applications-abd-visual-regression.mjs
-          node tests/ss-applications-browser.mjs
-          node tests/ss-extra-labs-browser.mjs
-          node tests/ss-apps-inquiry-browser.mjs
-          node tests/ss-partb-student-journeys.mjs
-          node tests/ss-partb-system-browser.mjs
-          node tests/ss-partb-compare-browser.mjs
-          node tests/ss-applications-math-audit.mjs
+          set -uo pipefail
+          failures=0
+          run_case() {
+            echo "::group::$*"
+            if "$@"; then status=0; else status=$?; fi
+            echo "::endgroup::"
+            if [ "$status" -ne 0 ]; then
+              echo "::error::Failed ($status): $*"
+              failures=$((failures+1))
+            fi
+          }
+          run_case node tests/applications-abd-visual-regression.mjs
+          run_case node tests/ss-applications-browser.mjs
+          run_case node tests/ss-extra-labs-browser.mjs
+          run_case node tests/ss-apps-inquiry-browser.mjs
+          run_case node tests/ss-partb-student-journeys.mjs
+          run_case node tests/ss-partb-system-browser.mjs
+          run_case node tests/ss-partb-compare-browser.mjs
+          run_case node tests/ss-applications-math-audit.mjs
+          if [ "$failures" -ne 0 ]; then echo "$failures test(s) failed"; exit 1; fi
       - name: Preserve browser evidence on failure or full manual audit
         if: ${{ failure() || github.event_name == 'workflow_dispatch' }}
         uses: actions/upload-artifact@v4
@@ -358,17 +419,28 @@ jobs:
       - name: Run Applications FFT, DFT, STFT and image browser
         shell: bash
         run: |
-          set -euo pipefail
-          node tests/applications-dft-fft-regression.mjs
-          node tests/applications-fft-path-regression.mjs
-          node tests/applications-fft-six-browser-regression.mjs
-          node tests/applications-fft-visual-standard.mjs
-          node tests/ss-fft-foundations-browser.mjs
-          node tests/ss-chirp-stft-browser.mjs
-          node tests/ss-fft-upload-browser.mjs
-          node tests/ss-dtmf-decoder-browser.mjs
-          node tests/ss-sound-fingerprint-browser.mjs
-          node tests/image-fft-browser.mjs
+          set -uo pipefail
+          failures=0
+          run_case() {
+            echo "::group::$*"
+            if "$@"; then status=0; else status=$?; fi
+            echo "::endgroup::"
+            if [ "$status" -ne 0 ]; then
+              echo "::error::Failed ($status): $*"
+              failures=$((failures+1))
+            fi
+          }
+          run_case node tests/applications-dft-fft-regression.mjs
+          run_case node tests/applications-fft-path-regression.mjs
+          run_case node tests/applications-fft-six-browser-regression.mjs
+          run_case node tests/applications-fft-visual-standard.mjs
+          run_case node tests/ss-fft-foundations-browser.mjs
+          run_case node tests/ss-chirp-stft-browser.mjs
+          run_case node tests/ss-fft-upload-browser.mjs
+          run_case node tests/ss-dtmf-decoder-browser.mjs
+          run_case node tests/ss-sound-fingerprint-browser.mjs
+          run_case node tests/image-fft-browser.mjs
+          if [ "$failures" -ne 0 ]; then echo "$failures test(s) failed"; exit 1; fi
       - name: Preserve browser evidence on failure or full manual audit
         if: ${{ failure() || github.event_name == 'workflow_dispatch' }}
         uses: actions/upload-artifact@v4
@@ -397,11 +469,22 @@ jobs:
       - name: Run Studio shared assets and migration contract
         shell: bash
         run: |
-          set -euo pipefail
-          node tests/studio-monorepo-contract.mjs
-          node tests/studio-header-inventory.mjs
-          node tests/els-shared-asset-contract.mjs
-          node tests/c-site-integrity.mjs
+          set -uo pipefail
+          failures=0
+          run_case() {
+            echo "::group::$*"
+            if "$@"; then status=0; else status=$?; fi
+            echo "::endgroup::"
+            if [ "$status" -ne 0 ]; then
+              echo "::error::Failed ($status): $*"
+              failures=$((failures+1))
+            fi
+          }
+          run_case node tests/studio-monorepo-contract.mjs
+          run_case node tests/studio-header-inventory.mjs
+          run_case node tests/els-shared-asset-contract.mjs
+          run_case node tests/c-site-integrity.mjs
+          if [ "$failures" -ne 0 ]; then echo "$failures test(s) failed"; exit 1; fi
 
   shared-browser:
     name: Studio shared header, themes and cross-course state
@@ -431,13 +514,24 @@ jobs:
       - name: Run Studio shared header, themes and cross-course state
         shell: bash
         run: |
-          set -euo pipefail
-          node tests/studio-header-contract-e2e.mjs
-          node tests/studio-header-controls-e2e.mjs
-          node tests/studio-cross-course-state-e2e.mjs
-          node tests/studio-theme-math-e2e.mjs
-          (cd signals-systems && node tests/ss-navigation-visual-e2e.mjs)
-          (cd signals-systems && node tests/ss-english-content-e2e.mjs)
+          set -uo pipefail
+          failures=0
+          run_case() {
+            echo "::group::$*"
+            if "$@"; then status=0; else status=$?; fi
+            echo "::endgroup::"
+            if [ "$status" -ne 0 ]; then
+              echo "::error::Failed ($status): $*"
+              failures=$((failures+1))
+            fi
+          }
+          run_case node tests/studio-header-contract-e2e.mjs
+          run_case node tests/studio-header-controls-e2e.mjs
+          run_case node tests/studio-cross-course-state-e2e.mjs
+          run_case node tests/studio-theme-math-e2e.mjs
+          run_case bash -lc 'cd signals-systems && node tests/ss-navigation-visual-e2e.mjs'
+          run_case bash -lc 'cd signals-systems && node tests/ss-english-content-e2e.mjs'
+          if [ "$failures" -ne 0 ]; then echo "$failures test(s) failed"; exit 1; fi
       - name: Preserve browser evidence on failure or full manual audit
         if: ${{ failure() || github.event_name == 'workflow_dispatch' }}
         uses: actions/upload-artifact@v4
@@ -478,15 +572,26 @@ jobs:
       - name: Run Studio admin and Owner Worker permissions
         shell: bash
         run: |
-          set -euo pipefail
-          node --test github-owner-worker/tests/*.test.mjs
-          node --check admin/admin.js
-          node --check admin/admin-access.js
-          node --check admin/github-owner.js
-          node --check github-owner-worker/src/index.js
-          node --check github-owner-worker/src/catalog-core.js
-          node tests/studio-admin.mjs
-          node tests/studio-admin-github.mjs
+          set -uo pipefail
+          failures=0
+          run_case() {
+            echo "::group::$*"
+            if "$@"; then status=0; else status=$?; fi
+            echo "::endgroup::"
+            if [ "$status" -ne 0 ]; then
+              echo "::error::Failed ($status): $*"
+              failures=$((failures+1))
+            fi
+          }
+          run_case node --test github-owner-worker/tests/*.test.mjs
+          run_case node --check admin/admin.js
+          run_case node --check admin/admin-access.js
+          run_case node --check admin/github-owner.js
+          run_case node --check github-owner-worker/src/index.js
+          run_case node --check github-owner-worker/src/catalog-core.js
+          run_case node tests/studio-admin.mjs
+          run_case node tests/studio-admin-github.mjs
+          if [ "$failures" -ne 0 ]; then echo "$failures test(s) failed"; exit 1; fi
       - name: Preserve browser evidence on failure or full manual audit
         if: ${{ failure() || github.event_name == 'workflow_dispatch' }}
         uses: actions/upload-artifact@v4

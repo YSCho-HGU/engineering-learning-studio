@@ -34,10 +34,11 @@ The CI workflow runs unchanged test scripts. Suite-specific obsolete workflow en
 2. **Diff classifier** selects only the affected learning areas. Manual dispatch validates all.
 3. Browser suites install Playwright/Chromium **once per job**, rather than once per legacy workflow.
 4. Each job has a deadline and all same-branch obsolete runs are cancelled through concurrency.
-5. Browser artifacts are stored on failure or deliberate full manual audit, not on every green check.
-6. Production deployment and post-deployment verification remain independent from premerge QA.
-7. On a GitHub compare result of 300 files or unknown change metadata, all suites are run to avoid missing changes.
-8. Manual G0–G7 and exact FFT source snapshot are preserved for deeper diagnostics.
+5. All tests in a selected job run to completion and failures are summarized; one failure cannot hide other regressions.
+6. Browser artifacts are stored on failure or deliberate full manual audit, not on every green check.
+7. Production deployment and post-deployment verification remain independent from premerge QA. Legacy Studio URLs are verified in postdeployment QA.
+8. On a GitHub compare result of 300 files or unknown change metadata, all suites are run to avoid missing changes.
+9. Manual G0–G7 and exact FFT source snapshot are preserved for deeper diagnostics.
 
 ## Release verification
 

@@ -56,6 +56,7 @@ jobs:
         run: |
           set -euo pipefail
           node tests/pages-production-smoke.mjs
+          node tests/studio-deployed-smoke.mjs
 
       - name: Upload complete browser QA evidence
         if: always()
