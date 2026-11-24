@@ -67,6 +67,16 @@ async function test(view,width){
    assert.equal(await page.evaluate(()=>typeof window.ELSHeaderControls?.makeNavigationArrow),"function",
       "shared header component missing");
    if(width>=1101){const left=data.arrowRects[0].x,right=data.arrowRects[3].right;assert.ok(Math.abs((left+right)/2-(data.headerLeft+data.headerWidth/2))<=2,"arrow group must be geometrically centered");}
+   if(cViews.includes(view)){
+    const geometry=await page.evaluate(()=>{
+     const header=document.querySelector("body > .c-ss-header");
+     const left=header?.querySelector(".els-header-left");
+     return {display:header?getComputedStyle(header).display:null,area:left?getComputedStyle(left).gridArea:null,nav:!!header?.querySelector(".c-four-navigation")};
+    });
+    assert.equal(geometry.display,"grid","C shared header must use three-slot grid");
+    assert.equal(geometry.area,"left","C chapter/home group must occupy left slot");
+    assert.ok(geometry.nav,"C center navigation missing");
+   }
    for(const [i,r] of data.arrowRects.entries()){
     assert.ok(Math.abs(r.w-34)<=1.5&&Math.abs(r.h-34)<=1.5,"arrow "+i+" dimensions "+JSON.stringify(r));
     assert.ok(data.arrowSvgs[i]>=1,"arrow "+i+" must be SVG");
