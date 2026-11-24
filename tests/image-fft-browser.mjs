@@ -73,7 +73,9 @@ try{
    check(await page.locator("#image-scan-fft").isVisible(),"FFT reconstruction preview missing");
    check(await page.locator("#image-spatial-progress .ss-image-bridge-cell").count()===25,"Spatial 5x5 output grid missing");
    check(await page.locator("#image-fft-progress .ss-image-bridge-cell").count()===25,"FFT 5x5 output grid missing");
-   const preview=page.locator("#image-scan-source"),bounds=await preview.boundingBox();
+   const preview=page.locator("#image-scan-source");
+   await preview.scrollIntoViewIfNeeded();
+   const bounds=await preview.boundingBox();
    await page.mouse.click(bounds.x+bounds.width*.45,bounds.y+bounds.height*.35);
    const previewPoint=await page.evaluate(()=>({x:window.SSImageFFTApp.state.probeX,y:window.SSImageFFTApp.state.probeY}));
    check(Math.abs(previewPoint.x-256*.45)<2&&Math.abs(previewPoint.y-256*.35)<2,"Preview click does not select kernel center");
@@ -92,6 +94,7 @@ try{
    await page.waitForFunction(()=>window.SSImageFFTApp.state.kernel==="sharpen"&&window.SSImageFFTApp.result?.output?.maxDifference<1e-9);
    const sharpImage=await page.locator("#image-output-canvas").evaluate(c=>c.toDataURL());
    check(sharpImage!==gaussianImage,"Sharpening should differ from Gaussian blur");
+   await page.locator("#image-input-canvas").scrollIntoViewIfNeeded();
    const clickBox=await page.locator("#image-input-canvas").boundingBox();
    await page.mouse.click(clickBox.x+clickBox.width*.37,clickBox.y+clickBox.height*.4);
    await page.waitForTimeout(120);
