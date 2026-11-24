@@ -19,7 +19,22 @@ try{
    const url=base+"/signals-systems/applications-system-lab.html";
    await page.goto(url+"?lab=rc",{waitUntil:"domcontentloaded"});
    await page.locator("#ss-sys-v-in").waitFor();
-   await page.waitForFunction(()=>window.SSSystemLab?.kind==="rc" && document.getElementById("ss-sys-v-in")?.textContent!=="0 V");
+   try{
+    await page.waitForFunction(()=>window.SSSystemLab?.kind==="rc" &&
+      document.getElementById("ss-sys-v-in")?.textContent!=="0 V",null,{timeout:7000});
+   }catch(err){
+    const state=await page.evaluate(()=>({
+      ready:document.readyState,
+      labKind:window.SSSystemLab?.kind||null,
+      coreReady:!!window.SSSystemCore,
+      probe:window.SSSystemLab?.state?.probe,
+      voltage:document.getElementById("ss-sys-v-in")?.textContent,
+      canvas:document.getElementById("ss-sys-canvas-1")?.width,
+      hint:document.getElementById("ss-sys-task")?.textContent,
+      scripts:Array.from(document.scripts).filter(x=>x.src.includes("system")).map(x=>x.src),
+    }));
+    throw Error("RC first render not ready: "+JSON.stringify({state,errors}));
+   }
    check(await page.locator("#ss-sys-rc-explorer").isVisible(),"RC schematic not visible");
    check((await page.locator("#ss-sys-step-1").innerText()).includes("Observe")||width===390,"RC Observe stage missing");
    if(width===1440){
