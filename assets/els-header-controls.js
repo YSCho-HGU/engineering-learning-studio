@@ -5,15 +5,6 @@
 (function(win,doc){
  "use strict";
  if(win.ELSHeaderControls)return;
- // Attach the shared stylesheet after legacy course CSS so cascade order is deterministic.
- // Resolve relative to this script, not the host page (which may be several folders deep).
- const script=doc.currentScript;
- if(script?.src&&!doc.querySelector('link[data-els-course-header-css]')){
-   const link=doc.createElement("link");
-   link.rel="stylesheet";link.dataset.elsCourseHeaderCss="";
-   link.href=new URL("./els-course-header.css?v=unified-20261124-r2",script.src).href;
-   doc.head.append(link);
- }
   // Shared presentation component used by both C and Signals & Systems.
   // Host course owns the navigation destination and its click behavior.
   function makeNavigationArrow({kind="section",direction=1,label="",href=null}={}){
