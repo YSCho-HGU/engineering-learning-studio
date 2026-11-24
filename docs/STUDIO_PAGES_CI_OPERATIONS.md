@@ -27,6 +27,7 @@ The following workflows remain independently useful and retain their existing te
 | `c-fileio-buffer.yml` | File I/O focused Chromium tests | Read-only |
 | `ss-applications-browser.yml` | SS Applications browser tests | Read-only, artifact-only QA report |
 | `applications-dft-fft.yml` | FFT and image-FFT learning invariants | Read-only, already had QA concurrency |
+| `unified-quality.yml` | C G0-G7 combined test and QA snapshots | Read-only, no main-branch publishing, Logic Design excluded from mandatory QA |
 | `deploy-owner-worker.yml` | Cloudflare Owner Worker deployment | Manual, separate environment and concurrency |
 
 Some path overlap is intentional: focused file I/O QA and broader C integration tests cover distinct assertions, and FFT numeric invariants differ from Applications end-to-end behavior. Heavy browser tests are **not** executed as a prerequisite for each production Pages deployment.
@@ -35,7 +36,7 @@ Some path overlap is intentional: focused file I/O QA and broader C integration 
 
 1. Rapid, separate commits for each changed chapter cause repeated `main` push events. Batch a coherent change set.
 2. The previous SS Applications QA workflow pushed `qa/fft-browser-last-run.json` back to `main`; this was removed in favor of an Actions artifact.
-3. Historical bot commits changed `qa-dashboard/*-latest.json` several times in one QA run. Their publisher has not yet been identified from the available workflow inventory. The dedicated Pages workflow excludes `qa-dashboard/**` so these writes no longer trigger **this** deployment workflow, but if such a publisher remains enabled it still produces unnecessary repository history and may trigger branch-source Pages publication until the Pages source is switched to GitHub Actions.
+3. Historical bot commits changed `qa-dashboard/*-latest.json` three times in one unified QA run. The publisher was located in `.github/workflows/unified-quality.yml` (G0-G7) and removed. QA dashboard snapshots now remain in the Actions artifact rather than producing new `main` commits. The Pages workflow also excludes `qa-dashboard/**`.
 
 ## Deployment acceptance criteria
 
@@ -46,3 +47,7 @@ Some path overlap is intentional: focused file I/O QA and broader C integration 
 5. A QA-only commit does not start `Studio Pages - production`.
 
 **Status caveat:** Repository code changes do not establish that the GitHub Pages source setting was switched or that production was successfully deployed. Check the Actions deployment run separately.
+
+## Scope of Logic Design
+
+Logic Design is not yet a published Studio course. The unified C browser test and G6 required evidence gate now exclude the earlier Logic Design prototype, and QA summaries mark that course `NOT_RUN` rather than failing the C quality gate.
