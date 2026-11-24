@@ -31,6 +31,7 @@ function analyze(samples,{N=2048,window="hann",offset=.4}={}){
  const row=LOW.reduce((b,v,i)=>Math.abs(v-low.frequency)<Math.abs(LOW[b]-low.frequency)?i:b,0),col=HIGH.reduce((b,v,i)=>Math.abs(v-high.frequency)<Math.abs(HIGH[b]-high.frequency)?i:b,0);
  return{N,start,spectrum,delta,low,high,decoded:KEYS[row][col]};
 }
+let evidenceReady=false;
 let randomSeed=null,st={secret:[],index:0,guess:null,result:null,tries:0,correct:0,done:false,solved:false},audioContext=null;
 const match=(W.location?.search||"").match(/[?&]seed=(\d+)/);if(match)randomSeed=Number(match[1])>>>0;
 function randomKey(){let i;if(randomSeed!==null){randomSeed=(Math.imul(randomSeed,1664525)+1013904223)>>>0;i=randomSeed%12}else{const a=new Uint32Array(1);W.crypto.getRandomValues(a);i=a[0]%12}return KEYS.join("")[i]}
@@ -75,12 +76,12 @@ function drawMap(){
  const holder=$("dtmf-frequency-map");holder.replaceChildren();
  const cells=[["Low / High",true],...HIGH.map(x=>[String(x),true])];
  for(let r=0;r<4;r++){cells.push([String(LOW[r]),true]);for(let c=0;c<3;c++)cells.push([KEYS[r][c],false])}
- for(const [v,head] of cells){const el=document.createElement("div");el.className="ss-dtmf-map-cell"+(head?" ss-dtmf-map-head":"")+(v===st.guess?" ss-dtmf-map-chosen":"");el.textContent=v;holder.append(el)}
+ for(const [v,head] of cells){const el=document.createElement("div");el.className="ss-dtmf-map-cell"+(head?" ss-dtmf-map-head":"")+(v===st.guess?" ss-dtmf-map-chosen":"")+(evidenceReady&&(v===$("dtmf-evidence-low").value||v===$("dtmf-evidence-high").value)?" ss-dtmf-map-evidence":"");el.textContent=v;holder.append(el)}
 }
 function keypad(){
  const el=$("dtmf-keypad");el.replaceChildren();
  for(const v of KEYS.join("")){
-  const b=document.createElement("button");b.type="button";b.textContent=v;b.dataset.digit=v;b.disabled=st.done||st.solved;b.setAttribute("aria-pressed",String(st.guess===v));
+  const b=document.createElement("button");b.type="button";b.textContent=v;b.dataset.digit=v;b.disabled=st.done||st.solved||!evidenceReady;b.setAttribute("aria-pressed",String(st.guess===v));
   b.addEventListener("click",()=>{if(st.solved)return;st.guess=v;$("dtmf-current-guess").textContent=v;$("dtmf-check").disabled=!st.result;keypad();drawMap()});el.append(b);
  }
 }
@@ -88,8 +89,35 @@ function progress(){
  $("dtmf-challenge-index").textContent=Math.min(st.index+1,st.secret.length)+" / "+st.secret.length;
  $("dtmf-progress").textContent=tr("Correct "+st.correct+" / "+st.secret.length+" · Attempts "+st.tries,"정답 "+st.correct+" / "+st.secret.length+" · 시도 "+st.tries);
 }
+function resetEvidence(){
+ evidenceReady=false;
+ $("dtmf-evidence-low").value="";$("dtmf-evidence-high").value="";
+ $("dtmf-evidence-check").disabled=true;
+ const feedback=$("dtmf-evidence-feedback");
+ feedback.textContent="";delete feedback.dataset.result;
+}
+function validateEvidence(){
+ const feedback=$("dtmf-evidence-feedback");
+ if(!st.result){
+  feedback.textContent=tr("Run the FFT first to obtain two peaks.","먼저 FFT를 실행하여 두 피크를 찾으세요.");
+  feedback.dataset.result="retry";return;
+ }
+ const low=Number($("dtmf-evidence-low").value),high=Number($("dtmf-evidence-high").value);
+ if(!low||!high){
+  feedback.textContent=tr("Select one row and one column from the spectrum.","스펙트럼에서 행과 열을 하나씩 선택하세요.");
+  feedback.dataset.result="retry";return;
+ }
+ const nearest=(values,f)=>values.reduce((best,v)=>Math.abs(v-f)<Math.abs(best-f)?v:best,values[0]);
+ evidenceReady=low===nearest(LOW,st.result.low.frequency)&&high===nearest(HIGH,st.result.high.frequency);
+ feedback.dataset.result=evidenceReady?"correct":"retry";
+ feedback.textContent=evidenceReady?tr("Both peaks match their frequency groups. Their intersection identifies exactly one key.","두 피크가 각 주파수 그룹과 일치합니다. 행·열 교차점에서 하나의 키를 찾을 수 있습니다."):
+  tr("The peak pair does not match. Read both spectral frequencies and try again.","주파수 쌍이 일치하지 않습니다. 두 피크의 수치를 다시 읽고 선택하세요.");
+ if(!evidenceReady){st.guess=null;$("dtmf-current-guess").textContent="—";}
+ $("dtmf-check").disabled=!(evidenceReady&&st.guess);
+ keypad();drawMap();
+}
 function resetView(){
- st.result=null;st.guess=null;st.solved=false;
+ st.result=null;st.guess=null;st.solved=false;evidenceReady=false;resetEvidence();
  $("dtmf-current-guess").textContent="—";$("dtmf-check").disabled=true;$("dtmf-fft").disabled=false;$("dtmf-play").disabled=false;$("dtmf-next").hidden=true;
  $("dtmf-spectrum").setAttribute("hidden","");$("dtmf-spectrum").replaceChildren();$("dtmf-peaks").hidden=true;$("dtmf-peaks").replaceChildren();$("dtmf-spectrum-placeholder").hidden=false;
  $("dtmf-spectrum-placeholder").textContent=tr("FFT hidden · Listen and run FFT.","FFT 숨김 · 소리를 듣고 FFT를 실행하세요.");
@@ -100,7 +128,7 @@ function newMystery(){
  st={secret:Array.from({length:$("dtmf-mode").value==="sequence"?3:1},randomKey),index:0,guess:null,result:null,tries:0,correct:0,done:false};resetView();
 }
 function check(){
- if(!st.guess||st.done||st.solved||!st.result)return;st.tries++;
+ if(!st.guess||st.done||st.solved||!st.result||!evidenceReady)return;st.tries++;
  if(st.guess===current()){
   st.correct++;st.solved=true;const p=tones(current());
   $("dtmf-feedback").textContent=tr("Correct! "+p.low+" Hz + "+p.high+" Hz → "+current(),"정답! "+p.low+"Hz + "+p.high+"Hz → "+current());
@@ -139,6 +167,12 @@ function localize(){
  "dtmf-play":["▶ Play Mystery Sound","▶ 비밀 소리 듣기"],"dtmf-new":["New Mystery","새 문제"],
  "dtmf-n-label":["FFT size N","FFT 길이 N"],"dtmf-window-label":["Analysis Window","분석 Window"],"dtmf-start-label":["Observation position","관측 구간 위치"],"dtmf-fft":["Run FFT · Reveal Spectrum","FFT 실행 · 스펙트럼 보기"],
  "dtmf-sampling-note":["Sampling frequency fs = 8,000 Hz. Compare Δf = fs/N by changing N.","샘플링 주파수 fs = 8,000Hz. N을 바꿔 Δf = fs/N을 비교하세요."],
+ "dtmf-options-summary":["Optional · Change FFT resolution","선택 · FFT 분해능 조절"],
+ "dtmf-evidence-title":["3 · Verify two frequency groups","3 · 두 주파수 그룹을 근거로 검증"],
+ "dtmf-evidence-help":["Read the two spectral peaks, then choose their nearest standard DTMF frequencies before using the keypad.","FFT 피크 두 개를 읽고 각 피크와 가장 가까운 표준 DTMF 주파수를 선택한 후 키패드로 해독하세요."],
+ "dtmf-evidence-low-label":["Low-frequency row","저주파 행"],
+ "dtmf-evidence-high-label":["High-frequency column","고주파 열"],
+ "dtmf-evidence-check":["Verify peak pair","주파수 쌍 검증"],
  "dtmf-wave-title":["Time waveform · What is hidden?","시간 파형 · 무엇이 숨어 있나요?"],"dtmf-wave-help":["The shaded samples are used for FFT.","음영으로 표시된 표본 구간만 FFT에 사용됩니다."],
  "dtmf-spectrum-title":["2 · FFT Spectrum","2 · FFT 스펙트럼"],"dtmf-spectrum-help":["Find one low-frequency peak and one high-frequency peak.","저주파 피크 하나와 고주파 피크 하나를 찾아보세요."],
  "dtmf-decode-title":["3 · Decode the Key","3 · 숫자 해독"],"dtmf-decode-help":["Match the low-frequency row and high-frequency column to find the keypad digit.","저주파의 행과 고주파의 열을 교차하여 숫자를 알아내세요."],
@@ -149,14 +183,20 @@ function localize(){
  };
  for(const [id,[en,ko]] of Object.entries(labels))$(id).textContent=tr(en,ko);
  [...$("dtmf-mode").options].forEach((o,i)=>o.textContent=i===0?tr("One hidden key","비밀 숫자 1개"):tr("Three hidden keys","비밀 숫자 3개"));
+ $("dtmf-evidence-low").options[0].textContent=tr("Select row","행 선택");
+ $("dtmf-evidence-high").options[0].textContent=tr("Select column","열 선택");
  document.documentElement.lang=W.ELSLanguage?.get?.()==="ko"?"ko":"en";
  if(st.secret.length)progress();
 }
 function init(){
  W.ELSLanguage?.bindSelect?.("#dtmf-language");
  $("dtmf-mode").addEventListener("change",newMystery);$("dtmf-new").addEventListener("click",newMystery);$("dtmf-play").addEventListener("click",play);
- $("dtmf-fft").addEventListener("click",()=>{st.result=analyze(synth(current()),{N:Number($("dtmf-fft-n").value),window:$("dtmf-window").value,offset:Number($("dtmf-start").value)/100});drawSpectrum();$("dtmf-check").disabled=!st.guess});
- for(const id of ["dtmf-fft-n","dtmf-window","dtmf-start"])$(id).addEventListener("input",()=>{drawWave();st.result=null;$("dtmf-check").disabled=true;$("dtmf-spectrum").setAttribute("hidden","");$("dtmf-peaks").hidden=true;$("dtmf-spectrum-placeholder").hidden=false});
+ $("dtmf-fft").addEventListener("click",()=>{st.result=analyze(synth(current()),{N:Number($("dtmf-fft-n").value),window:$("dtmf-window").value,offset:Number($("dtmf-start").value)/100});drawSpectrum();evidenceReady=false;$("dtmf-evidence-check").disabled=false;$("dtmf-check").disabled=true;keypad();});
+ for(const id of ["dtmf-fft-n","dtmf-window","dtmf-start"])$(id).addEventListener("input",()=>{
+  drawWave();st.result=null;st.guess=null;$("dtmf-current-guess").textContent="—";resetEvidence();keypad();drawMap();
+  $("dtmf-check").disabled=true;$("dtmf-spectrum").setAttribute("hidden","");$("dtmf-peaks").hidden=true;$("dtmf-spectrum-placeholder").hidden=false;
+ });
+ $("dtmf-evidence-check").addEventListener("click",validateEvidence);
  $("dtmf-check").addEventListener("click",check);$("dtmf-next").addEventListener("click",next);
  W.ELSLanguage?.subscribe?.(localize);newMystery();localize();W.SSMathCore?.renderNow?.();
 }
