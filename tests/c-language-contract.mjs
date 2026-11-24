@@ -82,4 +82,46 @@ try{
     console.log("PASS: C Functions body language mode",mode);
   }
   await context.close();
+
+  // AI-Assisted Coding and File I/O Guided Labs have their own translation
+  // engines. Removing the shared right-hand select must not strand either.
+  for(const target of [
+    {route:"c-programming/ai-coding/",picker:"#c-ai-language",text:"#studio-content",
+      contentEn:null},
+    {route:"c-programming/file-io/core-labs/",picker:"#language-mode",
+      text:'[data-i18n="writeTitle"]',contentEn:"Write One Line to a File"}
+  ]){
+    const isolated=await browser.newContext({viewport:{width:1280,height:900}});
+    await isolated.addInitScript(()=>localStorage.setItem("els-language","mixed"));
+    const tab=await isolated.newPage();
+    await tab.route("**/*",route=>{
+      const host=new URL(route.request().url()).hostname;
+      (host==="localhost"||host==="127.0.0.1")?route.continue():route.abort();
+    });
+    const response=await tab.goto(root+target.route,{waitUntil:"domcontentloaded",timeout:30000});
+    assert.equal(response?.status(),200,target.route+" not served");
+    await tab.waitForFunction(selector=>!!document.querySelector(selector),target.picker,{timeout:12000});
+    const initial=await tab.evaluate(selector=>{
+      const picker=document.querySelector(selector);
+      return {mode:window.ELSLanguage?.get(),value:picker?.value,
+        visible:!!picker&&picker.getBoundingClientRect().width>30,
+        rightDuplicate:document.querySelectorAll("header.c-ss-header .ss-common-language-select").length};
+    },target.picker);
+    assert.equal(initial.mode,"mixed",target.route+" initial mixed mode");
+    assert.equal(initial.value,"mixed",target.route+" native control initial mode");
+    assert.equal(initial.visible,true,target.route+" native control must be visible");
+    assert.equal(initial.rightDuplicate,0,target.route+" shared-language duplicate");
+    await tab.locator(target.picker).selectOption("en");
+    await tab.waitForFunction(()=>window.ELSLanguage?.get()==="en",null,{timeout:12000});
+    await tab.waitForTimeout(200);
+    const next=await tab.evaluate(selector=>({
+      mode:window.ELSLanguage.get(),text:document.querySelector(selector)?.textContent||""
+    }),target.text);
+    assert.equal(next.mode,"en",target.route+" native picker failed to update language");
+    if(target.contentEn)assert.equal(next.text.trim(),target.contentEn,
+      target.route+" English lesson content did not update");
+    assert.ok(next.text.length>10,target.route+" rendered learning content is missing");
+    console.log("PASS: C native language control",target.route);
+    await isolated.close();
+  }
 }finally{await browser.close();}
