@@ -57,3 +57,80 @@ a:hover{text-decoration:underline}
 @media(max-width:970px){.ss-sys-workspace{grid-template-columns:minmax(245px,290px) minmax(0,1fr)}.ss-sys-plots{grid-template-columns:1fr}.ss-sys-plot:first-child{grid-column:auto}}
 @media(max-width:720px){.ss-sys-workspace{grid-template-columns:1fr}.ss-sys-controls{position:static;max-height:none}.ss-sys-intro{align-items:flex-start;flex-direction:column}.ss-sys-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.ss-sys-plot canvas{height:205px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+
+/* Part B applied concept views: theme-safe RC schematic and convolution walkthrough. */
+.ss-sys-plots [hidden]{display:none!important}
+.ss-sys-rc-explorer,.ss-sys-ma-explorer{
+ min-width:0;grid-column:span 2;
+ padding:12px;border:1px solid var(--els-border);border-radius:10px;
+ background:var(--els-surface-alt);color:var(--els-ink)
+}
+.ss-sys-explorer-heading{display:flex;align-items:center;justify-content:space-between;gap:9px;flex-wrap:wrap;margin-bottom:6px}
+.ss-sys-explorer-heading h2{font-size:16px;line-height:1.4;margin:0;font-weight:750}
+.ss-sys-explorer-heading>output,.ss-sys-explorer-heading>span{
+ font-size:12px;color:var(--els-muted);border:1px solid var(--els-border);
+ background:var(--els-surface);border-radius:7px;padding:4px 8px
+}
+/* A single simple circuit replaces diagrams of imaginary current flow. Arrow = signal path. */
+.ss-sys-circuit{display:block;width:100%;height:auto;max-height:237px;background:var(--els-surface);border-radius:8px}
+.ss-sys-circuit :is(.ss-sys-wire,.ss-sys-series-r,.ss-sys-series-c,.ss-sys-shunt-r,.ss-sys-shunt-c){
+ fill:none;stroke:var(--els-ink);stroke-width:3.1;stroke-linecap:round;stroke-linejoin:round
+}
+.ss-sys-circuit .ss-sys-measured-element{stroke:var(--ss-trace-coral,var(--els-link));stroke-width:4}
+.ss-sys-circuit .ss-sys-source{fill:var(--els-surface);stroke:var(--els-ink);stroke-width:2.7}
+.ss-sys-circuit .ss-sys-source-wave{fill:none;stroke:var(--ss-trace-teal,var(--els-link));stroke-width:2.6}
+.ss-sys-circuit .ss-sys-circuit-node{fill:var(--els-ink)}
+.ss-sys-circuit .ss-sys-signal-direction{fill:none;stroke:var(--ss-trace-teal,var(--els-link));stroke-width:2.3;stroke-dasharray:6 4;animation:ss-sys-signal-motion 1.5s linear infinite}
+.ss-sys-circuit .ss-sys-arrowhead{fill:var(--ss-trace-teal,var(--els-link))}
+.ss-sys-circuit .ss-sys-svg-label{fill:var(--els-ink);font-size:17px;font-weight:700;font-family:Arial,"Malgun Gothic",sans-serif}
+.ss-sys-circuit .ss-sys-output-label{fill:var(--ss-trace-coral,var(--els-link))}
+.ss-sys-circuit .ss-sys-svg-muted{fill:var(--els-muted);font-size:13px;font-family:Arial,"Malgun Gothic",sans-serif}
+.ss-sys-voltage-readouts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px}
+.ss-sys-voltage-readouts>div{display:grid;gap:2px;min-width:0;border:1px solid var(--els-border);border-radius:7px;padding:7px 9px;background:var(--els-surface)}
+.ss-sys-voltage-readouts span{font-size:12px;color:var(--els-muted)}
+.ss-sys-voltage-readouts strong{font-size:clamp(13px,1.25vw,16px);font-weight:750;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ss-sys-voltage-readouts .ss-sys-measured-voltage{border-color:var(--ss-trace-coral,var(--els-link));box-shadow:inset 3px 0 var(--ss-trace-coral,var(--els-link))}
+.ss-sys-voltage-balance{font:700 13px/1.5 "Cambria Math",Arial,"Malgun Gothic",sans-serif;color:var(--els-ink);margin:7px 0 4px;overflow-wrap:anywhere}
+.ss-sys-circuit-note{font-size:12px;line-height:1.5;color:var(--els-muted);margin:5px 0 0;white-space:pre-line}
+/* Moving-average stepper remains compact: tap chips scroll rather than fill the page. */
+.ss-sys-ma-hint{font-size:13px;color:var(--els-muted);margin:0 0 7px;white-space:pre-line}
+.ss-sys-ma-taps{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;overscroll-behavior-inline:contain;padding:5px 2px 11px;scrollbar-width:thin}
+.ss-sys-ma-tap{display:grid;gap:2px;text-align:left;flex:0 0 122px;min-height:70px;padding:7px 9px;border:1px solid var(--els-border);border-radius:8px;background:var(--els-surface);color:var(--els-ink);font-size:12px;white-space:nowrap}
+.ss-sys-ma-tap span{font-size:11px;color:var(--els-muted)}
+.ss-sys-ma-tap strong{font-size:16px;font-weight:750;font-variant-numeric:tabular-nums}
+.ss-sys-ma-tap small{font-size:11px;color:var(--els-muted)}
+.ss-sys-ma-tap.ss-sys-ma-done{border-color:var(--els-link)}
+.ss-sys-ma-tap.ss-sys-ma-active{border-color:var(--ss-trace-coral,var(--els-link));box-shadow:inset 0 -3px var(--ss-trace-coral,var(--els-link));background:var(--els-surface-alt)}
+.ss-sys-ma-tap.ss-sys-ma-padded{opacity:.7;border-style:dashed}
+.ss-sys-ma-worked{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px;align-items:center}
+.ss-sys-ma-expression,.ss-sys-ma-accumulator{min-width:0;min-height:48px;display:flex;align-items:center;overflow-x:auto;overflow-y:hidden;border-radius:8px;border:1px solid var(--els-border);background:var(--els-surface);padding:8px 11px;font-size:14px}
+.ss-sys-ma-expression{font-size:clamp(15px,1.35vw,19px)}
+.ss-sys-ma-expression .katex{white-space:nowrap}
+.ss-sys-ma-accumulator{font-size:13px;white-space:pre-line}
+.ss-sys-ma-accumulator[data-verified=true]{border-color:var(--els-link)}
+.ss-sys-ma-buttons{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.ss-sys-ma-buttons button{padding:7px 12px;min-height:36px;border:1px solid var(--els-border);border-radius:8px;background:var(--els-surface);color:var(--els-ink);font-size:13px;font-weight:650}
+.ss-sys-ma-buttons button:hover:not(:disabled){border-color:var(--els-link)}
+.ss-sys-ma-buttons button:disabled{opacity:.46;cursor:default}
+.ss-sys-ma-buttons #ss-sys-ma-next{border-color:var(--els-link)}
+.ss-sys-ma-assumption{margin:7px 0 0;font-size:12px;line-height:1.5;color:var(--els-muted);white-space:pre-line}
+.ss-sys-plot:first-child canvas[role=button]{cursor:crosshair}
+.ss-sys-plot:first-child canvas[role=button]:focus-visible{outline:3px solid var(--els-focus);outline-offset:2px}
+@keyframes ss-sys-signal-motion{to{stroke-dashoffset:-20}}
+@media(min-width:1420px){
+ .ss-sys-plots:has(.ss-sys-rc-explorer:not([hidden])) .ss-sys-plot:first-child{grid-column:span 1}
+ .ss-sys-plots:has(.ss-sys-rc-explorer:not([hidden])) .ss-sys-rc-explorer{grid-column:span 1}
+ .ss-sys-plots:has(.ss-sys-rc-explorer:not([hidden])) .ss-sys-plot:first-child canvas{height:240px}
+}
+@media(max-width:970px){
+ .ss-sys-rc-explorer,.ss-sys-ma-explorer{grid-column:auto}
+ .ss-sys-ma-worked{grid-template-columns:1fr}
+}
+@media(max-width:720px){
+ .ss-sys-voltage-readouts{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .ss-sys-circuit{max-height:none}
+ .ss-sys-rc-explorer,.ss-sys-ma-explorer{padding:10px}
+ .ss-sys-ma-tap{flex-basis:115px}
+}
+@media(prefers-reduced-motion:reduce){.ss-sys-circuit .ss-sys-signal-direction{animation:none}}
