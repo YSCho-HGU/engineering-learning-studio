@@ -144,3 +144,13 @@ html .ss-common-header .ss-common-menu>.ss-common-title>.ss-common-chapter-label
   height:auto!important;max-height:25px!important;line-height:1.25!important
  }
 }
+
+/* Match Chapter 4's actual three-row mobile header rhythm (verified in
+ * 390px Playwright screenshots): 5px vertical inset + 6px row/column gap.
+ * Native Chapters 5–8 previously inherited 10px+12px, adding 22px in total. */
+@media(max-width:600px){
+ html .ss-common-header{
+  padding:5px 8px!important;
+  gap:6px!important;
+ }
+}
