@@ -49,6 +49,28 @@ for(const N of [64,128,256]){
  near(low.imagMax,0,1e-8,"lowpass preserves reality");
  near(high.imagMax,0,1e-8,"highpass preserves reality");
 }
+// Row-transform stage must still have spatial y; column-transform stage
+// must match the complex 2D FFT used by the image filter.
+for(const N of [16,32,64,128,256]){
+ const sample=c.synth("scene",N),stages=c.separableStages(sample.pixels,N);
+ const expected=c.forward(sample.pixels,N);
+ let maxDiff=0;
+ for(let k=0;k<N*N;k++){
+  maxDiff=Math.max(maxDiff,Math.hypot(stages.full.real[k]-expected.real[k],stages.full.imag[k]-expected.imag[k]));
+ }
+ near(maxDiff,0,1e-9,"Rows→columns equals direct FFT2");
+ for(const y of [0,Math.floor(N/3),N-1]){
+  let sum=0;
+  for(let x=0;x<N;x++)sum+=sample.pixels[y*N+x];
+  near(stages.rows.real[y*N],sum,1e-8,"Row FFT DC equals row pixel sum");
+  near(stages.rows.imag[y*N],0,1e-9,"Row FFT DC has no imaginary part");
+ }
+ const grat=c.synth("horizontal",N,{cycles:Math.min(4,N/4)});
+ const r=c.separableStages(grat.pixels,N).rows;
+ for(const y of [0,Math.floor(N/2),N-1])
+  near(Math.hypot(r.real[y*N+1],r.imag[y*N+1]),0,1e-8,
+    "Horizontal stripes remain DC along each transformed row");
+}
 for(const N of [16,32,64,128,256]){
  const input=c.synth("scene",N),spectrum=c.forward(input.pixels,N);
  for(const kernel of ["box","gaussian","sharpen"]){
