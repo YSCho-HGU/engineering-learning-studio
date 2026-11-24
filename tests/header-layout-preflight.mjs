@@ -10,7 +10,7 @@ const pages=[
   {name:"c-pointers",route:"c-programming/pointer/"},
   {name:"ss-applications",route:"signals-systems/applications.html"}
 ];
-const widths=[1280,768,390];
+const widths=[1280,960,860,820,768,390];
 const reports=[];
 fs.mkdirSync("qa/header-preflight",{recursive:true});
 const browser=await chromium.launch({headless:true});
@@ -58,13 +58,14 @@ try {
         assert.equal(d.overlaps.menuNav,0,id+" chooser/arrows overlapping "+JSON.stringify(d));
         assert.equal(d.overlaps.navActions,0,id+" arrows/preferences overlapping "+JSON.stringify(d));
         assert.ok(d.noHorizontalOverflow,id+" viewport overflow "+JSON.stringify(d));
-        if(width===1280){
+        if(width>800){
           const gap=d.nav.left-d.menu.right;
           assert.ok(gap>=0&&gap<=25,id+" arrows must directly follow chooser; gap="+gap);
           assert.ok(d.menu.width<=390,id+" chooser unexpectedly wide "+JSON.stringify(d));
           assert.ok(d.menu.width>=180,id+" chooser unexpectedly collapsed "+JSON.stringify(d));
           assert.ok(Math.abs(d.nav.top-d.menu.top)<=12,id+" controls not on same row");
           assert.ok(d.actions.left>=d.nav.right+3,id+" right-side controls collision");
+          assert.ok(Math.abs(d.nav.top-d.actions.top)<=13,id+" preferences moved off header row");
         }
         reports.push({id,status:"PASS",metrics:d});
         console.log("PASS",id,"chooser width",Math.round(d.menu.width),"gap",Math.round(d.nav.left-d.menu.right));
