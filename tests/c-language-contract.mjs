@@ -50,8 +50,10 @@ function verify(x,mode){
 try{
   const context=await browser.newContext({viewport:{width:1280,height:900}});
   await context.addInitScript(key=>{
-    localStorage.setItem("els-language","mixed");
-    localStorage.setItem(key,"untouched");
+    if(localStorage.getItem(key)!=="untouched"){
+      localStorage.setItem("els-language","mixed");
+      localStorage.setItem(key,"untouched");
+    }
   },marker);
   const page=await context.newPage();
   await page.route("**/*",route=>{
@@ -61,8 +63,12 @@ try{
   const response=await page.goto(url,{waitUntil:"domcontentloaded",timeout:30000});
   assert.equal(response?.status(),200,"C Functions not served");
   for(const mode of ["mixed","en","ko","mixed"]){
-    if(mode!=="mixed"||await page.evaluate(()=>window.ELSLanguage?.get())!=="mixed"){
-      await page.locator("#c-shared-language select").selectOption(mode);
+    const current=await page.evaluate(()=>window.ELSLanguage?.get());
+    if(current!==mode){
+      await Promise.all([
+        page.waitForNavigation({waitUntil:"domcontentloaded",timeout:15000}),
+        page.locator("#c-shared-language select").selectOption(mode)
+      ]);
     }
     await page.waitForFunction(m=>{
       return window.ELSLanguage?.get()===m &&
