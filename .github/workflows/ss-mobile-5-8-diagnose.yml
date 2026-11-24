@@ -1,0 +1,25 @@
+name: SS 5-8 mobile overlap diagnosis
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tests/ss-mobile-5-8-diagnose.mjs'
+      - 'signals-systems/assets/ss-mobile-ch5-8-repair.css'
+      - 'signals-systems/assets/ss-responsive-unified.css'
+      - '.github/workflows/ss-mobile-5-8-diagnose.yml'
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install chromium
+      - run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/site.log 2>&1 &
+          sleep 2
+      - run: node tests/ss-mobile-5-8-diagnose.mjs
