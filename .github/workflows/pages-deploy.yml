@@ -14,113 +14,80 @@ on:
       - 'progress/**'
       - 'textbook-viewer/**'
       - '.github/workflows/pages-deploy.yml'
-      - 'tests/pages-production-smoke.mjs'
-      - 'tests/header-layout-preflight.mjs'
   workflow_dispatch:
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
 concurrency:
   group: studio-pages-production
   cancel-in-progress: false
+
 jobs:
   publish:
-    name: Validate and deploy static Studio
+    name: Publish static Studio (independent from browser QA)
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 15
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout exact commit
+      - name: Checkout exact release commit
         uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Check static entrypoints and header JavaScript
+
+      - name: Minimal checks for critical site entrypoints
         shell: bash
         run: |
           set -euo pipefail
           test -s index.html
           test -s c-programming/index.html
-          test -s c-programming/arrays/index.html
           test -s signals-systems/index.html
-          test -s signals-systems/chapter2.html
+          test -s c-programming/pointer/index.html
+          test -s signals-systems/applications.html
           test -s assets/els-course-header.css
           test -s assets/els-header-controls.js
-          test -s c-programming/c-ss-shell.js
-          test -s signals-systems/assets/ss-common-header.js
           node --check assets/els-header-controls.js
           node --check c-programming/c-ss-shell.js
           node --check signals-systems/assets/ss-common-header.js
-          node --check tests/pages-production-smoke.mjs
-          node --check tests/header-layout-preflight.mjs
-      - name: Setup Node for local visual preflight
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - name: Verify C and S&S header geometry before publishing
+
+      - name: Stage public files and embed the exact commit
         shell: bash
         run: |
           set -euo pipefail
-          npm install --prefix "$RUNNER_TEMP/els-qa" --no-save --no-package-lock playwright@1.56.1
-          "$RUNNER_TEMP/els-qa/node_modules/.bin/playwright" install --with-deps chromium
-          ln -s "$RUNNER_TEMP/els-qa/node_modules" ./node_modules
-          python3 -m http.server 8765 --bind 127.0.0.1 > "$RUNNER_TEMP/els-http.log" 2>&1 &
-          server_pid=$!
-          trap 'kill "$server_pid" 2>/dev/null || true; rm -f ./node_modules' EXIT
-          node tests/header-layout-preflight.mjs
-      - name: Preserve local header snapshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: header-layout-preflight-${{ github.run_id }}
-          path: qa/header-preflight/
-          if-no-files-found: ignore
-      - name: Exclude QA screenshots from the public site
-        run: rm -rf qa/header-preflight
-      - name: Embed deployed commit identity
-        shell: bash
-        run: |
-          printf '{"commit":"%s","header":"v8-grid-adjacent","builtAt":"%s"}\n' "$GITHUB_SHA" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > build-info.json
-      - name: Configure GitHub Pages
+          site="$RUNNER_TEMP/studio-site"
+          mkdir -p "$site"
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='node_modules/' \
+            --exclude='qa/header-preflight/' \
+            --exclude='tests/' \
+            ./ "$site/"
+          printf '{"commit":"%s","header":"v8-grid-adjacent","builtAt":"%s"}\n' \
+            "$GITHUB_SHA" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$site/build-info.json"
+          test -s "$site/build-info.json"
+          test -s "$site/index.html"
+          echo "Publishing commit $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Configure Pages
         uses: actions/configure-pages@v5
-      - name: Package the site
+
+      - name: Upload public site only
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: ${{ runner.temp }}/studio-site
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-      - name: Prepare deployed-site browser verification
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - name: Install isolated Playwright Chromium
-        run: |
-          npm install --no-save --no-package-lock playwright@1.56.1
-          npx playwright install --with-deps chromium
-      - name: Verify deployed C and S&S header navigation
-        env:
-          PAGES_BASE_URL: ${{ steps.deployment.outputs.page_url }}
+
+      - name: Record production deployment identity
         shell: bash
         run: |
-          set -euo pipefail
-          for attempt in $(seq 1 12); do
-            if node tests/pages-production-smoke.mjs; then
-              echo "Production C / SS navigation verification passed" >> "$GITHUB_STEP_SUMMARY"
-              exit 0
-            fi
-            if [ "$attempt" -lt 12 ]; then sleep 20; fi
-          done
-          echo "::error::Pages deployed, but published C / SS navigation smoke failed"
-          exit 1
-      - name: Preserve complete production browser regression report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: pages-production-header-smoke-${{ github.run_id }}
-          path: |
-            pages-smoke-report.json
-            pages-smoke-*.png
-          if-no-files-found: ignore
+          echo "Deployment URL: ${{ steps.deployment.outputs.page_url }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Expected build-info.json commit: $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+          echo "Browser QA runs independently in Studio Pages - postdeploy QA." >> "$GITHUB_STEP_SUMMARY"
