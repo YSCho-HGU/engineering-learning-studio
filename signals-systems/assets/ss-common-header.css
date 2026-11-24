@@ -249,3 +249,43 @@ html .ss-common-header .ss-common-actions select{
   width:34px!important;min-width:34px!important;height:34px!important;
  }
 }
+
+
+/* Center the four-arrow group geometrically within the header, independent
+   of title width and language/theme selector widths. */
+@media(min-width:1101px){
+ html .ss-common-header:has(.ss-four-navigation){position:relative!important}
+ html .ss-common-header .ss-four-navigation{
+  position:absolute!important;left:50%!important;top:50%!important;
+  transform:translate(-50%,-50%)!important;margin:0!important;
+  width:max-content!important;z-index:2!important;
+ }
+ html .ss-common-header:has(.ss-four-navigation) .ss-common-menu{
+  max-width:calc(50% - 104px)!important;
+ }
+ html .ss-common-header:has(.ss-four-navigation) .ss-common-actions{
+  margin-left:auto!important;max-width:calc(50% - 104px)!important;
+ }
+}
+@media(max-width:1100px){
+ html .ss-common-header:has(.ss-four-navigation){
+  display:flex!important;flex-wrap:wrap!important;justify-content:space-between!important;
+ }
+ html .ss-common-header .ss-four-navigation{
+  position:static!important;transform:none!important;order:3!important;
+  width:100%!important;justify-content:center!important;
+  margin:3px 0 0!important;
+ }
+ html .ss-common-header:has(.ss-four-navigation) .ss-common-menu{order:1!important;flex:1 1 auto!important;max-width:calc(100% - 160px)!important}
+ html .ss-common-header:has(.ss-four-navigation) .ss-common-actions{order:2!important;width:auto!important;margin-left:auto!important}
+}
+@media(max-width:620px){
+ html .ss-common-header:has(.ss-four-navigation) .ss-common-menu{
+  order:1!important;flex:1 1 100%!important;max-width:100%!important;
+ }
+ html .ss-common-header:has(.ss-four-navigation) .ss-common-actions{
+  order:2!important;flex:1 1 100%!important;width:100%!important;
+  justify-content:flex-end!important;
+ }
+ html .ss-common-header .ss-four-navigation{order:3!important;justify-content:center!important}
+}
