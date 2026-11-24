@@ -1,4 +1,4 @@
-/** Applications A/B/D visual and functional browser QA; verify no pretend B/D labs. */
+/** Applications A/B/D visual and functional browser QA: A has six live, B three live + four planned, D planned. */
 import {chromium} from "playwright";
 import assert from "node:assert/strict";
 import {mkdir,writeFile} from "node:fs/promises";
@@ -17,7 +17,7 @@ const theme=p=>p.locator("[data-els-theme-picker]");
 async function inspectHub(part,view){
  const result=await p.evaluate(part=>{
   const main=document.querySelector(".ss-app-container"),section=document.querySelector("#part-"+part);
-  const row=section.querySelector(part==="a"?".ss-app-abd-lab-row":".ss-app-abd-planned-summary");
+  const row=section.querySelector(part==="d"?".ss-app-abd-planned-summary":".ss-app-abd-lab-row");
   const title=row.querySelector(".ss-app-lesson-title"),card=row.closest(".ss-app-abd-planned")||row,s=getComputedStyle(card),topicList=section.querySelector("#topics-"+part),collection=topicList.firstElementChild;
   return{
    header:!!document.querySelector("header.ss-common-header"),
@@ -44,13 +44,14 @@ try{
  await p.goto(url("applications.html","#part-a"));
  await p.locator("#topics-a .ss-app-abd-lab-row").first().waitFor({state:"visible"});
  for(const area of ["a","b","d"]){
-  assert.equal(await p.locator("#topics-"+area+" .ss-app-abd-lab-row").count(),area==="a"?6:0);
-  assert.equal(await p.locator("#topics-"+area+" .ss-app-abd-planned").count(),area==="a"?0:6);
+  assert.equal(await p.locator("#topics-"+area+" .ss-app-abd-lab-row").count(),area==="a"?6:area==="b"?3:0);
+  assert.equal(await p.locator("#topics-"+area+" .ss-app-abd-planned").count(),area==="a"?0:area==="b"?4:6);
  }
  assert.equal(await p.locator("#topics-c .ss-app-lesson-row").count(),7,"Do not alter FFT Part C");
  const hrefs=await p.locator("#topics-a .ss-app-abd-lab-row").evaluateAll(a=>a.map(x=>x.getAttribute("href")));
  assert.deepEqual(hrefs,labs.map(l=>"./applications-lab.html?lab="+l));
  for(const part of ["b","d"]){
+  if(part==="b")await p.locator("#topics-b .ss-app-future summary").first().click();
   assert.equal(await p.locator("#topics-"+part+" .ss-app-abd-planned[open]").count(),0);
   assert.equal(await p.locator("#topics-"+part+" .ss-app-abd-planned-summary a").count(),0,"Planned topic must not be a fake lab link");
   await p.locator("#topics-"+part+" .ss-app-abd-planned-summary").first().click();
@@ -58,6 +59,7 @@ try{
   assert.ok((await p.locator("#topics-"+part+" .ss-app-abd-observe").first().innerText()).length>10,"Planned exploration missing");
   assert.ok(await p.locator("#topics-"+part+" .ss-app-topic-labs a").first().isVisible(),"Chapter links lost");
   await p.locator("#topics-"+part+" .ss-app-abd-planned-summary").first().click();
+  if(part==="b")await p.locator("#topics-b .ss-app-future summary").first().click();
  }
  for(const lang of ["en","ko"]){
   await p.locator(".ss-common-language-select").selectOption(lang);
@@ -76,7 +78,7 @@ try{
   }
   await photo("catalog-"+view);
  }
- console.log("PASS Part A: 6 real direct links. Part B/D: 6 planned each, detailed questions and no fake labs.");
+ console.log("PASS Part A: 6 labs. Part B: 3 labs + 4 planned. Part D: 6 planned. No fake links.");
  for(const lab of labs){
   await p.setViewportSize({width:1366,height:850});
   await p.goto(url("applications-lab.html","?lab="+lab));
