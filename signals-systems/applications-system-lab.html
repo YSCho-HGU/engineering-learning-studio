@@ -57,6 +57,7 @@
 
     <section class="ss-sys-rc-explorer" id="ss-sys-rc-explorer" aria-labelledby="ss-sys-rc-heading" hidden>
      <div class="ss-sys-explorer-heading"><h2 id="ss-sys-rc-heading">RC Circuit and Voltage</h2><output id="ss-sys-rc-topology">Low-pass · Vout = VC</output></div>
+     <div class="ss-sys-circuit-frame" tabindex="0" role="region" aria-label="RC circuit diagram; horizontal scrolling on small screens">
      <svg class="ss-sys-circuit" viewBox="0 0 610 223" role="img" aria-labelledby="ss-sys-circuit-title ss-sys-circuit-desc">
       <title id="ss-sys-circuit-title">Interactive RC circuit</title>
       <desc id="ss-sys-circuit-desc">The series element and shunt element swap when choosing low-pass or high-pass. The output is measured across the shunt element.</desc>
@@ -90,6 +91,7 @@
       <text class="ss-sys-svg-label" x="479" y="152" id="ss-sys-shunt-label">C = 10 µF</text>
       <text class="ss-sys-svg-muted" x="17" y="181" id="ss-sys-source-label">Source</text>
      </svg>
+     </div>
      <div class="ss-sys-voltage-readouts" id="ss-sys-voltage-readouts" aria-live="off">
        <div><span>t</span><strong id="ss-sys-v-time">0 s</strong></div>
        <div><span>v_in(t)</span><strong id="ss-sys-v-in">0 V</strong></div>
