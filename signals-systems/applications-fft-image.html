@@ -36,7 +36,7 @@
  <nav class="ss-image-steps" aria-label="Four learning stages">
   <button type="button" class="ss-image-stage" data-stage="1" aria-current="step"><span>01</span><strong id="image-stage-1">Discover patterns</strong></button>
   <button type="button" class="ss-image-stage" data-stage="2"><span>02</span><strong id="image-stage-2">Read the spectrum</strong></button>
-  <button type="button" class="ss-image-stage" data-stage="3"><span>03</span><strong id="image-stage-3">Filter frequencies</strong></button>
+  <button type="button" class="ss-image-stage" data-stage="3"><span>03</span><strong id="image-stage-3">Kernel → FFT filter</strong></button>
   <button type="button" class="ss-image-stage" data-stage="4"><span>04</span><strong id="image-stage-4">Remove periodic noise</strong></button>
  </nav>
  <div class="ss-image-layout" id="image-workspace">
@@ -76,12 +76,26 @@
    <div class="ss-image-field">
     <label for="image-filter" id="image-filter-label">Filter type</label>
     <select id="image-filter">
-     <option value="none">No filter</option>
+     <option value="none">No filter</option><option value="kernel">3×3 kernel → FFT equivalent</option>
      <option value="low">Gaussian low-pass</option>
      <option value="high">Gaussian high-pass</option>
      <option value="notch">Symmetric notch reject</option>
     </select>
    </div>
+   <section class="ss-image-kernel-panel" id="image-kernel-panel" hidden aria-labelledby="image-kernel-title">
+     <h3 id="image-kernel-title">How does a 3×3 kernel change one pixel?</h3>
+     <label for="image-kernel-choice" id="image-kernel-choice-label">Select spatial kernel</label>
+     <select id="image-kernel-choice">
+      <option value="box">Box average</option><option value="gaussian">Gaussian blur</option><option value="sharpen">Sharpen</option>
+     </select>
+     <p id="image-kernel-intro">Click the input image to choose a pixel. Compare its neighboring pixels with the nine kernel weights.</p>
+     <div class="ss-image-kernel-grid">
+      <div><strong id="image-kernel-patch-label">3×3 input pixels</strong><div id="image-kernel-pixels" class="ss-image-kernel-matrix" aria-label="Surrounding image intensities"></div></div>
+      <div><strong id="image-kernel-weight-label">Kernel weights</strong><div id="image-kernel-weights" class="ss-image-kernel-matrix" aria-label="Kernel weights"></div></div>
+     </div>
+     <p id="image-kernel-evidence" class="ss-image-kernel-evidence" role="status" aria-live="polite"></p>
+     <p id="image-kernel-link" class="ss-image-kernel-link">The same output is computed twice: a 3×3 spatial convolution and FFT2(I) × FFT2(h).</p>
+   </section>
    <div class="ss-image-field" id="image-radius-field">
     <label for="image-radius"><span id="image-radius-label">Filter cutoff (frequency bins)</span><output for="image-radius" id="image-radius-value">22</output></label>
     <input id="image-radius" type="range" min="3" max="80" step="1" value="22">
@@ -109,7 +123,7 @@
    <div class="ss-image-views" aria-label="Linked original spectrum filter and reconstructed output">
     <section class="ss-image-panel ss-image-view">
      <h3 id="image-view-title-1">01 · Input image</h3>
-     <canvas id="image-input-canvas" width="512" height="512" role="img" aria-label="Input grayscale image"></canvas>
+     <canvas id="image-input-canvas" width="512" height="512" tabindex="0" role="button" aria-label="Input grayscale image; click to inspect a pixel and its 3 by 3 neighbors"></canvas>
      <p id="image-view-note-1">Pixel coordinates x, y.</p>
     </section>
     <section class="ss-image-panel ss-image-view">
@@ -146,7 +160,7 @@
      <p id="image-advanced-note">The 2D DFT is separable: FFT every row, then every column. The inverse restores the image from both magnitude and phase.</p>
      <div class="ss-image-formulas">
       <div id="image-formula-1">F[u,v] = Σ_y Σ_x I[x,y] exp(−j2π(ux+vy)/N)</div>
-      <div id="image-formula-2">g[x,y] = IFFT2{H[u,v] F[u,v]}</div>
+      <div id="image-formula-2">g[x,y] = IFFT2{H[u,v] F[u,v]}</div><div id="image-formula-kernel">g[x,y] = Σa Σb h[a,b] I[(x−a) mod N,(y−b) mod N]</div>
      </div>
      <label class="ss-image-field" for="image-spectrum-view">
       <span id="image-spectrum-view-label">Spectrum visualization</span>
