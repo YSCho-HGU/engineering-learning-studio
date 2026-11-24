@@ -174,3 +174,39 @@ main.ss-image-root .ss-image-view h3{
 
 .ss-image-scan-preview[role="button"]{cursor:crosshair}
 .ss-image-scan-preview:focus-visible{outline:3px solid var(--els-focus);outline-offset:3px}
+
+/* Actual row → column 1D FFT visual derivation (within the Stage 03 bridge). */
+.ss-image-fft-pipeline{display:grid;gap:10px;background:var(--els-surface);border:1px solid var(--els-border);border-radius:10px;padding:12px;min-width:0}
+.ss-image-fft-pipeline-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.ss-image-fft-pipeline-head h3{font-size:16px;line-height:1.35;margin:4px 0}
+.ss-image-fft-pipeline-stepcount{font-variant-numeric:tabular-nums;white-space:nowrap;font-size:12px;font-weight:750;color:var(--els-muted);padding:4px 7px;border:1px solid var(--els-border);border-radius:7px}
+.ss-image-fft-stages{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.ss-image-root .ss-image-fft-stages button{min-height:40px;font-size:12px;line-height:1.35;text-align:center}
+.ss-image-fft-stages button[aria-pressed=true]{border-color:var(--els-link);box-shadow:inset 0 -3px var(--els-link)}
+.ss-image-fft-pipeline-question{font-size:14px;font-weight:750;line-height:1.5;margin:0;color:var(--els-ink)}
+.ss-image-fft-pipeline-controls{display:grid;grid-template-columns:minmax(130px,1fr) minmax(130px,2fr) auto;gap:9px;align-items:center;background:var(--els-surface-alt);padding:9px;border:1px solid var(--els-border);border-radius:8px}
+.ss-image-fft-pipeline-controls label{font-size:12px;line-height:1.4;font-weight:700}
+.ss-image-fft-pipeline-controls input[type=range]{width:100%;min-width:0;accent-color:var(--els-link)}
+.ss-image-fft-pipeline-controls output{color:var(--els-link);font-size:13px;font-weight:750;min-width:25px;text-align:right;font-variant-numeric:tabular-nums}
+
+
+.ss-image-fft-pipeline-controls:has(input[hidden]) label[hidden],.ss-image-fft-pipeline-controls [hidden]{display:none!important}
+.ss-image-fft-pipeline-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ss-image-fft-pipeline-view{display:grid;gap:6px;align-content:start;background:var(--els-surface-alt);border:1px solid var(--els-border);border-radius:9px;padding:10px;min-width:0}
+.ss-image-fft-pipeline-view h4{font-size:13px;font-weight:750;line-height:1.35;margin:0;color:var(--els-ink)}
+.ss-image-fft-pipeline-view canvas{display:block;aspect-ratio:1/1;max-width:100%;width:min(100%,235px);height:auto;justify-self:center;background:#161616;border-radius:6px}
+.ss-image-fft-pipeline-view p{font-size:12px;line-height:1.55;margin:0;color:var(--els-muted)}
+.ss-image-fft-pipeline-explain{display:grid;gap:7px}
+.ss-image-fft-pipeline-explain p{margin:0;font-size:12px;line-height:1.55}
+#image-fft-pipeline-evidence{font-variant-numeric:tabular-nums;border-left:3px solid var(--els-link);background:var(--els-surface-alt);padding:9px;color:var(--els-ink);overflow-wrap:anywhere}
+#image-fft-pipeline-note{color:var(--els-muted)}
+.ss-image-fft-pipeline-nav{display:flex;gap:7px;justify-content:space-between}
+.ss-image-fft-pipeline-nav button{flex:0 1 190px}
+@media(max-width:620px){
+ .ss-image-fft-pipeline-pair{grid-template-columns:1fr}
+ .ss-image-fft-pipeline-view canvas{width:min(100%,220px)}
+ .ss-image-fft-pipeline-controls{grid-template-columns:1fr auto}
+ .ss-image-fft-pipeline-controls input{grid-column:1/-1;grid-row:2}
+ .ss-image-fft-stages{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .ss-image-fft-pipeline-head h3{font-size:15px}
+}
