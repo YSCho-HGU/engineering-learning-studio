@@ -55,22 +55,10 @@ function init(){
   arrows.className='ss-chapter-arrows ss-four-navigation';
   arrows.setAttribute('aria-label','Chapter and section navigation');
   const make=(kind,direction,glyph,label)=>{
-   const el=document.createElement(kind==='chapter'?'a':'button');
-   el.className='ss-chapter-arrow ss-nav-'+kind;
-   el.title=label;el.setAttribute('aria-label',label);
-   // Use identical stroke-based SVG geometry for every navigation direction.
-   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-   svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
-   const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-   const left=direction===-1;
-   path.setAttribute('d',left?'M15 5l-7 7 7 7':'M9 5l7 7-7 7');
-   svg.append(path);
-   if(kind==='chapter'){
-    const bar=document.createElementNS('http://www.w3.org/2000/svg','path');
-    bar.setAttribute('d',left?'M5 5v14':'M19 5v14');svg.append(bar);
-   }
-   el.replaceChildren(svg);
-   if(kind==='section'){el.type='button';el.dataset.ssSectionDirection=String(direction);}
+   const factory=window.ELSHeaderControls?.makeNavigationArrow;
+   if(typeof factory!=="function")throw new Error("Shared ELS header component not loaded");
+   const el=factory({kind,direction,label});
+   if(kind==='section')el.dataset.ssSectionDirection=String(direction);
    else{
     const target=chapterNumber+direction;
     if(target===9&&direction===1)el.href='./applications.html';
