@@ -49,6 +49,20 @@ for(const N of [64,128,256]){
  near(low.imagMax,0,1e-8,"lowpass preserves reality");
  near(high.imagMax,0,1e-8,"highpass preserves reality");
 }
+for(const N of [16,32,64,128,256]){
+ const input=c.synth("scene",N),spectrum=c.forward(input.pixels,N);
+ for(const kernel of ["box","gaussian","sharpen"]){
+  const output=c.applyKernelFFT(spectrum,input.pixels,N,kernel);
+  near(output.maxDifference,0,1e-9,"spatial circular convolution must equal FFT2 multiplier");
+  near(output.imagMax,0,1e-9,"real symmetric 3x3 kernel must keep IFFT real");
+  for(const [x,y] of [[0,0],[2,3],[N-1,N-1],[Math.floor(N/2),Math.floor(N/3)]]){
+   const probe=c.kernelProbe(input.pixels,N,kernel,x,y);
+   near(probe.sum,output.pixels[y*N+x],1e-9,"single-pixel kernel weighted sum equals FFT result");
+   near(probe.items.reduce((sum,v)=>sum+v.contribution,0),probe.sum,1e-12,"shown contribution sum");
+  }
+  assert.equal(c.kernelWeights(kernel).length,9);checks++;
+ }
+}
 const unit=new Float64Array(64*64);unit.fill(1);
 const d=c.forward(unit,64);
 near(d.real[0],4096,1e-8,"DC of unit image");
