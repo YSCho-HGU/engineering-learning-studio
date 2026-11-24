@@ -23,7 +23,7 @@ function readData(slug){
 }
 const catalog=JSON.parse(readFileSync("c-programming/course-catalog.json","utf8"));
 assert(catalog.schemaVersion===1,"catalog-schema");
-assert(catalog.chapters.length===18,"catalog-planned-count",String(catalog.chapters.length));
+assert(catalog.chapters.filter(c=>c.kind!=="ai-capstone").length===18,"catalog-planned-count",String(catalog.chapters.length));
 const published=catalog.chapters.filter(x=>x.published);
 assert(published.length===8,"catalog-published-count",String(published.length));
 assert(JSON.stringify(published.map(x=>x.id))===JSON.stringify(manifest.publishedUnits.map(x=>x.number)),"catalog-published-ids");

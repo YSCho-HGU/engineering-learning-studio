@@ -1,0 +1,2 @@
+# Chapter 211 / textbook Chapter 11
+Companion to 211_C_AI_Native_Software_Development_Rev1.docx. This is a separate capstone renderer, not the C execution/trace engine. All examples use synthetic data. No agent calls, package install, credentials, or network upload. Review progress uses els-ai-coding-211-v1; existing course keys are unchanged. Sort trace is a JS model, Git is a simulation. CSV accepts a simple unquoted time,value schema (finite numeric values, at most 2,000 rows); chart uses record order. Review marks are self-reported, not proof of competence.

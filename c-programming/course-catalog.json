@@ -191,6 +191,17 @@
       "url": "./crud-integration/",
       "published": false,
       "description": ""
+    },
+    {
+      "id": "211",
+      "chapter": 21,
+      "title": "AI-Native Software Development",
+      "group": "advanced",
+      "url": "./ai-coding/",
+      "published": false,
+      "kind": "ai-capstone",
+      "description": "C 기반 Vibe Coding, Coding Agent, 명세·Git·검증·보안과 센서 데이터 프로젝트",
+      "book": "https://docs.google.com/document/d/1hZCdkBpT2eeckfGG9RtxKIyd61xt1LGP/edit"
     }
   ]
 }

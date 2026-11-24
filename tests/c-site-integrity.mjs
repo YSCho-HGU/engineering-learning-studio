@@ -5,7 +5,8 @@ const root="c-programming";
 const catalog=JSON.parse(readFileSync(join(root,"course-catalog.json"),"utf8"));
 const failures=[];
 const current=catalog.chapters.filter(c=>c.published);
-if(catalog.chapters.length!==18)failures.push("Course should list exactly 18 planned units");
+if(catalog.chapters.filter(c=>c.kind!=="ai-capstone").length!==18)failures.push("Original 18 C units must remain");
+if(!catalog.chapters.some(c=>c.id==="211"&&c.kind==="ai-capstone"&&existsSync(join(root,c.url.slice(2),"index.html"))))failures.push("Missing AI capstone route");
 if(current.length!==8)failures.push("Eight finished units should be public");
 const seen=new Set();
 for(const c of catalog.chapters){

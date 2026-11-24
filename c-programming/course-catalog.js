@@ -33,7 +33,8 @@ const descriptionsEn={
  "151":"Values and addresses, dereferencing, swap, pointer arithmetic and safety · 6 core + 2 optional steps",
  "161":"Structs and typedefs, member access, record arrays, function parameters and copying · 6 core + 2 optional steps",
  "171":"Streams, file open/read/write, EOF, error handling and sensor logs · prioritize coding P1–P2",
- "181":"malloc/free, pointers and dynamic arrays · 4 core + 4 optional steps"
+ "181":"malloc/free, pointers and dynamic arrays · 4 core + 4 optional steps",
+ "211":"Vibe coding, coding agents, specification, Git, independent tests, security and a sensor dashboard project"
 };
 let catalogCache=null;
 const english=()=>window.CCourseI18n?.get()==="en";

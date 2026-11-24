@@ -1,3 +1,4 @@
+import "./c211-model.mjs";
 import {chromium} from 'playwright';
 const browser=await chromium.launch({headless:true});
 const problems=[];
@@ -13,7 +14,7 @@ for(const width of [390,1280]){
  if(await cards.count()!==8)problems.push(width+' expected eight available chapter cards');
  const catalogResponse=await page.request.get('http://127.0.0.1:8765/c-programming/course-catalog.json');
  const catalog=await catalogResponse.json();
- if(catalog.chapters.length!==18||catalog.chapters.filter(c=>c.published).length!==8)problems.push(width+' catalog public state mismatch');
+ if(catalog.chapters.length!==19||catalog.chapters.filter(c=>c.published).length!==8)problems.push(width+' catalog public state mismatch');
  if(!catalog.chapters.every(c=>/^\.\/[a-z0-9-]+\/$/.test(c.url)))problems.push(width+' invalid catalog route');
 
  const chapters=await cards.locator('.number').allTextContents();
@@ -28,20 +29,20 @@ for(const width of [390,1280]){
  if(await page.locator('#course-overview-details').evaluate(e=>e.open))problems.push(width+' overview should begin collapsed');
  await page.locator('#course-overview-details > summary').click();
  if(!await page.locator('#course-overview-details').evaluate(e=>e.open))problems.push(width+' roadmap link did not open overview');
- if(await page.locator('#units .unit').count()!==18)problems.push(width+' expected 18 roadmap chapters');
+ if(await page.locator('#units .unit').count()!==19)problems.push(width+' expected 19 roadmap chapters');
  const groupHeads=await page.locator('#units .course-group h3').allTextContents();
  if(groupHeads.join('|')!=='기초 문법|배열 · 함수|포인터 · 구조체 · 메모리|자료구조 · 종합 응용')problems.push(width+' course overview grouping incorrect: '+groupHeads.join('|'));
  const groupCounts=await page.locator('#units .course-group .unit').count();
- if(groupCounts!==18)problems.push(width+' grouped course count mismatch');
+ if(groupCounts!==19)problems.push(width+' grouped course count mismatch');
  const liveCards=page.locator('#units a.unit-live'),pendingCards=page.locator('#units article.unit-pending');
  if(await liveCards.count()!==8)problems.push(width+' 8 published cards required');
- if(await pendingCards.count()!==10)problems.push(width+' 10 pending cards required');
+ if(await pendingCards.count()!==11)problems.push(width+' 11 pending cards required');
  if(await page.locator('.course-availability .availability-item').count()!==2)problems.push(width+' status legend missing');
  if(await page.locator('#available-overview-count').innerText()!=='8개')problems.push(width+' published count mismatch');
- if(await page.locator('#pending-overview-count').innerText()!=='10개')problems.push(width+' pending count mismatch');
+ if(await page.locator('#pending-overview-count').innerText()!=='11개')problems.push(width+' pending count mismatch');
  if(await pendingCards.locator('a').count())problems.push(width+' pending cards must not contain links');
  if(await liveCards.locator('.unit-status.live').count()!==8)problems.push(width+' published badges missing');
- if(await pendingCards.locator('.unit-status.pending').count()!==10)problems.push(width+' pending badges missing');
+ if(await pendingCards.locator('.unit-status.pending').count()!==11)problems.push(width+' pending badges missing');
 
  await page.goto('http://127.0.0.1:8765/c-programming/#roadmap',{waitUntil:'networkidle'});
  if(!await page.locator('#course-overview-details').evaluate(e=>e.open))problems.push(width+' direct #roadmap link did not open overview');
@@ -84,6 +85,35 @@ for(const width of [390,1280]){
  await page.goto('http://127.0.0.1:8765/c-programming/admin/',{waitUntil:'networkidle'});
  if(await page.locator('#chapters').isVisible())problems.push(width+' administrator settings shown without authentication');
  if(!await page.locator('#token').isVisible())problems.push(width+' admin token field missing');
+
+ // Independent capstone renderer: test the direct preview before publication.
+ await page.goto('http://127.0.0.1:8765/c-programming/ai-coding/#11-2',{waitUntil:'networkidle'});
+ await page.locator('#sort-step').click();
+ if(!(await page.locator('#activity').innerText()).includes('[2, 5, 4]'))problems.push(width+' 211 first swap');
+ await page.locator('#sort-step').click();
+ if(!(await page.locator('#activity').innerText()).includes('[2, 4, 5]'))problems.push(width+' 211 second swap');
+ await page.locator('#c-language').selectOption('en');
+ if(!(await page.locator('#activity').innerText()).includes('[2, 4, 5]'))problems.push(width+' 211 language reset trace');
+ if(/[가-힣]/.test(await page.locator('#lesson').innerText()))problems.push(width+' 211 English content leak');
+ await page.goto('http://127.0.0.1:8765/c-programming/ai-coding/#11-5',{waitUntil:'networkidle'});
+ await page.locator('#run-tests').click();
+ if(await page.getByText('FAIL',{exact:true}).count()!==1)problems.push(width+' 211 missing boundary failure');
+ await page.locator('#fix-diff').click();await page.locator('#run-tests').click();
+ if(await page.getByText('PASS',{exact:true}).count()!==3)problems.push(width+' 211 boundary fix');
+ await page.goto('http://127.0.0.1:8765/c-programming/ai-coding/#11-7',{waitUntil:'networkidle'});
+ if(!(await page.locator('.ai-stat').innerText()).includes('25'))problems.push(width+' 211 sample mean');
+ await page.locator('#threshold').fill('40');
+ if((await page.locator('.ai-stat strong').last().innerText())!=='0')problems.push(width+' 211 strict threshold');
+ await page.locator('#sensor-csv').fill('time,value\n0,NaN');
+ if(await page.locator('.ai-error').count()!==1)problems.push(width+' 211 invalid CSV accepted');
+ await page.locator('#sensor-csv').fill('time,value\n0,10\n1,20\n2,40\n3,30');
+ await page.locator('#c-language').selectOption('ko');
+ if(await page.locator('#threshold').inputValue()!=='40')problems.push(width+' 211 language reset threshold');
+ await page.locator('#theme').selectOption('white-clean');
+ if(await page.evaluate(()=>document.documentElement.dataset.elsTheme)!=='white-clean')problems.push(width+' 211 theme');
+ if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+3))problems.push(width+' 211 horizontal overflow');
+ await page.screenshot({path:'qa-ai-coding-'+width+'.png',fullPage:true});
+
  await ctx.close();
 }
 await browser.close();

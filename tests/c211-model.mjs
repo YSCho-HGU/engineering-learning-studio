@@ -1,0 +1,12 @@
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+import vm from "node:vm";
+const w={window:{}};vm.runInNewContext(readFileSync("c-programming/ai-coding/core.js","utf8"),w);
+const C=w.window.AICodingCore;
+const plain=x=>JSON.parse(JSON.stringify(x));
+assert.deepEqual(plain(C.stats(C.parseCSV("time,value\n0,10\n1,20\n2,40\n3,30"),30)),{min:10,mean:25,max:40,alerts:1});
+for(const a of [[5,2,4],[1],[1,2,3],[3,2,1],[2,2,1],[-3,0,-5]])assert.deepEqual(plain(C.sortTrace(a).at(-1).a),a.slice().sort((a,b)=>a-b));
+for(const bad of ["time,value","time,value\n0,","time,value\n0,NaN","time,value\n0,0x10","wrong\n1,2"])assert.throws(()=>C.parseCSV(bad));
+assert.equal(C.thresholdTests(true).filter(x=>x.expected!==x.actual).length,1);
+assert.equal(C.thresholdTests(false).filter(x=>x.expected!==x.actual).length,0);
+console.log("AI capstone model checks passed.");

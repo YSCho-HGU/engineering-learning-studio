@@ -56,7 +56,7 @@ try{
  await page.locator("#github-login").click();
  await page.locator("#editor").waitFor({state:"visible",timeout:12000});
  await page.locator("#admin-private").waitFor({state:"visible",timeout:12000});
- if(await page.locator(".chapter").count()!==18)errors.push("C catalog missing");
+ if(await page.locator(".chapter").count()!==c.chapters.length)errors.push("C catalog missing");
  await page.locator("#title-151").fill("Pointer Fundamentals");
  await page.locator("#save").click();
  await page.waitForFunction(()=>document.getElementById("status")?.textContent.includes("저장 완료"));
@@ -68,7 +68,7 @@ try{
  // A developer should stay signed in when refreshing the same admin tab.
  await page.reload({waitUntil:"domcontentloaded"});
  await page.locator("#editor").waitFor({state:"visible",timeout:12000});
- if(await page.locator(".chapter").count()!==18)errors.push("Owner session was not restored after refresh");
+ if(await page.locator(".chapter").count()!==c.chapters.length)errors.push("Owner session was not restored after refresh");
  await page.locator("#course-ss").click();
  await page.locator("#editor").waitFor({state:"visible"});
  if(await page.locator(".chapter").count()!==8)errors.push("Signals catalog missing");
