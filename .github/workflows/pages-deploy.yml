@@ -52,6 +52,7 @@ jobs:
           node --check assets/els-header-controls.js
           node --check c-programming/c-ss-shell.js
           node --check signals-systems/assets/ss-common-header.js
+          node --check tests/pages-production-smoke.mjs
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
       - name: Package the site
@@ -84,10 +85,12 @@ jobs:
           done
           echo "::error::Pages deployed, but published C / SS navigation smoke failed"
           exit 1
-      - name: Preserve browser smoke failures
-        if: failure()
+      - name: Preserve complete production browser regression report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: pages-production-header-smoke-${{ github.run_id }}
-          path: pages-smoke-*.png
+          path: |
+            pages-smoke-report.json
+            pages-smoke-*.png
           if-no-files-found: ignore
