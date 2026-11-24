@@ -9,7 +9,7 @@ const tr=(en,ko,compact=false)=>{
  const mode=language?.get?.()||"mixed";
  return mode==="en"?en:mode==="ko"?ko:compact?en+" · "+ko:en+"\n"+ko;
 };
-const fmt=(v,d=3)=>Number(v).toFixed(d).replace(/\.?0+$/,"");
+const fmt=(v,d=3)=>{const value=Number(v).toFixed(d);return value.includes(".")?value.replace(/0+$/,"").replace(/\.$/,""):value;};
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 function text(id,en,ko,short=false){$(id).textContent=tr(en,ko,short);}
 function renderMath(target,formula,fallback){
