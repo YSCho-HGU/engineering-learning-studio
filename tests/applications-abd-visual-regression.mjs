@@ -47,7 +47,7 @@ try{
   assert.equal(await p.locator("#topics-"+area+" .ss-app-abd-lab-row").count(),area==="a"?6:area==="b"?3:0);
   assert.equal(await p.locator("#topics-"+area+" .ss-app-abd-planned").count(),area==="a"?0:area==="b"?4:6);
  }
- assert.equal(await p.locator("#topics-c .ss-app-lesson-row").count(),7,"Do not alter FFT Part C");
+ assert.equal(await p.locator("#topics-c .ss-app-lesson-row").count(),8,"FFT Part C adds image lesson 07");
  const hrefs=await p.locator("#topics-a .ss-app-abd-lab-row").evaluateAll(a=>a.map(x=>x.getAttribute("href")));
  assert.deepEqual(hrefs,labs.map(l=>"./applications-lab.html?lab="+l));
  for(const part of ["b","d"]){
