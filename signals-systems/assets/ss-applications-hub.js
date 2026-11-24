@@ -1,4 +1,4 @@
-/* Applications curriculum catalog: six Part A labs, three Part B labs, seven Part C labs, remaining topics planned. */
+/* Applications curriculum catalog: six Part A labs, three Part B labs, eight Part C labs, remaining topics planned. */
 (()=>{
 "use strict";
 const sections=["a","b","c","d"];
@@ -28,10 +28,10 @@ const topics={
   {phase:"discovery",routeIndex:4,lab:"dtmf-decoder",href:"./applications-fft-dtmf.html",en:"DTMF Decoder",ko:"DTMF 해독",descEn:"Decode a hidden telephone key",descKo:"FFT로 전화번호 해독"},
   {phase:"discovery",routeIndex:5,lab:"sound-fingerprint",href:"./applications-fft-sound-fingerprint.html",en:"Sound Fingerprint",ko:"소리의 주파수 지문",descEn:"Recognize sounds from harmonics",descKo:"고조파로 소리 구별하기"},
   {phase:"discovery",routeIndex:6,lab:"fft-upload",href:"./applications-fft-upload.html",en:"Real Audio & Sensor FFT",ko:"실제 음성·센서 FFT",descEn:"Analyze a recording or sensor signal",descKo:"실제 음성·센서 데이터 분석"},
-  {phase:"extension",routeIndex:7,optional:true,lab:"chirp-stft",href:"./applications-chirp-stft.html",en:"Chirp & STFT",ko:"Chirp·STFT",descEn:"See when frequency changes",descKo:"주파수가 변하는 시점 확인"},
+  {phase:"discovery",routeIndex:7,lab:"image-fft",href:"./applications-fft-image.html",en:"2D Image FFT Discovery",ko:"2D 이미지 FFT 발견",descEn:"Find image patterns and remove periodic noise",descKo:"이미지 패턴 발견·주기적 잡음 제거"},
+  {phase:"extension",routeIndex:8,optional:true,lab:"chirp-stft",href:"./applications-chirp-stft.html",en:"Chirp & STFT",ko:"Chirp·STFT",descEn:"See when frequency changes",descKo:"주파수가 변하는 시점 확인"},
   {phase:"planned",en:"Magnitude, Phase and Reconstruction",ko:"크기·위상·복원"},
   {phase:"planned",en:"FFT-Based Convolution",ko:"FFT 기반 컨벌루션"},
-  {phase:"planned",en:"2D FFT of Images",ko:"이미지의 2D FFT"},
   {phase:"planned",en:"Video Temporal FFT and Flicker",ko:"동영상 시간 FFT와 깜빡임"}
  ],
 
@@ -181,7 +181,7 @@ function renderTopics(){
   };
   host.replaceChildren();
   if(part==="c"){
-   document.getElementById("part-c-count").textContent=i18n("6 core labs + 1 optional","핵심 6개 + 선택 1개",true);
+   document.getElementById("part-c-count").textContent=i18n("7 core labs + 1 optional","핵심 7개 + 선택 1개",true);
    renderFFTCompact(host,data);restoreDisclosure();return;
   }
   if(part==="a"){
