@@ -1,0 +1,62 @@
+name: Part B student journey and usability QA
+on:
+  push:
+    paths:
+      - 'signals-systems/applications-system-lab.html'
+      - 'signals-systems/applications-system-compare.html'
+      - 'signals-systems/assets/ss-app-system-*.js'
+      - 'signals-systems/assets/ss-app-system-*.css'
+      - 'signals-systems/assets/ss-system-compare*.js'
+      - 'signals-systems/assets/ss-system-compare*.css'
+      - 'signals-systems/assets/ss-system-lab-core.js'
+      - 'signals-systems/assets/ss-applications-hub.js'
+      - 'tests/ss-partb-student-journeys.mjs'
+      - 'tests/ss-partb-system-browser.mjs'
+      - 'tests/ss-partb-compare-browser.mjs'
+      - '.github/workflows/ss-partb-student-journeys.yml'
+  workflow_dispatch:
+concurrency:
+  group: ss-partb-student-main
+  cancel-in-progress: true
+jobs:
+  students:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate Part B JavaScript and numerical models
+        run: |
+          node --check signals-systems/assets/ss-app-system-labs.js
+          node --check signals-systems/assets/ss-app-system-explorers.js
+          node --check signals-systems/assets/ss-system-compare.js
+          node --check signals-systems/assets/ss-system-compare-core.js
+          node --check tests/ss-partb-student-journeys.mjs
+          node signals-systems/tests/partb-system-labs.mjs
+          node signals-systems/tests/partb-compare-core.mjs
+      - name: Install Chromium for student journey checks
+        run: |
+          npm install --no-save @playwright/test
+          npx playwright install --with-deps chromium
+      - name: Serve the integrated studio locally
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/partb-student-http.log 2>&1 &
+          sleep 2
+      - name: Run realistic Part B student journeys (desktop and mobile)
+        run: node tests/ss-partb-student-journeys.mjs
+      - name: Check circuit and convolution lab regression
+        run: node tests/ss-partb-system-browser.mjs
+      - name: Check phase, delay and filter comparison regression
+        run: node tests/ss-partb-compare-browser.mjs
+      - name: Archive student journey screenshots and metrics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: partb-student-journey-evidence
+          path: |
+            artifacts/partb-student-qa/
+            tests/screenshots/partb-*
+          retention-days: 14
+          if-no-files-found: ignore
