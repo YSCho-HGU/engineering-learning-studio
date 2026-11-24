@@ -62,6 +62,7 @@ const exercises={
  explain:["For real images, F(−u,−v)=F*(u,v). A paired symmetric notch retains that property. Targeted frequency removal can suppress image-wide interference.","실수 이미지의 F(−u,−v)=F*(u,v)이므로 대칭 Notch는 복소 켤레대칭을 유지합니다. 전체 이미지에 퍼진 주기 잡음을 특정 주파수만 제거해 줄일 수 있습니다."]}
 };
 const presets=[["stripes","Adjustable stripes","줄무늬 조절"],["checker","Checkerboard","체커보드"],["scene","Synthetic city scene","합성 도시 장면"],["noise","Scene + periodic noise","장면 + 주기적 잡음"]];
+const kernelChoices=[["Box average","3×3 평균"],["Gaussian blur","가우시안 블러"],["Sharpen","선명화"]];
 const filters=[["none","No filter","필터 없음"],["kernel","3×3 spatial kernel (FFT equivalent)","3×3 공간 커널 (FFT로 동일 계산)"],["low","Gaussian low-pass","가우시안 저역통과"],["high","Gaussian high-pass","가우시안 고역통과"],["notch","Symmetric notch reject","대칭 Notch 제거"]];
 const defaults={stage:1,kind:"stripes",N:256,cycles:8,angle:0,filter:"none",radius:22,notchU:12,notchV:7,notchRadius:2.5,view:"magnitude",kernel:"box",probeX:82,probeY:106};
 const state={...defaults};let bitmap=null,dirty=true,base=null,result=null,scheduled=0,interactions=0;
@@ -72,11 +73,12 @@ function labels(){
  const uploadedOption=$("image-preset").querySelector('option[value="upload"]');
  if(uploadedOption)uploadedOption.textContent=tr("Uploaded picture","업로드 이미지",true);
  for(const [i,o]of filters.entries())$("image-filter").options[i].textContent=tr(o[1],o[2],true);
- for(const [i,word]of [[["Box average","3×3 평균"],["Gaussian blur","가우시안 블러"],["Sharpen","선명화"]]].flat().entries())$("image-kernel-choice").options[i].textContent=tr(...word,true);
+ for(const [i,word]of kernelChoices.entries())$("image-kernel-choice").options[i].textContent=tr(...word,true);
  $("image-spectrum-view").options[0].textContent=tr("Log magnitude","로그 크기",true);
  $("image-spectrum-view").options[1].textContent=tr("Phase (advanced)","위상 (심화)",true);
  document.title=tr("2D Image FFT Discovery","2D 이미지 FFT 발견 실습",true)+" | Engineering Learning Studio";
  document.documentElement.lang=mode()==="ko"?"ko":"en";
+ $("image-input-canvas").setAttribute("aria-label",tr("Input image. In Kernel stage use arrows to move the inspected pixel, Enter to inspect.","입력 이미지입니다. 커널 단계에서 방향키로 선택 위치를 이동하고 Enter로 픽셀을 관찰합니다."));
  stageLabels();sync();if(result)render(result);
 }
 function stageLabels(){
@@ -319,6 +321,7 @@ function bind(){
  input.addEventListener("click",e=>setProbeFromPointer(e.clientX,e.clientY,input.getBoundingClientRect()));
  input.addEventListener("keydown",e=>{
   if(state.stage!==3)return;
+  if(e.key==="Enter"||e.key===" "){e.preventDefault();interactions++;schedule();return;}
   if(e.key==="ArrowLeft")state.probeX--;else if(e.key==="ArrowRight")state.probeX++;
   else if(e.key==="ArrowUp")state.probeY--;else if(e.key==="ArrowDown")state.probeY++;else return;
   e.preventDefault();
