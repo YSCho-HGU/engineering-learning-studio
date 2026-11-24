@@ -1,7 +1,7 @@
 /* Engineering Learning Studio course header — canonical geometry.
    Both C Programming and S&S use the same left / navigation / actions DOM.
    All earlier conflicting grid / flex / absolute overrides were removed.
-   Version: els-header-v5-20261124 */
+   Version: els-header-v6-inline-nav-20261124 */
 :root {
   --els-course-control-size:34px;
   --els-course-header-gap:10px;
@@ -29,7 +29,7 @@ html body.c-ss-course > header.ss-common-header.els-course-header {
 }
 html body > header.ss-common-header.els-course-header > .els-header-left {
   display:flex!important;
-  flex:1 1 0!important;
+  flex:0 1 auto!important;
   min-width:0!important;
   align-items:center!important;
   gap:10px!important;
@@ -40,8 +40,9 @@ html body > header.ss-common-header.els-course-header > .els-header-left > .ss-c
 }
 html body > header.ss-common-header.els-course-header > .els-header-left > .ss-common-menu {
   flex:0 1 auto!important;
+  width:max-content!important;
   min-width:0!important;
-  max-width:min(42vw,520px)!important;
+  max-width:min(42vw,430px)!important;
 }
 html body > header.ss-common-header.els-course-header .ss-common-menu > summary.ss-common-title {
   box-sizing:border-box!important;
@@ -58,7 +59,7 @@ html body > header.ss-common-header.els-course-header .ss-common-menu > summary.
 }
 html body > header.ss-common-header.els-course-header > .ss-common-actions {
   display:flex!important;
-  flex:1 1 0!important;
+  flex:0 0 auto!important;
   min-width:0!important;
   align-items:center!important;
   justify-content:flex-end!important;
@@ -84,7 +85,7 @@ html body > header.ss-common-header.els-course-header > nav.ss-four-navigation.e
   min-width:0!important;
   height:auto!important;
   padding:0!important;
-  margin:0!important;
+  margin:0 auto 0 0!important;
   transform:none!important;
   background:transparent!important;
   border:0!important;
@@ -136,49 +137,33 @@ html body > header.ss-common-header.els-course-header :is(a,button,select,summar
   outline:2px solid var(--els-focus,#f2cc82)!important;
   outline-offset:2px!important;
 }
-@media(min-width:1101px) {
-  html body > header.ss-common-header.els-course-header > nav.ss-four-navigation.els-course-header-navigation {
-    position:absolute!important;
-    left:50%!important;
-    top:50%!important;
-    transform:translate(-50%,-50%)!important;
-  }
-  html body > header.ss-common-header.els-course-header > .els-header-left {
-    padding-right:104px!important;
-  }
-  html body > header.ss-common-header.els-course-header > .ss-common-actions {
-    padding-left:104px!important;
-  }
-}
+/* Navigation follows the chapter chooser rather than anchoring to viewport center.
+   The chapter menu stays at intrinsic content width and actions remain right-aligned. */
 @media(max-width:1100px) {
   html body > header.ss-common-header.els-course-header {
-    display:grid!important;
-    grid-template-columns:minmax(0,1fr) auto!important;
-    grid-template-areas:"left actions" "navigation navigation"!important;
-    row-gap:7px!important;
+    flex-wrap:wrap!important;
+    row-gap:8px!important;
   }
-  html body > header.ss-common-header.els-course-header > .els-header-left {grid-area:left!important;padding:0!important}
-  html body > header.ss-common-header.els-course-header > .ss-common-actions {grid-area:actions!important;padding:0!important}
+  html body > header.ss-common-header.els-course-header > .els-header-left {
+    flex:0 1 auto!important;
+  }
   html body > header.ss-common-header.els-course-header > nav.ss-four-navigation.els-course-header-navigation {
-    grid-area:navigation!important;
     position:static!important;
-    justify-self:center!important;
     transform:none!important;
-    margin:0!important;
   }
 }
-@media(max-width:640px) {
-  html body > header.ss-common-header.els-course-header {
-    grid-template-columns:minmax(0,1fr)!important;
-    grid-template-areas:"left" "actions" "navigation"!important;
-    padding:8px!important;
+@media(max-width:700px) {
+  html body > header.ss-common-header.els-course-header {padding:8px!important;}
+  html body > header.ss-common-header.els-course-header > .els-header-left {
+    flex:1 1 auto!important;
   }
   html body > header.ss-common-header.els-course-header > .els-header-left > .ss-common-menu {
-    flex:1 1 auto!important;
-    max-width:calc(100vw - 100px)!important;
+    max-width:calc(100vw - 102px)!important;
+  }
+  html body > header.ss-common-header.els-course-header > nav.ss-four-navigation.els-course-header-navigation {
+    margin-left:0!important;
   }
   html body > header.ss-common-header.els-course-header > .ss-common-actions {
-    width:100%!important;
-    justify-self:end!important;
+    margin-left:auto!important;
   }
 }
