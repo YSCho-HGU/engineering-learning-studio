@@ -49,51 +49,19 @@ function init(){
  const chapterMatch=location.pathname.match(/chapter([1-8])\.html$/);
  const chapterNumber=chapterMatch?Number(chapterMatch[1]):0;
  if(chapterNumber){
-  const existing=header.querySelector('.ss-chapter-arrows');
-  // Reuse semantic HTML navigation: never remove working arrows during hydration.
-  const arrows=existing||document.createElement('nav');
-  const preservedArrows=existing?Array.from(existing.children):[];
-  let arrowIndex=0;
-  arrows.className='ss-chapter-arrows ss-four-navigation els-course-header-navigation';
-  arrows.setAttribute('aria-label','Chapter and section navigation');
-  const make=(kind,direction,glyph,label)=>{
-   const factory=window.ELSHeaderControls?.makeNavigationArrow;
-   // A missing shared adapter must never remove the chapter navigation.
-   // This SVG-only fallback is used solely when a late or failed asset load occurs.
-   const preserved=preservedArrows[arrowIndex++];
-   const el=preserved || (typeof factory==="function"
-     ?factory({kind,direction,label})
-     :(()=>{
-       const item=document.createElement(kind==="chapter"?"a":"button");
-       item.className="els-header-arrow ss-chapter-arrow ss-nav-"+kind;
-       item.setAttribute("aria-label",label);item.title=label;
-       if(kind==="section")item.type="button";
-       const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
-       svg.setAttribute("viewBox","0 0 24 24");svg.setAttribute("aria-hidden","true");
-       const stroke=document.createElementNS("http://www.w3.org/2000/svg","path");
-       stroke.setAttribute("d",direction<0?"M15 5l-7 7 7 7":"M9 5l7 7-7 7");svg.append(stroke);
-       if(kind==="chapter"){
-         const bar=document.createElementNS("http://www.w3.org/2000/svg","path");
-         bar.setAttribute("d",direction<0?"M5 5v14":"M19 5v14");svg.append(bar);
-       }
-       item.append(svg);return item;
-     })());
-   if(kind==='section')el.dataset.ssSectionDirection=String(direction);
-   else{
-    const target=chapterNumber+direction;
-    if(target===9&&direction===1)el.href='./applications.html';
-    else if(target<1||target>8){el.setAttribute('aria-disabled','true');el.removeAttribute('href');}
-    else el.href='./chapter'+target+'.html';
-   }
-   arrows.append(el);return el;
-  };
-  make('chapter',-1,'⇤','Previous chapter');
-  const prevSection=make('section',-1,'←','Previous section');
-  const nextSection=make('section',1,'→','Next section');
-  make('chapter',1,'⇥','Next chapter');
-  const actions=header.querySelector('.ss-common-actions');
-  if(actions)header.insertBefore(arrows,actions);else header.append(arrows);
-
+  // The four controls are authored in chapter HTML. Only attach behavior here:
+  // never delete, recreate, re-parent, or replace navigation nodes at runtime.
+  const arrows=header.querySelector(':scope > nav.ss-four-navigation');
+  const controls=Array.from(arrows?.querySelectorAll(':scope > .ss-chapter-arrow')||[]);
+  if(controls.length!==4){
+    console.error('[ELS header] Expected four static navigation controls for chapter',chapterNumber);
+  } else {
+   const [prevChapter,prevSection,nextSection,nextChapter]=controls;
+   prevChapter.href='./chapter'+Math.max(1,chapterNumber-1)+'.html';
+   if(chapterNumber===1){prevChapter.removeAttribute('href');prevChapter.setAttribute('aria-disabled','true')}
+   nextChapter.href=chapterNumber===8?'./applications.html':'./chapter'+(chapterNumber+1)+'.html';
+   prevSection.dataset.ssSectionDirection='-1';
+   nextSection.dataset.ssSectionDirection='1';
   // Each chapter owns its section buttons, but the public sidebar contract is shared.
   // Never count hidden or disabled navigation buttons as sections.
   const findNav=()=>{
@@ -106,10 +74,10 @@ function init(){
    if(!nav)return [];
    return Array.from(nav.querySelectorAll('button')).filter(b=>
     !b.disabled && !b.hidden && b.getAttribute('aria-hidden')!=='true' &&
-    !!b.getClientRects().length && !b.closest('[hidden],[aria-hidden="true"]'));
+    !b.closest('[hidden],[aria-hidden="true"]'));
   };
   const currentIndex=items=>{
-   let i=items.findIndex(b=>b.matches('.active,.on,.selected,[aria-current="page"],[aria-current="true"],[aria-pressed="true"]'));
+   let i=items.findIndex(b=>b.matches('.active,.on,.selected,.current,[aria-current="page"],[aria-current="step"],[aria-current="true"],[aria-pressed="true"]'));
    return i>=0?i:(items.length?0:-1);
   };
   const refresh=()=>{
@@ -149,6 +117,7 @@ function init(){
   window.addEventListener('ss:sidebar-resized',refresh);
   window.addEventListener('pageshow',()=>{observe();refresh();});
   refresh();
+  }
  }
  // Synchronize all chapter language pickers using the shared language preference.
  const languageLabel=header.querySelector('.ss-common-language');
