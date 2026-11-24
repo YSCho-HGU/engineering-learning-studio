@@ -46,8 +46,18 @@ function init(){
  arrows.setAttribute("aria-label","Chapter and section navigation");
  function arrow(title,chapterDelta,sectionDelta){
   const factory=window.ELSHeaderControls?.makeNavigationArrow;
-  if(typeof factory!=="function")throw new Error("Shared ELS header component is missing");
-  const n=factory({kind:chapterDelta!=null?"chapter":"section",direction:chapterDelta??sectionDelta,label:title});
+  const kind=chapterDelta!=null?"chapter":"section",direction=chapterDelta??sectionDelta;
+  // Keep the C course usable even when the shared presentation asset is stale or unavailable.
+  const fallback=()=>{
+   const node=el(kind==="chapter"?"a":"button","els-header-arrow ss-chapter-arrow ss-nav-"+kind);
+   const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+   svg.setAttribute("viewBox","0 0 24 24");svg.setAttribute("aria-hidden","true");
+   const path=document.createElementNS("http://www.w3.org/2000/svg","path");
+   path.setAttribute("d",direction<0?"M15 5l-7 7 7 7":"M9 5l7 7-7 7");svg.append(path);
+   if(kind==="chapter"){const bar=document.createElementNS("http://www.w3.org/2000/svg","path");bar.setAttribute("d",direction<0?"M5 5v14":"M19 5v14");svg.append(bar)}
+   node.append(svg);return node;
+  };
+  const n=typeof factory==="function"?factory({kind,direction,label:title}):fallback();
   n.setAttribute("aria-label",title);n.title=title;
   if(chapterDelta!=null){let index=current+chapterDelta;if(index>=0&&index<chapters.length)n.href=parentPrefix+chapters[index][0]+"/";else{n.setAttribute("aria-disabled","true");n.tabIndex=-1}}
   else {n.type="button";n.dataset.direction=String(sectionDelta);n.addEventListener("click",()=>{const buttons=[...document.querySelectorAll(fileioTask?"#task-nav button[data-task]":fileioLabs?".side-nav a[data-lab-link]":practice?".cp-menu .cp-nav-item":fileio?"#lesson-nav button[data-nav]":"#lesson-nav button[data-lesson], #lesson-nav a[href^='#lab-']")];const pos=buttons.findIndex(b=>fileioLabs?b.getAttribute("href")===(location.hash||"#write"):fileioTask||practice?b.classList.contains("active"):fileio?b.classList.contains("current"):b.getAttribute("aria-current")==="step");if(pos>=0&&pos+sectionDelta>=0&&pos+sectionDelta<buttons.length){buttons[pos+sectionDelta].click()}refreshArrows()})}
