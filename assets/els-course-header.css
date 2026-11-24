@@ -163,3 +163,8 @@ html body > header.els-course-header :is(a,button,summary,select):focus-visible{
     flex-wrap:nowrap!important;
   }
 }
+
+/* Retain the C learning shell's sticky header behavior. */
+html body.c-ss-course > header.els-course-header.ss-common-header{
+  position:sticky!important;top:0!important;
+}
