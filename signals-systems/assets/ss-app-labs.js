@@ -91,7 +91,7 @@ function fieldRange(host,options){
   if(lab==="chirp"&&options.key==="pos")seekAudio(state.T*state.pos/100);
   else if(lab!=="helix"&&options.key!=="window")invalidateAudio();
   if(lab==="chirp"&&options.key!=="pos"&&options.key!=="window")stftCache=null;
-  scheduleDraw();
+  scheduleDraw();window.SSApplicationsInquiry?.refresh?.(lab,state);
  });
  return range;
 }
@@ -107,7 +107,7 @@ function fieldSelect(host,options){
   if(lab!=="helix"&&options.key!=="window")invalidateAudio();
   if(lab==="chirp")stftCache=null;
   if(options.rebuild)renderControls();
-  scheduleDraw();
+  scheduleDraw();window.SSApplicationsInquiry?.refresh?.(lab,state);
  });
  return select;
 }
@@ -178,10 +178,14 @@ function renderControls(){
   stop.addEventListener("click",()=>stopAudio(true));
   refreshAudioButtons();
  }
- const guide=$("ss-al-guidance");clear(guide);
- elt("strong",null,tx("Try this sequence","탐구 순서",true),guide);
- const list=elt("ol",null,null,guide);
- labels[lab].notes.forEach(x=>elt("li",null,tx(...x),list));
+ const guide=$("ss-al-guidance");
+ if(!window.SSApplicationsInquiry?.renderSignal?.({lab,state,host:guide,apply:patch=>{
+  stopAudio(true);Object.assign(state,patch);audioState.buffer=null;
+  renderControls();scheduleDraw();
+ }})){
+  clear(guide);elt("strong",null,tx("Try this sequence","탐구 순서",true),guide);
+  const list=elt("ol",null,null,guide);labels[lab].notes.forEach(x=>elt("li",null,tx(...x),list));
+ }
 }
 function plotTitles(){
  const titles={
@@ -663,7 +667,7 @@ function init(){
    setAudioPosition(0);
    if(lab==="chirp")state.pos=initial.pos;
   }
-  renderControls();renderHeader();scheduleDraw();
+  window.SSApplicationsInquiry?.reset?.(lab);renderControls();renderHeader();scheduleDraw();
  });
  prev.addEventListener("click",()=>{if(at>0)location.href="./applications-lab.html?lab="+MODES[at-1]});
  next.addEventListener("click",()=>{if(at<MODES.length-1)location.href="./applications-lab.html?lab="+MODES[at+1]});
