@@ -39,13 +39,12 @@
     element.append(svg);
     return element;
   }
- function normalize(root){
-   const scope=root||doc;
-   const header=scope.querySelector(".ss-common-header,.site-header,body > header");
+ // The only layout composer for both courses. It accepts existing
+ // navigation nodes so course-specific event listeners and state survive.
+ function mountSlots(header){
    if(!header)return;
    header.classList.add("els-course-header");
-   // C creates .els-header-left directly; SS historically has two root siblings.
-   // Normalize both to the same left / center / right structural contract.
+   header.dataset.elsHeaderVersion="3";
    if(header.classList.contains("ss-common-header")&&!header.querySelector(":scope > .els-header-left")){
      const home=header.querySelector(":scope > .ss-common-home");
      const menu=header.querySelector(":scope > .ss-common-menu");
@@ -56,6 +55,14 @@
        left.append(home,menu);
      }
    }
+   header.querySelector(".ss-four-navigation")?.classList.add("els-course-header-navigation");
+   header.querySelector(".ss-common-actions")?.classList.add("els-course-header-actions");
+ }
+ function normalize(root){
+   const scope=root||doc;
+   const header=scope.querySelector(".ss-common-header,.site-header,body > header");
+   if(!header)return;
+   mountSlots(header);
    const title=header.querySelector(".ss-common-menu,.brand");
    if(title)title.classList.add("els-course-header-title");
    const actions=header.querySelector(".ss-common-actions,.header-nav");
@@ -119,5 +126,5 @@
  }
  function ready(){normalize();win.addEventListener("els:themechange",()=>normalize());}
  if(doc.readyState==="loading")doc.addEventListener("DOMContentLoaded",ready,{once:true});else ready();
- win.ELSHeaderControls=Object.freeze({normalize:()=>normalize(),makeNavigationArrow,themes:win.ELSTheme?.options?.slice()||[]});
+ win.ELSHeaderControls=Object.freeze({normalize:()=>normalize(),mountSlots,makeNavigationArrow,themes:win.ELSTheme?.options?.slice()||[]});
 })(window,document);
