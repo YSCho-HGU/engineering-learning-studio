@@ -38,7 +38,8 @@ try{
     const nav=page.locator(navs[chapter]);await nav.first().waitFor({timeout:20000});
     await page.waitForTimeout(220);
     const n=await nav.count();verify(n>=4&&n<30,"Invalid section navigation count "+chapter+":"+n);
-    for(const index of [...new Set([0,Math.floor(n/2),n-1])]){
+    const indices=width===390?Array.from({length:n},(_,i)=>i):[...new Set([0,Math.floor(n/2),n-1])];
+    for(const index of indices){
      await nav.nth(index).evaluate(el=>el.click());
      await page.waitForTimeout(120);
      const x=await inspect(page,chapter,width,index+1,false);
