@@ -52,6 +52,7 @@ function init(){
   const existing=header.querySelector('.ss-chapter-arrows');
   // Reuse semantic HTML navigation: never remove working arrows during hydration.
   const arrows=existing||document.createElement('nav');
+  const preservedArrows=existing?Array.from(existing.children):[];
   let arrowIndex=0;
   arrows.className='ss-chapter-arrows ss-four-navigation';
   arrows.setAttribute('aria-label','Chapter and section navigation');
@@ -59,7 +60,7 @@ function init(){
    const factory=window.ELSHeaderControls?.makeNavigationArrow;
    // A missing shared adapter must never remove the chapter navigation.
    // This SVG-only fallback is used solely when a late or failed asset load occurs.
-   const preserved=existing?.children[arrowIndex++];
+   const preserved=preservedArrows[arrowIndex++];
    const el=preserved || (typeof factory==="function"
      ?factory({kind,direction,label})
      :(()=>{
