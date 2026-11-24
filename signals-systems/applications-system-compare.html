@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="../assets/els-header-controls.css?v=1">
 <link rel="stylesheet" href="./assets/ss-trace-palette.css?v=1">
 <link rel="stylesheet" href="./assets/ss-app-system-labs.css?v=20261124-explorer1">
-<link rel="stylesheet" href="./assets/ss-system-compare.css?v=1">
+<link rel="stylesheet" href="./assets/ss-system-compare.css?v=20261124-phase1">
 <link rel="stylesheet" href="./assets/ss-applications-math.css?v=3">
 <link rel="stylesheet" href="./assets/ss-responsive-unified.css?v=1">
 <link rel="stylesheet" href="./assets/ss-plot-typography.css?v=1">
@@ -49,6 +49,7 @@
  <div class="ss-sys-workspace" id="cmp-workspace">
   <aside class="ss-sys-controls cmp-controls" aria-label="Shared signal and filter parameters">
    <div class="ss-sys-panel-heading"><h2 id="cmp-control-title">One input · two filters</h2><p id="cmp-control-intro"></p></div>
+   <h3 class="cmp-control-group" id="cmp-input-group">01 · Input signal</h3>
    <div class="ss-sys-fields">
     <div class="ss-sys-field"><label for="cmp-signal" id="cmp-label-signal">Input signal</label>
      <select id="cmp-signal"><option value="sensor">Noisy sensor</option><option value="step">Step</option><option value="pulse">Pulse</option><option value="sine">Sine wave</option></select>
@@ -61,6 +62,7 @@
     </div>
    </div>
    <div class="cmp-separator"></div>
+   <h3 class="cmp-control-group" id="cmp-filter-group">02 · Filter parameters</h3>
    <div class="ss-sys-fields">
     <div class="ss-sys-field"><div class="ss-sys-field-head"><label for="cmp-M" id="cmp-label-M">MA window M</label><output for="cmp-M" id="cmp-M-value">9</output></div>
      <input id="cmp-M" type="range" min="1" max="31" step="1" value="9">
@@ -83,19 +85,46 @@
    </div>
    <div class="cmp-metric-grid" id="cmp-metrics" aria-live="off"></div>
    <div class="cmp-plots">
-    <article class="ss-sys-plot cmp-plot cmp-primary"><h2 id="cmp-title-time">The same input, two filtered outputs</h2>
-     <div class="ss-sys-legend" id="cmp-legend-time"></div><canvas id="cmp-time" role="button" tabindex="0" aria-label="Time graph. Click or use arrow keys to select a sample."></canvas>
-     <p id="cmp-time-note"></p>
-     <div class="cmp-probe" id="cmp-probe" aria-live="off"></div>
-    </article>
-    <article class="ss-sys-plot cmp-plot"><h2 id="cmp-title-frequency">Frequency response</h2>
-     <div class="ss-sys-legend" id="cmp-legend-frequency"></div><canvas id="cmp-frequency" role="img" aria-label="RC and Moving Average magnitude responses"></canvas>
-     <p id="cmp-frequency-note"></p>
-    </article>
-    <article class="ss-sys-plot cmp-plot"><h2 id="cmp-title-step">Step response and lag</h2>
-     <div class="ss-sys-legend" id="cmp-legend-step"></div><canvas id="cmp-step" role="img" aria-label="RC and Moving Average unit step responses"></canvas>
-     <p id="cmp-step-note"></p>
-    </article>
+    <section class="cmp-domain" aria-labelledby="cmp-time-section-title">
+     <header class="cmp-domain-head">
+      <span class="cmp-domain-number" aria-hidden="true">01</span>
+      <div><h2 id="cmp-time-section-title">Observe · What changes in time?</h2><p id="cmp-time-section-desc">One input is processed by both filters. Look for smoothing and response to sudden changes.</p></div>
+     </header>
+     <div class="cmp-time-grid">
+      <article class="ss-sys-plot cmp-plot cmp-primary"><h3 id="cmp-title-time">The same input, two filtered outputs</h3>
+       <div class="ss-sys-legend" id="cmp-legend-time"></div><canvas id="cmp-time" role="button" tabindex="0" aria-label="Time graph. Click or use arrow keys to select a sample."></canvas>
+       <p id="cmp-time-note"></p><div class="cmp-probe" id="cmp-probe" aria-live="off"></div>
+      </article>
+      <article class="ss-sys-plot cmp-plot"><h3 id="cmp-title-step">Step response and lag</h3>
+       <div class="ss-sys-legend" id="cmp-legend-step"></div><canvas id="cmp-step" role="img" aria-label="RC and Moving Average unit step responses"></canvas><p id="cmp-step-note"></p>
+      </article>
+     </div>
+    </section>
+    <section class="cmp-domain" aria-labelledby="cmp-frequency-section-title">
+     <header class="cmp-domain-head">
+      <span class="cmp-domain-number" aria-hidden="true">02</span>
+      <div><h2 id="cmp-frequency-section-title">Explain · How do frequency and phase matter?</h2><p id="cmp-frequency-section-desc">Equal cutoff does not imply the same phase or delay. Explore frequency before interpreting timing.</p></div>
+     </header>
+     <div class="cmp-frequency-controls">
+      <label for="cmp-scope" id="cmp-scope-label">Frequency view</label>
+      <select id="cmp-scope"><option value="near">Near cutoff (learn)</option><option value="full">Full Nyquist band</option></select>
+      <label for="cmp-freq-probe" id="cmp-freq-probe-label">Inspect frequency</label>
+      <input id="cmp-freq-probe" type="range" min="0" max="10" step=".01" value="2.47">
+      <output id="cmp-freq-probe-value" for="cmp-freq-probe">2.47 Hz</output>
+     </div>
+     <div class="cmp-frequency-grid">
+      <article class="ss-sys-plot cmp-plot"><h3 id="cmp-title-frequency">Magnitude |H|</h3>
+       <div class="ss-sys-legend" id="cmp-legend-frequency"></div><canvas id="cmp-frequency" role="img" aria-label="RC and Moving Average magnitude responses"></canvas><p id="cmp-frequency-note"></p>
+      </article>
+      <article class="ss-sys-plot cmp-plot"><h3 id="cmp-title-phase">Phase response ∠H</h3>
+       <div class="ss-sys-legend" id="cmp-legend-phase"></div><canvas id="cmp-phase" role="img" aria-label="Wrapped phase response in degrees"></canvas><p id="cmp-phase-note"></p>
+      </article>
+      <article class="ss-sys-plot cmp-plot"><h3 id="cmp-title-delay">Group delay τg(f)</h3>
+       <div class="ss-sys-legend" id="cmp-legend-delay"></div><canvas id="cmp-delay" role="img" aria-label="Frequency dependent group delay in milliseconds"></canvas><p id="cmp-delay-note"></p>
+      </article>
+     </div>
+     <div class="cmp-frequency-readouts" id="cmp-frequency-readouts" aria-live="off"></div>
+    </section>
    </div>
    <section class="ss-sys-insight cmp-insight"><strong id="cmp-insight-title">What did you discover?</strong><p id="cmp-insight-body"></p></section>
    <details class="cmp-model-notes"><summary id="cmp-model-summary">About the models and a fair comparison</summary>
@@ -110,6 +139,6 @@
 <script defer src="../assets/els-header-controls.js?v=1"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js"></script>
 <script defer src="./assets/ss-applications-math.js?v=5"></script>
-<script defer src="./assets/ss-system-compare-core.js?v=1"></script>
-<script defer src="./assets/ss-system-compare.js?v=1"></script>
+<script defer src="./assets/ss-system-compare-core.js?v=20261124-phase1"></script>
+<script defer src="./assets/ss-system-compare.js?v=20261124-phase1"></script>
 </body></html>
