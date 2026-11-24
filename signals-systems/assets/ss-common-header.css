@@ -214,3 +214,38 @@ html[data-els-language="mixed"] .ss-layout-main :is(p,.desc,.notice,.insight,.sm
     overflow-wrap:anywhere!important;
   }
 }
+
+
+/* 2026-11-24: final shared-header geometry overrides earlier 30px glyph rules.
+   One 34px control grid; vector arrows are immune to OS font differences. */
+html .ss-common-header .ss-four-navigation{gap:6px!important;align-items:center!important}
+html .ss-common-header .ss-four-navigation .ss-chapter-arrow{
+ box-sizing:border-box!important;width:34px!important;min-width:34px!important;height:34px!important;min-height:34px!important;
+ border-radius:var(--els-header-control-radius,8px)!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ background:var(--els-surface-alt)!important;color:var(--els-ink)!important;
+ border:1px solid var(--els-border)!important;
+ padding:0!important;font-size:0!important;text-decoration:none!important;
+}
+html .ss-common-header .ss-four-navigation .ss-chapter-arrow svg{
+ display:block!important;width:var(--els-header-arrow-icon-size,17px)!important;
+ height:var(--els-header-arrow-icon-size,17px)!important;fill:none!important;
+ stroke:currentColor!important;stroke-width:var(--els-header-arrow-stroke,2.15)!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;flex:none!important;
+}
+html .ss-common-header .ss-four-navigation .ss-chapter-arrow:is(:hover,:focus-visible){
+ border-color:var(--els-link)!important;background:var(--els-surface-alt)!important;
+}
+html .ss-common-header .ss-four-navigation .ss-chapter-arrow:is(:disabled,[aria-disabled="true"]){
+ opacity:.4!important;cursor:not-allowed!important;
+}
+html .ss-common-header .ss-common-menu>summary.ss-common-title,
+html .ss-common-header .ss-common-actions select{
+ box-sizing:border-box!important;height:34px!important;min-height:34px!important;
+ border-radius:8px!important;
+}
+@media(max-width:700px){
+ html .ss-common-header .ss-four-navigation .ss-chapter-arrow{
+  width:34px!important;min-width:34px!important;height:34px!important;
+ }
+}
