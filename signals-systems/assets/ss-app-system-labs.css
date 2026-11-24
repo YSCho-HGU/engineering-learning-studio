@@ -120,11 +120,19 @@ a:hover{text-decoration:underline}
 .ss-sys-plot:first-child canvas[role=button]{cursor:crosshair}
 .ss-sys-plot:first-child canvas[role=button]:focus-visible{outline:3px solid var(--els-focus);outline-offset:2px}
 @keyframes ss-sys-signal-motion{to{stroke-dashoffset:-20}}
-@media(min-width:1420px){
- .ss-sys-plots:has(.ss-sys-rc-explorer:not([hidden])) .ss-sys-plot:first-child{grid-column:span 1}
- .ss-sys-plots:has(.ss-sys-rc-explorer:not([hidden])) .ss-sys-rc-explorer{grid-column:span 1}
- .ss-sys-plots:has(.ss-sys-rc-explorer:not([hidden])) .ss-sys-plot:first-child canvas{height:240px}
+/* Keep the adjustable waveform and its explanation beside each other on classroom screens. */
+@media(min-width:1250px){
+ .ss-sys-plots:has(.ss-sys-rc-explorer:not([hidden])) .ss-sys-plot:first-child,
+ .ss-sys-plots:has(.ss-sys-ma-explorer:not([hidden])) .ss-sys-plot:first-child{grid-column:span 1}
+ .ss-sys-plots:has(.ss-sys-rc-explorer:not([hidden])) .ss-sys-rc-explorer,
+ .ss-sys-plots:has(.ss-sys-ma-explorer:not([hidden])) .ss-sys-ma-explorer{grid-column:span 1}
+ .ss-sys-plots:has(.ss-sys-rc-explorer:not([hidden])) .ss-sys-plot:first-child canvas,
+ .ss-sys-plots:has(.ss-sys-ma-explorer:not([hidden])) .ss-sys-plot:first-child canvas{height:240px}
+ .ss-sys-plots:has(.ss-sys-ma-explorer:not([hidden])) .ss-sys-ma-worked{grid-template-columns:minmax(0,1fr)}
+ .ss-sys-plots:has(.ss-sys-rc-explorer:not([hidden])) .ss-sys-voltage-readouts{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .ss-sys-plots:has(.ss-sys-rc-explorer:not([hidden])) .ss-sys-voltage-readouts strong{white-space:normal}
 }
+
 @media(max-width:970px){
  .ss-sys-rc-explorer,.ss-sys-ma-explorer{grid-column:auto}
  .ss-sys-ma-worked{grid-template-columns:1fr}
