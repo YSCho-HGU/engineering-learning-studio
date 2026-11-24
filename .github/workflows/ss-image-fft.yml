@@ -4,6 +4,7 @@ on:
     paths:
       - 'signals-systems/assets/ss-image-fft-core.js'
       - 'signals-systems/assets/ss-image-fft.js'
+      - 'signals-systems/assets/ss-image-fft-pipeline.js'
       - 'signals-systems/assets/ss-image-fft.css'
       - 'signals-systems/applications-fft-image.html'
       - 'signals-systems/assets/ss-applications-hub.js'
@@ -25,6 +26,7 @@ jobs:
         run: |
           node --check signals-systems/assets/ss-image-fft-core.js
           node --check signals-systems/assets/ss-image-fft.js
+          node --check signals-systems/assets/ss-image-fft-pipeline.js
           node --check tests/image-fft-core-invariants.mjs
           node --check tests/image-fft-browser.mjs
       - name: Verify 2D FFT numerical identities, kernels, symmetric notches and IFFT
