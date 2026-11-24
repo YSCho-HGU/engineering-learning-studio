@@ -41,6 +41,25 @@ function transform2D(real,imag,N,inverse=false){
  }
  return {real,imag};
 }
+/* Expose ACTUAL row and column FFT intermediate states for inquiry diagrams.
+ * Rows: R[y,u] = FFT_x{I[y,x]}; y is still a spatial index.
+ * Columns: F[v,u] = FFT_y{R[y,u]}; both indices are frequencies.
+ * FFT output is unshifted; shift belongs only to visualization.
+ */
+function separableStages(samples,N){
+ sizeCheck(N);
+ if(!samples||samples.length!==N*N)throw Error("Invalid grayscale image length");
+ const rowReal=Float64Array.from(samples),rowImag=new Float64Array(N*N);
+ for(let y=0;y<N;y++)fft1d(rowReal.subarray(y*N,(y+1)*N),rowImag.subarray(y*N,(y+1)*N));
+ const fullReal=Float64Array.from(rowReal),fullImag=Float64Array.from(rowImag);
+ const cr=new Float64Array(N),ci=new Float64Array(N);
+ for(let u=0;u<N;u++){
+  for(let y=0;y<N;y++){const i=y*N+u;cr[y]=fullReal[i];ci[y]=fullImag[i];}
+  fft1d(cr,ci);
+  for(let v=0;v<N;v++){const i=v*N+u;fullReal[i]=cr[v];fullImag[i]=ci[v];}
+ }
+ return {rows:{real:rowReal,imag:rowImag},full:{real:fullReal,imag:fullImag},N};
+}
 function forward(samples,N){
  sizeCheck(N);
  if(!samples||samples.length!==N*N)throw Error("Invalid grayscale image length");
@@ -223,6 +242,6 @@ function applyKernelFFT(spectrum,pixels,N,kernel="box"){
 }
 root.SSImageFFTCore=Object.freeze({
  forward,inverse,transform2D,fft1d,synth,scene,maskAt,applyMask,dominant,
- frequencyAt,spatialIndex,shiftedToIndex,rmse,spatialConvolution,kernelWeights,kernelProbe,applyKernelFFT
+ frequencyAt,spatialIndex,shiftedToIndex,rmse,spatialConvolution,kernelWeights,kernelProbe,applyKernelFFT,separableStages
 });
 })(typeof window!=="undefined"?window:globalThis);
