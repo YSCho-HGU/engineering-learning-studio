@@ -54,7 +54,7 @@ function init(){
   const arrows=existing||document.createElement('nav');
   const preservedArrows=existing?Array.from(existing.children):[];
   let arrowIndex=0;
-  arrows.className='ss-chapter-arrows ss-four-navigation';
+  arrows.className='ss-chapter-arrows ss-four-navigation els-course-header-navigation';
   arrows.setAttribute('aria-label','Chapter and section navigation');
   const make=(kind,direction,glyph,label)=>{
    const factory=window.ELSHeaderControls?.makeNavigationArrow;
