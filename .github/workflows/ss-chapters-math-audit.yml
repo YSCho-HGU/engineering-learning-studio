@@ -38,7 +38,6 @@ jobs:
       - name: Verify auditor syntax
         run: |
           node --check signals-systems/assets/ss-chapters-math-audit.js
-          node --check signals-systems/assets/ss-presentation-mode.js
           node --check signals-systems/assets/ss-canvas-typography.js
           node --check tests/ss-plot-typography-browser.mjs
           node --check tests/ss-chapters-math-audit.mjs
