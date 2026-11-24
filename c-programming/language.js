@@ -93,9 +93,13 @@ let pending=false;
 const observer=new MutationObserver(mutations=>{for(const change of mutations){if(change.type==="characterData")originals.delete(change.target)}if(pending)return;pending=true;queueMicrotask(()=>{pending=false;observer.disconnect();translate(document.body);observer.observe(document.body,{subtree:true,childList:true,characterData:true})})});
 function renderLang(){document.documentElement.lang=lang==="en"?"en":"ko";restore();translate(document.body);}
 function setup(){
- const nav=document.querySelector(".toplinks,.header-nav,.topbar,.site-header,header nav,header");
- if(!nav)return;
- if(!document.getElementById("c-shared-language")){
+ // The course shell owns its single native picker; this module only renders
+ // translated C instructional content there. Legacy stand-alone C pages keep
+ // their existing fallback picker, driven by the same ELSLanguage state.
+ const courseHeader=document.querySelector("header.c-ss-header");
+ const nav=courseHeader?null:document.querySelector(".toplinks,.header-nav,.topbar,.site-header,header nav,header");
+ if(!courseHeader&&!nav)return;
+ if(!courseHeader&&!document.getElementById("c-shared-language")){
   const label=document.createElement("label");label.id="c-shared-language";label.style.cssText="display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-size:12px";
   const caption=document.createElement("span");caption.textContent="🌐";caption.setAttribute("aria-hidden","true");caption.title="Language / 언어";
   const select=document.createElement("select");select.setAttribute("aria-label","C Programming language");

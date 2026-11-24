@@ -40,25 +40,36 @@ try {
           const actions=header.querySelector(":scope > .ss-common-actions");
           const rect=e=>{const r=e.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};
           const a=rect(actions),m=rect(menu),n=rect(nav);
+          const native=header.querySelector(":scope > .c-native-language");
+          const l=native?rect(native):null;
           const overlap=(x,y)=>Math.max(0,Math.min(x.right,y.right)-Math.max(x.left,y.left))*
               Math.max(0,Math.min(x.bottom,y.bottom)-Math.max(x.top,y.top));
           return {
             layout:getComputedStyle(header).display,
-            menu:m,nav:n,actions:a,
+            menu:m,nav:n,actions:a,language:l,
             arrowCount:nav.querySelectorAll(".ss-chapter-arrow").length,
             visible:[...nav.children].every(el=>{const r=el.getBoundingClientRect();return r.width>=29&&r.height>=29&&getComputedStyle(el).visibility!=="hidden"}),
-            overlaps:{menuNav:overlap(m,n),navActions:overlap(n,a)},
+            overlaps:{menuNav:overlap(m,n),navActions:overlap(n,a),
+              navLanguage:l?overlap(n,l):0,languageActions:l?overlap(l,a):0},
             selectors:actions.querySelectorAll("select").length,
-            noHorizontalOverflow:n.right<=innerWidth+2&&a.right<=innerWidth+2
+            nativeCLanguage:!!document.querySelector("#c-shared-language select"),
+            duplicatedCLanguage:!!header.querySelector(".ss-common-language-select"),
+            noHorizontalOverflow:n.right<=innerWidth+2&&a.right<=innerWidth+2&&(!l||l.right<=innerWidth+2)
           };
         });
         assert.equal(d.layout,"grid",id+" header must use canonical grid");
         assert.equal(d.arrowCount,4,id+" four controls");
-        assert.ok(d.visible&&d.selectors===2,id+" controls missing "+JSON.stringify(d));
+        assert.ok(d.visible,id+" arrows not visible "+JSON.stringify(d));
+        if(target.name==="c-pointers"){
+          assert.equal(d.selectors,1,id+" C header must contain only theme");
+          assert.ok(d.nativeCLanguage&&!d.duplicatedCLanguage,id+" C native language control must be unique");
+        } else assert.equal(d.selectors,2,id+" SS language and theme controls");
         assert.equal(d.overlaps.menuNav,0,id+" chooser/arrows overlapping "+JSON.stringify(d));
         assert.equal(d.overlaps.navActions,0,id+" arrows/preferences overlapping "+JSON.stringify(d));
+        assert.equal(d.overlaps.navLanguage,0,id+" arrows/C language overlapping "+JSON.stringify(d));
+        assert.equal(d.overlaps.languageActions,0,id+" C language/theme overlapping "+JSON.stringify(d));
         assert.ok(d.noHorizontalOverflow,id+" viewport overflow "+JSON.stringify(d));
-        if(width>800){
+        if(width>(target.name==="c-pointers"?900:800)){
           const gap=d.nav.left-d.menu.right;
           assert.ok(gap>=0&&gap<=25,id+" arrows must directly follow chooser; gap="+gap);
           assert.ok(d.menu.width<=390,id+" chooser unexpectedly wide "+JSON.stringify(d));

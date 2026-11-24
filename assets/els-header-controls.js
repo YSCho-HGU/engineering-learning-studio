@@ -34,7 +34,7 @@
  // Existing S&S static headers are adopted by mountSlots() to avoid a blank
  // header before scripts load. Both paths have the identical DOM contract.
  function createCourseHeader({className="",homeHref="../../",title="",chapterLinks=[],
-   languageId="els-course-language",themeId="els-course-theme"}={}){
+   languageId="els-course-language",themeId="els-course-theme",showLanguage=true}={}){
    const create=(tag,cls,content)=>{
      const node=doc.createElement(tag);
      if(cls)node.className=cls;
@@ -61,17 +61,21 @@
    const navigation=create("nav","ss-four-navigation els-course-header-navigation");
    navigation.setAttribute("aria-label","Chapter and section navigation");
    const actions=create("div","ss-common-actions els-course-header-actions");
+   let languageSelect=null;
+   if(showLanguage){
    const language=create("label","ss-common-language");
    language.htmlFor=languageId;
    const globe=create("span","ss-language-icon","🌐");
    globe.setAttribute("aria-hidden","true");
-   const languageSelect=create("select","ss-common-language-select");
+   languageSelect=create("select","ss-common-language-select");
    languageSelect.id=languageId;
    languageSelect.setAttribute("aria-label","Language / 언어");
    for(const [value,label] of [["mixed","한/영"],["en","English"],["ko","한국어"]]){
      const option=create("option","",label);option.value=value;languageSelect.append(option);
    }
    language.append(globe,languageSelect);
+   actions.append(language);
+   }
    const theme=create("label","ss-common-theme");theme.htmlFor=themeId;
    const themeSelect=create("select","");
    themeSelect.id=themeId;
@@ -86,7 +90,7 @@
    themeSelect.value=win.ELSTheme?.get?.()||"neutral-dark";
    themeSelect.addEventListener("change",()=>win.ELSTheme?.set?.(themeSelect.value));
    theme.append(themeSelect);
-   actions.append(language,theme);
+   actions.append(theme);
    header.append(left,navigation,actions);
    mountSlots(header);
    return {header,home,menu,summary,links,navigation,actions,languageSelect,themeSelect};

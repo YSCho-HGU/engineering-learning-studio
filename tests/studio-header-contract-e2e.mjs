@@ -38,7 +38,7 @@ async function test(view,width){
   }
   const data=await page.evaluate(()=>{
    const header=document.querySelector(".ss-common-header,.site-header,body > header");
-   const lang=header?.querySelector("#lang,#c-language,.ss-common-language-select,#ss-language-select");
+   const lang=header?.querySelector("#lang,#c-language,.ss-common-language-select,#ss-language-select,#c-shared-language select");
    const theme=header?.querySelector("[data-els-theme-picker]");
    const chapter=header?.querySelector(".ss-common-menu>summary");
    const arrows=[...header?.querySelectorAll(".ss-four-navigation .ss-chapter-arrow")||[]];
@@ -52,6 +52,8 @@ async function test(view,width){
     arrowDisabled:arrows.map(x=>x.getAttribute("aria-disabled")==="true"),
     headerRight:header?rect(header).right:0,headerLeft:header?rect(header).x:0,headerWidth:header?rect(header).w:0,
     headerVersion:header?.dataset.elsHeaderVersion,
+    nativeCLanguageCount:header?.querySelectorAll("#c-shared-language select").length||0,
+    duplicateCLanguageCount:header?.querySelectorAll(".ss-common-language-select").length||0,
     headerDisplay:header?getComputedStyle(header).display:null,
     horizontalOverflow:document.documentElement.scrollWidth-window.innerWidth,
     preserved:localStorage.getItem("els-header-test-preserve")};
@@ -66,7 +68,7 @@ async function test(view,width){
    assert.ok(Math.abs(rect.h-34)<=1.5,name+" height "+rect.h);
   }
   if(view.startsWith("signals-systems/chapter")||cViews.includes(view)){
-   assert.equal(data.headerVersion,"3","shared header composer version");
+   assert.equal(data.headerVersion,"7","shared header composer version");
    assert.equal(data.headerDisplay,"grid","shared layout must be grid");
    const canonicalCss=await page.evaluate(()=>{
     const styles=[...document.styleSheets];
@@ -84,21 +86,27 @@ async function test(view,width){
       "mobile/tablet: all four arrows must remain on one row");
     assert.ok(data.arrowRects[0].x>=0&&data.arrowRects[3].right<=width+2,
       "mobile/tablet: all four arrows must remain inside the viewport");
-    const center=(data.arrowRects[0].x+data.arrowRects[3].right)/2;
-    assert.ok(Math.abs(center-width/2)<8,"mobile/tablet arrows must be centered");
+    // Responsive navigation is adjacent to the chooser, not viewport-centered.
    }
    assert.equal(await page.evaluate(()=>typeof window.ELSHeaderControls?.makeNavigationArrow),"function",
       "shared header component missing");
-   if(width>=1101){const left=data.arrowRects[0].x,right=data.arrowRects[3].right;assert.ok(Math.abs((left+right)/2-(data.headerLeft+data.headerWidth/2))<=2,"arrow group must be geometrically centered");}
+   if(width>=1101){
+    const gap=data.arrowRects[0].x-data.chapterRect.right;
+    assert.ok(gap>=-1&&gap<=28,"arrows must immediately follow chooser; gap="+gap);
+    assert.ok(Math.abs(data.arrowRects[0].y-data.chapterRect.y)<=12,
+      "chapter chooser and arrows must share a row");
+   }
    if(cViews.includes(view)){
+    assert.equal(data.nativeCLanguageCount,1,"C must have one native language selector");
+    assert.equal(data.duplicateCLanguageCount,0,"C must not have duplicate language selector");
     const geometry=await page.evaluate(()=>{
      const header=document.querySelector("body > .c-ss-header");
      const left=header?.querySelector(".els-header-left");
-     return {display:header?getComputedStyle(header).display:null,area:left?getComputedStyle(left).gridArea:null,nav:!!header?.querySelector(".c-four-navigation")};
+     return {display:header?getComputedStyle(header).display:null,area:left?getComputedStyle(left).gridArea:null,nav:!!header?.querySelector(".ss-four-navigation.els-course-header-navigation")};
     });
-    assert.equal(geometry.display,"grid","C shared header must use three-slot grid");
-    assert.equal(geometry.area,"course-left","C chapter/home group must occupy shared left slot");
-    assert.ok(geometry.nav,"C center navigation missing");
+    assert.equal(geometry.display,"grid","C shared header must use canonical grid");
+    assert.equal(geometry.area,"left","C chapter/home group must occupy shared left slot");
+    assert.ok(geometry.nav,"C adjacent navigation missing");
    }
    for(const [i,r] of data.arrowRects.entries()){
     assert.ok(Math.abs(r.w-34)<=1.5&&Math.abs(r.h-34)<=1.5,"arrow "+i+" dimensions "+JSON.stringify(r));

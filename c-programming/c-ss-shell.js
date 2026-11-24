@@ -40,9 +40,9 @@ function init(){
  const entries=[{label:"C Programming · Course Home",href:parentPrefix},
   ...chapters.map((entry,i)=>({label:"Chapter "+entry[1]+" · "+entry[2],
     href:parentPrefix+entry[0]+"/",current:i===current}))];
- const {header,menu,navigation:arrows,languageSelect:select}=controls.createCourseHeader({
+ const {header,menu,navigation:arrows}=controls.createCourseHeader({
    className:"c-ss-header",homeHref:nested?"../../../":"../../",title:parentTitle,
-   chapterLinks:entries,languageId:"c-language",themeId:"theme"
+   chapterLinks:entries,themeId:"theme",showLanguage:false
  });
  function arrow(title,chapterDelta,sectionDelta){
   const kind=chapterDelta!=null?"chapter":"section",direction=chapterDelta??sectionDelta;
@@ -71,6 +71,34 @@ function init(){
  arrow("Previous chapter",-1,null);
  const previous=arrow("Previous section",null,-1),next=arrow("Next section",null,1);
  arrow("Next chapter",1,null);
+ // One C language controller in every course header. The selected mode is
+ // always owned by ELSLanguage; only instructional rendering is course-specific.
+ const nativeLanguage=el("label","c-native-language");
+ nativeLanguage.id="c-shared-language";
+ const globe=el("span","ss-language-icon","🌐");
+ globe.setAttribute("aria-hidden","true");
+ nativeLanguage.append(globe);
+ const reusedLabPicker=fileioLabs?oldHeader.querySelector("#language-mode"):null;
+ const languagePicker=reusedLabPicker||el("select","");
+ if(!reusedLabPicker)languagePicker.id="c-course-language";
+ languagePicker.setAttribute("aria-label","C Programming language");
+ const options=[["mixed","ENG + 한국어"],["en","ENG"],["ko","한국어"]];
+ if(reusedLabPicker){
+   for(const [value,label] of options){
+     const option=Array.from(languagePicker.options).find(x=>x.value===value);
+     if(option)option.textContent=label;
+   }
+ }else{
+   for(const [value,label] of options){
+     const option=el("option","",label);option.value=value;
+     languagePicker.append(option);
+   }
+ }
+ nativeLanguage.append(languagePicker);
+ header.insertBefore(nativeLanguage,header.querySelector(":scope > .ss-common-actions"));
+ // Guided Labs already binds #language-mode and subscribes to ELSLanguage.
+ // Moving that existing node preserves its listener. Other C modules bind once.
+ if(!reusedLabPicker)window.ELSLanguage?.bindSelect?.(languagePicker);
  oldHeader.replaceWith(header);
  // Move original sidebar, do not clone it: progress, event handlers and lesson IDs remain unchanged.
  const shell=el("div","c-ss-shell"),sideRow=el("div","c-sidebar-topline");
@@ -174,9 +202,6 @@ function init(){
  }
  const crumb=wrap.querySelector(".crumb");if(crumb)crumb.remove();
  const hero=wrap.querySelector(".hero");if(hero)hero.classList.add("c-ss-intro");
- if(fileioLabs){const existing=oldHeader.querySelector("#language-mode");if(existing){existing.hidden=true;existing.setAttribute("aria-hidden","true");existing.tabIndex=-1;header.append(existing)}}
- const languageAPI=window.ELSLanguage;if(languageAPI?.bindSelect)languageAPI.bindSelect(select);
- else select.addEventListener("change",()=>{try{localStorage.setItem("els-language",select.value)}catch(_){}location.reload()});
  function refreshArrows(){const buttons=[...document.querySelectorAll(fileioTask?"#task-nav button[data-task]":fileioLabs?".side-nav a[data-lab-link]":practice?".cp-menu .cp-nav-item":fileio?"#lesson-nav button[data-nav]":"#lesson-nav button[data-lesson], #lesson-nav a[href^='#lab-']")];const idx=buttons.findIndex(b=>fileioLabs?b.getAttribute("href")===(location.hash||"#write"):fileioTask||practice?b.classList.contains("active"):fileio?b.classList.contains("current"):b.getAttribute("aria-current")==="step");previous.disabled=idx<=0;next.disabled=idx<0||idx>=buttons.length-1}
  const nav=(practice||fileioTask)?aside:fileioLabs?aside.querySelector(".side-nav"):aside.querySelector("#lesson-nav");
  if(nav){new MutationObserver(refreshArrows).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:["aria-current","class"]});nav.addEventListener("click",()=>requestAnimationFrame(refreshArrows))}

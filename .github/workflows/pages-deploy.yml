@@ -67,7 +67,7 @@ jobs:
             --exclude='qa/header-preflight/' \
             --exclude='tests/' \
             ./ "$site/"
-          printf '{"commit":"%s","header":"v9-compact-adjacent","builtAt":"%s"}\n' \
+          printf '{"commit":"%s","header":"v10-c-single-language","builtAt":"%s"}\n' \
             "$GITHUB_SHA" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$site/build-info.json"
           test -s "$site/build-info.json"
           test -s "$site/index.html"
