@@ -155,6 +155,7 @@ function renderFrequencyPanel(m,p){
 }
 function draw(m){
  const p=palette(),{items,fs,M,alpha,cutoffRC,cutoffMA,groupDelayRC,groupDelayMA,sigmaRC,sigmaMA}=m;
+ katex("cmp-delay-equation","\\tau_g(f)=-\\frac{1}{2\\pi}\\frac{d\\angle H(f)}{df},\\quad \\tau_{g,\\mathrm{MA}}=\\frac{M-1}{2f_s}","Group delay = −(1/2π)·d(phase)/df; MA delay = (M−1)/(2fs)");
  $("cmp-match").checked=state.match;$("cmp-match").disabled=state.M===1;
  $("cmp-tau").disabled=state.match&&state.M>1;
  $("cmp-tau-value").textContent=fmt(m.tau,3)+" s"+(m.match?" (auto)":"");
