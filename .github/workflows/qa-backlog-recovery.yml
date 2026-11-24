@@ -1,0 +1,110 @@
+name: QA backlog recovery - latest run only
+
+on:
+  push:
+    paths:
+      - '.github/workflows/qa-backlog-recovery.yml'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Report obsolete QA runs without cancelling them'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: qa-backlog-recovery
+  cancel-in-progress: false
+
+jobs:
+  prune-obsolete-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Cancel obsolete and stale QA only
+        uses: actions/github-script@v7
+        env:
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const now = Date.now();
+            const maxAgeMs = 65 * 60 * 1000;
+            const dryRun = process.env.DRY_RUN === 'true';
+            const protectedFiles = new Set([
+              'pages-deploy.yml',
+              'pages-postdeploy-qa.yml',
+              'deploy-owner-worker.yml',
+              'qa-backlog-recovery.yml'
+            ]);
+            const statuses = ['queued', 'in_progress', 'pending', 'waiting'];
+            const active = new Map();
+            for (const status of statuses) {
+              const runs = await github.paginate(github.rest.actions.listWorkflowRunsForRepo, {
+                owner, repo, status, per_page: 100
+              });
+              for (const run of runs) {
+                const file = (run.path || '').split('/').pop();
+                if (!file || protectedFiles.has(file)) continue;
+                // Never cancel unknown workflows outside this repo's QA directory.
+                if (!(run.path || '').startsWith('.github/workflows/')) continue;
+                if (run.id === context.runId) continue;
+                active.set(run.id, run);
+              }
+            }
+            const runs = [...active.values()].sort((a, b) => b.id - a.id);
+            const newestByGroup = new Map();
+            for (const run of runs) {
+              const group = [run.workflow_id, run.head_branch || '_', run.event].join(':');
+              if (!newestByGroup.has(group)) newestByGroup.set(group, run.id);
+            }
+            let obsolete = 0;
+            let stale = 0;
+            let cancelled = 0;
+            let failed = 0;
+            const failures = [];
+            for (const run of runs) {
+              const group = [run.workflow_id, run.head_branch || '_', run.event].join(':');
+              const isOldVersion = newestByGroup.get(group) !== run.id;
+              const isStale = now - Date.parse(run.created_at) > maxAgeMs;
+              // Keep the newest run per workflow/branch/event unless it is
+              // already older than any permitted QA runtime.
+              if (!isOldVersion && !isStale) continue;
+              if (isOldVersion) obsolete++;
+              else stale++;
+              core.info(`${dryRun ? 'WOULD CANCEL' : 'CANCEL'} #${run.id} ${run.name} ${run.head_branch} ${run.status} ${isOldVersion ? 'superseded' : 'stale'}`);
+              if (dryRun) continue;
+              try {
+                await github.rest.actions.cancelWorkflowRun({
+                  owner, repo, run_id: run.id
+                });
+                cancelled++;
+              } catch (error) {
+                if (error.status === 409 || error.status === 404) {
+                  core.info(`Already finished or cancelled: #${run.id}`);
+                } else {
+                  failed++;
+                  failures.push(`#${run.id}: ${error.message}`);
+                }
+              }
+              // Avoid GitHub's secondary rate limits from a cancellation burst.
+              await new Promise(resolve => setTimeout(resolve, 300));
+            }
+            const report = [
+              '## QA backlog recovery',
+              `- Dry run: ${dryRun}`,
+              `- Active QA runs inspected: ${runs.length}`,
+              `- Superseded runs: ${obsolete}`,
+              `- Stale (older than 65 minutes): ${stale}`,
+              `- Cancellation requests accepted: ${cancelled}`,
+              `- API errors: ${failed}`,
+              '- Protected: production Pages, postdeployment QA, Owner Worker, and recovery itself',
+              '- Latest non-stale run per workflow / branch / event remains active',
+              ...failures.map(s => `- Error ${s}`)
+            ].join('\n');
+            core.summary.addRaw(report).write();
+            if (failed) core.setFailed(`Cancellation had ${failed} GitHub API errors`);
