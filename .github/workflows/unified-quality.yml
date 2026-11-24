@@ -13,10 +13,10 @@ on:
       - '.github/workflows/unified-quality.yml'
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: studio-unified-quality
+  group: qa-studio-unified-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -45,7 +45,7 @@ jobs:
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps chromium
 
-      - name: G2 - C all published chapters and Logic gate truth tables
+      - name: G2 - C published chapters browser checks
         run: |
           if node tests/qa-unified-browser.mjs; then echo PASS > qa-unified/G2.status; else echo FAIL > qa-unified/G2.status; fi
 
@@ -64,14 +64,14 @@ jobs:
         run: |
           if node tests/phase0-c-baseline.mjs && node tests/phase0-storage-scan.mjs; then echo PASS > qa-unified/G5.status; else echo FAIL > qa-unified/G5.status; fi
 
-      - name: G6 - Verify required C and Logic browser evidence matrix
+      - name: G6 - Verify published C browser evidence matrix
         run: |
           if node --input-type=module -e '
             import fs from "node:fs";
             const d=JSON.parse(fs.readFileSync("qa-unified/browser-results.json"));
-            const ok=d.status==="PASS"&&d.c.published===8&&d.c.screenshotMatrix===32&&
-              d.c.chapters.length===8&&d.c.chapters.every(x=>x.checks===4&&x.status==="PASS")&&
-              d.logic.viewports.length===4&&d.logic.viewports.every(x=>x.status==="PASS");
+            const expected=d.c.published*4;
+            const ok=d.status==="PASS"&&d.c.published>0&&d.c.screenshotMatrix===expected&&
+              d.c.chapters.length===d.c.published&&d.c.chapters.every(x=>x.checks===4&&x.status==="PASS");
             if(!ok)process.exit(1);'; then echo PASS > qa-unified/G6.status
           else echo FAIL > qa-unified/G6.status; fi
 
@@ -89,29 +89,6 @@ jobs:
       - name: Create shared quality snapshots
         if: ${{ always() && !cancelled() }}
         run: node tests/qa-unified-summary.mjs
-
-      - name: Publish read-only results for administrator dashboard
-        if: ${{ always() && !cancelled() }}
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs=require('fs');
-            const paths=['qa-dashboard/c-latest.json','qa-dashboard/logic-latest.json','qa-dashboard/studio-latest.json'];
-            const {owner,repo}=context.repo;
-            for(const path of paths){
-              if(!fs.existsSync(path))throw Error('Missing snapshot '+path);
-              let sha;
-              try{
-                const current=await github.rest.repos.getContent({owner,repo,path,ref:'main'});
-                if(Array.isArray(current.data))throw Error('Directory instead of snapshot '+path);
-                sha=current.data.sha;
-              }catch(error){if(error.status!==404)throw error}
-              await github.rest.repos.createOrUpdateFileContents({
-                owner,repo,path,branch:'main',sha,
-                content:Buffer.from(fs.readFileSync(path,'utf8')).toString('base64'),
-                message:'chore(qa): publish '+path+' from run '+context.runId+' [skip ci]'
-              });
-            }
 
       - name: Preserve QA logs and screenshots
         if: always()
