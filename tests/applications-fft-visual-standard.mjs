@@ -109,7 +109,7 @@ try{
   measurements.push({module:slug,view:"390px mobile dark",...mobile});
   await p.screenshot({path:path.join(output,String(idx+1).padStart(2,"0")+"-"+slug+"-mobile.png"),fullPage:true,animations:"disabled"});
   assert.equal(await p.locator(".katex-error").count(),0,slug+": rendered invalid KaTeX");
-  console.log("PASS visual standard "+"(idx+1)+"/8 "+slug+": cards, controls, graph, equation, themes, desktop/mobile");
+  console.log("PASS visual standard "+(idx+1)+"/8 "+slug+": cards, controls, graph, equation, themes, desktop/mobile");
  }
  assert.equal(allErrors.length,0,"Uncaught JS exceptions: "+allErrors.join(" | "));
  const fs=await import("node:fs/promises");
