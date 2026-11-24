@@ -16,7 +16,7 @@ const targets = [
 const cssResponse=await fetch(root+"assets/els-course-header.css",{cache:"no-store"});
 assert.equal(cssResponse.status,200,"Published common header CSS was not found");
 const cssBody=await cssResponse.text();
-assert.ok(cssBody.includes("els-header-v6-inline-nav-20261124"),
+assert.ok(cssBody.includes("els-header-v7-single-component-20261124"),
   "The live Pages site is serving an older shared-header stylesheet; deployment is stale");
 const widths = [390,768,1280];
 const failures = [], results = [];
