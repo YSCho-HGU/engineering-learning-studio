@@ -10,9 +10,8 @@ for(const width of [1366,390]){
  const jsErrors=[];page.on("pageerror",e=>jsErrors.push(e.message));
  try{
   await page.goto(base+"/signals-systems/applications.html#part-c",{waitUntil:"domcontentloaded"});
-  const card=page.locator("#topics-c .ss-app-topic").filter({hasText:"DTMF Mystery Decoder"});
-  assert(await card.count()===1,"DTMF card missing");
-  assert(await card.locator('a[href="./applications-fft-dtmf.html"]').count()===1,"DTMF link missing");
+  const card=page.locator('#topics-c a.ss-app-lesson-row[href="./applications-fft-dtmf.html"]');
+  assert(await card.count()===1,"DTMF lesson link missing");
   await page.goto(base+"/signals-systems/applications-fft-dtmf.html?seed=129",{waitUntil:"domcontentloaded"});
   await page.locator("#dtmf-wave .ss-dtmf-trace").waitFor({timeout:15000});
   const computed=await page.evaluate(()=>{
@@ -33,6 +32,7 @@ for(const width of [1366,390]){
   assert(await page.locator("#dtmf-spectrum").isHidden(),"FFT result should initially be hidden");
   assert(await page.locator("#dtmf-check").isDisabled(),"Check should be gated by spectrum");
   const before=await page.locator("#dtmf-wave").innerHTML();
+  await page.locator(".ss-dtmf-options summary").click();
   await page.locator("#dtmf-start").evaluate(el=>{el.value="85";el.dispatchEvent(new Event("input",{bubbles:true}))});
   assert(before!==(await page.locator("#dtmf-wave").innerHTML()),"Window slider failed");
   await page.locator("#dtmf-fft-n").selectOption("512");
@@ -40,6 +40,15 @@ for(const width of [1366,390]){
   assert(await page.locator("#dtmf-spectrum").isVisible(),"FFT spectrum missing "+JSON.stringify(await page.evaluate(()=>({hidden:document.querySelector("#dtmf-spectrum").hidden,html:document.querySelector("#dtmf-spectrum").innerHTML.slice(0,100),result:!!window.SSDTMF.result,css:getComputedStyle(document.querySelector("#dtmf-spectrum")).display,errors:null})))+" JS errors="+jsErrors.join("; "));
   assert(await page.locator("#dtmf-peaks .ss-dtmf-peak").count()===2,"Two frequency peaks missing");
   let correct=await page.evaluate(()=>window.SSDTMF.result.decoded);
+  const pair=await page.evaluate(()=>{const api=window.SSDTMF;return api.tones(api.result.decoded)});
+  await page.locator("#dtmf-evidence-low").selectOption("697");
+  await page.locator("#dtmf-evidence-high").selectOption("1209");
+  await page.locator("#dtmf-evidence-check").click();
+  if(pair.low!==697||pair.high!==1209)assert(await page.locator("#dtmf-evidence-feedback").getAttribute("data-result")==="retry","Invalid spectral evidence accepted");
+  await page.locator("#dtmf-evidence-low").selectOption(String(pair.low));
+  await page.locator("#dtmf-evidence-high").selectOption(String(pair.high));
+  await page.locator("#dtmf-evidence-check").click();
+  assert(await page.locator("#dtmf-evidence-feedback").getAttribute("data-result")==="correct","Correct frequency pair rejected");
   const incorrect=correct==="1"?"2":"1";
   await page.locator('#dtmf-keypad button[data-digit="'+incorrect+'"]').click();
   await page.locator("#dtmf-check").click();
@@ -57,6 +66,11 @@ for(const width of [1366,390]){
    assert(await page.locator("#dtmf-spectrum").isHidden(),"New mystery leaked prior FFT");
    await page.locator("#dtmf-fft").click();
    correct=await page.evaluate(()=>window.SSDTMF.result.decoded);
+   const nextPair=await page.evaluate(()=>window.SSDTMF.tones(window.SSDTMF.result.decoded));
+   await page.locator("#dtmf-evidence-low").selectOption(String(nextPair.low));
+   await page.locator("#dtmf-evidence-high").selectOption(String(nextPair.high));
+   await page.locator("#dtmf-evidence-check").click();
+   assert(await page.locator("#dtmf-evidence-feedback").getAttribute("data-result")==="correct","Sequence frequency evidence mismatch");
    await page.locator('#dtmf-keypad button[data-digit="'+correct+'"]').click();
    await page.locator("#dtmf-check").click();
    assert(await page.locator("#dtmf-feedback").getAttribute("data-result")==="correct","Sequence digit "+j+" check failed");
