@@ -1,0 +1,36 @@
+/* Applications inquiry: compact integrated learning decisions, not a second sidebar.
+   Uses the shared Studio theme and leaves existing graphs/controls untouched. */
+.ss-al-guidance.ss-inquiry{display:grid;gap:10px;background:var(--els-surface-alt);border:1px solid var(--els-border);border-radius:10px;padding:13px;margin-top:12px;color:var(--els-ink)}
+.ss-inquiry-kicker{font-weight:750;font-size:11px;letter-spacing:.035em;color:var(--els-link)}
+.ss-inquiry-question{font-size:15px;line-height:1.42;margin:0;color:var(--els-ink)}
+.ss-inquiry-field{display:grid;gap:5px;min-width:0}
+.ss-inquiry-label{font-size:12px;font-weight:750;line-height:1.4;color:var(--els-ink)}
+.ss-inquiry-field select{width:100%;min-height:39px;color:var(--els-ink);background:var(--els-surface);border:1px solid var(--els-border);border-radius:8px;font-size:12px;padding:7px 8px;white-space:normal}
+.ss-inquiry-experiment{display:grid;gap:6px}
+.ss-inquiry-presets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.ss-inquiry-presets button,.ss-inquiry-verify{border:1px solid var(--els-border);border-radius:8px;min-height:38px;padding:7px 8px;line-height:1.4;font-size:12px;font-weight:700;color:var(--els-ink);background:var(--els-surface);white-space:normal}
+.ss-inquiry-presets button[aria-pressed="true"]{border-color:var(--els-link);box-shadow:inset 0 -3px var(--els-link)}
+.ss-inquiry-verify{background:var(--els-info-bg,var(--els-surface));border-color:var(--els-link)}
+.ss-inquiry-presets button:hover,.ss-inquiry-verify:hover{border-color:var(--els-link)}
+.ss-inquiry :where(button,select):focus-visible{outline:3px solid var(--els-focus);outline-offset:2px}
+.ss-inquiry-observed{display:grid;gap:4px;padding:9px 10px;border-left:3px solid var(--els-link);background:var(--els-surface);border-radius:7px}
+.ss-inquiry-evidence{font-size:13px;line-height:1.5;color:var(--els-ink);font-variant-numeric:tabular-nums;white-space:pre-line}
+.ss-inquiry-progress{font-size:11px;color:var(--els-muted)}
+.ss-inquiry-transfer{margin:0;font-size:12px;line-height:1.5;color:var(--els-muted);white-space:pre-line}
+.ss-inquiry-feedback{font-size:12px;line-height:1.55;margin:0;white-space:pre-line}
+.ss-inquiry-feedback:empty{display:none}
+.ss-inquiry-feedback[data-result="correct"]{border-left:3px solid var(--els-link);padding-left:9px}
+.ss-inquiry-feedback[data-result="retry"]{border-left:3px solid var(--els-border);padding-left:9px}
+/* Part C reasoning controls live inside their existing explanation or decode stage. */
+.ss-c-reason{display:grid;gap:8px;padding:11px 12px;margin-top:11px;border:1px solid var(--els-border);border-radius:9px;background:var(--els-surface-alt);color:var(--els-ink)}
+.ss-c-reason h3{font-size:14px;line-height:1.4;margin:0}
+.ss-c-reason label,.ss-c-reason p{font-size:12px;line-height:1.5;margin:0}
+.ss-c-reason select{min-width:0;max-width:100%;width:100%;min-height:38px;padding:7px 9px;font-size:13px;color:var(--els-ink);background:var(--els-surface);border:1px solid var(--els-border);border-radius:8px}
+.ss-c-reason button{min-height:37px;padding:7px 10px;font-size:13px;font-weight:700;color:var(--els-ink);border:1px solid var(--els-link);background:var(--els-surface);border-radius:8px}
+.ss-c-reason button:disabled{opacity:.5;cursor:not-allowed}
+.ss-c-reason :where(button,select):focus-visible{outline:3px solid var(--els-focus);outline-offset:2px}
+.ss-c-reason-feedback{font-size:12px;line-height:1.5;white-space:pre-line;min-height:1em}
+.ss-c-reason-feedback[data-result="correct"]{border-left:3px solid var(--els-link);padding-left:8px}
+.ss-c-reason-feedback[data-result="retry"]{border-left:3px solid var(--els-border);padding-left:8px}
+.ss-c-inference{font-weight:750;font-size:12px;color:var(--els-link);letter-spacing:.02em}
+@media(max-width:520px){.ss-al-guidance.ss-inquiry{padding:10px;gap:9px}.ss-inquiry-question{font-size:14px}.ss-inquiry-presets button{font-size:11px}.ss-c-reason{padding:10px}}
