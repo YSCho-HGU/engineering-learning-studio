@@ -77,6 +77,8 @@ jobs:
           name: header-layout-preflight-${{ github.run_id }}
           path: qa/header-preflight/
           if-no-files-found: ignore
+      - name: Exclude QA screenshots from the public site
+        run: rm -rf qa/header-preflight
       - name: Embed deployed commit identity
         shell: bash
         run: |
@@ -104,12 +106,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for attempt in 1 2 3; do
+          for attempt in $(seq 1 12); do
             if node tests/pages-production-smoke.mjs; then
               echo "Production C / SS navigation verification passed" >> "$GITHUB_STEP_SUMMARY"
               exit 0
             fi
-            if [ "$attempt" -lt 3 ]; then sleep 12; fi
+            if [ "$attempt" -lt 12 ]; then sleep 20; fi
           done
           echo "::error::Pages deployed, but published C / SS navigation smoke failed"
           exit 1
