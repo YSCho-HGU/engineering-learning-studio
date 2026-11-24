@@ -219,3 +219,79 @@ html[data-c-sidebar=collapsed] .c-sidebar-caption{display:none}
  .c-ss-header .ss-common-actions{order:2;width:100%;justify-content:flex-end}
  .c-ss-header .c-four-navigation{order:3;flex:0 0 100%;white-space:nowrap}
 }
+
+
+/* 2026-11-24 C header fix: explicit 3-slot geometry, not flex-auto margins.
+   Exactly the same 34px control and centered four-arrow contract as SS. */
+body.c-ss-course > header.c-ss-header.els-course-header{
+ box-sizing:border-box!important;display:grid!important;
+ grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;
+ grid-template-areas:"left arrows actions"!important;
+ align-items:center!important;column-gap:12px!important;row-gap:8px!important;
+ width:100%!important;min-width:0!important;
+ padding:10px 15px!important;height:auto!important;min-height:58px!important;
+ position:sticky!important;top:0!important;overflow:visible!important;
+}
+body.c-ss-course > .c-ss-header .els-header-left{
+ grid-area:left!important;display:flex!important;align-items:center!important;
+ gap:10px!important;min-width:0!important;max-width:100%!important;
+}
+body.c-ss-course > .c-ss-header .els-header-left .ss-common-home{
+ flex:0 0 auto!important;white-space:nowrap!important;
+}
+body.c-ss-course > .c-ss-header .els-header-left .ss-common-menu{
+ flex:1 1 auto!important;min-width:0!important;max-width:100%!important;
+}
+body.c-ss-course > .c-ss-header .els-header-left .ss-common-title{
+ width:100%!important;max-width:100%!important;min-width:0!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+ box-sizing:border-box!important;height:34px!important;min-height:34px!important;
+}
+body.c-ss-course > .c-ss-header .c-four-navigation{
+ grid-area:arrows!important;position:static!important;inset:auto!important;
+ transform:none!important;margin:0!important;padding:0!important;
+ box-sizing:border-box!important;display:flex!important;flex-direction:row!important;
+ flex-wrap:nowrap!important;align-items:center!important;justify-content:center!important;
+ width:max-content!important;min-width:0!important;max-width:100%!important;
+ gap:6px!important;white-space:nowrap!important;
+}
+body.c-ss-course > .c-ss-header .ss-common-actions{
+ grid-area:actions!important;display:flex!important;align-items:center!important;
+ justify-content:flex-end!important;gap:8px!important;
+ margin:0!important;min-width:0!important;max-width:100%!important;
+}
+body.c-ss-course > .c-ss-header .c-four-navigation .ss-chapter-arrow{
+ box-sizing:border-box!important;width:34px!important;min-width:34px!important;
+ height:34px!important;min-height:34px!important;flex:0 0 34px!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ font-size:0!important;padding:0!important;
+}
+body.c-ss-course > .c-ss-header .c-four-navigation .ss-chapter-arrow svg{
+ display:block!important;width:17px!important;height:17px!important;flex:none!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:2.15!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+@media(max-width:1100px){
+ body.c-ss-course > header.c-ss-header.els-course-header{
+  grid-template-columns:minmax(0,1fr) auto!important;
+  grid-template-areas:"left actions" "arrows arrows"!important;
+  column-gap:10px!important;row-gap:7px!important;
+ }
+ body.c-ss-course > .c-ss-header .c-four-navigation{
+  justify-self:center!important;align-self:center!important;
+  width:max-content!important;max-width:100%!important;
+  flex-wrap:nowrap!important;white-space:nowrap!important;
+ }
+ body.c-ss-course > .c-ss-header .ss-common-actions{justify-self:end!important}
+}
+@media(max-width:700px){
+ body.c-ss-course > header.c-ss-header.els-course-header{
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-areas:"left" "actions" "arrows"!important;
+  padding:9px 10px!important;row-gap:6px!important;
+ }
+ body.c-ss-course > .c-ss-header .els-header-left{width:100%!important;gap:7px!important}
+ body.c-ss-course > .c-ss-header .ss-common-actions{justify-self:end!important;max-width:100%!important}
+ body.c-ss-course > .c-ss-header .c-four-navigation{justify-self:center!important}
+ body.c-ss-course > .c-ss-header .ss-common-actions select{max-width:min(40vw,150px)!important}
+}
