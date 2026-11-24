@@ -235,7 +235,7 @@ function stopScan(){
 function resetScan(newAnchor){
  if(newAnchor){scan.anchorX=state.probeX;scan.anchorY=state.probeY;}
  scan.progress=0;state.probeX=scan.anchorX;state.probeY=scan.anchorY;
- if(result&&state.stage===3&&state.filter==="kernel")renderScan(result);
+ if(result&&state.stage===3&&state.filter==="kernel"){renderScan(result);liveObservation(result);}
 }
 function scanPosition(i,N){
  const px=scan.anchorX-2+(i%5),py=scan.anchorY-2+Math.floor(i/5);
@@ -246,7 +246,7 @@ function nextScan(){
  if(scan.progress>=25){stopScan();return;}
  const point=scanPosition(scan.progress,result.N);
  state.probeX=point.x;state.probeY=point.y;
- scan.progress++;interactions++;renderScan(result);
+ scan.progress++;interactions++;renderScan(result);liveObservation(result);
  if(scan.progress===25)stopScan();
 }
 function playScan(){
@@ -313,11 +313,14 @@ function showKernelInspector(m){
  }
  if(state.filter==="kernel"){
   const value=m.output.pixels[probe.y*m.N+probe.x];
+  const compared=scan.progress>=3;
   set("image-kernel-evidence",
-   "At pixel ("+probe.x+", "+probe.y+"): weighted sum = "+probe.sum.toFixed(5)+"; FFT2 filtering = "+value.toFixed(5)+
-   ". Max |spatial − FFT| = "+m.output.maxDifference.toExponential(2)+".",
-   "픽셀 ("+probe.x+", "+probe.y+"): 공간 가중합 = "+probe.sum.toFixed(5)+
-   "; FFT2 결과 = "+value.toFixed(5)+". 최대 |공간 − FFT| 오차 = "+m.output.maxDifference.toExponential(2)+".");
+   scan.progress===0?"Press Next pixel to begin the weighted 3×3 calculation.":
+    "Pixel ("+probe.x+", "+probe.y+"): spatial sum = "+probe.sum.toFixed(5)+
+    "; FFT2 = "+value.toFixed(5)+(compared?". Full-image max difference = "+m.output.maxDifference.toExponential(2)+".":". Compare two more positions."),
+   scan.progress===0?"다음 픽셀을 눌러 3×3 가중합 계산을 시작하세요.":
+    "픽셀 ("+probe.x+", "+probe.y+"): 공간 가중합 = "+probe.sum.toFixed(5)+
+    "; FFT2 = "+value.toFixed(5)+(compared?". 전체 영상 최대 오차 = "+m.output.maxDifference.toExponential(2)+".":". 다른 픽셀도 비교해 보세요."));
  }else set("image-kernel-evidence",
    "Select the 3×3 kernel filter mode to compare its spatial and FFT results.",
    "공간·FFT 결과를 비교하려면 필터 종류에서 3×3 커널을 선택하세요.");
@@ -338,8 +341,8 @@ function liveObservation(m){
   en="Checkerboard edges repeat in both directions: compare its multiple harmonic peaks with a smooth cosine stripe.";
   ko="체커보드 경계는 두 방향으로 반복됩니다. 여러 고조파 피크를 정현파 줄무늬와 비교하세요.";
  }else if(state.stage===3){
-  en="Same image, same circular boundary: max |spatial−FFT2| = "+(m.output.maxDifference??0).toExponential(2)+". Observe how 3×3 turns into FFT2 multiplication.";
-  ko="같은 영상·순환 경계에서 최대 |공간−FFT2| = "+(m.output.maxDifference??0).toExponential(2)+". 3×3 가중합이 FFT2 곱셈과 연결됩니다.";
+  en=scan.progress<3?"Compute at least 3 spatial pixels. Do they match the precomputed FFT2 output?":"Across the whole image, max |spatial−FFT2| = "+(m.output.maxDifference??0).toExponential(2)+".";
+  ko=scan.progress<3?"최소 3개 픽셀을 공간 영역에서 계산하세요. FFT2 결과와 같을까요?":"영상 전체 최대 |공간−FFT2| 오차 = "+(m.output.maxDifference??0).toExponential(2)+".";
  }else if(m.originalRMSE!==null){
   const reduction=m.originalRMSE>0?Math.max(0,100*(1-m.filteredRMSE/m.originalRMSE)):0;
   en="Periodic noise RMSE: "+m.originalRMSE.toFixed(3)+" → "+m.filteredRMSE.toFixed(3)+" ("+reduction.toFixed(1)+"% lower).";
