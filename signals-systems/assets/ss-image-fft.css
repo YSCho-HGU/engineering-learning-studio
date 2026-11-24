@@ -171,3 +171,6 @@ main.ss-image-root .ss-image-view h3{
  .ss-image-preflight{grid-template-columns:1fr}
  .ss-image-preflight #image-prediction-kicker{grid-column:1}
 }
+
+.ss-image-scan-preview[role="button"]{cursor:crosshair}
+.ss-image-scan-preview:focus-visible{outline:3px solid var(--els-focus);outline-offset:3px}
