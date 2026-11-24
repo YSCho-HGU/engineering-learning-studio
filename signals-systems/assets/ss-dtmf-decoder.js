@@ -175,9 +175,9 @@ function localize(){
  "dtmf-evidence-check":["Verify peak pair","주파수 쌍 검증"],
  "dtmf-wave-title":["Time waveform · What is hidden?","시간 파형 · 무엇이 숨어 있나요?"],"dtmf-wave-help":["The shaded samples are used for FFT.","음영으로 표시된 표본 구간만 FFT에 사용됩니다."],
  "dtmf-spectrum-title":["2 · FFT Spectrum","2 · FFT 스펙트럼"],"dtmf-spectrum-help":["Find one low-frequency peak and one high-frequency peak.","저주파 피크 하나와 고주파 피크 하나를 찾아보세요."],
- "dtmf-decode-title":["3 · Decode the Key","3 · 숫자 해독"],"dtmf-decode-help":["Match the low-frequency row and high-frequency column to find the keypad digit.","저주파의 행과 고주파의 열을 교차하여 숫자를 알아내세요."],
+ "dtmf-decode-title":["4 · Decode the Key from the Two Peaks","4 · 두 주파수로 숫자 해독"],"dtmf-decode-help":["Match the low-frequency row and high-frequency column to find the keypad digit.","저주파의 행과 고주파의 열을 교차하여 숫자를 알아내세요."],
  "dtmf-guess-label":["Your answer","나의 답"],"dtmf-check":["Check Answer","정답 확인"],
- "dtmf-explain-title":["4 · Why Did FFT Work?","4 · FFT가 답을 찾은 이유"],
+ "dtmf-explain-title":["5 · Explain Why FFT Worked","5 · FFT로 해독한 원리 설명"],
  "dtmf-explain":["DTMF combines two sinusoids. The time waveform mixes them; FFT separates the two frequencies. Increasing N reduces bin spacing fs/N. A sequence of keys must be divided into segments before decoding its order.","DTMF는 두 정현파의 합입니다. 시간 파형에는 두 성분이 섞여 있지만 FFT는 각 주파수를 보여줍니다. N을 늘리면 Bin 간격 fs/N이 작아집니다. 여러 숫자의 순서를 알려면 신호를 구간별로 나누어 분석해야 합니다."],
  "dtmf-challenge-conclusion":["Reflection · What did FFT reveal that the waveform did not?","성찰 · 시간 파형에 비해 FFT에서 어떤 정보를 발견했나요?"],
  };
