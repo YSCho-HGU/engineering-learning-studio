@@ -1,15 +1,15 @@
 /* Engineering Learning Studio course header — canonical geometry.
    Both C Programming and S&S use the same left / navigation / actions DOM.
    All earlier conflicting grid / flex / absolute overrides were removed.
-   Version: els-header-v8-grid-adjacent-20261124 */
+   Version: els-header-v9-compact-adjacent-20261124 */
 :root {
   --els-course-control-size:34px;
-  --els-course-header-gap:10px;
+  --els-course-header-gap:8px;
 }
 html body > header.ss-common-header.els-course-header {
   box-sizing:border-box!important;
   display:grid!important;
-  grid-template-columns:minmax(0,max-content) max-content minmax(0,1fr)!important;
+  grid-template-columns:max-content max-content minmax(0,1fr)!important;
   grid-template-areas:"left navigation actions"!important;
   align-items:center!important;
   column-gap:var(--els-course-header-gap)!important;
@@ -33,7 +33,7 @@ html body > header.ss-common-header.els-course-header > .els-header-left {
   display:flex!important;
   flex:0 0 auto!important;
   min-width:0!important;
-  max-width:min(48vw,475px)!important;
+  max-width:min(44vw,440px)!important;
   align-items:center!important;
   gap:10px!important;
 }
@@ -45,7 +45,7 @@ html body > header.ss-common-header.els-course-header > .els-header-left > .ss-c
   flex:0 1 auto!important;
   width:max-content!important;
   min-width:0!important;
-  max-width:min(34vw,380px)!important;
+  max-width:min(34vw,355px)!important;
 }
 html body > header.ss-common-header.els-course-header .ss-common-menu > summary.ss-common-title {
   box-sizing:border-box!important;
@@ -60,6 +60,12 @@ html body > header.ss-common-header.els-course-header .ss-common-menu > summary.
   white-space:nowrap!important;
   text-overflow:ellipsis!important;
 }
+/* Long chapter names truncate inside the chooser, not across navigation controls. */
+html body > header.ss-common-header.els-course-header .ss-common-title > .ss-common-chapter-label,
+html body > header.ss-common-header.els-course-header .ss-common-title > .c211-header-title {
+  min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
 html body > header.ss-common-header.els-course-header > .ss-common-actions {
   grid-area:actions!important;
   justify-self:end!important;
@@ -69,7 +75,7 @@ html body > header.ss-common-header.els-course-header > .ss-common-actions {
   align-items:center!important;
   justify-content:flex-end!important;
   gap:8px!important;
-  margin:0 0 0 auto!important;
+  margin:0!important;
 }
 html body > header.ss-common-header.els-course-header > .ss-common-actions select {
   box-sizing:border-box!important;
@@ -145,7 +151,7 @@ html body > header.ss-common-header.els-course-header :is(a,button,select,summar
   outline-offset:2px!important;
 }
 /* Compact responsive arrangement; never overlay the navigation on menus. */
-@media(max-width:1000px) {
+@media(max-width:800px) {
   html body > header.ss-common-header.els-course-header {
     grid-template-columns:minmax(0,1fr) auto!important;
     grid-template-areas:"left actions" "navigation navigation"!important;
