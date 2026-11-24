@@ -73,6 +73,11 @@ try{
    check(await page.locator("#image-scan-fft").isVisible(),"FFT reconstruction preview missing");
    check(await page.locator("#image-spatial-progress .ss-image-bridge-cell").count()===25,"Spatial 5x5 output grid missing");
    check(await page.locator("#image-fft-progress .ss-image-bridge-cell").count()===25,"FFT 5x5 output grid missing");
+   const preview=page.locator("#image-scan-source"),bounds=await preview.boundingBox();
+   await page.mouse.click(bounds.x+bounds.width*.45,bounds.y+bounds.height*.35);
+   const previewPoint=await page.evaluate(()=>({x:window.SSImageFFTApp.state.probeX,y:window.SSImageFFTApp.state.probeY}));
+   check(Math.abs(previewPoint.x-256*.45)<2&&Math.abs(previewPoint.y-256*.35)<2,"Preview click does not select kernel center");
+   check((await page.locator("#image-scan-counter").textContent())==="0 / 25","Selecting preview must restart the scan");
    check(await page.locator("#image-spatial-progress .ss-image-bridge-revealed").count()===0,"Spatial scan must begin empty");
    check(await page.locator("#image-kernel-pixels .ss-image-kernel-cell").count()===9,"Nine input pixels missing");
    check(await page.locator("#image-kernel-weights .ss-image-kernel-cell").count()===9,"Nine kernel weights missing");
