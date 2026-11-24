@@ -87,5 +87,5 @@ $("ss-sys-next").onclick=()=>{if(kind==="rc")location.href="./applications-syste
 controls();render();}
 $("ss-sys-reset").addEventListener("click",()=>{Object.assign(state,defaults);controls();render();});
 lang?.subscribe?.(init);window.addEventListener("els:themechange",render);window.addEventListener("resize",render);
-if(window.ResizeObserver)new ResizeObserver(render).observe($("ss-sys-workspace"));init();
+if(window.ResizeObserver){let lastWidth=0;new ResizeObserver(entries=>{const width=Math.round(entries[0].contentRect.width);if(width!==lastWidth){lastWidth=width;render();}}).observe($("ss-sys-workspace"));}init();
 })();
