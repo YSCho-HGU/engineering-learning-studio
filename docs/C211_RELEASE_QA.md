@@ -10,3 +10,9 @@ Scope: Experience First overview, common TOC, six complete demos, 30 standalone 
 - UI: shared header/TOC on lessons, compact mobile sidebar, separate standalone program interface with the same theme and language choices. Header controls no longer inherit oversized lesson button/select styles.
 - Release checks: TOC, 30 version pages, six completed demos, 320/390/1280 px novice path, five palettes, actual clipboard, offline HTML execution. Screenshot artifacts retained for review. New test results must be read from Actions; a configured test is not a passing test.
 - Other course regression failures remain outside this scoped change; prior C regression run 45337104092 attempted to click collapsed Guided Labs links without expanding their groups. Unified gates require independent review. No release flag changed.
+
+## Follow-up UI QA and C regression remediation
+- Latest dedicated 211 run 45339028218 passed all five checks; screenshot artifact 14895556664.
+- Screenshot-driven improvements: mobile-first collapsed sidebar (separate mobile preference), complete chapter title on narrow screens, consistent card alignment, compact bilingual card labels, common 34px language/theme controls in 30 standalone stages and completed project pages.
+- C browser regression run 45339028097: seven failures at hidden Guided Labs links; File I/O passed. The test now expands the actual group using its summary before selecting a lab, retains editor/prediction/persistence/return checks, and checks mobile horizontal overflow. This is a test repair, not evidence of a successful rerun.
+- New browser tests assert default mobile sidebar and title clipping. Keep published=false pending release approval and fresh QA.

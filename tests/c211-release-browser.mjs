@@ -12,6 +12,9 @@ try{
   const p=await ctx.newPage(),errors=[];p.on("pageerror",e=>errors.push(e.message));
   await p.goto(base);await p.locator(".tile").first().waitFor();
   await p.locator("#c-language").selectOption("mixed");
+  assert.equal(await p.locator("#lesson-nav").isVisible(),width>780,"default sidebar");
+  const title=await p.locator(".ss-common-title").evaluate(n=>({scroll:n.scrollHeight,client:n.clientHeight,width:n.scrollWidth,clientWidth:n.clientWidth}));
+  assert.ok(title.scroll<=title.client+2&&title.width<=title.clientWidth+2,"chapter title clipped");
   assert.equal(await p.locator(".tile").count(),6);
   for(let i=0;i<6;i++)assert.equal(await p.locator(".tile").nth(i).getAttribute("href"),"./projects/versions/"+projects[i]+"/v1.html");
   for(const theme of ["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark"]){

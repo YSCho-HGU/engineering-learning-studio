@@ -7,7 +7,9 @@ try{
   const ctx=await browser.newContext({viewport:{width,height:850}});
   await ctx.addInitScript(()=>{if(!localStorage.getItem("els-language"))localStorage.setItem("els-language","en")});
   const page=await ctx.newPage(),errors=[];page.on("pageerror",e=>errors.push(e.message));
-  await page.goto(base);await page.locator("#lesson-nav button[data-lesson]").first().waitFor();
+  await page.goto(base);await page.locator("#lesson-nav button[data-lesson]").first().waitFor({state:"attached"});
+  assert.equal(await page.locator("#lesson-nav").isVisible(),width>780,"initial responsive sidebar");
+  if(width<=780)await page.locator(".c-sidebar-toggle").click();
   assert.equal(await page.locator("#lesson-nav.c-grouped-toc details.c-learning-group").count(),3);
   assert.equal(await page.locator("#lesson-nav button[data-lesson]").count(),6);
   assert.equal(await page.locator("#lesson-nav [aria-current=step] .n").innerText(),"01");

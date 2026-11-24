@@ -13,8 +13,9 @@ if(path.includes("/ai-coding/"))chapters.push(["ai-coding","21","AI-Assisted Cod
 const current=chapters.findIndex(row=>path.includes("/"+row[0]+"/"));
 if(current<0)return;
 const course=chapters[current],root=document.documentElement;
-const STORE="els-c-sidebar-collapsed-v1";
-function getSaved(){try{return localStorage.getItem(STORE)==="1"}catch(_){return false}}
+const compact211=course[0]==="ai-coding"&&matchMedia("(max-width: 780px)").matches;
+const STORE=compact211?"els-c211-mobile-sidebar-v1":"els-c-sidebar-collapsed-v1";
+function getSaved(){try{const value=localStorage.getItem(STORE);return value===null?compact211:value==="1"}catch(_){return compact211}}
 function setSaved(v){try{localStorage.setItem(STORE,v?"1":"0")}catch(_){}}
 function el(tag,className,text){const n=document.createElement(tag);if(className)n.className=className;if(text!=null)n.textContent=text;return n}
 function link(label,href){const a=el("a","",label);a.href=href;return a}
@@ -34,7 +35,7 @@ function init(){
  header.setAttribute("aria-label","Engineering Learning Studio navigation");
  header.append(link("← Studio",nested?"../../../":"../../"));
  const menu=el("details","ss-common-menu c-ss-menu"),summary=el("summary","ss-common-title");
- summary.textContent="C Programming · Chapter "+course[1]+" · "+course[2]+" ⌄";
+ if(course[0]==="ai-coding"){summary.append(el("span","c211-header-prefix","C Programming · "),el("span","c211-header-title","Chapter "+course[1]+" · "+course[2]+" ⌄"))}else summary.textContent="C Programming · Chapter "+course[1]+" · "+course[2]+" ⌄";
  summary.setAttribute("aria-label","Choose C Programming chapter");
  const links=el("nav","ss-common-links");
  links.append(link("C Programming · Course Home",parentPrefix));

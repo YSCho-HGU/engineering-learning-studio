@@ -9,11 +9,32 @@
 :is(.ai-experience,.ai-course) .c-ss-shell .c-learning-group-title{font-size:.84rem;line-height:1.45}
 :is(.ai-experience,.ai-course) .c-ss-shell .c-learning-link{font-size:.85rem;line-height:1.45}
 :is(.ai-experience,.ai-course) .c-ss-shell #lesson-nav .c-learning-group-items>button:focus-visible{outline:2px solid var(--els-focus);outline-offset:-2px}
-@media(max-width:780px){
- :is(.ai-experience,.ai-course) .c-ss-shell>.c-ss-sidebar{height:auto;max-height:38dvh;overflow-y:auto}
- html[data-c-sidebar=collapsed] :is(.ai-experience,.ai-course) .c-ss-shell>.c-ss-sidebar{max-height:none}
-}
+
 
 /* The mobile grouped-nav rule has greater specificity than the original collapse rule. */
 html[data-c-sidebar="collapsed"] body:is(.ai-experience,.ai-course) .c-ss-shell>.c-ss-sidebar>#lesson-nav.c-grouped-toc{display:none}
-@media(max-width:780px){body:is(.ai-experience,.ai-course) .c-ss-shell>.c-ss-sidebar{max-height:27dvh}}
+@media(max-width:780px){
+ body:is(.ai-experience,.ai-course) .c-ss-shell>.c-ss-sidebar{height:auto;max-height:27dvh;overflow-y:auto;padding:5px 10px}
+ html[data-c-sidebar=collapsed] body:is(.ai-experience,.ai-course) .c-ss-shell>.c-ss-sidebar{max-height:none;padding:4px 10px}
+ html[data-c-sidebar=collapsed] body:is(.ai-experience,.ai-course) .c-sidebar-topline{justify-content:flex-start;min-height:32px}
+ html[data-c-sidebar=collapsed] body:is(.ai-experience,.ai-course) .c-sidebar-caption{display:block;white-space:normal;overflow:visible}
+ body:is(.ai-experience,.ai-course) .c-sidebar-toggle{height:32px;flex-basis:36px}
+ body:is(.ai-experience,.ai-course)>.c-ss-header{gap:6px;padding:5px 10px}
+ body:is(.ai-experience,.ai-course) .c-ss-header .ss-common-title{max-width:none;white-space:normal;overflow:visible;line-height:1.3;gap:4px}
+ body:is(.ai-experience,.ai-course) .c-ss-header .ss-common-menu{flex:1 1 210px}
+ body:is(.ai-experience,.ai-course) .c-ss-header .c211-header-prefix{display:none}
+ body:is(.ai-experience,.ai-course) .c-ss-header .c211-header-title{min-width:0;overflow-wrap:normal}
+ body:is(.ai-experience,.ai-course) .c-ss-header .ss-four-navigation{gap:4px;margin:0}
+ body:is(.ai-experience,.ai-course) .c-ss-header .ss-chapter-arrow{width:32px;min-width:32px;height:34px}
+ body:is(.ai-experience,.ai-course) .c-ss-header .ss-common-actions{width:auto;gap:5px;margin-left:auto}
+ body:is(.ai-experience,.ai-course) .c-ss-header .ss-common-language select{max-width:76px;padding:4px 3px}
+ body:is(.ai-experience,.ai-course) .c-ss-header .ss-common-theme select{max-width:112px;padding:4px 3px}
+ body:is(.ai-experience,.ai-course) .c-ss-header .ss-language-icon{font-size:15px}
+}
+@media(max-width:360px){
+ body:is(.ai-experience,.ai-course)>.c-ss-header{gap:4px;padding-inline:7px}
+ body:is(.ai-experience,.ai-course) .c-ss-header .ss-chapter-arrow{width:28px;min-width:28px}
+ body:is(.ai-experience,.ai-course) .c-ss-header .ss-common-theme select{max-width:94px}
+ body:is(.ai-experience,.ai-course) .c-ss-header .ss-common-language{gap:2px}
+}
+
