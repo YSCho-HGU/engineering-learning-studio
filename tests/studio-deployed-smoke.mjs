@@ -56,7 +56,7 @@ try{
     return h?.dataset.elsHeaderVersion==="3" &&
       h.querySelectorAll(".els-course-header-navigation .ss-chapter-arrow svg").length===4 &&
       getComputedStyle(h).display==="grid";
-   },{timeout:20000});
+   },null,{timeout:20000});
    const dims=await page.evaluate(()=>{
     const h=document.querySelector("body > header.els-course-header");
     const a=[...h.querySelectorAll(".els-course-header-navigation .ss-chapter-arrow")].map(e=>e.getBoundingClientRect());
