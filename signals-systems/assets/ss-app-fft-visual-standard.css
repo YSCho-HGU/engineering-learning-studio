@@ -1,9 +1,9 @@
 /*
- * FFT Applications visual contract — seven modules, 2026-11-23
+ * FFT Applications visual contract — eight modules, 2026-11-23
  * Presentation-only CSS: no transforms, FFT data, SVG geometry or event logic are changed.
  * Keep this LAST after each lab's CSS. Standard Studio header and navigation are excluded.
  */
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root){
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root){
  --fft-ui-gap:12px;
  --fft-ui-inner:14px;
  --fft-ui-radius:12px;
@@ -24,64 +24,64 @@ main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-
  font-size:15px;
  line-height:1.55;
 }
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root) *,
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root) *::before,
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root) *::after{
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root) *,
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root) *::before,
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root) *::after{
  box-sizing:border-box;
 }
 /* The same panel rhythm in every lesson. */
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
- :is(.ss-fft-card,.ss-fft-r-card,.dft-plot-card,.ss-dtmf-panel,.ss-finger-card,.ss-fft-upload-panel,.ss-stft-card){
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
+ :is(.ss-fft-card,.ss-fft-r-card,.dft-plot-card,.ss-dtmf-panel,.ss-finger-card,.ss-fft-upload-panel,.ss-stft-card,.ss-image-panel){
  min-width:0;
  max-width:100%;
  padding:var(--fft-ui-inner);
  border-radius:var(--fft-ui-radius);
 }
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
- :is(.ss-fft-controls,.ss-fft-r-controls,.dft-controls,.ss-dtmf-controls,.ss-finger-controls,.ss-fft-upload-controls,.ss-stft-controls){
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
+ :is(.ss-fft-controls,.ss-fft-r-controls,.dft-controls,.ss-dtmf-controls,.ss-finger-controls,.ss-fft-upload-controls,.ss-stft-controls,.ss-image-controls){
  min-width:0;
  border-radius:var(--fft-ui-radius);
  gap:10px;
 }
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
- :is(.ss-fft-controls,.ss-fft-r-controls,.ss-dtmf-controls,.ss-finger-controls,.ss-fft-upload-controls,.ss-stft-controls){
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
+ :is(.ss-fft-controls,.ss-fft-r-controls,.ss-dtmf-controls,.ss-finger-controls,.ss-fft-upload-controls,.ss-stft-controls,.ss-image-controls){
  padding:var(--fft-ui-inner);
 }
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
- :is(.ss-fft-results,.ss-fft-r-results,.ss-dtmf-content,.ss-finger-content,.ss-fft-upload-results,.ss-stft-content){
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
+ :is(.ss-fft-results,.ss-fft-r-results,.ss-dtmf-content,.ss-finger-content,.ss-fft-upload-results,.ss-stft-content,.ss-image-results){
  min-width:0;
  gap:var(--fft-ui-gap);
 }
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
  :is(.ss-fft-workspace,.ss-fft-r-layout,.ss-dtmf-layout,.ss-finger-layout,.ss-fft-upload-layout,.ss-stft-layout,
-     .ss-fft-graphs,.ss-fft-r-graphs,.dft-paired-plots,.ss-stft-pair,.ss-stft-compare-grid){
+     .ss-fft-graphs,.ss-fft-r-graphs,.dft-paired-plots,.ss-stft-pair,.ss-stft-compare-grid,.ss-image-views){
  gap:var(--fft-ui-gap);
  min-width:0;
 }
 /* Shared heading hierarchy: page → graph/card → subsection. */
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
  :is(.ss-fft-intro,.ss-fft-r-intro,.dft-heading,.ss-dtmf-intro,.ss-finger-intro,.ss-fft-upload-intro,.ss-stft-intro) h1{
  font-size:clamp(23px,2vw,29px);
  line-height:1.32;
  letter-spacing:-.015em;
 }
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
- :is(.ss-fft-card,.ss-fft-r-card,.dft-plot-card,.ss-dtmf-panel,.ss-finger-card,.ss-fft-upload-panel,.ss-stft-card) h2{
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
+ :is(.ss-fft-card,.ss-fft-r-card,.dft-plot-card,.ss-dtmf-panel,.ss-finger-card,.ss-fft-upload-panel,.ss-stft-card,.ss-image-panel) h2{
  font-size:var(--fft-ui-plot-heading);
  line-height:1.4;
  font-weight:750;
  margin:0 0 7px;
  color:var(--els-ink);
 }
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
- :is(.ss-fft-card,.ss-fft-r-card,.dft-plot-card,.ss-dtmf-panel,.ss-finger-card,.ss-fft-upload-panel,.ss-stft-card) h3{
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
+ :is(.ss-fft-card,.ss-fft-r-card,.dft-plot-card,.ss-dtmf-panel,.ss-finger-card,.ss-fft-upload-panel,.ss-stft-card,.ss-image-panel) h3{
  font-size:14px;
  line-height:1.4;
  font-weight:750;
  color:var(--els-ink);
 }
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
- :is(.ss-fft-card,.ss-fft-r-card,.dft-panel-header,.ss-dtmf-panel,.ss-finger-card,.ss-fft-upload-panel,.ss-stft-card) p{
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
+ :is(.ss-fft-card,.ss-fft-r-card,.dft-panel-header,.ss-dtmf-panel,.ss-finger-card,.ss-fft-upload-panel,.ss-stft-card,.ss-image-panel) p{
  font-size:var(--fft-ui-body);
  line-height:1.6;
 }
@@ -95,35 +95,35 @@ main.ss-finger-root .ss-finger-sample-grid h3{
  color:var(--els-ink);
 }
 /* Comfortable, equal target heights; never force sliders and checkboxes into text-field height. */
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
  :is(label,.ss-fft-field,.ss-fft-r-controls label,.dft-controls label,.ss-finger-controls label,.ss-dtmf-controls label,.ss-fft-upload-controls label,.ss-stft-controls label){
  min-width:0;
  font-size:13px;
  line-height:1.45;
 }
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
  :is(select,input:not([type="range"]):not([type="checkbox"]):not([type="radio"]),button){
  min-height:var(--fft-ui-control);
  max-width:100%;
  border-radius:8px;
  font-size:14px;
 }
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
  :is(select,input:not([type="range"]):not([type="checkbox"]):not([type="radio"])){
  min-width:0;
 }
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
  :is(input[type="range"],input[type="checkbox"],input[type="radio"]){
  accent-color:var(--els-link);
 }
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
  :is(.ss-fft-muted,.ss-fft-hint,.ss-fft-r-help,.ss-dtmf-small,.ss-finger-small,.ss-fft-upload-help,.ss-stft-note,.dft-caption){
  font-size:var(--fft-ui-note);
  line-height:1.5;
  color:var(--els-muted);
 }
 /* Graphs retain their own viewBox, data scaling and intentional SVG shapes. */
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
  svg[role="img"]:not(#butterfly-diagram){
  display:block;
  width:100%;
@@ -131,18 +131,18 @@ main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-
  height:auto;
  min-width:0;
 }
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
  svg :is(.tick,.tick-label,.ss-fft-upload-tick,.ss-finger-tick,.ss-dtmf-tick,.ss-stft-tick){
  font-size:var(--fft-ui-graph-tick);
  font-family:Arial,"Malgun Gothic",sans-serif;
 }
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
  svg :is(.axis-title,.axis-label,.ss-fft-upload-axis-title,.ss-finger-axislabel,.ss-dtmf-axis-title,.ss-stft-axis-label){
  font-size:var(--fft-ui-graph-axis);
  font-family:Arial,"Malgun Gothic",sans-serif;
 }
 /* One readable math scale. Scrolling stays local to an equation, never to the document. */
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
  :is(.ss-fft-equation,.ss-fft-r-theory>div,.dft-formula,.ss-dtmf-formulas>div,.ss-finger-math>div,.ss-fft-upload-formulas>div,.ss-stft-formulas>div){
  min-width:0;
  max-width:100%;
@@ -152,31 +152,31 @@ main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-
  font-size:var(--fft-ui-equation);
  line-height:1.6;
 }
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
  :is(.ss-fft-equation,.ss-fft-r-theory,.dft-formula,.ss-dtmf-formulas,.ss-finger-math,.ss-fft-upload-formulas,.ss-stft-formulas) .katex-display{
  margin:5px 0;
  max-width:100%;
  text-align:left;
 }
-main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
+main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
  :is(.ss-fft-r-theory>div,.ss-dtmf-formulas>div,.ss-finger-math>div,.ss-fft-upload-formulas>div,.ss-stft-formulas>div){
  padding:10px;
  border-radius:8px;
 }
 @media(max-width:700px){
- main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root){
+ main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root){
   --fft-ui-inner:12px;--fft-ui-gap:10px;--fft-ui-equation:17px;--fft-ui-plot-heading:15px;
  }
- main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root)
-  :is(.ss-fft-controls,.ss-fft-r-controls,.ss-dtmf-controls,.ss-finger-controls,.ss-fft-upload-controls,.ss-stft-controls){
+ main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root)
+  :is(.ss-fft-controls,.ss-fft-r-controls,.ss-dtmf-controls,.ss-finger-controls,.ss-fft-upload-controls,.ss-stft-controls,.ss-image-controls){
   position:static;
   max-height:none;
   overflow:visible;
  }
 }
 @media(prefers-reduced-motion:reduce){
- main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root) *,
- main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root) *::before{
+ main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root) *,
+ main:is(.ss-fft-root,.ss-fft-r-wrap,.dft-main,.ss-dtmf-root,.ss-finger-root,.ss-fft-upload-root,.ss-stft-root,.ss-image-root) *::before{
   scroll-behavior:auto;
  }
 }
