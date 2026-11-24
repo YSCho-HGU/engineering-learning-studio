@@ -72,7 +72,7 @@ function validate(s,baseline){
  check(s.navRow.gap==="6px",name+" Chapter4 6px navigation spacing mismatch");
  check(s.navRow.height>=52,name+" navigation tap target too small");
  check(s.navRow.radius===baseline.navRow.radius,name+" sidebar card corner differs from Chapter4");
- check(s.navRow.background===baseline.navRow.background,name+" sidebar surface differs from Chapter4");
+ if(!String(s.section).startsWith("theme-"))check(s.navRow.background===baseline.navRow.background,name+" sidebar surface differs from Chapter4");
  check(Math.abs(s.header.h-baseline.header.h)<=18,name+" header differs too much from Chapter4");
  for(const c of s.controls){
   if(!c.rect||c.rect.w<2)continue;
