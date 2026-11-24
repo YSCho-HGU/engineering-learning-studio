@@ -49,12 +49,18 @@ try {
             visible:[...nav.children].every(el=>{const r=el.getBoundingClientRect();return r.width>=29&&r.height>=29&&getComputedStyle(el).visibility!=="hidden"}),
             overlaps:{menuNav:overlap(m,n),navActions:overlap(n,a)},
             selectors:actions.querySelectorAll("select").length,
+            nativeCLanguage:!!document.querySelector("#c-shared-language select"),
+            duplicatedCLanguage:!!header.querySelector(".ss-common-language-select"),
             noHorizontalOverflow:n.right<=innerWidth+2&&a.right<=innerWidth+2
           };
         });
         assert.equal(d.layout,"grid",id+" header must use canonical grid");
         assert.equal(d.arrowCount,4,id+" four controls");
-        assert.ok(d.visible&&d.selectors===2,id+" controls missing "+JSON.stringify(d));
+        assert.ok(d.visible,id+" arrows not visible "+JSON.stringify(d));
+        if(target.name==="c-pointers"){
+          assert.equal(d.selectors,1,id+" C header must contain only theme");
+          assert.ok(d.nativeCLanguage&&!d.duplicatedCLanguage,id+" C native language control must be unique");
+        } else assert.equal(d.selectors,2,id+" SS language and theme controls");
         assert.equal(d.overlaps.menuNav,0,id+" chooser/arrows overlapping "+JSON.stringify(d));
         assert.equal(d.overlaps.navActions,0,id+" arrows/preferences overlapping "+JSON.stringify(d));
         assert.ok(d.noHorizontalOverflow,id+" viewport overflow "+JSON.stringify(d));
