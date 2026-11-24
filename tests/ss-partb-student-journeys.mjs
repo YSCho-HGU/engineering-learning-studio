@@ -56,7 +56,8 @@ try{
    assertThat((await page.locator("#out-probe").textContent()).includes("ms"),"RC probe should be physical time");
    await page.locator("#sys-type").selectOption("high");
    await sleep(120);
-   assertThat((await page.locator("#ss-sys-rc-topology").textContent()).includes("High-pass"),"RC output topology not updated");
+   assertThat(await page.evaluate(()=>window.SSSystemLab.state.type==="high"),"RC type state did not switch");
+   assertThat((await page.locator("#ss-sys-output-label").textContent()).includes("v_R"),"RC output measurement did not move to resistor");
    await checkLayout(page,"RC",scenario);
    await shots(page,"rc-"+viewport.width);
    scenario.steps.push({name:"RC: slow vs fast, topology, measured time",slowGain,fastGain,status:"PASS"});
