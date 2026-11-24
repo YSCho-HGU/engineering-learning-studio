@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2D Image FFT Discovery · Engineering Learning Studio</title>
+<meta name="description" content="Discover spatial frequency, 2D image FFT, inverse FFT, and periodic noise removal by clicking image spectrum peaks.">
+<script>(function(){var v="neutral-dark";try{var s=localStorage.getItem("els-theme-v2");if(["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark"].includes(s))v=s}catch(e){}document.documentElement.dataset.elsTheme=v;document.documentElement.dataset.theme=["white-clean","warm-neutral"].includes(v)?"light":"dark";document.documentElement.style.colorScheme=["white-clean","warm-neutral"].includes(v)?"only light":"dark"})();</script>
+<link rel="stylesheet" href="../assets/els-theme-v2.css?v=6">
+<link rel="stylesheet" href="../assets/els-typography-standard.css?v=1">
+<link rel="stylesheet" href="./assets/ss-common-header.css?v=20261122-four-controls">
+<link rel="stylesheet" href="../assets/els-header-controls.css?v=1">
+<link rel="stylesheet" href="./assets/ss-applications-math.css?v=3">
+<link rel="stylesheet" href="./assets/ss-app-fft-path.css?v=20261124-image1">
+<link rel="stylesheet" href="./assets/ss-app-fft-visual-standard.css?v=20261124-image1">
+<link rel="stylesheet" href="./assets/ss-image-fft.css?v=20261124-image1">
+<link rel="stylesheet" href="./assets/ss-responsive-unified.css?v=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css">
+</head>
+<body>
+<a class="ss-image-skip" href="#image-workspace">Skip to image FFT experiment</a>
+<header class="ss-common-header" aria-label="Engineering Learning Studio navigation">
+ <a class="ss-common-home" href="../">← Studio</a>
+ <details class="ss-common-menu"><summary class="ss-common-title">Signals &amp; Systems · Applications <span aria-hidden="true">⌄</span></summary><nav class="ss-common-links" aria-label="Choose chapter"></nav></details>
+ <div class="ss-common-actions">
+  <label class="ss-common-language" for="image-language">🌐
+   <select class="ss-common-language-select" id="image-language" aria-label="Language"><option value="mixed">한/영</option><option value="en">English</option><option value="ko">한국어</option></select>
+  </label>
+  <label class="ss-common-theme"><select data-els-theme-picker aria-label="Theme"><option value="white-clean">White Clean</option><option value="warm-neutral">Warm Neutral</option><option value="warm-dark">Warm Dark</option><option value="navy-dark">Navy Dark</option><option value="neutral-dark">Neutral Dark</option></select></label>
+ </div>
+</header>
+<main class="ss-image-root" id="image-main">
+ <section class="ss-image-panel ss-image-intro">
+  <p class="ss-image-eyebrow">PART C · 07 · FFT DISCOVERY</p>
+  <h1 id="image-title">2D Image FFT Discovery</h1>
+  <p id="image-intro">Can an FFT find and remove a hidden image pattern?</p>
+ </section>
+ <nav class="ss-image-steps" aria-label="Four learning stages">
+  <button type="button" class="ss-image-stage" data-stage="1" aria-current="step"><span>01</span><strong id="image-stage-1">Discover patterns</strong></button>
+  <button type="button" class="ss-image-stage" data-stage="2"><span>02</span><strong id="image-stage-2">Read the spectrum</strong></button>
+  <button type="button" class="ss-image-stage" data-stage="3"><span>03</span><strong id="image-stage-3">Filter frequencies</strong></button>
+  <button type="button" class="ss-image-stage" data-stage="4"><span>04</span><strong id="image-stage-4">Remove periodic noise</strong></button>
+ </nav>
+ <div class="ss-image-layout" id="image-workspace">
+  <aside class="ss-image-panel ss-image-controls">
+   <div class="ss-image-control-intro">
+    <h2 id="image-controls-title">Change the image</h2>
+    <p id="image-controls-help">A change here updates all four panels.</p>
+   </div>
+   <div class="ss-image-field">
+    <label for="image-preset" id="image-preset-label">Input image</label>
+    <select id="image-preset">
+     <option value="stripes">Adjustable stripes</option>
+     <option value="checker">Checkerboard</option>
+     <option value="scene">Synthetic city scene</option>
+     <option value="noise">City scene + periodic noise</option>
+    </select>
+   </div>
+   <div class="ss-image-field" id="image-cycles-field">
+    <label for="image-cycles"><span id="image-cycles-label">Stripes across image</span><output for="image-cycles" id="image-cycles-value">8</output></label>
+    <input id="image-cycles" type="range" min="2" max="32" step="1" value="8">
+   </div>
+   <div class="ss-image-field" id="image-angle-field">
+    <label for="image-angle"><span id="image-angle-label">Stripe direction</span><output for="image-angle" id="image-angle-value">0°</output></label>
+    <input id="image-angle" type="range" min="0" max="180" step="5" value="0">
+   </div>
+   <div class="ss-image-field">
+    <label for="image-size" id="image-size-label">Image size</label>
+    <select id="image-size"><option value="128">128 × 128</option><option value="256" selected>256 × 256</option></select>
+   </div>
+   <div class="ss-image-field">
+    <label for="image-upload" id="image-upload-label">Analyze your own image</label>
+    <input id="image-upload" type="file" accept="image/png,image/jpeg,image/webp">
+    <p class="ss-image-help" id="image-upload-help">Local image only. Center-cropped to square, grayscale, no upload to server.</p>
+   </div>
+   <div class="ss-image-rule"></div>
+   <h3 id="image-filter-title">Frequency mask</h3>
+   <div class="ss-image-field">
+    <label for="image-filter" id="image-filter-label">Filter type</label>
+    <select id="image-filter">
+     <option value="none">No filter</option>
+     <option value="low">Gaussian low-pass</option>
+     <option value="high">Gaussian high-pass</option>
+     <option value="notch">Symmetric notch reject</option>
+    </select>
+   </div>
+   <div class="ss-image-field" id="image-radius-field">
+    <label for="image-radius"><span id="image-radius-label">Filter cutoff (frequency bins)</span><output for="image-radius" id="image-radius-value">22</output></label>
+    <input id="image-radius" type="range" min="3" max="80" step="1" value="22">
+   </div>
+   <div class="ss-image-field" id="image-notch-radius-field" hidden>
+    <label for="image-notch-radius"><span id="image-notch-radius-label">Notch radius</span><output for="image-notch-radius" id="image-notch-radius-value">2.5</output></label>
+    <input id="image-notch-radius" type="range" min=".8" max="9" step=".2" value="2.5">
+   </div>
+   <p class="ss-image-help" id="image-notch-hint"></p>
+   <div class="ss-image-actions">
+    <button type="button" id="image-reset">Reset experiment</button>
+    <button type="button" id="image-export">Save result PNG</button>
+   </div>
+   <output id="image-status" class="ss-image-status" role="status" aria-live="polite"></output>
+  </aside>
+  <div class="ss-image-results">
+   <section class="ss-image-panel ss-image-discovery">
+    <div class="ss-image-discovery-heading">
+     <div><span class="ss-image-kicker" id="image-step-tag">01 · Discover</span>
+      <h2 id="image-question">Where do the stripe frequencies appear?</h2></div>
+     <span class="ss-image-step-counter" id="image-counter">Step 1 / 4</span>
+    </div>
+    <p id="image-instruction">Change stripe spacing and direction. Compare the image with its 2D FFT.</p>
+   </section>
+   <div class="ss-image-views" aria-label="Linked original spectrum filter and reconstructed output">
+    <section class="ss-image-panel ss-image-view">
+     <h3 id="image-view-title-1">01 · Input image</h3>
+     <canvas id="image-input-canvas" width="512" height="512" role="img" aria-label="Input grayscale image"></canvas>
+     <p id="image-view-note-1">Pixel coordinates x, y.</p>
+    </section>
+    <section class="ss-image-panel ss-image-view">
+     <h3 id="image-view-title-2">02 · 2D FFT spectrum</h3>
+     <canvas id="image-spectrum-canvas" width="512" height="512" role="button" tabindex="0" aria-label="2D FFT spectrum; select a bright peak to place paired notches"></canvas>
+     <p id="image-view-note-2">Centered log magnitude. Click a bright peak to reject its symmetric pair.</p>
+    </section>
+    <section class="ss-image-panel ss-image-view">
+     <h3 id="image-view-title-3">03 · Frequency mask</h3>
+     <canvas id="image-mask-canvas" width="512" height="512" role="img" aria-label="Filter mask in centered frequency coordinates"></canvas>
+     <p id="image-view-note-3">White passes frequencies; dark attenuates them.</p>
+    </section>
+    <section class="ss-image-panel ss-image-view">
+     <h3 id="image-view-title-4">04 · Reconstructed image</h3>
+     <canvas id="image-output-canvas" width="512" height="512" role="img" aria-label="Filtered image reconstructed using inverse 2D FFT"></canvas>
+     <p id="image-view-note-4">IFFT2 of the masked complex spectrum.</p>
+    </section>
+   </div>
+   <div class="ss-image-panel ss-image-metrics" id="image-metrics" aria-live="off"></div>
+   <section class="ss-image-panel ss-image-reason">
+    <h2 id="image-reason-title">Predict → Observe → Explain</h2>
+    <label for="image-prediction" id="image-prediction-question">Which way will the FFT peaks move?</label>
+    <select id="image-prediction"><option value="">Choose a prediction</option><option value="a">Option A</option><option value="b">Option B</option></select>
+    <div class="ss-image-predict-controls">
+     <button id="image-check" type="button">Check using the image and spectrum</button>
+     <button id="image-next" type="button">Next discovery</button>
+    </div>
+    <p id="image-feedback" role="status" aria-live="polite"></p>
+    <p id="image-explanation"></p>
+   </section>
+   <details class="ss-image-panel ss-image-advanced">
+    <summary id="image-advanced-title">How does 2D FFT actually work? · Advanced</summary>
+    <div class="ss-image-advanced-body">
+     <p id="image-advanced-note">The 2D DFT is separable: FFT every row, then every column. The inverse restores the image from both magnitude and phase.</p>
+     <div class="ss-image-formulas">
+      <div id="image-formula-1">F[u,v] = Σ_y Σ_x I[x,y] exp(−j2π(ux+vy)/N)</div>
+      <div id="image-formula-2">g[x,y] = IFFT2{H[u,v] F[u,v]}</div>
+     </div>
+     <label class="ss-image-field" for="image-spectrum-view">
+      <span id="image-spectrum-view-label">Spectrum visualization</span>
+      <select id="image-spectrum-view"><option value="magnitude">Log magnitude</option><option value="phase">Phase (advanced)</option></select>
+     </label>
+     <p id="image-advanced-axes"></p>
+    </div>
+   </details>
+  </div>
+ </div>
+</main>
+<script src="../assets/els-language.js?v=1" defer></script>
+<script src="../assets/els-theme-v2.js?v=6" defer></script>
+<script src="./assets/ss-common-header.js?v=applications2" defer></script>
+<script src="../assets/els-header-controls.js?v=1" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js" defer></script>
+<script src="./assets/ss-app-fft-path.js?v=20261124-image1" defer></script>
+<script src="./assets/ss-image-fft-core.js?v=20261124-image1" defer></script>
+<script src="./assets/ss-image-fft.js?v=20261124-image1" defer></script>
+</body></html>
