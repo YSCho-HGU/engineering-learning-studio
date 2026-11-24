@@ -4,8 +4,12 @@ on:
     branches: [main]
     paths:
       - 'index.html'
-      - 'c-programming/index.html'
+      - 'c-programming/**/*.html'
+      - 'c-programming/c-ss-shell.js'
+      - 'c-programming/c-ss-shell.css'
       - 'signals-systems/*.html'
+      - 'signals-systems/assets/ss-common-header.js'
+      - 'signals-systems/assets/ss-common-header.css'
       - 'assets/els-header-controls.css'
       - 'assets/els-header-controls.js'
       - 'signals-systems/assets/ss-common-header.css'
@@ -15,9 +19,14 @@ on:
   pull_request:
     paths:
       - 'index.html'
-      - 'c-programming/index.html'
+      - 'c-programming/**/*.html'
+      - 'c-programming/c-ss-shell.js'
+      - 'c-programming/c-ss-shell.css'
       - 'signals-systems/*.html'
+      - 'signals-systems/assets/ss-common-header.js'
+      - 'signals-systems/assets/ss-common-header.css'
       - 'assets/els-header-controls.*'
+      - 'c-programming/c-ss-shell.*'
       - 'signals-systems/assets/ss-common-header.*'
       - 'tests/studio-header-contract-e2e.mjs'
   workflow_dispatch:
