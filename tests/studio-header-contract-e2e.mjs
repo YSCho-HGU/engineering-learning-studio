@@ -8,7 +8,11 @@ const port=8798,base="http://127.0.0.1:"+port+"/";
 const server=spawn("python3",["-m","http.server",String(port),"--bind","127.0.0.1"],{stdio:"ignore"});
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 await sleep(1300);
-const browser=await chromium.launch({headless:true});
+const browser=await chromium.launch({headless:true,timeout:15000});
+const perPageTimeoutMs=6000;
+const maxFailures=Number(process.env.HEADER_QA_FAILURE_LIMIT||8);
+const maxRunMs=Number(process.env.HEADER_QA_MAX_DURATION_MS||480000);
+const startTime=Date.now();
 const cModules=["arrays","strings","standard-library","functions","pointer","structure","file-io","dynamic-memory","ai-coding"];
 const cViews=cModules.flatMap(slug=>["c-programming/"+slug+"/",...(slug==="ai-coding"?[]:["c-programming/"+slug+"/practice/"])]);
 cViews.push("c-programming/file-io/core-labs/","c-programming/ai-coding/toolkit.html");
@@ -21,14 +25,16 @@ async function test(view,width){
  const context=await browser.newContext({viewport:{width,height:900}});
  await context.addInitScript(()=>{if(!sessionStorage.getItem("els-header-contract-initialized")){localStorage.setItem("els-language","en");localStorage.setItem("els-theme-v2","neutral-dark");localStorage.setItem("els-header-test-preserve","keep");sessionStorage.setItem("els-header-contract-initialized","1");}});
  const page=await context.newPage(),errors=[];
+ page.setDefaultTimeout(perPageTimeoutMs);
+ page.setDefaultNavigationTimeout(12000);
  page.on("pageerror",e=>errors.push(e.message));
  try{
-  const response=await page.goto(base+view,{waitUntil:"domcontentloaded",timeout:45000});
+  const response=await page.goto(base+view,{waitUntil:"domcontentloaded",timeout:12000});
   assert.equal(response?.status(),200,"HTTP 200");
-  await page.waitForFunction(()=>window.ELSTheme&&window.ELSHeaderControls,{timeout:20000});
+  await page.waitForFunction(()=>window.ELSTheme&&window.ELSHeaderControls,{timeout:perPageTimeoutMs});
   if(view.startsWith("signals-systems/chapter")||cViews.includes(view)){
-   await page.waitForFunction(()=>document.querySelector("body > header.els-course-header .els-course-header-navigation")?.children.length===4,{timeout:20000});
-   await page.waitForFunction(()=>getComputedStyle(document.querySelector("body > header.els-course-header")).display==="grid",{timeout:20000});
+   await page.waitForFunction(()=>document.querySelector("body > header.els-course-header .els-course-header-navigation")?.children.length===4,{timeout:perPageTimeoutMs});
+   await page.waitForFunction(()=>getComputedStyle(document.querySelector("body > header.els-course-header")).display==="grid",{timeout:perPageTimeoutMs});
   }
   const data=await page.evaluate(()=>{
    const header=document.querySelector(".ss-common-header,.site-header,body > header");
@@ -112,10 +118,10 @@ async function test(view,width){
    await page.screenshot({path:"qa/header-screenshots/"+key+"-"+width+".png",fullPage:false});
   }
   await page.locator("[data-els-theme-picker]").selectOption("warm-neutral");
-  await page.waitForFunction(()=>document.documentElement.dataset.elsTheme==="warm-neutral");
+  await page.waitForFunction(()=>document.documentElement.dataset.elsTheme==="warm-neutral",{timeout:perPageTimeoutMs});
   assert.equal(await page.evaluate(()=>localStorage.getItem("els-theme-v2")),"warm-neutral");
   await page.reload({waitUntil:"domcontentloaded"});
-  await page.waitForFunction(()=>window.ELSHeaderControls&&window.ELSTheme);
+  await page.waitForFunction(()=>window.ELSHeaderControls&&window.ELSTheme,{timeout:perPageTimeoutMs});
   assert.equal(await page.locator("[data-els-theme-picker]").inputValue(),"warm-neutral","theme persisted after reload");
   assert.ok(data.horizontalOverflow<=3,"page horizontal overflow "+data.horizontalOverflow);
   assert.deepEqual(errors,[],"runtime errors");
@@ -123,8 +129,19 @@ async function test(view,width){
  }finally{await context.close();}
 }
 try{
- for(const width of [390,768,1280])for(const view of pages){
-  try{await test(view,width)}catch(e){failures.push({view,width,error:e.message});console.error("FAIL "+width+"px "+view+": "+e.message);}
+ let stoppedEarly=false;
+ testViews: for(const width of [390,768,1280])for(const view of pages){
+  if(failures.length>=maxFailures || Date.now()-startTime>=maxRunMs){
+   stoppedEarly=true;
+   break testViews;
+  }
+  try{await test(view,width)}
+  catch(e){failures.push({view,width,error:e.message});console.error("FAIL "+width+"px "+view+": "+e.message);}
  }
+ if(stoppedEarly){
+  failures.push({view:"remaining views",width:0,error:"QA safety budget reached; remaining views were not executed"});
+  console.error("Stopped header QA early to avoid monopolizing a hosted runner.");
+ }
+ console.log("Header QA checked "+(pages.length*3-(stoppedEarly?1:0))+" planned viewports; failures="+failures.length);
  assert.deepEqual(failures,[],"Shared header regression failures");
 }finally{await browser.close();server.kill();}
