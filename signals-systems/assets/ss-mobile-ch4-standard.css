@@ -154,3 +154,57 @@ html .ss-common-header .ss-common-menu>.ss-common-title>.ss-common-chapter-label
   gap:6px!important;
  }
 }
+
+/* 2026-11-24 · Q2: compact chapter navigation on initial mobile viewport.
+   Keep every lesson link reachable by scrolling inside the list; retain toggle. */
+@media(max-width:600px){
+ html:not([data-ss-sidebar="collapsed"]) body .ss-layout-root>.ss-layout-sidebar{
+  max-height:118px!important;height:auto!important;min-height:0!important;
+  overflow-y:auto!important;overscroll-behavior:contain!important;
+  padding-top:6px!important;padding-bottom:6px!important
+ }
+ html:not([data-ss-sidebar="collapsed"]) body .ss-layout-root>.ss-layout-sidebar :is(.brand,.navlabel,.side-label,.ss7-sidebar-title,.ss8-sidebar-title){
+  display:none!important
+ }
+ html:not([data-ss-sidebar="collapsed"]) body .ss-layout-root>.ss-layout-sidebar .ss-sidebar-topline{
+  position:sticky!important;top:0!important;z-index:2!important;
+  background:var(--els-surface,#20252b)!important;margin:0 0 4px!important
+ }
+}
+/* 2026-11-24 · Q3: a compact, scrollable parameter strip stays in view
+   alongside the beginning of Observe while the user explores the plots.
+   No controls are cloned or disabled; keyboard, input events and math remain native. */
+@media(max-width:600px){
+ html.ss5-native #page>.lab,
+ html.ss6-compact-workspace .ss6-control-plot-workspace,
+ html.ss7-native .ss7-stage-pair,
+ html.ss8-native .ss8-stage-pair{
+  gap:6px!important;align-items:start!important
+ }
+ html.ss5-native #page>.lab>.controls,
+ html.ss6-compact-workspace .ss6-control-plot-workspace>.controls,
+ html.ss7-native .ss7-stage-pair>.ss7-stage-change,
+ html.ss8-native .ss8-stage-pair>.ss8-stage-change{
+  position:sticky!important;top:6px!important;z-index:5!important;
+  max-height:min(25dvh,170px)!important;overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  padding:9px 11px!important;margin:0!important;
+  border:1px solid var(--els-border,#777)!important;
+  background:var(--els-surface,#20252b)!important;
+  box-shadow:0 4px 12px #0002!important
+ }
+ html.ss5-native #page>.lab>.controls :is(.controlgrid,.control-grid),
+ html.ss6-compact-workspace .ss6-control-plot-workspace>.controls .control-grid{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:6px 9px!important
+ }
+ html.ss7-native .ss7-stage-change .controls,
+ html.ss8-native .ss8-stage-change .controls{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:6px 9px!important
+ }
+ html.ss5-native #page .plots,
+ html.ss6-compact-workspace .ss6-control-plot-workspace :is(.charts,.ss6-step-graphs),
+ html.ss7-native .ss7-stage-observe #plots,
+ html.ss8-native .ss8-stage-observe #plots{margin-top:0!important}
+}
