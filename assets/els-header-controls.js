@@ -122,6 +122,13 @@
    if(language){
      language.classList.add("els-course-language-slot");
      if(language.parentElement===actions)header.insertBefore(language,actions);
+     // Overview uses #ss-language-select, while chapters use a different ID.
+     // Normalize option *labels* here without touching values or event handlers.
+     for(const option of language.querySelectorAll("select option")){
+       if(option.value==="mixed")option.textContent="ENG + 한국어";
+       else if(option.value==="en")option.textContent="ENG";
+       else if(option.value==="ko")option.textContent="한국어";
+     }
    }
    // On GitHub Pages the S&S "Studio" button always targets the shared portal.
    if(win.location.pathname.includes("/signals-systems/")){
