@@ -40,9 +40,9 @@ function init(){
  const entries=[{label:"C Programming · Course Home",href:parentPrefix},
   ...chapters.map((entry,i)=>({label:"Chapter "+entry[1]+" · "+entry[2],
     href:parentPrefix+entry[0]+"/",current:i===current}))];
- const {header,menu,navigation:arrows,languageSelect:select}=controls.createCourseHeader({
+ const {header,menu,navigation:arrows}=controls.createCourseHeader({
    className:"c-ss-header",homeHref:nested?"../../../":"../../",title:parentTitle,
-   chapterLinks:entries,languageId:"c-language",themeId:"theme"
+   chapterLinks:entries,themeId:"theme",showLanguage:false
  });
  function arrow(title,chapterDelta,sectionDelta){
   const kind=chapterDelta!=null?"chapter":"section",direction=chapterDelta??sectionDelta;
@@ -175,8 +175,7 @@ function init(){
  const crumb=wrap.querySelector(".crumb");if(crumb)crumb.remove();
  const hero=wrap.querySelector(".hero");if(hero)hero.classList.add("c-ss-intro");
  if(fileioLabs){const existing=oldHeader.querySelector("#language-mode");if(existing){existing.hidden=true;existing.setAttribute("aria-hidden","true");existing.tabIndex=-1;header.append(existing)}}
- const languageAPI=window.ELSLanguage;if(languageAPI?.bindSelect)languageAPI.bindSelect(select);
- else select.addEventListener("change",()=>{try{localStorage.setItem("els-language",select.value)}catch(_){}location.reload()});
+ // The single C language picker is owned by c-programming/language.js.
  function refreshArrows(){const buttons=[...document.querySelectorAll(fileioTask?"#task-nav button[data-task]":fileioLabs?".side-nav a[data-lab-link]":practice?".cp-menu .cp-nav-item":fileio?"#lesson-nav button[data-nav]":"#lesson-nav button[data-lesson], #lesson-nav a[href^='#lab-']")];const idx=buttons.findIndex(b=>fileioLabs?b.getAttribute("href")===(location.hash||"#write"):fileioTask||practice?b.classList.contains("active"):fileio?b.classList.contains("current"):b.getAttribute("aria-current")==="step");previous.disabled=idx<=0;next.disabled=idx<0||idx>=buttons.length-1}
  const nav=(practice||fileioTask)?aside:fileioLabs?aside.querySelector(".side-nav"):aside.querySelector("#lesson-nav");
  if(nav){new MutationObserver(refreshArrows).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:["aria-current","class"]});nav.addEventListener("click",()=>requestAnimationFrame(refreshArrows))}
