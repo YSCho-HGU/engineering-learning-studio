@@ -50,7 +50,8 @@ try {
         await page.waitForFunction(()=>{
           const h=document.querySelector("body > header.ss-common-header");
           return h?.querySelectorAll(".ss-four-navigation .ss-chapter-arrow svg").length===4
-             && h.querySelectorAll(".ss-common-actions select").length>=2;
+             && h.querySelectorAll(".ss-common-actions select").length>=1
+             && (h.querySelector(".ss-common-language-select") || document.querySelector("#c-shared-language select"));
         },null,{timeout:15000});
         const state=await page.evaluate(()=>{
           const header=document.querySelector("body > header.ss-common-header");
@@ -80,7 +81,8 @@ try {
             sectionButtons:arrows.slice(1,3).every(e=>e.tagName==="BUTTON"),
             localStoragePreserved:localStorage.getItem("studio-pages-smoke-marker")==="untouched",
             chapterMenu:!!header.querySelector(".ss-common-menu > summary"),
-            language:!!header.querySelector(".ss-common-language-select"),
+            language:!!(header.querySelector(".ss-common-language-select") || document.querySelector("#c-shared-language select")),
+            duplicatedCLanguage:!!(header.classList.contains("c-ss-header") && header.querySelector(".ss-common-language-select")),
             theme:!!header.querySelector("[data-els-theme-picker]"),
           };
         });
@@ -100,6 +102,7 @@ try {
         }
         assert.ok(state.dimensions.every(([w,h])=>Math.abs(w-34)<=4&&Math.abs(h-34)<=4),
           id+" size mismatch "+JSON.stringify(state));
+        assert.equal(state.duplicatedCLanguage,false,id+" duplicated C header language selector");
         assert.ok(state.sectionButtons&&state.chapterMenu&&state.language&&state.theme,
           id+" header controls "+JSON.stringify(state));
         assert.ok(state.localStoragePreserved,id+" modified unrelated localStorage");
