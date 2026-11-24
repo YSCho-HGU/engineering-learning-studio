@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="../assets/els-header-controls.css?v=1">
 <link rel="stylesheet" href="./assets/ss-trace-palette.css?v=1">
 <link rel="stylesheet" href="./assets/ss-app-system-labs.css?v=20261124-partb-q3">
-<link rel="stylesheet" href="./assets/ss-system-compare.css?v=20261124-partb-q3">
+<link rel="stylesheet" href="./assets/ss-system-compare.css?v=20261124-students1">
 <link rel="stylesheet" href="./assets/ss-applications-math.css?v=3">
 <link rel="stylesheet" href="./assets/ss-responsive-unified.css?v=1">
 <link rel="stylesheet" href="./assets/ss-plot-typography.css?v=1">
@@ -49,6 +49,14 @@
  <div class="ss-sys-workspace" id="cmp-workspace">
   <aside class="ss-sys-controls cmp-controls" aria-label="Shared signal and filter parameters">
    <div class="ss-sys-panel-heading"><h2 id="cmp-control-title">One input · two filters</h2><p id="cmp-control-intro"></p></div>
+   <section class="cmp-start" aria-labelledby="cmp-start-title">
+    <h3 id="cmp-start-title">Compare a prepared example</h3>
+    <div class="cmp-start-buttons">
+     <button id="cmp-example-fair" type="button">Matched cutoffs</button>
+     <button id="cmp-example-step" type="button">Step and delay</button>
+    </div>
+    <p id="cmp-example-hint" aria-live="polite"></p>
+   </section>
    <h3 class="cmp-control-group" id="cmp-input-group">01 · Input signal</h3>
    <div class="ss-sys-fields">
     <div class="ss-sys-field"><label for="cmp-signal" id="cmp-label-signal">Input signal</label>
@@ -141,5 +149,5 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js"></script>
 <script defer src="./assets/ss-applications-math.js?v=5"></script>
 <script defer src="./assets/ss-system-compare-core.js?v=20261124-partb-q3"></script>
-<script defer src="./assets/ss-system-compare.js?v=20261124-partb-q3"></script>
+<script defer src="./assets/ss-system-compare.js?v=20261124-students1"></script>
 </body></html>
