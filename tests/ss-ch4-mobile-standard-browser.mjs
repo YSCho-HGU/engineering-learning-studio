@@ -117,7 +117,7 @@ try{
   const page=await context.newPage();
   const ref=async()=>{
    await page.goto(BASE+"/signals-systems/chapter4.html",{waitUntil:"domcontentloaded"});
-   await page.locator(NAV[4]).first().waitFor({timeout:20000});
+   await page.locator(NAV[4]).first().waitFor({state:"attached",timeout:20000});
    await page.waitForTimeout(180);
    return snapshot(page,4,width,1);
   };
@@ -129,7 +129,7 @@ try{
     // Page already has the Studio origin after the Chapter 4 reference visit.
     await page.evaluate(()=>localStorage.setItem("ss-sidebar-collapsed-v1","0"));
     await page.goto(BASE+"/signals-systems/chapter"+chapter+".html",{waitUntil:"domcontentloaded"});
-    const nav=page.locator(NAV[chapter]);await nav.first().waitFor({timeout:20000});
+    const nav=page.locator(NAV[chapter]);await nav.first().waitFor({state:"attached",timeout:20000});
     await page.waitForTimeout(150);
     if(width<=600){
      const picker=page.locator(".ss-mobile-index-toggle").first();
