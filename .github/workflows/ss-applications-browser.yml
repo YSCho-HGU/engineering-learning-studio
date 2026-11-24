@@ -32,6 +32,11 @@ on:
       - 'tests/ss-applications-browser.mjs'
       - 'tests/ss-partb-system-browser.mjs'
       - 'signals-systems/assets/ss-system-lab-core.js'
+      - 'signals-systems/assets/ss-system-compare-core.js'
+      - 'signals-systems/assets/ss-system-compare.js'
+      - 'signals-systems/assets/ss-system-compare.css'
+      - 'signals-systems/tests/partb-compare-core.mjs'
+      - 'tests/ss-partb-compare-browser.mjs'
       - 'signals-systems/tests/partb-system-labs.mjs'
       - '.github/workflows/ss-applications-browser.yml'
   workflow_dispatch:
@@ -71,6 +76,10 @@ jobs:
           node --check signals-systems/assets/ss-system-lab-core.js
           node --check tests/ss-partb-system-browser.mjs
           node signals-systems/tests/partb-system-labs.mjs
+          node --check signals-systems/assets/ss-system-compare-core.js
+          node --check signals-systems/assets/ss-system-compare.js
+          node --check tests/ss-partb-compare-browser.mjs
+          node signals-systems/tests/partb-compare-core.mjs
           node --check tests/ss-applications-math-audit.mjs
       - name: Install Playwright Chromium
         run: |
@@ -80,6 +89,10 @@ jobs:
         run: |
           python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/ss-applications-server.log 2>&1 &
           sleep 2
+      - name: Check matched-cutoff RC and Moving Average comparison
+        id: compare
+        continue-on-error: true
+        run: node tests/ss-partb-compare-browser.mjs
       - name: Check RC circuit and moving-average walkthrough interactions
         id: partb
         continue-on-error: true
@@ -129,6 +142,7 @@ jobs:
           DTMF_RESULT: ${{ steps.dtmf.outcome }}
           FINGERPRINT_RESULT: ${{ steps.fingerprint.outcome }}
           PARTB_RESULT: ${{ steps.partb.outcome }}
+          COMPARE_RESULT: ${{ steps.compare.outcome }}
         run: |
           mkdir -p qa
           python3 - <<'PY'
@@ -146,6 +160,7 @@ jobs:
             "dtmf_mystery_outcome":os.environ["DTMF_RESULT"],
             "sound_fingerprint_outcome":os.environ["FINGERPRINT_RESULT"],
             "partb_system_browser_outcome":os.environ["PARTB_RESULT"],
+            "partb_matched_filter_comparison_outcome":os.environ["COMPARE_RESULT"],
             "viewport_widths":[1366,390],
             "coverage":["FFT arithmetic","graph missions","KaTeX","language modes","five themes","responsive overflow"]
           }
@@ -179,6 +194,7 @@ jobs:
           DTMF: ${{ steps.dtmf.outcome }}
           FINGERPRINT: ${{ steps.fingerprint.outcome }}
           PARTB: ${{ steps.partb.outcome }}
+          COMPARE: ${{ steps.compare.outcome }}
         run: |
-          echo "original=$PRIMARY extra=$EXTRA fft=$FFT stft=$STFT realfft=$REALFFT dtmf=$DTMF fingerprint=$FINGERPRINT math=$MATH partb=$PARTB"
-          test "$PRIMARY" = success && test "$EXTRA" = success && test "$FFT" = success && test "$STFT" = success && test "$REALFFT" = success && test "$DTMF" = success && test "$FINGERPRINT" = success && test "$MATH" = success && test "$PARTB" = success
+          echo "original=$PRIMARY extra=$EXTRA fft=$FFT stft=$STFT realfft=$REALFFT dtmf=$DTMF fingerprint=$FINGERPRINT math=$MATH partb=$PARTB compare=$COMPARE"
+          test "$PRIMARY" = success && test "$EXTRA" = success && test "$FFT" = success && test "$STFT" = success && test "$REALFFT" = success && test "$DTMF" = success && test "$FINGERPRINT" = success && test "$MATH" = success && test "$PARTB" = success && test "$COMPARE" = success
