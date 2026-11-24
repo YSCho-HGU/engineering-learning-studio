@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { chromium } from "playwright";
 
-const root = (process.env.PAGES_BASE_URL || "https://yscho-hgu.github.io/engineering-learning-studio/").replace(/\\?\/$/, "/");
+const root = (process.env.PAGES_BASE_URL || "https://yscho-hgu.github.io/engineering-learning-studio/").replace(/\/?$/, "/");
 const cSlugs = ["arrays","strings","standard-library","functions","pointer","structure","file-io","dynamic-memory","ai-coding"];
 const targets = [
   ...cSlugs.map(slug => ({course:"C", chapter:slug, route:`c-programming/${slug}/`})),
@@ -87,14 +87,23 @@ try {
         // At desktop width, prove that section navigation responds to the learner's
         // sidebar rather than merely rendering a decorative arrow.
         if(width===1280){
+          await page.waitForTimeout(350);
           const section=await page.evaluate(()=>{
-            const nav=document.querySelector(".ss-four-navigation");
-            const prev=nav.querySelector('.ss-nav-section[aria-label="Previous section"]');
-            const next=nav.querySelector('.ss-nav-section[aria-label="Next section"]');
-            return {previousDisabled:prev?.disabled,nextDisabled:next?.disabled};
+            const header=document.querySelector("body > header.ss-common-header");
+            const prev=header.querySelector('.ss-nav-section[aria-label="Previous section"]');
+            const next=header.querySelector('.ss-nav-section[aria-label="Next section"]');
+            const side=document.querySelector(".ss-layout-sidebar");
+            const toc=side?.querySelector("#lesson-nav,#ss7-lesson-nav,#tabs,nav.ss8-lab-nav,nav.tabs,nav.nav,nav#nav");
+            const buttons=[...toc?.querySelectorAll("button")||[]].filter(e=>!e.hidden&&!e.disabled);
+            return {previousDisabled:prev?.disabled,nextDisabled:next?.disabled,sidebarChoices:buttons.length,
+              firstSection:buttons[0]?.textContent?.trim().slice(0,70)||null};
           });
           assert.ok(typeof section.previousDisabled==="boolean"&&typeof section.nextDisabled==="boolean",
             id+" section state not initialized");
+          if(section.sidebarChoices>=2){
+            assert.equal(section.nextDisabled,false,
+              id+" next section is disabled despite "+section.sidebarChoices+" available sections: "+JSON.stringify(section));
+          }
         }
         results.push({id,status:"PASS",centerError:state.centerError,dimensions:state.dimensions});
         console.log("PASS",id,"centerError="+state.centerError.toFixed(1));
