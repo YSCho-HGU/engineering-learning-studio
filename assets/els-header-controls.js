@@ -34,6 +34,13 @@
    const scope=root||doc;
    const header=scope.querySelector(".ss-common-header,.site-header,body > header");
    if(!header)return;
+   header.classList.add("els-course-header");
+   const title=header.querySelector(".ss-common-menu,.brand");
+   if(title)title.classList.add("els-course-header-title");
+   const actions=header.querySelector(".ss-common-actions,.header-nav");
+   if(actions)actions.classList.add("els-course-header-actions");
+   const navigation=header.querySelector(".ss-four-navigation");
+   if(navigation)navigation.classList.add("els-course-header-navigation");
    const language=header.querySelector("#lang,#c-language,.ss-common-language-select,#ss-language-select");
    if(language){
      const wrapped=language.closest("label");
