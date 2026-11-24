@@ -41,7 +41,7 @@ on:
       - '.github/workflows/ss-applications-browser.yml'
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 jobs:
   browser:
     runs-on: ubuntu-latest
@@ -167,18 +167,12 @@ jobs:
           with open("qa/fft-browser-last-run.json","w") as f:
             json.dump(result,f,indent=2)
           PY
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add qa/fft-browser-last-run.json
-          if ! git diff --cached --quiet; then
-            git commit -m "chore(qa): publish FFT browser test status [skip ci]"
-            git push origin HEAD:main || echo "QA status push unavailable"
-          fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: ss-part-a-visual-snapshots
+          name: ss-applications-browser-qa-${{ github.run_id }}
           path: |
+            qa/fft-browser-last-run.json
             tests/screenshots/
             qa/applications-math-audit.json
           if-no-files-found: ignore
