@@ -92,3 +92,12 @@ html,body{max-width:100%;min-width:0}
 .ss-image-kernel-link{color:var(--els-muted)}
 #image-input-canvas[role=button]{cursor:crosshair}
 @media(max-width:860px) and (min-width:530px){.ss-image-kernel-matrix{max-width:225px}}
+
+/* Image panels use h3 for graph titles; match the shared FFT plot-title scale. */
+main.ss-image-root .ss-image-view h3{
+ font-size:var(--fft-ui-plot-heading,16px);
+ line-height:1.4;
+ font-weight:750;
+ margin:0 0 7px;
+ color:var(--els-ink);
+}
