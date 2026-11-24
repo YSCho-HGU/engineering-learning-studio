@@ -290,7 +290,7 @@ function init(){
   try{await loadFile(type,e.target.files?.[0])}catch(error){$("finger-files-status").textContent=tr("Unable to read file: ","파일 분석 실패: ")+error.message}
  });
  $("finger-clear-files").addEventListener("click",()=>{recordings={};for(const type of TYPES)$("finger-"+type+"-file").value="";reset();$("finger-files-status").textContent=tr("Synthetic examples restored.","합성 예제로 돌아왔습니다.")});
- W.ELSLanguage?.subscribe?.(localize);
+ W.ELSLanguage?.subscribe?.(()=>{localize();$("finger-evidence-feedback").textContent="";delete $("finger-evidence-feedback").dataset.result;});
  localize();reset();W.SSMathCore?.renderNow?.();
 }
 W.SSSoundFingerprint=Object.freeze({synth,fft,analyze,profiles,fs:FS,get state(){return{selected:LETTERS[selected],revealed,source:reverse(),attempts}}});
