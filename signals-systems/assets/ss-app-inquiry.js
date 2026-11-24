@@ -77,6 +77,7 @@ function refresh(lab,state){
  if(evidence)evidence.textContent=text(spec.evidence(state));
  const seen=root.querySelector("[data-inquiry-progress]");
  if(seen)seen.textContent=text(["Scenarios observed: "+s.seen.size+" / 2","관찰한 조건: "+s.seen.size+" / 2"]);
+ root.querySelectorAll("[data-scenario]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.scenario===String(Number(s.choice)+1)&&s.choice!=="")));
 }
 function renderSignal({lab,state,host,apply}){
  const spec=specs[lab];if(!spec)return false;
