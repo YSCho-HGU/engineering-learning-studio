@@ -21,6 +21,14 @@ try{
    await page.locator("#ss-sys-v-in").waitFor();
    await page.waitForFunction(()=>window.SSSystemLab?.kind==="rc" && document.getElementById("ss-sys-v-in")?.textContent!=="0 V");
    check(await page.locator("#ss-sys-rc-explorer").isVisible(),"RC schematic not visible");
+   check((await page.locator("#ss-sys-step-1").innerText()).includes("Observe")||width===390,"RC Observe stage missing");
+   if(width===1440){
+    const layout=await page.evaluate(()=>({
+     waveform:document.querySelector("#ss-sys-canvas-1").closest(".ss-sys-plot").getBoundingClientRect().top,
+     explanation:document.querySelector("#ss-sys-rc-explorer").getBoundingClientRect().top
+    }));
+    check(Math.abs(layout.waveform-layout.explanation)<28,"RC circuit and waveform should share a visual row");
+   }
    check(!(await page.locator("#ss-sys-series-r").isHidden()),"RC low-pass series resistor should be shown");
    check(await page.locator("#ss-sys-series-c").isHidden(),"RC low-pass series capacitor should be hidden");
    const voltages=await page.evaluate(()=>{
@@ -59,6 +67,13 @@ try{
    await page.goto(url+"?lab=moving-average",{waitUntil:"domcontentloaded"});
    await page.waitForFunction(()=>window.SSSystemLab?.kind==="moving-average" && !!document.querySelector("#ss-sys-ma-taps button"));
    check(await page.locator("#ss-sys-ma-explorer").isVisible(),"Convolution inspector missing");
+   if(width===1440){
+    const layout=await page.evaluate(()=>({
+     waveform:document.querySelector("#ss-sys-canvas-1").closest(".ss-sys-plot").getBoundingClientRect().top,
+     inspector:document.querySelector("#ss-sys-ma-explorer").getBoundingClientRect().top
+    }));
+    check(Math.abs(layout.waveform-layout.inspector)<28,"MA tap inspector should align beside graph");
+   }
    check(await page.locator("#ss-sys-ma-taps button").count()===7,"Incorrect initial tap count");
    check(await page.locator("#ss-sys-ma-back").isDisabled(),"Previous should be disabled at stage 0");
    await page.locator("#ss-sys-ma-next").click();
