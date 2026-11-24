@@ -64,15 +64,49 @@ try{
    await capture("02-checkerboard");
    await page.locator('[data-stage="3"]').click();
    await page.waitForFunction(()=>window.SSImageFFTApp.state.kind==="scene"&&window.SSImageFFTApp.result);
-   check(await page.locator("#image-filter").inputValue()==="low","Stage 3 should start low-pass");
+   check(await page.locator("#image-filter").inputValue()==="kernel","Stage 3 must begin with an actual spatial kernel");
+   const inspector=page.locator("#image-kernel-panel");
+   check(await inspector.isVisible(),"3x3 spatial kernel should be displayed");
+   check(await page.locator("#image-kernel-pixels .ss-image-kernel-cell").count()===9,"Nine input pixels missing");
+   check(await page.locator("#image-kernel-weights .ss-image-kernel-cell").count()===9,"Nine kernel weights missing");
+   let kernel=await page.evaluate(()=>window.SSImageFFTApp.result);
+   check(kernel.output.maxDifference<1e-9,"Box spatial and FFT2 filtering disagree");
+   const boxImage=await page.locator("#image-output-canvas").evaluate(c=>c.toDataURL());
+   await page.locator("#image-kernel-choice").selectOption("gaussian");
+   await page.waitForFunction(()=>window.SSImageFFTApp.state.kernel==="gaussian"&&window.SSImageFFTApp.result?.output?.maxDifference<1e-9);
+   const gaussianImage=await page.locator("#image-output-canvas").evaluate(c=>c.toDataURL());
+   check(gaussianImage!==boxImage,"Box and Gaussian kernel results must differ");
+   await page.locator("#image-kernel-choice").selectOption("sharpen");
+   await page.waitForFunction(()=>window.SSImageFFTApp.state.kernel==="sharpen"&&window.SSImageFFTApp.result?.output?.maxDifference<1e-9);
+   const sharpImage=await page.locator("#image-output-canvas").evaluate(c=>c.toDataURL());
+   check(sharpImage!==gaussianImage,"Sharpening should differ from Gaussian blur");
+   const clickBox=await page.locator("#image-input-canvas").boundingBox();
+   await page.mouse.click(clickBox.x+clickBox.width*.37,clickBox.y+clickBox.height*.4);
+   await page.waitForTimeout(120);
+   check((await page.locator("#image-kernel-evidence").textContent()).includes("FFT2"),"Pixel evidence not linked to FFT result");
+   const probe=await page.evaluate(()=>{
+    const api=window.SSImageFFTApp,core=window.SSImageFFTCore;
+    return core.kernelProbe(api.result.input.pixels,api.state.N,api.state.kernel,api.state.probeX,api.state.probeY);
+   });
+   const fftPixel=await page.evaluate(()=>{
+    const api=window.SSImageFFTApp;
+    return api.result.output.pixels[api.state.probeY*api.state.N+api.state.probeX];
+   });
+   check(Math.abs(probe.sum-fftPixel)<1e-9,"Selected pixel weighted sum not equal to FFT pixel output");
+   // Show the broad frequency-domain low/high-pass alternative as a distinct operation,
+   // rather than incorrectly treating the Gaussian mask as identical to a 3x3 kernel.
+   await page.locator("#image-filter").selectOption("low");
+   await page.waitForTimeout(140);
    const lowData=await page.locator("#image-output-canvas").evaluate(c=>c.toDataURL());
    await page.locator("#image-filter").selectOption("high");
-   await page.waitForTimeout(160);
+   await page.waitForTimeout(140);
    const highData=await page.locator("#image-output-canvas").evaluate(c=>c.toDataURL());
    check(highData!==lowData,"Low/high-pass output images identical");
+   await page.locator("#image-filter").selectOption("kernel");
+   await page.waitForTimeout(100);
    await page.locator("#image-prediction").selectOption("a");
    await page.locator("#image-check").click();
-   check((await page.locator("#image-feedback").getAttribute("data-result"))==="correct","Stage 3 blur explanation");
+   check((await page.locator("#image-feedback").getAttribute("data-result"))==="correct","Stage 3 spatial kernel explanation");
    await capture("03-filter");
    await page.locator('[data-stage="4"]').click();
    await page.waitForFunction(()=>window.SSImageFFTApp.state.kind==="noise"&&!!window.SSImageFFTApp.result?.originalRMSE);
