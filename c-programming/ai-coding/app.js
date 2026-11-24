@@ -23,11 +23,7 @@ function render(){
  $("intro").textContent=prose("From Vibe Coding to Agentic Coding and Engineering","C에서 배운 원리를 AI 기반 소프트웨어 개발로 확장");
  $("book").textContent=t("Textbook 211","교재 211");
  $("progress").textContent=t("Reviewed","학습 확인")+" "+state.reviewed.length+"/"+L.length;
- const nav=$("lesson-nav");nav.replaceChildren();
- for(const [name,en,ko,indices] of [["core","Core concepts","핵심 개념",[0,1,2,3,4,5]],["labs","Guided project","통합 실습",[6]],["challenges","Wrap-up","정리",[7]]]){
- const d=add(nav,"details",undefined,"c-learning-group");d.dataset.group=name;d.open=indices.includes(state.index)||name==="core";add(d,"summary",t(en,ko),"c-learning-group-title");const group=add(d,"div",undefined,"c-learning-group-items");
- for(const i of indices){const b=button(group,L[i].title,L[i].ko,()=>show(i,true));b.dataset.lesson=String(i);if(i===state.index)b.setAttribute("aria-current","step");if(state.reviewed.includes(i))b.append(" ✓")}
- }
+ window.ELSAICodingTOC.render($("lesson-nav"),{active:state.index,go:i=>show(i,true),lessons:L,reviewed:state.reviewed});
  const l=L[state.index];$("title").textContent=t(l.title,l.ko);$("body").textContent=prose(l.body,l.kr);$("task").textContent=prose(l.task,l.taskKo);
  $("disclaimer").textContent=prose("Local educational models; no live AI, Git commands or C execution. No data is sent to a server by these activities.","로컬 학습 모형이며 실제 AI·Git 명령·C 실행은 아니다. 실습 데이터는 서버로 전송하지 않는다.");
  $("mark").textContent=state.reviewed.includes(state.index)?t("Reviewed ✓","확인 완료 ✓"):t("Mark reviewed","학습 확인");

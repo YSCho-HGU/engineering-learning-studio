@@ -3,7 +3,7 @@
 const $=id=>document.getElementById(id),lang=window.ELSLanguage;
 const B=(en,ko)=>lang.get()==="en"?en:lang.get()==="ko"?ko:en+" · "+ko;
 const P=(en,ko)=>lang.get()==="en"?en:lang.get()==="ko"?ko:en+"\n"+ko;
-const sections=[["projects","Start Creating","먼저 만들어 보기"],["improve","Make It Better","기능 발전시키기"],["technology","Explore Technology","기술 스택 탐색"],["agents","Build with AI Agents","AI와 함께 개발하기"],["publish","Publish Your App","배포하고 공유하기"],["toolkit","Engineering Toolkit","체계적 개발 도구"]];
+const sections=window.ELSAICodingTOC.sections;
 const projects=[
 ["01-reaction-time.html","Reaction Time Game","반응속도 게임","Click green, measure, beat your record.","초록색에서 클릭하고 기록에 도전해 보세요.","C: state · if · array · function"],
 ["02-gpa-calculator.html","GPA Calculator","학점 계산기","Add courses and calculate weighted GPA.","과목을 추가하고 가중평균을 계산하세요.","C: struct · loop · arithmetic"],
@@ -101,8 +101,7 @@ function toolkit(root){
 }
 function go(i){active=i;history.pushState(null,"","#"+sections[i][0]);render();window.scrollTo({top:0,behavior:"instant"});$("lesson").focus({preventScroll:true})}
 function render(){
- const nav=$("lesson-nav"),select=$("mobile-sections");nav.replaceChildren();select.replaceChildren();
- sections.forEach(([key,en,ko],i)=>{const b=btn(nav,(i+1)+". "+en,(i+1)+". "+ko,()=>go(i));b.dataset.lesson=String(i);if(active===i)b.setAttribute("aria-current","step");const o=add(select,"option",B(en,ko));o.value=String(i)});select.value=String(active);select.onchange=()=>go(Number(select.value));
+ window.ELSAICodingTOC.render($("lesson-nav"),{active,go});
  const root=$("studio-content");root.replaceChildren();[gallery,improve,technology,agents,publish,toolkit][active](root);const n=$("studio-next");n.replaceChildren();if(active>0)btn(n,"← Previous","← 이전",()=>go(active-1));if(active<sections.length-1){const b=btn(n,"Next →","다음 →",()=>go(active+1));b.classList.add("primary")}window.ELSCourseShell?.refreshArrows();
 }
 window.addEventListener("hashchange",()=>{if(/^#11-[1-8]$/.test(location.hash)){location.replace("./toolkit.html"+location.hash);return}active=Math.max(0,sections.findIndex(s=>"#"+s[0]===location.hash));render()});

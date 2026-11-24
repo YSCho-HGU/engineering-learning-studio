@@ -1,0 +1,15 @@
+/* Reuse shared shell dimensions and grouped TOC styles. Scope only the two 211 lesson pages. */
+:is(.ai-experience,.ai-course) .c-ss-shell #lesson-nav .c-learning-group-items>button{
+ font:500 .875rem/1.5 Arial,"Malgun Gothic",sans-serif;
+ display:flex;align-items:flex-start;gap:9px;min-height:44px;padding:9px 8px;margin:0;width:100%;
+}
+:is(.ai-experience,.ai-course) .c-ss-shell #lesson-nav .c-learning-group-items>button.active{font-weight:750}
+:is(.ai-experience,.ai-course) .c-ss-shell #lesson-nav .n{flex:0 0 28px;color:var(--els-link);font-size:.82rem;font-weight:800}
+:is(.ai-experience,.ai-course) .c-ss-shell #lesson-nav .c-toc-label{flex:1;min-width:0;overflow-wrap:anywhere}
+:is(.ai-experience,.ai-course) .c-ss-shell .c-learning-group-title{font-size:.84rem;line-height:1.45}
+:is(.ai-experience,.ai-course) .c-ss-shell .c-learning-link{font-size:.85rem;line-height:1.45}
+:is(.ai-experience,.ai-course) .c-ss-shell #lesson-nav .c-learning-group-items>button:focus-visible{outline:2px solid var(--els-focus);outline-offset:-2px}
+@media(max-width:780px){
+ :is(.ai-experience,.ai-course) .c-ss-shell>.c-ss-sidebar{height:auto;max-height:38dvh;overflow-y:auto}
+ html[data-c-sidebar=collapsed] :is(.ai-experience,.ai-course) .c-ss-shell>.c-ss-sidebar{max-height:none}
+}
