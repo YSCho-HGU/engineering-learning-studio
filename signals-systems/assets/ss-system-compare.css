@@ -107,3 +107,5 @@
  .cmp-domain-head p{font-size:12px}
  .cmp-time-grid .cmp-primary canvas{height:220px}
 }
+
+.cmp-delay-equation{font-size:clamp(14px,1.2vw,17px);color:var(--els-ink);line-height:1.5;padding:5px 9px;background:var(--els-surface-alt);border:1px solid var(--els-border);border-radius:8px;max-width:100%;overflow-x:auto;white-space:nowrap}
