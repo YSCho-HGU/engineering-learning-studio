@@ -159,3 +159,15 @@ main.ss-image-root .ss-image-view h3{
 @media(prefers-reduced-motion:reduce){
  .ss-image-kernel-bridge *{scroll-behavior:auto;transition:none!important}
 }
+
+/* Inquiry sequence: prediction precedes charts; explanation follows evidence. */
+.ss-image-preflight{display:grid;gap:6px;grid-template-columns:minmax(0,1fr) minmax(170px,.72fr);align-items:center;padding:10px 12px;background:var(--els-surface-alt)}
+.ss-image-preflight #image-prediction-kicker{grid-column:1/-1;font-size:11px;letter-spacing:.035em;font-weight:800;color:var(--els-link)}
+.ss-image-preflight label{font-size:13px;line-height:1.45;font-weight:750}
+.ss-image-preflight select{min-height:39px;font-size:12px;width:100%}
+.ss-image-reason{margin-top:0}
+.ss-image-results>.ss-image-live-observation{margin:0;padding:9px 12px;background:var(--els-surface-alt);border:1px solid var(--els-border);border-left:3px solid var(--els-link);border-radius:8px;min-height:34px;font-size:13px}
+@media(max-width:690px){
+ .ss-image-preflight{grid-template-columns:1fr}
+ .ss-image-preflight #image-prediction-kicker{grid-column:1}
+}
