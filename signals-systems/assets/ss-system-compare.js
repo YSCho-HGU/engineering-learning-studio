@@ -4,7 +4,7 @@
 const core=window.SSSystemCompareCore,lang=window.ELSLanguage,$=id=>document.getElementById(id);
 if(!core)return;
 const defaults={shape:"sensor",fs:50,noise:.3,M:9,tau:.09,match:true,inspectT:2.4,scope:"near",probeF:2.47};
-const state={...defaults};let scheduled=0;
+const state={...defaults};let scheduled=0,example=0;
 const tr=(en,ko,compact=false)=>{const m=lang?.get?.()||"mixed";return m==="en"?en:m==="ko"?ko:compact?en+" · "+ko:en+"\n"+ko;};
 const tx=(id,en,ko,short=false)=>{$(id).textContent=tr(en,ko,short);};
 const fmt=(x,n=2)=>Number(x).toFixed(n),clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
@@ -68,6 +68,7 @@ function localize(){
  tx("cmp-input-group","01 · Input and sampling","01 · 입력 및 표본화",true);
  tx("cmp-filter-group","02 · Filter settings","02 · 필터 설정",true);
  tx("cmp-control-intro","All outputs update using the same x[n].","모든 출력은 동일한 x[n]으로 갱신됩니다.");
+ updateExampleText();
  tx("cmp-label-signal","Input pattern","입력 신호",true);
  tx("cmp-label-fs","Sampling rate fs","샘플링 주파수 fs",true);
  tx("cmp-label-noise","Noise level","잡음 크기",true);
@@ -92,6 +93,27 @@ function localize(){
  Array.from($("cmp-signal").options).forEach((o,i)=>o.textContent=tr(names[i][0],names[i][1],true));
  document.title=tr("RC vs Moving Average","RC와 이동평균 비교",true)+" | Engineering Learning Studio";
  document.documentElement.lang=lang?.get?.()==="ko"?"ko":"en";
+}
+function updateExampleText(){
+ tx("cmp-start-title","Choose a learning scenario","학습 시나리오 선택",true);
+ tx("cmp-example-fair","Fair comparison","동일 차단주파수",true);
+ tx("cmp-example-step","Step and delay","계단응답과 지연",true);
+ $("cmp-example-fair").setAttribute("aria-pressed",String(example===1));
+ $("cmp-example-step").setAttribute("aria-pressed",String(example===2));
+ tx("cmp-example-hint",
+  example===1?"Both filters receive exactly the same noisy sensor signal. Compare noise ratios at a matched cutoff.":
+  example===2?"With the same step input and matched cutoff, examine different rise shapes and phase delays.":
+  "Try equal cutoff first; then use a step to reveal how delay appears.",
+  example===1?"동일한 잡음 센서 신호를 두 필터에 넣고 차단주파수를 맞춰 잡음 감소 비를 비교하세요.":
+  example===2?"같은 계단 입력과 차단주파수에서도 상승 모양과 위상 지연은 달라집니다.":
+  "먼저 차단주파수를 맞춘 뒤 계단응답으로 지연의 차이를 관찰하세요.");
+}
+function syncExampleControls(){
+ $("cmp-signal").value=state.shape;$("cmp-fs").value=String(state.fs);
+ $("cmp-noise").value=String(state.noise);$("cmp-M").value=String(state.M);
+ $("cmp-match").checked=state.match;$("cmp-tau").value=String(state.tau);
+ $("cmp-scope").value=state.scope;$("cmp-freq-probe").value=String(state.probeF);
+ updateExampleText();redraw();
 }
 function insight(en,ko){
  tx("cmp-insight-title","What do you notice?","무엇을 관찰했나요?",true);
@@ -215,6 +237,14 @@ function draw(m){
  "두 필터에 같은 결정적 표본 입력 x[n]과 동일한 잡음을 넣습니다. 아날로그 RC 저역통과는 초기 커패시터 전압 0에서 표본 구간마다 입력을 일정하게 유지한 경우(ZOH)의 구간 끝 전압을 정확하게 계산합니다: α=exp(−1/(fs τ)). 인과적 이동평균은 현재와 과거 M−1개 표본을 사용하고 음수 인덱스는 0으로 채웁니다. 모든 주파수 응답은 표본화된 모델의 응답이며 연속시간 RC 응답과 구분됩니다. 백색잡음 비는 독립 잡음 표본을 가정하고, DC 군지연과 계단응답의 50% 도달시간은 다릅니다.");
 }
 function redraw(){if(scheduled)cancelAnimationFrame(scheduled);scheduled=requestAnimationFrame(()=>{scheduled=0;draw(core.run(state));});}
+$("cmp-example-fair").addEventListener("click",()=>{
+ Object.assign(state,defaults,{shape:"sensor",noise:.55,M:9,match:true,scope:"near",inspectT:2.4});
+ example=1;syncExampleControls();
+});
+$("cmp-example-step").addEventListener("click",()=>{
+ Object.assign(state,defaults,{shape:"step",noise:0,M:21,match:true,scope:"near",inspectT:1.3});
+ example=2;syncExampleControls();
+});
 $("cmp-signal").addEventListener("change",e=>{state.shape=e.target.value;redraw();});
 $("cmp-fs").addEventListener("change",e=>{state.fs=Number(e.target.value);redraw();});
 $("cmp-noise").addEventListener("input",e=>{state.noise=Number(e.target.value);redraw();});
@@ -224,11 +254,11 @@ $("cmp-tau").addEventListener("input",e=>{state.tau=Number(e.target.value);redra
 $("cmp-scope").addEventListener("change",e=>{state.scope=e.target.value;redraw();});
 $("cmp-freq-probe").addEventListener("input",e=>{state.probeF=Number(e.target.value);redraw();});
 $("cmp-reset").addEventListener("click",()=>{
- Object.assign(state,defaults);
+ Object.assign(state,defaults);example=0;
  $("cmp-signal").value=state.shape;$("cmp-fs").value=String(state.fs);
  $("cmp-noise").value=state.noise;$("cmp-M").value=state.M;
  $("cmp-match").checked=true;$("cmp-tau").value=state.tau;
- $("cmp-scope").value=state.scope;$("cmp-freq-probe").value=state.probeF;redraw();
+ $("cmp-scope").value=state.scope;$("cmp-freq-probe").value=state.probeF;updateExampleText();redraw();
 });
 const canvas=$("cmp-time");
 canvas.addEventListener("click",e=>{
