@@ -9,9 +9,9 @@
 <link rel="stylesheet" href="./assets/ss-common-header.css?v=20261122-four-controls">
 <link rel="stylesheet" href="../assets/els-header-controls.css?v=1">
 <link rel="stylesheet" href="./assets/ss-applications-math.css?v=3">
-<link rel="stylesheet" href="./assets/ss-app-fft-path.css?v=20261124-inquiry4">
-<link rel="stylesheet" href="./assets/ss-app-fft-visual-standard.css?v=20261124-inquiry4">
-<link rel="stylesheet" href="./assets/ss-image-fft.css?v=20261124-inquiry4">
+<link rel="stylesheet" href="./assets/ss-app-fft-path.css?v=20261124-rowfft1">
+<link rel="stylesheet" href="./assets/ss-app-fft-visual-standard.css?v=20261124-rowfft1">
+<link rel="stylesheet" href="./assets/ss-image-fft.css?v=20261124-rowfft1">
 <link rel="stylesheet" href="./assets/ss-responsive-unified.css?v=1">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css">
 </head>
@@ -165,6 +165,50 @@
         </div>
       </article>
     </div>
+    <section class="ss-image-fft-pipeline" id="image-fft-pipeline" aria-labelledby="image-fft-pipeline-title">
+      <div class="ss-image-fft-pipeline-head">
+        <div>
+          <p class="ss-image-kicker" id="image-fft-pipeline-kicker">INSIDE FFT2 · THE SAME INPUT</p>
+          <h3 id="image-fft-pipeline-title">How a 2D FFT is built from two 1D FFTs</h3>
+        </div>
+        <span class="ss-image-fft-pipeline-stepcount" id="image-fft-pipeline-counter">1 / 4</span>
+      </div>
+      <div class="ss-image-fft-stages" role="group" aria-label="FFT processing steps">
+        <button type="button" data-fft-step="0" aria-pressed="true" id="image-fft-stage-0">1 · Row FFT</button>
+        <button type="button" data-fft-step="1" aria-pressed="false" id="image-fft-stage-1">2 · Column FFT</button>
+        <button type="button" data-fft-step="2" aria-pressed="false" id="image-fft-stage-2">3 · × H</button>
+        <button type="button" data-fft-step="3" aria-pressed="false" id="image-fft-stage-3">4 · IFFT2</button>
+      </div>
+      <p id="image-fft-pipeline-question" class="ss-image-fft-pipeline-question">What changes when only the rows are transformed?</p>
+      <div class="ss-image-fft-pipeline-controls">
+        <label id="image-fft-row-label" for="image-fft-row">Inspect image row (y)</label>
+        <input id="image-fft-row" type="range" min="0" max="255" value="96" step="1">
+        <output id="image-fft-row-value" for="image-fft-row">96</output>
+        <label id="image-fft-column-label" for="image-fft-column" hidden>Inspect frequency column (u)</label>
+        <input id="image-fft-column" type="range" min="-128" max="127" value="8" step="1" hidden>
+        <output id="image-fft-column-value" for="image-fft-column" hidden>8</output>
+      </div>
+      <div class="ss-image-fft-pipeline-pair">
+        <article class="ss-image-fft-pipeline-view">
+          <h4 id="image-fft-left-title">Input I[y,x]</h4>
+          <canvas id="image-fft-left" width="360" height="360" role="img" aria-label="Image before current FFT step"></canvas>
+          <p id="image-fft-left-caption">Spatial x and y coordinates</p>
+        </article>
+        <article class="ss-image-fft-pipeline-view">
+          <h4 id="image-fft-right-title">Row spectra R[y,u]</h4>
+          <canvas id="image-fft-right" width="360" height="360" role="img" aria-label="Actual computed result of current FFT step"></canvas>
+          <p id="image-fft-right-caption">Horizontal axis u is now frequency; vertical axis y is still position</p>
+        </article>
+      </div>
+      <div class="ss-image-fft-pipeline-explain">
+        <p id="image-fft-pipeline-evidence" role="status" aria-live="polite"></p>
+        <p id="image-fft-pipeline-note">Complex values include phase. Log magnitude is a visualization only; it is not the data used for subsequent FFTs.</p>
+      </div>
+      <div class="ss-image-fft-pipeline-nav">
+        <button type="button" id="image-fft-prev" disabled>Previous operation</button>
+        <button type="button" id="image-fft-next">Next operation</button>
+      </div>
+    </section>
     <div class="ss-image-kernel-conclusion">
       <p id="image-kernel-evidence" class="ss-image-kernel-evidence" aria-live="off"></p>
       <p id="image-kernel-link">The two methods agree when the boundary rule is the same. For a tiny 3×3 kernel, direct spatial filtering may actually be faster than FFT.</p>
@@ -226,7 +270,7 @@
 <script src="./assets/ss-common-header.js?v=applications2" defer></script>
 <script src="../assets/els-header-controls.js?v=1" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js" defer></script>
-<script src="./assets/ss-app-fft-path.js?v=20261124-inquiry4" defer></script>
-<script src="./assets/ss-image-fft-core.js?v=20261124-inquiry4" defer></script>
-<script src="./assets/ss-image-fft.js?v=20261124-inquiry4" defer></script>
+<script src="./assets/ss-app-fft-path.js?v=20261124-rowfft1" defer></script>
+<script src="./assets/ss-image-fft-core.js?v=20261124-rowfft1" defer></script>
+<script src="./assets/ss-image-fft.js?v=20261124-rowfft1" defer></script>
 </body></html>
