@@ -89,6 +89,9 @@ function labels(){
  $("image-spectrum-view").options[1].textContent=tr("Phase (advanced)","위상 (심화)",true);
  document.title=tr("2D Image FFT Discovery","2D 이미지 FFT 발견 실습",true)+" | Engineering Learning Studio";
  document.documentElement.lang=mode()==="ko"?"ko":"en";
+ const speedNames=[["Slow","느림"],["Normal","보통"],["Fast","빠름"]];
+ [...$("image-scan-speed").options].forEach((o,i)=>o.textContent=tr(...speedNames[i],true));
+ if(scan.timer!==null)$("image-scan-play").textContent=tr("Pause scan","일시정지");
  $("image-input-canvas").setAttribute("aria-label",tr("Input image. In Kernel stage use arrows to move the inspected pixel, Enter to inspect.","입력 이미지입니다. 커널 단계에서 방향키로 선택 위치를 이동하고 Enter로 픽셀을 관찰합니다."));
  stageLabels();sync();if(result)render(result);
 }
@@ -218,6 +221,70 @@ function showMetrics(m){
  }
 }
 
+/* A reproducible 5x5 scan: spatial method reveals pixels while
+ * FFT2 output is already complete. Never recompute FFT per animation tick.
+ */
+function stopScan(){
+ if(scan.timer!==null){clearInterval(scan.timer);scan.timer=null;}
+ const play=$("image-scan-play");
+ if(play){play.setAttribute("aria-pressed","false");play.textContent=tr("Play scan","자동 이동");}
+}
+function resetScan(newAnchor){
+ if(newAnchor){scan.anchorX=state.probeX;scan.anchorY=state.probeY;}
+ scan.progress=0;state.probeX=scan.anchorX;state.probeY=scan.anchorY;
+ if(result&&state.stage===3&&state.filter==="kernel")renderScan(result);
+}
+function scanPosition(i,N){
+ const px=scan.anchorX-2+(i%5),py=scan.anchorY-2+Math.floor(i/5);
+ return {x:(px%N+N)%N,y:(py%N+N)%N};
+}
+function nextScan(){
+ if(state.stage!==3||state.filter!=="kernel"||!result?.output?.spatialPixels){stopScan();return;}
+ if(scan.progress>=25){stopScan();return;}
+ const point=scanPosition(scan.progress,result.N);
+ state.probeX=point.x;state.probeY=point.y;
+ scan.progress++;interactions++;renderScan(result);
+ if(scan.progress===25)stopScan();
+}
+function playScan(){
+ if(scan.timer!==null){stopScan();return;}
+ if(scan.progress>=25)resetScan(false);
+ nextScan();
+ if(scan.progress>=25)return;
+ const speed=clamp(Number($("image-scan-speed").value)||470,200,1200);
+ scan.timer=setInterval(nextScan,speed);
+ $("image-scan-play").setAttribute("aria-pressed","true");
+ $("image-scan-play").textContent=tr("Pause scan","일시정지");
+}
+function renderScan(m){
+ if(state.stage!==3||state.filter!=="kernel"||!m?.output?.spatialPixels)return;
+ const N=m.N,space=$("image-spatial-progress"),freq=$("image-fft-progress");
+ space.replaceChildren();freq.replaceChildren();
+ const active=scan.progress>0?scan.progress-1:-1;
+ const fragSpace=document.createDocumentFragment(),fragFFT=document.createDocumentFragment();
+ for(let i=0;i<25;i++){
+  const point=scanPosition(i,N),k=point.y*N+point.x;
+  const spatial=m.output.spatialPixels[k],fromFFT=m.output.pixels[k];
+  const a=document.createElement("span"),b=document.createElement("span");
+  a.className="ss-image-bridge-cell"+(i===active?" ss-image-bridge-active":"")+(i<scan.progress?" ss-image-bridge-revealed":"");
+  b.className="ss-image-bridge-cell ss-image-bridge-known"+(i===active?" ss-image-bridge-active":"");
+  a.textContent=i<scan.progress?spatial.toFixed(2):"·";
+  b.textContent=fromFFT.toFixed(2);
+  a.title=tr("Spatial pixel ","공간 픽셀 ")+"("+point.x+","+point.y+"): "+spatial.toFixed(6);
+  b.title=tr("FFT pixel ","FFT 픽셀 ")+"("+point.x+","+point.y+"): "+fromFFT.toFixed(6);
+  fragSpace.append(a);fragFFT.append(b);
+ }
+ space.append(fragSpace);freq.append(fragFFT);
+ $("image-scan-counter").textContent=scan.progress+" / 25";
+ if(scan.timer===null)$("image-scan-play").textContent=tr("Play scan","자동 이동");
+ showRaster("image-input-canvas",m.input.pixels,N);
+ showKernelInspector(m);
+ showRaster("image-output-canvas",m.output.pixels,N);
+ const cv=$("image-output-canvas"),ctx=cv.getContext("2d"),size=cv.width/N;
+ ctx.save();ctx.lineWidth=2.5;ctx.strokeStyle="#7ad9be";
+ ctx.strokeRect(state.probeX*size,state.probeY*size,Math.max(size,2),Math.max(size,2));
+ ctx.restore();
+}
 function showKernelInspector(m){
  if(state.stage!==3)return;
  const weights=C.kernelWeights(state.kernel),probe=C.kernelProbe(m.input.pixels,m.N,state.kernel,state.probeX,state.probeY);
@@ -268,7 +335,7 @@ function chooseStage(stage){
  if(state.stage===3)Object.assign(state,{kind:"scene",filter:"kernel",kernel:"box",probeX:82,probeY:106,view:"magnitude"});
  if(state.stage===4)Object.assign(state,{kind:"noise",filter:"none",notchU:12,notchV:7,notchRadius:2.5,view:"magnitude"});
  $("image-prediction").value="";$("image-explanation").textContent="";feedback();
- interactions=0;dirty=true;resetScan(false);stageLabels();sync();schedule();
+ interactions=0;dirty=true;scan.anchorX=state.probeX;scan.anchorY=state.probeY;resetScan(false);stageLabels();sync();schedule();
 }
 function check(){
  const answer=$("image-prediction").value,e=exercises[state.stage];
@@ -308,7 +375,7 @@ async function loadImage(file){
 function reset(){
  stopScan();Object.assign(state,defaults);if(bitmap?.close)bitmap.close();bitmap=null;dirty=true;
  $("image-upload").value="";$("image-preset").querySelector('[value="upload"]')?.remove();
- interactions=0;resetScan(false);feedback();$("image-prediction").value="";$("image-explanation").textContent="";$("image-status").textContent="";
+ interactions=0;scan.anchorX=state.probeX;scan.anchorY=state.probeY;resetScan(false);feedback();$("image-prediction").value="";$("image-explanation").textContent="";$("image-status").textContent="";
  labels();schedule();
 }
 function bind(){
@@ -322,6 +389,11 @@ function bind(){
   ["image-filter","filter","change",String],["image-radius","radius","input",Number],
   ["image-notch-radius","notchRadius","input",Number]
  ])$(id).addEventListener(event,e=>{state[field]=convert(e.target.value);stopScan();resetScan(false);interactions++;sync();schedule();});
+ $("image-scan-play").addEventListener("click",playScan);
+ $("image-scan-next").addEventListener("click",()=>{stopScan();nextScan();});
+ $("image-scan-restart").addEventListener("click",()=>{stopScan();resetScan(false);});
+ $("image-scan-speed").addEventListener("change",()=>{if(scan.timer!==null){stopScan();playScan();}});
+ document.addEventListener("visibilitychange",()=>{if(document.hidden)stopScan();});
  $("image-kernel-choice").addEventListener("change",e=>{
   stopScan();state.kernel=e.target.value;state.filter="kernel";resetScan(false);interactions++;sync();schedule();
  });
