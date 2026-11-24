@@ -17,10 +17,14 @@ try{
    await page.goto(base+'index.html'+view,{waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>!!window.ELSTheme?.get());
    const selector=page.locator('#ss-language-select');
-   const icon=page.locator('.ss-common-actions .ss-language-icon');
+   const icon=page.locator('.els-course-language-slot .ss-language-icon');
    assert.equal(await icon.count(),1,width+' '+view+' globe icon');
    assert.equal((await icon.textContent()).trim(),'🌐');
    assert.equal(await selector.inputValue(),'en');
+   assert.deepEqual(await selector.locator('option').allTextContents(),
+     ['ENG + 한국어','ENG','한국어'],width+' '+view+' shared language labels');
+   assert.equal(await page.locator('.els-course-language-slot select').count(),1,'single aligned language picker');
+   assert.equal(await page.locator('.ss-common-home').getAttribute('aria-label'),'Studio Home');
    const options=await page.locator('#theme-select option').allTextContents();
    assert.deepEqual(options,expected,width+' '+view+' theme order');
    assert.equal(await page.locator('#theme-select').inputValue(),expectedTheme);
