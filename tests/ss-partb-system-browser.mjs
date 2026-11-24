@@ -42,7 +42,7 @@ try{
    check((await page.locator("#ss-sys-series-label").innerText()).includes("25")===false,"Series label should show capacitance in high-pass mode");
    check((await page.locator("#ss-sys-shunt-label").innerText()).includes("25"),"RC resistance label did not update");
    const cursorBefore=await page.locator("#sys-probe").inputValue();
-   const chart=page.locator("#ss-sys-canvas-1"),rect=await chart.boundingBox();
+   const chart=page.locator("#ss-sys-canvas-1");await chart.scrollIntoViewIfNeeded();const rect=await chart.boundingBox();
    check(!!rect,"RC chart not visible");
    await page.mouse.click(rect.x+rect.width*.73,rect.y+rect.height*.53);
    check((await page.locator("#sys-probe").inputValue())!==cursorBefore,"Clicking RC chart did not move time cursor");
@@ -71,7 +71,7 @@ try{
    check(await page.locator("#ss-sys-ma-taps button").count()===21,"M=21 tap count incorrect");
    check(await page.locator(".ss-sys-ma-padded").count()===20,"Initial zero padding not shown");
    const before=await page.locator("#sys-index").inputValue();
-   const graph=page.locator("#ss-sys-canvas-1"),bounds=await graph.boundingBox();
+   const graph=page.locator("#ss-sys-canvas-1");await graph.scrollIntoViewIfNeeded();const bounds=await graph.boundingBox();
    await page.mouse.click(bounds.x+bounds.width*.66,bounds.y+bounds.height*.5);
    check((await page.locator("#sys-index").inputValue())!==before,"Clicking sensor plot did not select a sample");
    await graph.focus();await page.keyboard.press("ArrowRight");
