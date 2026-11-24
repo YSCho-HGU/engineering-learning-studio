@@ -1,9 +1,6 @@
 name: QA backlog recovery - latest run only
 
 on:
-  push:
-    paths:
-      - '.github/workflows/qa-backlog-recovery.yml'
   workflow_dispatch:
     inputs:
       dry_run:
