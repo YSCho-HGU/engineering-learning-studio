@@ -1,11 +1,5 @@
 name: FFT source snapshot for local Chromium
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/fft-source-snapshot.yml'
-      - 'signals-systems/applications-dft-fft.html'
-      - 'signals-systems/assets/ss-app-fft-butterfly-core.js'
-      - 'tests/applications-dft-fft-regression.mjs'
   workflow_dispatch:
 concurrency:
   group: qa-${{ github.workflow }}-${{ github.ref }}

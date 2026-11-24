@@ -1,16 +1,6 @@
 name: Unified Studio Quality G0-G7
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'c-programming/**'
-      - 'index.html'
-      - 'assets/**'
-      - 'tests/qa-unified-*.mjs'
-      - 'tests/c-curriculum-quality-review.mjs'
-      - 'docs/qa/**'
-      - '.github/workflows/unified-quality.yml'
 
 permissions:
   contents: read
