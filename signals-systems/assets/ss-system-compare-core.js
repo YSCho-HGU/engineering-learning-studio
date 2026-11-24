@@ -96,7 +96,11 @@ function run(options={}){
   stepSum+=xStep[n]-(n>=M?xStep[n-M]:0);
   step.push({t:n/fs,x:xStep[n],rc:stepRC,ma:stepSum/M});
  }
- const spectrum=Array.from({length:501},(_,i)=>responsePoint(alpha,M,fs,(fs/2)*i/500));
+ const frequencySamples=Array.from({length:501},(_,i)=>(fs/2)*i/500);
+ // Add FIR spectral nulls explicitly, so phase/group-delay curves break there.
+ for(let k=1;k<=Math.floor(M/2);k++)if(M>1)frequencySamples.push(k*fs/M);
+ frequencySamples.sort((a,b)=>a-b);
+ const spectrum=frequencySamples.map(f=>responsePoint(alpha,M,fs,f));
  const magnitude=spectrum.map(point=>({f:point.f,rc:point.rcMag,ma:point.maMag}));
  const cutoffRC=rcCutoff(alpha,fs),cutoffMA=maCutoff(M,fs);
  const groupDelayRC=alpha/(1-alpha)/fs;
