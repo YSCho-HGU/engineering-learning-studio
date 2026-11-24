@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
   "course": "c-programming",
-  "generatedAt": "2026-11-24T06:35:33.601Z",
-  "sourceSha": "c4fd7c7a030108970eb17b062d64d8c7459bf39c",
-  "runId": "45340328435",
-  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/45340328435",
+  "generatedAt": "2026-11-24T06:47:26.190Z",
+  "sourceSha": "60db360571c06e7af71de61b5524f0ebb7a965ff",
+  "runId": "45341890628",
+  "runUrl": "https://github.com/YSCho-HGU/engineering-learning-studio/actions/runs/45341890628",
   "automaticStatus": "BLOCKED_AUTOMATED",
   "automatedStatus": "BLOCKED_AUTOMATED",
   "manualStatus": "PENDING",
   "releaseStatus": "BLOCKED_AUTOMATED",
-  "chaptersCount": 8,
+  "chaptersCount": 9,
   "labsCount": 8,
   "plannedUnits": 19,
   "gates": [
@@ -230,15 +230,36 @@
       "coverage": {
         "numericalReference": "GCC C11 stdout for supported common-engine cases"
       }
+    },
+    {
+      "id": "211",
+      "title": "AI-Assisted Coding",
+      "labCount": 4,
+      "visual": {
+        "status": "PASS",
+        "expected": 4,
+        "observed": 4,
+        "issues": 0,
+        "missing": 0
+      },
+      "issueExamples": [],
+      "manual": {
+        "axesAndLegends": "PENDING",
+        "mathematics": "PENDING",
+        "pedagogy": "PENDING"
+      },
+      "coverage": {
+        "numericalReference": "GCC C11 stdout for supported common-engine cases"
+      }
     }
   ],
   "visual": {
-    "expected": 32,
-    "observed": 32,
+    "expected": 36,
+    "observed": 36,
     "issues": 0
   },
   "notes": [
-    "PASS applies only to the named, executed checks for eight published C chapters.",
+    "PASS applies only to the named, executed checks for published C units; the AI capstone also has independent stage-level QA.",
     "Compiler reference output does not verify every possible input or student solution.",
     "Instructor evaluation M1–M3 remains pending."
   ]
