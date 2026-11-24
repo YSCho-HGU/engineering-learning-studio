@@ -115,6 +115,13 @@ try{
    check((await page.locator("#dtmf-peaks").innerText()).includes("Hz"),"dtmf: no two frequency peaks");
    const digit=await page.evaluate(()=>window.SSDTMF.result?.decoded);
    check(typeof digit==="string"&&digit.length===1,"dtmf: no valid decoded key");
+   const pair=await page.evaluate(()=>{
+    const api=window.SSDTMF;return api.tones(api.result.decoded);
+   });
+   await page.locator("#dtmf-evidence-low").selectOption(String(pair.low));
+   await page.locator("#dtmf-evidence-high").selectOption(String(pair.high));
+   await page.locator("#dtmf-evidence-check").click();
+   check(await page.locator("#dtmf-evidence-feedback").getAttribute("data-result")==="correct","dtmf: FFT peak pair rejected");
    await page.locator('#dtmf-keypad [data-digit="'+digit+'"]').click();
    await page.locator("#dtmf-check").click();
    check((await page.locator("#dtmf-feedback").getAttribute("data-result"))==="correct","dtmf: correct key rejected");
@@ -127,7 +134,16 @@ try{
    await page.locator("#finger-fft-length").selectOption("4096");
    await svgNonblank(page,"finger-spectrum");
    await page.locator("#finger-guess").selectOption("piano");await page.locator("#finger-guess-check").click();
-   check(await page.locator("#finger-reveal-btn").isEnabled(),"sound: prediction not recorded");
+   check(await page.locator("#finger-reveal-btn").isDisabled(),"sound: reveal must require evidence");
+   const harmonic=await page.evaluate(()=>{
+    const api=window.SSSoundFingerprint;
+    const f0=Number(document.querySelector("#finger-note").value);
+    const samples=api.synth(api.state.source,{f0});
+    return api.analyze(samples,{N:Number(document.querySelector("#finger-fft-length").value),f0,window:document.querySelector("#finger-window").value}).dominant.h;
+   });
+   await page.locator("#finger-evidence-choice").selectOption(harmonic===1?"h1":harmonic<=3?"h23":"h4");
+   await page.locator("#finger-evidence-check").click();
+   check(await page.locator("#finger-reveal-btn").isEnabled(),"sound: valid harmonic FFT evidence rejected");
    await page.locator("#finger-reveal-btn").click();
    check(await page.locator("#finger-reveal-content").isVisible(),"sound: FFT fingerprint reveal did not work");
    check((await page.locator("#finger-compare").innerText()).length>35,"sound: comparison empty");
