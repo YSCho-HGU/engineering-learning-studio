@@ -4,6 +4,21 @@
 (function(){
 'use strict';
 const KEY='ss-sidebar-collapsed-v1';
+const MOBILE_QUERY=window.matchMedia('(max-width:600px)');
+let mobileOpen=false;
+function mobileNav(){return findSidebar()?.querySelector('nav:has(> button)')}
+function activeLesson(){const nav=mobileNav();const b=nav?.querySelector('[aria-current="page"],[aria-current="true"],.active,.on')||nav?.querySelector('button');return b?.querySelector('.nav-name,.tabname,.ss7-lab-title,.ss8-lab-label')?.textContent.trim()||b?.textContent.trim()||''}
+function syncMobile(){
+ const side=findSidebar(),btn=side?.querySelector('.ss-mobile-index-toggle');
+ if(!side||!btn)return;
+ const enabled=MOBILE_QUERY.matches&&root.dataset.ssSidebar!=='collapsed';
+ root.dataset.ssMobileIndex=enabled&&mobileOpen?'open':'closed';
+ btn.hidden=!enabled;btn.setAttribute('aria-expanded',String(enabled&&mobileOpen));
+ const mode=window.ELSLanguage?.get?.()||'mixed';
+ btn.textContent=mobileOpen?(mode==='en'?'Hide list':mode==='ko'?'목차 닫기':'Hide · 닫기'):(mode==='en'?'Show lessons':mode==='ko'?'목차 보기':'Lessons · 목차');
+ const current=side.querySelector('.ss-mobile-current-lesson');
+ if(current){current.hidden=!enabled||mobileOpen;current.textContent=activeLesson();current.title=current.textContent;}
+}
 const root=document.documentElement;
 function saved(){try{return localStorage.getItem(KEY)==='1'}catch{return false}}
 function persist(v){try{localStorage.setItem(KEY,v?'1':'0')}catch{}}
@@ -26,6 +41,7 @@ function sync(){
    else child.style.removeProperty('display');
   }
   if(collapsed)side.scrollTop=0;
+  syncMobile();
  }
  // An independent, body-level restore control cannot be hidden or clipped
  // by any chapter's sidebar/lesson CSS while the rail is collapsed.
@@ -75,6 +91,15 @@ function setup(){
   button.innerHTML='<span class="ss-toggle-icon" aria-hidden="true">≪</span>';
   row.prepend(button);
  }
+ let mobileButton=row.querySelector('.ss-mobile-index-toggle');
+ if(!mobileButton){
+  mobileButton=document.createElement('button');mobileButton.type='button';mobileButton.className='ss-mobile-index-toggle';
+  mobileButton.setAttribute('aria-controls','ss-mobile-lessons');row.append(mobileButton);
+ }
+ const nav=mobileNav();if(nav&&!nav.id)nav.id='ss-mobile-lessons';
+ else if(nav)mobileButton.setAttribute('aria-controls',nav.id);
+ let current=row.querySelector('.ss-mobile-current-lesson');
+ if(!current){current=document.createElement('span');current.className='ss-mobile-current-lesson';row.insertBefore(current,mobileButton)}
  const eyebrow=brand.querySelector(':scope > .over,:scope > .eyebrow');
  if(eyebrow && eyebrow.parentElement!==row){
   eyebrow.classList.add('ss-sidebar-chapter-label');
@@ -85,9 +110,14 @@ function setup(){
  sync();
 }
 document.addEventListener('click',event=>{
+ const mobile=event.target.closest?.('.ss-mobile-index-toggle');
+ if(mobile){mobileOpen=!mobileOpen;syncMobile();redraw();return;}
+ const choice=event.target.closest?.('.ss-layout-sidebar nav>button');
+ if(choice&&MOBILE_QUERY.matches&&mobileOpen){mobileOpen=false;requestAnimationFrame(syncMobile);}
  const button=event.target.closest?.('.ss-side-toggle');
  if(!button||(!button.closest('.ss-layout-sidebar') && button.id!=='ss-sidebar-restore'))return;
  const collapsed=root.dataset.ssSidebar!=='collapsed';
+ if(collapsed)mobileOpen=false;
  root.dataset.ssSidebar=collapsed?'collapsed':'expanded';
  persist(collapsed);
  sync();
@@ -99,6 +129,11 @@ function init(){
  setup();
  const app=document.getElementById('app');
  if(app)new MutationObserver(setup).observe(app,{childList:true});
+ const side=findSidebar(),nav=mobileNav();
+ if(nav)new MutationObserver(()=>requestAnimationFrame(syncMobile)).observe(nav,{subtree:true,childList:true,attributes:true,attributeFilter:['class','aria-current']});
+ if(side)new MutationObserver(()=>requestAnimationFrame(syncMobile)).observe(side,{childList:true});
+ MOBILE_QUERY.addEventListener?.('change',()=>{mobileOpen=false;syncMobile()});
+ window.ELSLanguage?.subscribe?.(syncMobile);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 window.addEventListener('storage',e=>{
