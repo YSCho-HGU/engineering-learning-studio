@@ -142,6 +142,10 @@ try{
      check(expanded.mobileIndex.ariaExpanded==="true","Ch"+chapter+" picker aria-expanded is not true");
      await picker.click();
      await page.waitForFunction(()=>document.documentElement.dataset.ssMobileIndex==="closed");
+     await picker.click();
+     await page.locator(NAV[chapter]).nth(1).evaluate(el=>el.click());
+     await page.waitForFunction(()=>document.documentElement.dataset.ssMobileIndex==="closed");
+     check(await picker.getAttribute("aria-expanded")==="false","Ch"+chapter+" picker did not close after choosing lesson");
     }
     const count=await nav.count();
     check(count>=4&&count<35,"Ch"+chapter+" invalid count "+count);
