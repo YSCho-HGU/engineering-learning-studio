@@ -3,7 +3,7 @@
 "use strict";
 const core=window.SSSystemCompareCore,lang=window.ELSLanguage,$=id=>document.getElementById(id);
 if(!core)return;
-const defaults={shape:"sensor",fs:50,noise:.3,M:9,tau:.09,match:true,inspectT:2.4};
+const defaults={shape:"sensor",fs:50,noise:.3,M:9,tau:.09,match:true,inspectT:2.4,scope:"near",probeF:2.47};
 const state={...defaults};let scheduled=0;
 const tr=(en,ko,compact=false)=>{const m=lang?.get?.()||"mixed";return m==="en"?en:m==="ko"?ko:compact?en+" · "+ko:en+"\n"+ko;};
 const tx=(id,en,ko,short=false)=>{$(id).textContent=tr(en,ko,short);};
@@ -46,7 +46,12 @@ function plot(id,lines,opt={}){
  lines.forEach(line=>{
   c.strokeStyle=line.color;c.lineWidth=line.width||2.3;c.setLineDash(line.dash||[]);
   c.beginPath();let began=false;
-  for(const [x,y]of line.points){if(!Number.isFinite(x)||!Number.isFinite(y))continue;if(!began){c.moveTo(X(x),Y(y));began=true;}else c.lineTo(X(x),Y(y));}
+  let lastY=null;
+  for(const [x,y]of line.points){
+   if(!Number.isFinite(x)||!Number.isFinite(y)){began=false;lastY=null;continue;}
+   if(!began||(line.breakJump&&lastY!==null&&Math.abs(y-lastY)>line.breakJump)){c.moveTo(X(x),Y(y));began=true;}else c.lineTo(X(x),Y(y));
+   lastY=y;
+  }
   c.stroke();c.setLineDash([]);
  });
  if(Number.isFinite(opt.marker)){c.setLineDash([4,5]);c.strokeStyle=p.accent;c.lineWidth=1.5;c.beginPath();c.moveTo(X(opt.marker),T);c.lineTo(X(opt.marker),T+H);c.stroke();c.setLineDash([]);}
@@ -60,6 +65,8 @@ function localize(){
  tx("cmp-tab-ma","02 · Moving Average","02 · 이동평균",true);
  tx("cmp-tab-compare","03 · Filter Comparison","03 · 필터 비교",true);
  tx("cmp-control-title","One signal · two filters","하나의 신호 · 두 필터",true);
+ tx("cmp-input-group","01 · Input and sampling","01 · 입력 및 표본화",true);
+ tx("cmp-filter-group","02 · Filter settings","02 · 필터 설정",true);
  tx("cmp-control-intro","All outputs update using the same x[n].","모든 출력은 동일한 x[n]으로 갱신됩니다.");
  tx("cmp-label-signal","Input pattern","입력 신호",true);
  tx("cmp-label-fs","Sampling rate fs","샘플링 주파수 fs",true);
@@ -69,6 +76,15 @@ function localize(){
  tx("cmp-label-tau","RC time constant τ","RC 시정수 τ",true);
  tx("cmp-reset","Reset","초기화",true);
  tx("cmp-task-title","Try this","직접 실험하기",true);
+ tx("cmp-time-section-title","Observe · What changes in time?","관찰 · 시간영역에서 무엇이 달라지나요?",true);
+ tx("cmp-time-section-desc","The same input reaches both filters. Compare smoothing and response to sudden changes.","같은 입력을 통과시켜 평활화와 갑작스러운 변화에 대한 반응을 관찰합니다.");
+ tx("cmp-frequency-section-title","Explain · Frequency, phase and delay","이해 · 주파수, 위상과 지연",true);
+ tx("cmp-frequency-section-desc","Follow the magnitude response, then see how phase slope creates group delay.","크기 응답을 먼저 살펴본 뒤 위상의 기울기가 그룹 지연과 연결되는 과정을 확인합니다.");
+ tx("cmp-scope-label","Frequency range","주파수 범위",true);
+ tx("cmp-freq-probe-label","Inspect frequency","관찰 주파수",true);
+ const opts=$("cmp-scope").options;
+ opts[0].textContent=tr("Near cutoff","차단주파수 근처",true);
+ opts[1].textContent=tr("Full band","전체 주파수 대역",true);
  tx("cmp-task-body",
  "Enable cutoff matching, then change M from 5 to 25. Compare noise suppression and low-frequency group delay. Next disable matching and adjust τ directly; finally change fs to observe what physical time each M means.",
  "차단주파수를 맞춘 뒤 M을 5에서 25로 조절하면서 잡음 억제와 저주파 군지연을 비교하세요. 일치 기능을 끄고 τ를 조절한 다음, fs 변경에 따라 M이 나타내는 물리적 시간이 달라짐을 관찰하세요.");
@@ -80,6 +96,62 @@ function localize(){
 function insight(en,ko){
  tx("cmp-insight-title","What do you notice?","무엇을 관찰했나요?",true);
  tx("cmp-insight-body",en,ko);
+}
+/* Frequency probe shares the same x position across magnitude, phase and group-delay plots. */
+function renderFrequencyPanel(m,p){
+ const {fs,M,alpha,cutoffRC,cutoffMA,spectrum}=m;
+ const full=state.scope==="full";
+ const reference=Math.max(cutoffMA||0,cutoffRC||0,fs/100);
+ const maxF=full?fs/2:Math.min(fs/2,Math.max(.1,1.8*reference));
+ state.probeF=clamp(state.probeF,0,maxF);
+ const slider=$("cmp-freq-probe");
+ slider.max=String(maxF);slider.step=String(Math.max(.001,maxF/1000));
+ slider.value=String(state.probeF);
+ $("cmp-scope").value=state.scope;
+ $("cmp-freq-probe-value").textContent=fmt(state.probeF,2)+" Hz";
+ const current=core.responsePoint(alpha,M,fs,state.probeF);
+ const visible=spectrum.filter(v=>v.f<=maxF+1e-9);
+ const point=(key)=>visible.map(v=>[v.f,key(v)]);
+ const common={xmin:0,xmax:maxF,xlabel:"f (Hz)",marker:state.probeF};
+ const lines=(key,extra={})=>[
+  {color:p.rc,width:2.5,points:point(q=>q[key==="mag"?"rcMag":key==="phase"?"rcPhase":"rcDelay"]*(key==="delay"?1000:1)),...extra},
+  {color:p.ma,width:2.5,points:point(q=>q[key==="mag"?"maMag":key==="phase"?"maPhase":"maDelay"]==null?null:q[key==="mag"?"maMag":key==="phase"?"maPhase":"maDelay"]*(key==="delay"?1000:1)),...extra}
+ ];
+ tx("cmp-title-frequency","Magnitude response |H|","크기 응답 |H|",true);
+ tx("cmp-title-phase","Phase response ∠H","위상 응답 ∠H",true);
+ tx("cmp-title-delay","Group delay τg(f)","그룹 지연 τg(f)",true);
+ legend("cmp-legend-frequency",[["RC low-pass","RC 저역통과",p.rc],["Moving average","이동평균",p.ma]]);
+ legend("cmp-legend-phase",[["RC","RC",p.rc],["MA","MA",p.ma]]);
+ legend("cmp-legend-delay",[["RC","RC",p.rc],["MA","MA",p.ma]]);
+ plot("cmp-frequency",lines("mag"),{...common,ymin:0,ymax:1.08,threshold:1/Math.sqrt(2)});
+ plot("cmp-phase",lines("phase",{breakJump:150}),{...common,ymin:-185,ymax:185,xlabel:"f (Hz)"});
+ const delays=visible.flatMap(v=>[v.rcDelay,v.maDelay]).filter(Number.isFinite).map(x=>x*1000);
+ const upper=Math.max(1,...delays),lower=Math.min(0,...delays);
+ const ymax=Math.max(10,Math.ceil(upper*1.13/10)*10),ymin=lower<0?Math.floor(lower*1.2/10)*10:0;
+ plot("cmp-delay",lines("delay"),{...common,ymin,ymax,xlabel:"f (Hz)"});
+ tx("cmp-frequency-note",
+  "Dashed line: −3 dB amplitude. Move the frequency slider to compare both filters at one frequency.",
+  "점선은 −3 dB 크기입니다. 주파수 슬라이더로 같은 주파수에서 두 필터를 비교하세요.");
+ tx("cmp-phase-note",
+  "Wrapped phase in degrees (−180° to 180°). Phase is undefined at MA spectral nulls; breaks are intentional.",
+  "위상은 −180°~180°로 표시합니다. 이동평균 스펙트럼의 영점에서는 위상이 정의되지 않으므로 선이 끊깁니다.");
+ tx("cmp-delay-note",
+  "Group delay = −d∠H/dω. MA delay is constant between spectral nulls; RC delay depends on frequency. RC delay can be negative near Nyquist.",
+  "그룹 지연 = −d∠H/dω입니다. 이동평균은 영점 사이에서 일정하고 RC는 주파수에 따라 변합니다. RC는 나이퀴스트 부근에서 음의 지연을 보일 수 있습니다.");
+ const chips=$("cmp-frequency-readouts");chips.replaceChildren();
+ const phase=x=>x===null?tr("undefined","정의되지 않음",true):fmt(x,1)+"°";
+ const delay=x=>x===null?tr("undefined","정의되지 않음",true):fmt(x*1000,1)+" ms";
+ const values=[
+  [tr("Selected f","선택 주파수",true),fmt(state.probeF,2)+" Hz",""],
+  ["RC · ∠H",phase(current.rcPhase),"rc"],
+  ["MA · ∠H",phase(current.maPhase),"ma"],
+  [tr("RC group delay","RC 그룹 지연",true),delay(current.rcDelay),"rc"],
+  [tr("MA group delay","MA 그룹 지연",true),delay(current.maDelay),"ma"]
+ ];
+ for(const [name,value,role] of values){
+  const box=document.createElement("div");box.className="cmp-frequency-value"+(role?" cmp-frequency-value-"+role:"");
+  const a=document.createElement("span"),b=document.createElement("strong");a.textContent=name;b.textContent=value;box.append(a,b);chips.append(box);
+ }
 }
 function draw(m){
  const p=palette(),{items,fs,M,alpha,cutoffRC,cutoffMA,groupDelayRC,groupDelayMA,sigmaRC,sigmaMA}=m;
@@ -116,17 +188,13 @@ function draw(m){
   {color:p.rc,width:2.6,points:items.map(v=>[v.t,v.rc])},
   {color:p.ma,width:2.6,points:items.map(v=>[v.t,v.ma])}
  ],{xmin:0,xmax:4,ymin,ymax,xlabel:"t (s)",marker:selected.t});
- plot("cmp-frequency",[
-  {color:p.rc,width:2.5,points:m.magnitude.map(v=>[v.f,v.rc])},
-  {color:p.ma,width:2.5,points:m.magnitude.map(v=>[v.f,v.ma])}
- ],{xmin:0,xmax:fs/2,ymin:0,ymax:1.05,xlabel:"f (Hz)",threshold:1/Math.sqrt(2)});
+ renderFrequencyPanel(m,p);
  plot("cmp-step",[
   {color:p.clean,dash:[5,4],width:1.4,points:m.step.map(v=>[v.t,v.x])},
   {color:p.rc,width:2.5,points:m.step.map(v=>[v.t,v.rc])},
   {color:p.ma,width:2.5,points:m.step.map(v=>[v.t,v.ma])}
  ],{xmin:.6,xmax:Math.min(4,Math.max(2.4,1+5*m.tau)),ymin:-.05,ymax:1.08,xlabel:"t (s)",threshold:.5});
  tx("cmp-time-note","Click the graph to inspect the two outputs at the same time.","그래프를 클릭하여 동일한 순간의 두 출력을 비교하세요.");
- tx("cmp-frequency-note","Dashed horizontal line: −3 dB (1/√2). Frequency range: 0 to Nyquist fs/2.","수평 점선은 −3 dB (1/√2), 주파수 구간은 0부터 나이퀴스트 fs/2까지입니다.");
  tx("cmp-step-note","Step at t=1 s. A 50% crossing time is different from low-frequency group delay.","계단 입력은 t=1초에서 발생합니다. 50% 도달시간과 저주파 군지연은 다른 개념입니다.");
  const probe=$("cmp-probe");probe.replaceChildren();
  [["n="+selected.n+" · t="+fmt(selected.t,2)+" s",""],["x[n]="+fmt(selected.x,3),""],["RC="+fmt(selected.rc,3),"cmp-probe-rc"],["MA="+fmt(selected.ma,3),"cmp-probe-ma"]].forEach(([value,klass])=>{const span=document.createElement("span");span.className=klass;span.textContent=value;probe.append(span);});
@@ -152,11 +220,14 @@ $("cmp-noise").addEventListener("input",e=>{state.noise=Number(e.target.value);r
 $("cmp-M").addEventListener("input",e=>{state.M=Number(e.target.value);if(state.M===1)state.match=false;redraw();});
 $("cmp-match").addEventListener("change",e=>{state.match=e.target.checked;redraw();});
 $("cmp-tau").addEventListener("input",e=>{state.tau=Number(e.target.value);redraw();});
+$("cmp-scope").addEventListener("change",e=>{state.scope=e.target.value;redraw();});
+$("cmp-freq-probe").addEventListener("input",e=>{state.probeF=Number(e.target.value);redraw();});
 $("cmp-reset").addEventListener("click",()=>{
  Object.assign(state,defaults);
  $("cmp-signal").value=state.shape;$("cmp-fs").value=String(state.fs);
  $("cmp-noise").value=state.noise;$("cmp-M").value=state.M;
- $("cmp-match").checked=true;$("cmp-tau").value=state.tau;redraw();
+ $("cmp-match").checked=true;$("cmp-tau").value=state.tau;
+ $("cmp-scope").value=state.scope;$("cmp-freq-probe").value=state.probeF;redraw();
 });
 const canvas=$("cmp-time");
 canvas.addEventListener("click",e=>{
