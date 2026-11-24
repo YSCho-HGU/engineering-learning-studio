@@ -1,0 +1,57 @@
+name: Applications inquiry-first six-lab QA
+on:
+  push:
+    paths:
+      - 'signals-systems/applications-lab.html'
+      - 'signals-systems/applications-dft-fft.html'
+      - 'signals-systems/applications-fft-dtmf.html'
+      - 'signals-systems/applications-fft-sound-fingerprint.html'
+      - 'signals-systems/assets/ss-app-inquiry.*'
+      - 'signals-systems/assets/ss-app-labs.js'
+      - 'signals-systems/assets/ss-app-extra-labs.js'
+      - 'signals-systems/assets/ss-app-dft-fft-simple.js'
+      - 'signals-systems/assets/ss-dtmf-decoder.js'
+      - 'signals-systems/assets/ss-sound-fingerprint.js'
+      - 'tests/ss-apps-inquiry-browser.mjs'
+      - '.github/workflows/ss-inquiry-first-six-labs.yml'
+  workflow_dispatch:
+concurrency:
+  group: ss-inquiry-six
+  cancel-in-progress: true
+jobs:
+  inquiry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check six-lab learning logic syntax
+        run: |
+          node --check signals-systems/assets/ss-app-inquiry.js
+          node --check signals-systems/assets/ss-app-labs.js
+          node --check signals-systems/assets/ss-app-extra-labs.js
+          node --check signals-systems/assets/ss-app-dft-fft-simple.js
+          node --check signals-systems/assets/ss-dtmf-decoder.js
+          node --check signals-systems/assets/ss-sound-fingerprint.js
+          node --check tests/ss-apps-inquiry-browser.mjs
+          node tests/fft-butterfly-invariants.mjs
+      - name: Install headless Chromium
+        run: |
+          npm install --no-save @playwright/test
+          npx playwright install chromium
+      - name: Serve the studio locally
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/ss-inquiry-http.log 2>&1 &
+          sleep 2
+      - name: Run six student learning journeys in desktop and mobile
+        run: node tests/ss-apps-inquiry-browser.mjs
+      - name: Upload visual regression snapshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: six-inquiry-labs-screenshots
+          path: tests/screenshots/inquiry-*
+          retention-days: 14
+          if-no-files-found: ignore
