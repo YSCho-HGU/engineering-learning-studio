@@ -35,6 +35,28 @@ for(const M of [1,3,7,21,31]){
  assert.ok(Math.abs(expected-window.total)<1e-12,"causal convolution");
  assert.equal(window.terms.length,M);
 }
+// Kirchhoff's relation and the selected output node are exact for both topologies.
+for(const type of ["low","high"]){
+ for(const shape of ["sine","square","step","sensor"]){
+  const d=c.rcSimulate({Rk:14,Cmicro:7,frequency:5,type,shape,noise:.5});
+  for(const point of [d.series[0],d.series[330],d.series[1200]]){
+   const vr=type==="low"?point.x-point.y:point.y;
+   const vc=type==="low"?point.y:point.x-point.y;
+   assert.ok(Math.abs(point.x-vr-vc)<1e-10,"RC circuit KVL");
+   assert.ok(Math.abs(point.y-(type==="low"?vc:vr))<1e-10,"RC output measured on shunt element");
+  }
+ }
+}
+// Early causal FIR samples require zero padding and a complete M-tap sum.
+for(const M of [1,7,21,31]){
+ const d=c.averageSimulate({M,shape:"step",noise:.5});
+ for(const n of [0,2,65,127]){
+  const w=c.averageWindow(d.series,M,n);
+  assert.equal(w.terms.filter(t=>t.padded).length,Math.max(0,M-1-n));
+  assert.ok(Math.abs(w.total-d.series[n].y)<1e-10,"FIR weighted term sum matches y[n]");
+ }
+}
+
 const hub=read("assets/ss-applications-hub.js"),page=read("applications-system-lab.html"),ui=read("assets/ss-app-system-labs.js");
 assert.match(hub,/renderSystemsModules/);
 assert.match(hub,/applications-system-lab\.html\?lab=/);
@@ -42,4 +64,9 @@ assert.match(page,/ss-common-header/);assert.match(page,/data-els-theme-picker/)
 assert.match(page,/ss-app-system-labs\.js/);assert.match(page,/ss-system-lab-core\.js/);
 assert.match(ui,/ss-sys-canvas-1/);assert.match(ui,/ss-sys-canvas-3/);
 assert.match(ui,/lang\?\.subscribe/);assert.match(ui,/els:themechange/);
-console.log("Part B system labs: RC cutoff/phase/step, moving-average FIR/convolution and UI contracts PASS");
+const explorer=read("assets/ss-app-system-explorers.js");
+assert.match(page,/ss-sys-rc-explorer/);assert.match(page,/ss-sys-ma-explorer/);
+assert.match(page,/ss-app-system-explorers\.js/);
+assert.match(explorer,/toggleAttribute\("hidden"/);
+assert.match(explorer,/ArrowRight/);assert.match(explorer,/renderWalkthrough/);
+console.log("Part B PASS: RC cutoff, voltage law/topology, FIR convolution/zero padding, interactive explorer contracts");
