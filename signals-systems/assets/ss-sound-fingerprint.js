@@ -271,10 +271,10 @@ function localize(){
 function init(){
  W.ELSLanguage?.bindSelect?.("#finger-language");
  for(let i=0;i<3;i++){
-  $("finger-play-"+LETTERS[i].toLowerCase()).addEventListener("click",()=>{selected=i;render();play(reverse())});
+  $("finger-play-"+LETTERS[i].toLowerCase()).addEventListener("click",()=>{selected=i;if(!revealed){evidenceVerified=false;$("finger-reveal-btn").disabled=true;$("finger-evidence-feedback").textContent="";delete $("finger-evidence-feedback").dataset.result;}render();play(reverse())});
  }
  for(const id of ["finger-note","finger-fft-length","finger-window","finger-position"])$(id).addEventListener("input",()=>{
-  if(!revealed){evidenceVerified=false;$("finger-reveal-btn").disabled=true;}
+  if(!revealed){evidenceVerified=false;$("finger-reveal-btn").disabled=true;$("finger-evidence-feedback").textContent="";delete $("finger-evidence-feedback").dataset.result;}
   render();
  });
  $("finger-evidence-check").addEventListener("click",checkEvidence);
