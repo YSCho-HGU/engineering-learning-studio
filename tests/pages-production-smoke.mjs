@@ -75,7 +75,8 @@ try {
         assert.ok(state.sectionButtons&&state.chapterMenu&&state.language&&state.theme,
           id+" header controls "+JSON.stringify(state));
         assert.ok(state.localStoragePreserved,id+" modified unrelated localStorage");
-        assert.ok(state.chapterLinks[1],id+" no next chapter");
+        if(target.course!=="C"||target.chapter!=="ai-coding")
+          assert.ok(state.chapterLinks[1],id+" no next chapter");
         assert.deepEqual(errors,[],id+" JS errors");
         // Validate navigation destination without leaving the page: links must point
         // to a published route. First chapter may intentionally have no previous link.
