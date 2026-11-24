@@ -32,14 +32,17 @@ function init(){
  if(!wrap||!layout||!aside||!oldHeader)return;
  const header=el("header","ss-common-header c-ss-header els-course-header");
  header.setAttribute("aria-label","Engineering Learning Studio navigation");
- header.append(link("← Studio",nested?"../../../":"../../"));
+ const left=el("div","els-header-left");
+ const home=link("← Studio",nested?"../../../":"../../");
+ home.classList.add("ss-common-home");
+ left.append(home);
  const menu=el("details","ss-common-menu c-ss-menu"),summary=el("summary","ss-common-title");
  if(course[0]==="ai-coding"){summary.append(el("span","c211-header-prefix","C Programming · "),el("span","c211-header-title","Chapter "+course[1]+" · "+course[2]+" ⌄"))}else summary.textContent="C Programming · Chapter "+course[1]+" · "+course[2]+" ⌄";
  summary.setAttribute("aria-label","Choose C Programming chapter");
  const links=el("nav","ss-common-links");
  links.append(link("C Programming · Course Home",parentPrefix));
  chapters.forEach((entry,i)=>{let a=link("Chapter "+entry[1]+" · "+entry[2],parentPrefix+entry[0]+"/");if(i===current)a.setAttribute("aria-current","page");links.append(a)});
- menu.append(summary,links);header.append(menu);
+ menu.append(summary,links);left.append(menu);header.append(left);
  const arrows=el("nav","ss-four-navigation c-four-navigation els-course-header-navigation");
  arrows.setAttribute("aria-label","Chapter and section navigation");
  function arrow(symbol,title,chapterDelta,sectionDelta){
