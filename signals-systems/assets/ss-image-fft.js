@@ -377,6 +377,7 @@ function render(m){
   "고역통과 결과에서 0은 중간 회색으로 표시합니다.":
   "IFFT2는 크기와 위상을 포함한 복소 스펙트럼 전체로 복원합니다.");
  showMetrics(m);liveObservation(m);
+ W.dispatchEvent(new CustomEvent("ss:image-fft-render",{detail:{model:m}}));
 }
 function chooseStage(stage){
  stopScan();noiseHint=false;state.stage=clamp(Number(stage),1,4);
@@ -393,6 +394,9 @@ function check(){
  if(!interactions){feedback(tr("Explore at least one variable or FFT peak first.","변수나 FFT 피크를 먼저 조작하세요."),"retry");return;}
  if(state.stage===3&&(state.filter!=="kernel"||scan.progress<3)){
   feedback(tr("First calculate at least 3 neighboring pixels in the spatial scan, then compare the matching FFT values.","먼저 공간 커널을 최소 3개 픽셀에 이동하여 계산하고 해당 FFT 결과와 비교하세요."),"retry");return;
+ }
+ if(state.stage===3&&!W.SSImageFFTPipeline?.completed){
+  feedback(tr("Explore all four FFT steps: row, column, complex multiplication and inverse reconstruction.","행 FFT, 열 FFT, 복소 곱셈, 역변환의 네 단계를 모두 관찰한 후 설명하세요."),"retry");return;
  }
  if(state.stage===4&&state.filter!=="notch"){feedback(tr("Select a bright FFT peak and apply its mirrored notch.","밝은 피크를 선택해 대칭 Notch를 적용하세요."),"retry");return;}
  const correct=answer==="a";
