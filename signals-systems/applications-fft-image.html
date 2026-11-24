@@ -9,9 +9,9 @@
 <link rel="stylesheet" href="./assets/ss-common-header.css?v=20261122-four-controls">
 <link rel="stylesheet" href="../assets/els-header-controls.css?v=1">
 <link rel="stylesheet" href="./assets/ss-applications-math.css?v=3">
-<link rel="stylesheet" href="./assets/ss-app-fft-path.css?v=20261124-inquiry3">
-<link rel="stylesheet" href="./assets/ss-app-fft-visual-standard.css?v=20261124-inquiry3">
-<link rel="stylesheet" href="./assets/ss-image-fft.css?v=20261124-inquiry3">
+<link rel="stylesheet" href="./assets/ss-app-fft-path.css?v=20261124-inquiry4">
+<link rel="stylesheet" href="./assets/ss-app-fft-visual-standard.css?v=20261124-inquiry4">
+<link rel="stylesheet" href="./assets/ss-image-fft.css?v=20261124-inquiry4">
 <link rel="stylesheet" href="./assets/ss-responsive-unified.css?v=1">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css">
 </head>
@@ -144,7 +144,7 @@
       <article class="ss-image-bridge-method">
         <h3 id="image-spatial-heading">A · Spatial convolution</h3>
         <p id="image-spatial-help">Compute one output pixel at a time from the 3×3 neighborhood.</p>
-        <canvas id="image-scan-source" class="ss-image-scan-preview" width="256" height="256" role="img" aria-label="Input image with animated sliding kernel window"></canvas>
+        <canvas id="image-scan-source" class="ss-image-scan-preview" width="256" height="256" tabindex="0" role="button" aria-label="Choose scanning region by clicking input image or using arrow keys"></canvas>
         <div class="ss-image-kernel-grid">
          <div><strong id="image-kernel-patch-label">3×3 input pixels</strong><div id="image-kernel-pixels" class="ss-image-kernel-matrix" aria-label="3 by 3 input intensities"></div></div>
          <div><strong id="image-kernel-weight-label">3×3 weights</strong><div id="image-kernel-weights" class="ss-image-kernel-matrix" aria-label="3 by 3 kernel weights"></div></div>
@@ -166,7 +166,7 @@
       </article>
     </div>
     <div class="ss-image-kernel-conclusion">
-      <p id="image-kernel-evidence" class="ss-image-kernel-evidence" role="status" aria-live="polite"></p>
+      <p id="image-kernel-evidence" class="ss-image-kernel-evidence" aria-live="off"></p>
       <p id="image-kernel-link">The two methods agree when the boundary rule is the same. For a tiny 3×3 kernel, direct spatial filtering may actually be faster than FFT.</p>
     </div>
    </section>
@@ -226,7 +226,7 @@
 <script src="./assets/ss-common-header.js?v=applications2" defer></script>
 <script src="../assets/els-header-controls.js?v=1" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js" defer></script>
-<script src="./assets/ss-app-fft-path.js?v=20261124-inquiry3" defer></script>
-<script src="./assets/ss-image-fft-core.js?v=20261124-inquiry3" defer></script>
-<script src="./assets/ss-image-fft.js?v=20261124-inquiry3" defer></script>
+<script src="./assets/ss-app-fft-path.js?v=20261124-inquiry4" defer></script>
+<script src="./assets/ss-image-fft-core.js?v=20261124-inquiry4" defer></script>
+<script src="./assets/ss-image-fft.js?v=20261124-inquiry4" defer></script>
 </body></html>
