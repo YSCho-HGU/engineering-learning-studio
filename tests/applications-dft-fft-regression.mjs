@@ -28,6 +28,11 @@ try{
  const errorText=await page.locator("#same-error").innerText();
  assert.ok(Number(errorText)<1e-7,"FFT and direct DFT differ: "+errorText);
  assert.ok((await page.locator("#same-peak").innerText()).includes("Hz"));
+ await page.locator("#dft-evidence-choice").selectOption("labels");
+ const oldFS=Number(await page.locator("#same-fs").inputValue());
+ await page.locator("#dft-evidence-test").click();
+ assert.equal(Number(await page.locator("#same-fs").inputValue()),2*oldFS,"DFT fs comparison did not double fs");
+ assert.equal(await page.locator("#dft-evidence-feedback").getAttribute("data-result"),"correct","DFT identity hypothesis was not verified");
  await page.locator("#same-signal").selectOption("two");
  await page.locator("#same-n").selectOption("128");
  await page.locator("#same-fs").fill("2048");
@@ -54,6 +59,10 @@ try{
  await page.locator('[data-stage="3"]').click();
  assert.ok(await page.locator("#butterfly-proof").isVisible(),"Final FFT/DFT proof should appear at stage 3");
  assert.equal(await page.locator("#butterfly-proof-rows tr").count(),8);
+ await page.locator("#dft-transfer-choice").selectOption("flat");
+ await page.locator("#dft-transfer-test").click();
+ assert.equal(await page.locator("#dft-transfer-feedback").getAttribute("data-result"),"correct","Impulse transfer hypothesis failed");
+ assert.ok((await page.locator("#butterfly-proof-rows tr").first().textContent()).includes("1.000"),"Impulse FFT coefficient missing");
  const proof=(await page.locator("#butterfly-proof-error").innerText()).match(/([\d.]+e[+-]?\d+)/i);
  assert.ok(proof&&Number(proof[1])<1e-9,"Numerical verification failed");
  await page.locator("#butterfly-preset").selectOption("impulse");
@@ -75,6 +84,9 @@ try{
  await page.locator("#speed-run").click();
  assert.ok((await page.locator("#speed-fft").innerText()).includes("ms"));
  assert.ok((await page.locator("#speed-ratio").innerText()).includes("×"));
+ await page.locator("#dft-speed-choice").selectOption("four");
+ await page.locator("#dft-speed-check").click();
+ assert.equal(await page.locator("#dft-speed-feedback").getAttribute("data-result"),"correct","DFT O(N²) growth prediction not checked");
  assert.equal(await page.locator("#dft-speed-plot path").count(),2,"Expected DFT and FFT cost curves");
  assert.ok((await page.locator("#speed-discovery").innerText()).length>70);
  await page.screenshot({path:path.join(screenshots,"dft-fft-speed-desktop.png"),fullPage:true});
