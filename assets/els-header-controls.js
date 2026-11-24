@@ -40,7 +40,17 @@
    const actions=header.querySelector(".ss-common-actions,.header-nav");
    if(actions)actions.classList.add("els-course-header-actions");
    const navigation=header.querySelector(".ss-four-navigation");
-   if(navigation)navigation.classList.add("els-course-header-navigation");
+   if(navigation){
+     navigation.classList.add("els-course-header-navigation");
+     const arrows=[...navigation.querySelectorAll(".ss-chapter-arrow")];
+     arrows.forEach((arrow,index)=>{
+       if(arrow.querySelector("svg"))return;
+       const template=makeNavigationArrow({kind:arrow.classList.contains("ss-nav-chapter")?"chapter":"section",
+         direction:index<2?-1:1,label:arrow.getAttribute("aria-label")||arrow.title||"Navigation"});
+       arrow.replaceChildren(template.querySelector("svg"));
+       arrow.classList.add("els-header-arrow");
+     });
+   }
    const language=header.querySelector("#lang,#c-language,.ss-common-language-select,#ss-language-select");
    if(language){
      const wrapped=language.closest("label");
