@@ -63,7 +63,7 @@ try{
    check((await page.locator("#image-feedback").getAttribute("data-result"))==="correct","Stage 2 checkerboard reasoning");
    await capture("02-checkerboard");
    await page.locator('[data-stage="3"]').click();
-   await page.waitForFunction(()=>window.SSImageFFTApp.state.kind==="scene"&&window.SSImageFFTApp.result);
+   await page.waitForFunction(()=>window.SSImageFFTApp.result?.input?.kind==="scene" && Number.isFinite(window.SSImageFFTApp.result?.output?.maxDifference) && document.querySelectorAll("#image-kernel-pixels .ss-image-kernel-cell").length===9);
    check(await page.locator("#image-filter").inputValue()==="kernel","Stage 3 must begin with an actual spatial kernel");
    const inspector=page.locator("#image-kernel-panel");
    check(await inspector.isVisible(),"3x3 spatial kernel should be displayed");
