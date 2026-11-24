@@ -15,6 +15,10 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: qa-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ss-contrast-math:
     runs-on: ubuntu-24.04
