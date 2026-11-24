@@ -210,3 +210,7 @@ main.ss-image-root .ss-image-view h3{
  .ss-image-fft-stages{grid-template-columns:repeat(2,minmax(0,1fr))}
  .ss-image-fft-pipeline-head h3{font-size:15px}
 }
+
+.ss-image-fft-pipeline-equation{max-width:100%;overflow-x:auto;padding:10px;border:1px solid var(--els-border);background:var(--els-surface-alt);border-radius:7px;font-size:15px;color:var(--els-ink);text-align:center}
+.ss-image-fft-pipeline-equation .katex-display{margin:0}
+@media(max-width:560px){.ss-image-fft-pipeline-equation{font-size:13px}}
