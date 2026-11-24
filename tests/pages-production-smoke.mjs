@@ -104,6 +104,27 @@ try {
           if(section.sidebarChoices>=2){
             assert.equal(section.nextDisabled,false,
               id+" next section is disabled despite "+section.sidebarChoices+" available sections: "+JSON.stringify(section));
+            // Exercise the real next-section button and confirm sidebar selection changes.
+            const outcome=await page.evaluate(()=>{
+              const side=document.querySelector(".ss-layout-sidebar");
+              const toc=side?.querySelector("#lesson-nav,#ss7-lesson-nav,#tabs,nav.ss8-lab-nav,nav.tabs,nav.nav,nav#nav");
+              const getButtons=()=>[...toc?.querySelectorAll("button")||[]].filter(e=>!e.hidden&&!e.disabled);
+              const active=buttons=>buttons.findIndex(b=>b.matches('.active,.on,.selected,.current,[aria-current="step"],[aria-current="page"],[aria-current="true"]'));
+              const before=active(getButtons());
+              document.querySelector('.ss-four-navigation .ss-nav-section[aria-label="Next section"]').click();
+              return {before};
+            });
+            await page.waitForTimeout(200);
+            if(outcome.before>=0){
+              const after=await page.evaluate(()=>{
+                const side=document.querySelector(".ss-layout-sidebar");
+                const toc=side?.querySelector("#lesson-nav,#ss7-lesson-nav,#tabs,nav.ss8-lab-nav,nav.tabs,nav.nav,nav#nav");
+                const buttons=[...toc?.querySelectorAll("button")||[]].filter(e=>!e.hidden&&!e.disabled);
+                return buttons.findIndex(b=>b.matches('.active,.on,.selected,.current,[aria-current="step"],[aria-current="page"],[aria-current="true"]'));
+              });
+              assert.equal(after,outcome.before+1,
+                id+" next-section click did not advance sidebar selection ("+outcome.before+" -> "+after+")");
+            }
           }
         }
         results.push({id,status:"PASS",centerError:state.centerError,dimensions:state.dimensions});
