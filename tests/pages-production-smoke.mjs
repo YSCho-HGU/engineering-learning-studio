@@ -16,7 +16,7 @@ const targets = [
 const cssResponse=await fetch(root+"assets/els-course-header.css",{cache:"no-store"});
 assert.equal(cssResponse.status,200,"Published common header CSS was not found");
 const cssBody=await cssResponse.text();
-assert.ok(cssBody.includes("els-header-v5-20261124"),
+assert.ok(cssBody.includes("els-header-v6-inline-nav-20261124"),
   "The live Pages site is serving an older shared-header stylesheet; deployment is stale");
 const widths = [390,768,1280];
 const failures = [], results = [];
@@ -63,6 +63,8 @@ try {
               getComputedStyle(arrows[i]).visibility!=="hidden"&&getComputedStyle(arrows[i]).display!=="none"),
             sameRow:rects.every(r=>Math.abs(r.top-rects[0].top)<=3),
             insideViewport:rects[0].left>=-1&&rects.at(-1).right<=innerWidth+1,
+            chooserWidth:header.querySelector(".ss-common-menu").getBoundingClientRect().width,
+            chooserToNavGap:rects[0].left-header.querySelector(".ss-common-menu").getBoundingClientRect().right,
             centerError:Math.abs((rects[0].left+rects.at(-1).right)/2-(head.left+head.width/2)),
             dimensions:rects.map(r=>[Math.round(r.width),Math.round(r.height)]),
             navigationDisplay:style.display,
@@ -77,7 +79,11 @@ try {
         assert.equal(state.count,4,id+" arrow count");
         assert.ok(state.accessible&&state.visible&&state.sameRow&&state.insideViewport,
           id+" geometry "+JSON.stringify(state));
-        assert.ok(state.centerError<=10,id+" centering "+JSON.stringify(state));
+        if(width===1280){
+          assert.ok(state.chooserWidth<=440,id+" chooser unexpectedly expanded "+JSON.stringify(state));
+          assert.ok(state.chooserToNavGap>=0&&state.chooserToNavGap<=22,
+            id+" arrows not adjacent to chapter chooser "+JSON.stringify(state));
+        }
         assert.ok(state.dimensions.every(([w,h])=>Math.abs(w-34)<=4&&Math.abs(h-34)<=4),
           id+" size mismatch "+JSON.stringify(state));
         assert.ok(state.sectionButtons&&state.chapterMenu&&state.language&&state.theme,
