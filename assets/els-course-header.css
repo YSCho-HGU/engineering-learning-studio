@@ -240,3 +240,52 @@ html body > header.els-course-header.ss-common-header .els-course-header-navigat
    margin:0!important;
  }
 }
+
+/* Final shared header contract (2026-11-24): direct, stable placement.
+   Does not require JS normalization or width-balanced title/actions. */
+@media (min-width:1101px){
+ html body > header.ss-common-header:has(> .ss-four-navigation),
+ html body > header.ss-common-header.els-course-header:has(> .els-course-header-navigation){
+   box-sizing:border-box!important;position:relative!important;
+   display:flex!important;align-items:center!important;
+   min-height:56px!important;overflow:visible!important;
+ }
+ html body > header.ss-common-header > .ss-four-navigation,
+ html body > header.ss-common-header > .els-course-header-navigation{
+   position:absolute!important;left:50%!important;right:auto!important;top:50%!important;
+   transform:translate(-50%,-50%)!important;
+   display:flex!important;visibility:visible!important;
+   margin:0!important;padding:0!important;
+   justify-content:center!important;align-items:center!important;
+   width:max-content!important;z-index:50!important;
+ }
+ html body > header.ss-common-header > .els-header-left{
+   display:flex!important;align-items:center!important;gap:10px!important;
+   margin-right:auto!important;min-width:0!important;
+ }
+ html body > header.ss-common-header > .ss-common-actions{
+   display:flex!important;margin-left:auto!important;align-items:center!important;
+ }
+}
+html body > header.ss-common-header .ss-four-navigation{
+ visibility:visible!important;opacity:1!important;
+}
+html body > header.ss-common-header .ss-four-navigation .ss-chapter-arrow{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 34px!important;width:34px!important;min-width:34px!important;
+ height:34px!important;min-height:34px!important;max-height:34px!important;
+ padding:0!important;border-radius:8px!important;
+}
+html body > header.ss-common-header .ss-four-navigation .ss-chapter-arrow svg{
+ display:block!important;width:17px!important;height:17px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:2.15!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body > header.ss-common-header .ss-four-navigation .ss-nav-chapter{
+ background:var(--els-surface,#252525)!important;
+ border-color:var(--els-link,#95cbc4)!important;
+}
+html body > header.ss-common-header .ss-four-navigation .ss-nav-section{
+ background:var(--els-surface-alt,#303030)!important;
+ border-color:var(--els-border,#606660)!important;
+}
