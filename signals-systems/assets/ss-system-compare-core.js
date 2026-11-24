@@ -15,6 +15,26 @@ function movingGain(M,omega){
 function rcGain(alpha,omega){
  return (1-alpha)/Math.sqrt(1+alpha*alpha-2*alpha*Math.cos(omega));
 }
+/* Exact frequency-domain response and analytic group delay for sampled filters.
+ * MA phase is wrapped to [-180,180] degrees, and undefined at spectral zeros.
+ * Group delay here is defined as -d(arg H)/d(omega), converted to seconds.
+ */
+function responsePoint(alpha,M,fs,f){
+ const omega=2*PI*f/fs,den=1+alpha*alpha-2*alpha*Math.cos(omega);
+ const rcMag=rcGain(alpha,omega),maMag=movingGain(M,omega);
+ const rcPhase=-Math.atan2(alpha*Math.sin(omega),1-alpha*Math.cos(omega))*180/PI;
+ const rcDelay=(alpha*Math.cos(omega)-alpha*alpha)/den/fs;
+ const isNull=M>1 && Math.abs(Math.sin(M*omega/2))<1e-9 && Math.abs(Math.sin(omega/2))>1e-8;
+ let maPhase=0,maDelay=0;
+ if(isNull){maPhase=null;maDelay=null;}
+ else if(M>1){
+  const ratio=Math.abs(omega)<1e-9?1:Math.sin(M*omega/2)/Math.sin(omega/2);
+  const phase=-(M-1)*omega/2+(ratio<0?PI:0);
+  maPhase=Math.atan2(Math.sin(phase),Math.cos(phase))*180/PI;
+  maDelay=(M-1)/(2*fs);
+ }
+ return {f,omega,rcMag,maMag,rcPhase,maPhase,rcDelay,maDelay,maNull:isNull};
+}
 function maCutoff(M,fs){
  if(M<=1)return null;
  let lo=0,hi=2*PI/M;
@@ -76,10 +96,8 @@ function run(options={}){
   stepSum+=xStep[n]-(n>=M?xStep[n-M]:0);
   step.push({t:n/fs,x:xStep[n],rc:stepRC,ma:stepSum/M});
  }
- const magnitude=Array.from({length:251},(_,i)=>{
-  const f=(fs/2)*i/250,w=2*PI*f/fs;
-  return {f,rc:rcGain(alpha,w),ma:movingGain(M,w)};
- });
+ const spectrum=Array.from({length:501},(_,i)=>responsePoint(alpha,M,fs,(fs/2)*i/500));
+ const magnitude=spectrum.map(point=>({f:point.f,rc:point.rcMag,ma:point.maMag}));
  const cutoffRC=rcCutoff(alpha,fs),cutoffMA=maCutoff(M,fs);
  const groupDelayRC=alpha/(1-alpha)/fs;
  const groupDelayMA=(M-1)/(2*fs);
@@ -91,10 +109,10 @@ function run(options={}){
   return entry?entry.t-1:null;
  };
  return {
-  fs,M,shape,noise,match,tau,dt,alpha,items,step,magnitude,
+  fs,M,shape,noise,match,tau,dt,alpha,items,step,magnitude,spectrum,
   cutoffRC,cutoffMA,groupDelayRC,groupDelayMA,sigmaRC,sigmaMA,
   stepHalfRC:cross("rc"),stepHalfMA:cross("ma"),duration:4
  };
 }
-root.SSSystemCompareCore={run,maCutoff,rcCutoff,matchedTau,movingGain,rcGain,noiseStream};
+root.SSSystemCompareCore={run,maCutoff,rcCutoff,matchedTau,movingGain,rcGain,responsePoint,noiseStream};
 })(typeof window!=="undefined"?window:globalThis);
