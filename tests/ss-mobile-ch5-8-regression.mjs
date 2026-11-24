@@ -69,6 +69,10 @@ try{
     const x=await inspect(collapsed,chapter,width,1,true);
     console.log("COLLAPSED_RESULT "+JSON.stringify(x));
     verify(x.sideState==="collapsed","Chapter "+chapter+" persisted collapse not restored");
+    verify(x.grid==="grid","Chapter "+chapter+" collapsed view must retain 52px+content grid");
+    verify(x.main.x>=x.sidebar.right-2,"Chapter "+chapter+" collapsed rail pushes content BELOW instead of BESIDE rail");
+    verify(x.main.y<=x.header.bottom+3,"Chapter "+chapter+" collapsed view must show main directly under header");
+    verify(x.main.w>=width-55,"Chapter "+chapter+" collapsed state loses content width");
     verify(x.main.w>=200,"Chapter "+chapter+" collapsed state hides content");
     verify(!x.sideMainCross,"Chapter "+chapter+" collapsed rail overlaps main");
     verify(x.visibleRestore,"Chapter "+chapter+" no restore button");
