@@ -15,6 +15,7 @@ on:
       - 'textbook-viewer/**'
       - '.github/workflows/pages-deploy.yml'
       - 'tests/pages-production-smoke.mjs'
+      - 'tests/header-layout-preflight.mjs'
   workflow_dispatch:
 permissions:
   contents: read
@@ -53,6 +54,33 @@ jobs:
           node --check c-programming/c-ss-shell.js
           node --check signals-systems/assets/ss-common-header.js
           node --check tests/pages-production-smoke.mjs
+          node --check tests/header-layout-preflight.mjs
+      - name: Setup Node for local visual preflight
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify C and S&S header geometry before publishing
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --prefix "$RUNNER_TEMP/els-qa" --no-save --no-package-lock playwright@1.56.1
+          "$RUNNER_TEMP/els-qa/node_modules/.bin/playwright" install --with-deps chromium
+          ln -s "$RUNNER_TEMP/els-qa/node_modules" ./node_modules
+          python3 -m http.server 8765 --bind 127.0.0.1 > "$RUNNER_TEMP/els-http.log" 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true; rm -f ./node_modules' EXIT
+          node tests/header-layout-preflight.mjs
+      - name: Preserve local header snapshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: header-layout-preflight-${{ github.run_id }}
+          path: qa/header-preflight/
+          if-no-files-found: ignore
+      - name: Embed deployed commit identity
+        shell: bash
+        run: |
+          printf '{"commit":"%s","header":"v8-grid-adjacent","builtAt":"%s"}\n' "$GITHUB_SHA" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > build-info.json
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
       - name: Package the site
