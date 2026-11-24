@@ -21,11 +21,11 @@ The previous 31 workflow files frequently started independent Chromium installat
 The CI workflow runs unchanged test scripts. Suite-specific obsolete workflow entrypoints were deleted; their content remains recoverable through Git history. No learning page, source code, or published asset was removed.
 
 - **C static**: authoring, site/catalog integrity, pedagogy, GCC C11, mini lab, textbook links, C211 source, storage.
-- **C browser**: published chapters, File I/O, C181, C211, learning journey, responsive landing page.
+- **C browser**: published chapters, File I/O, C181, C211, learning journey, responsive landing page, plus the optional C language PR contract when present.
 - **S&S Chapters**: mathematical expressions, all sections, 3-mode content, plots, tablet/mobile, sidebar/header.
 - **Applications static**: FFT and 2D FFT numerical invariants, Part B numerical models.
 - **Applications browser**: original labs, inquiry, filters, FFT, chirp/STFT, DTMF, sound fingerprint, image FFT.
-- **Shared UI**: canonical asset inventory, migration, cross-course header, theme, navigation, progress.
+- **Shared UI**: canonical asset inventory, migration, preflight header geometry, cross-course header, theme, navigation, progress.
 - **Admin**: Owner Worker protocol, fail-closed access, admin browser checks.
 
 ## Performance and correctness
