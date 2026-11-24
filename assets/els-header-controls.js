@@ -63,6 +63,11 @@
          if(wrapped)label.insertBefore(icon,language);else label.replaceChildren(icon);
        }
        icon.textContent="🌐";icon.setAttribute("aria-hidden","true");
+       // Standalone project labels already contain a globe as a text node.
+       // Replace that glyph with the same accessible icon, never duplicate it.
+       for(const node of [...label.childNodes]){
+         if(node.nodeType===3 && node.textContent.trim()==="🌐")node.remove();
+       }
        for(const child of Array.from(label.children)){
          if(child!==icon&&child!==language&&child.matches("span"))child.hidden=true;
        }
