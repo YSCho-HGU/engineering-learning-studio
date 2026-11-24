@@ -1,0 +1,40 @@
+name: Studio shared header regression
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'c-programming/index.html'
+      - 'signals-systems/*.html'
+      - 'assets/els-header-controls.css'
+      - 'assets/els-header-controls.js'
+      - 'signals-systems/assets/ss-common-header.css'
+      - 'signals-systems/assets/ss-common-header.js'
+      - 'tests/studio-header-contract-e2e.mjs'
+      - '.github/workflows/studio-shared-header.yml'
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'c-programming/index.html'
+      - 'signals-systems/*.html'
+      - 'assets/els-header-controls.*'
+      - 'signals-systems/assets/ss-common-header.*'
+      - 'tests/studio-header-contract-e2e.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  header-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser test dependencies
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Run 14-page responsive header contract
+        run: node tests/studio-header-contract-e2e.mjs
