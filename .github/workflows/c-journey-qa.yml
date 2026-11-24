@@ -28,6 +28,13 @@ on:
       - 'c-programming/learning-journey/**'
       - 'c-programming/file-io/**'
       - '.github/workflows/c-journey-qa.yml'
+permissions:
+  contents: read
+
+concurrency:
+  group: qa-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   cross-validation:
     runs-on: ubuntu-24.04
