@@ -179,6 +179,7 @@ function init(){
  if(nav){new MutationObserver(refreshArrows).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:["aria-current","class"]});nav.addEventListener("click",()=>requestAnimationFrame(refreshArrows))}
  refreshArrows();
  document.addEventListener("pointerdown",e=>{if(menu.open&&!menu.contains(e.target))menu.open=false});
+ window.ELSHeaderControls?.normalize?.();
  window.ELSCourseShell={refreshArrows,chapters:chapters.map(x=>x[0])};
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
