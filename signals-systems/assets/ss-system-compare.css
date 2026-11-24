@@ -1,0 +1,55 @@
+/* Shared Part B visual system with compact, learning-first side-by-side results. */
+.ss-compare-root{--cmp-radius:10px}
+.ss-compare-root .cmp-controls{position:sticky}
+.ss-compare-root .ss-sys-intro{margin-bottom:8px}
+.ss-compare-root .ss-sys-controls .ss-sys-field-head{flex-wrap:wrap}
+.cmp-separator{border-top:1px solid var(--els-border);margin:15px 0}
+.cmp-match{display:flex;align-items:flex-start;gap:10px;padding:10px;border:1px solid var(--els-border);border-radius:9px;background:var(--els-surface-alt);font-size:13px;line-height:1.4;cursor:pointer}
+.cmp-match input{margin-top:3px;width:17px;height:17px;accent-color:var(--els-link);flex-shrink:0}
+.cmp-match:focus-within{outline:3px solid var(--els-focus);outline-offset:2px}
+.cmp-param-note{margin:0;font-size:12px;color:var(--els-muted);line-height:1.5;white-space:pre-line}
+.ss-compare-root input[type=range]:disabled{opacity:.45;cursor:default}
+.cmp-actions{margin-top:14px}
+.cmp-actions button{border:1px solid var(--els-border);border-radius:8px;background:var(--els-surface-alt);color:var(--els-ink);padding:7px 13px;min-height:37px;font-size:13px}
+.cmp-actions button:hover{border-color:var(--els-link)}
+.cmp-equations{display:flex;flex-wrap:wrap;gap:12px;align-items:center;font-size:clamp(14px,1.25vw,18px)}
+.cmp-equations>span{display:block;min-width:0;max-width:100%;overflow-x:auto}
+.cmp-metric-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:11px 0}
+.cmp-metric-card{min-width:0;background:var(--els-surface-alt);border:1px solid var(--els-border);border-radius:9px;padding:9px 12px}
+.cmp-metric-card>span{display:block;font-size:12px;line-height:1.45;color:var(--els-muted);margin-bottom:5px}
+.cmp-metric-values{display:flex;gap:12px;justify-content:space-between}
+.cmp-metric-values>div{display:grid;gap:1px;min-width:0}
+.cmp-metric-values small{font-size:11px;color:var(--els-muted)}
+.cmp-metric-values strong{font-size:clamp(14px,1.4vw,19px);color:var(--els-ink);font-variant-numeric:tabular-nums}
+.cmp-metric-values div:first-child strong{color:var(--ss-trace-coral,var(--els-ink))}
+.cmp-metric-values div:last-child strong{color:var(--ss-trace-gold,var(--els-ink))}
+.cmp-plots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.cmp-plot{min-width:0}
+.cmp-plot.cmp-primary{grid-column:span 2}
+.cmp-plot h2{font-size:16px!important;margin:0 0 6px;line-height:1.4}
+.cmp-plot canvas{height:205px;display:block;width:100%;max-width:100%;background:var(--els-surface);border-radius:7px}
+.cmp-plot.cmp-primary canvas{height:260px;cursor:crosshair}
+.cmp-plot canvas:focus-visible{outline:3px solid var(--els-focus);outline-offset:2px}
+.cmp-plot .ss-sys-legend{gap:12px;min-height:18px;margin-bottom:3px}
+.cmp-plot p{font-size:12px;margin:7px 0 0;color:var(--els-muted);line-height:1.5;white-space:pre-line}
+.cmp-probe{display:flex;gap:8px;flex-wrap:wrap;align-items:center;min-height:28px;padding-top:7px}
+.cmp-probe span{font-size:12px;padding:3px 8px;border:1px solid var(--els-border);border-radius:7px;background:var(--els-surface);font-variant-numeric:tabular-nums}
+.cmp-probe .cmp-probe-rc{border-color:var(--ss-trace-coral,var(--els-border))}
+.cmp-probe .cmp-probe-ma{border-color:var(--ss-trace-gold,var(--els-border))}
+.cmp-insight{margin-top:10px}
+.cmp-insight p{white-space:pre-line}
+.cmp-model-notes{border:1px solid var(--els-border);border-radius:9px;padding:9px 12px;margin-top:10px;background:var(--els-surface-alt)}
+.cmp-model-notes summary{font-size:13px;font-weight:700;cursor:pointer;color:var(--els-ink)}
+.cmp-model-notes>div{font-size:13px;color:var(--els-muted);line-height:1.6;margin-top:8px;white-space:pre-line}
+@media(max-width:1100px){
+ .cmp-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .cmp-plots{grid-template-columns:1fr}
+ .cmp-plot.cmp-primary{grid-column:auto}
+}
+@media(max-width:720px){
+ .cmp-metric-grid{grid-template-columns:1fr}
+ .cmp-metric-values{justify-content:flex-start;gap:26px}
+ .cmp-plot.cmp-primary canvas{height:220px}
+ .cmp-plot canvas{height:200px}
+ .cmp-equations{gap:7px}
+}
