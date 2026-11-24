@@ -53,7 +53,7 @@ function rcRender(){
  const vc=isLow?point.y:point.x-point.y;
  const activeId=isLow?"ss-sys-shunt-c":"ss-sys-shunt-r";
  ["ss-sys-series-r","ss-sys-series-c","ss-sys-shunt-r","ss-sys-shunt-c"].forEach(id=>{
-  const el=$(id);el.hidden=id===(isLow?"ss-sys-series-c":"ss-sys-series-r")||id===(isLow?"ss-sys-shunt-r":"ss-sys-shunt-c");
+  const el=$(id);el.toggleAttribute("hidden",id===(isLow?"ss-sys-series-c":"ss-sys-series-r")||id===(isLow?"ss-sys-shunt-r":"ss-sys-shunt-c"));
   el.classList.toggle("ss-sys-measured-element",id===activeId);
  });
  text("ss-sys-rc-heading","RC circuit · signal and voltage","RC 회로 · 신호와 전압",true);
