@@ -39,6 +39,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: ss-ch4-mobile-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   chapter4-mobile-ux:
     runs-on: ubuntu-24.04
