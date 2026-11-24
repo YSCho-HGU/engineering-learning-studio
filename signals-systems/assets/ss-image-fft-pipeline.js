@@ -137,6 +137,7 @@ function draw(model){
  $("image-fft-row-value").textContent=String(state.row);
  $("image-fft-column-value").textContent=String(state.column);
  const rowOn=state.step===0,colOn=state.step===1;
+ $("image-fft-pipeline-controls").hidden=!(rowOn||colOn);
  for(const id of ["image-fft-row","image-fft-row-label","image-fft-row-value"])$(id).hidden=!rowOn;
  for(const id of ["image-fft-column","image-fft-column-label","image-fft-column-value"])$(id).hidden=!colOn;
  $("image-fft-prev").disabled=state.step===0;
