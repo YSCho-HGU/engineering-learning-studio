@@ -30,7 +30,7 @@ function init(){
  const layout=(fileio||fileioLabs)?wrap:practice?wrap?.querySelector("#practice-root .cp-layout"):fileioTask?wrap?.querySelector(".layout"):wrap?.querySelector(".layout");
  const aside=(fileio||fileioLabs)?wrap?.querySelector(".sidebar"):fileioTask?layout?.querySelector("#task-nav"):practice?layout?.querySelector(".cp-menu"):layout?.querySelector(".side");
  if(!wrap||!layout||!aside||!oldHeader)return;
- const header=el("header","ss-common-header c-ss-header");
+ const header=el("header","ss-common-header c-ss-header els-course-header");
  header.setAttribute("aria-label","Engineering Learning Studio navigation");
  header.append(link("← Studio",nested?"../../../":"../../"));
  const menu=el("details","ss-common-menu c-ss-menu"),summary=el("summary","ss-common-title");
@@ -40,10 +40,13 @@ function init(){
  links.append(link("C Programming · Course Home",parentPrefix));
  chapters.forEach((entry,i)=>{let a=link("Chapter "+entry[1]+" · "+entry[2],parentPrefix+entry[0]+"/");if(i===current)a.setAttribute("aria-current","page");links.append(a)});
  menu.append(summary,links);header.append(menu);
- const arrows=el("nav","ss-four-navigation c-four-navigation");
+ const arrows=el("nav","ss-four-navigation c-four-navigation els-course-header-navigation");
  arrows.setAttribute("aria-label","Chapter and section navigation");
  function arrow(symbol,title,chapterDelta,sectionDelta){
-  let n=chapterDelta!=null?el("a","ss-chapter-arrow",symbol):el("button","ss-chapter-arrow",symbol);
+  const factory=window.ELSHeaderControls?.makeNavigationArrow;
+  let n=typeof factory==="function"
+   ?factory({kind:chapterDelta!=null?"chapter":"section",direction:chapterDelta??sectionDelta,label:title})
+   :(chapterDelta!=null?el("a","ss-chapter-arrow",symbol):el("button","ss-chapter-arrow",symbol));
   n.setAttribute("aria-label",title);n.title=title;
   if(chapterDelta!=null){let index=current+chapterDelta;if(index>=0&&index<chapters.length)n.href=parentPrefix+chapters[index][0]+"/";else{n.setAttribute("aria-disabled","true");n.tabIndex=-1}}
   else {n.type="button";n.dataset.direction=String(sectionDelta);n.addEventListener("click",()=>{const buttons=[...document.querySelectorAll(fileioTask?"#task-nav button[data-task]":fileioLabs?".side-nav a[data-lab-link]":practice?".cp-menu .cp-nav-item":fileio?"#lesson-nav button[data-nav]":"#lesson-nav button[data-lesson], #lesson-nav a[href^='#lab-']")];const pos=buttons.findIndex(b=>fileioLabs?b.getAttribute("href")===(location.hash||"#write"):fileioTask||practice?b.classList.contains("active"):fileio?b.classList.contains("current"):b.getAttribute("aria-current")==="step");if(pos>=0&&pos+sectionDelta>=0&&pos+sectionDelta<buttons.length){buttons[pos+sectionDelta].click()}refreshArrows()})}
