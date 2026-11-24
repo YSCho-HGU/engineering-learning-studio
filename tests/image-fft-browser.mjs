@@ -68,6 +68,7 @@ try{
    const inspector=page.locator("#image-kernel-panel");
    check(await inspector.isVisible(),"3x3 kernel selector should be displayed");
    check(await page.locator("#image-kernel-bridge").isVisible(),"Spatial/FFT comparison bridge missing");
+   check(await page.evaluate(()=>document.querySelector("#image-prediction").compareDocumentPosition(document.querySelector("#image-input-canvas"))&Node.DOCUMENT_POSITION_FOLLOWING),"Prediction must appear before input image");
    check(await page.locator("#image-scan-source").isVisible(),"Animated source preview missing");
    check(await page.locator("#image-scan-fft").isVisible(),"FFT reconstruction preview missing");
    check(await page.locator("#image-spatial-progress .ss-image-bridge-cell").count()===25,"Spatial 5x5 output grid missing");
@@ -89,7 +90,7 @@ try{
    const clickBox=await page.locator("#image-input-canvas").boundingBox();
    await page.mouse.click(clickBox.x+clickBox.width*.37,clickBox.y+clickBox.height*.4);
    await page.waitForTimeout(120);
-   check((await page.locator("#image-kernel-evidence").textContent()).includes("FFT2"),"Pixel evidence not linked to FFT result");
+   check((await page.locator("#image-kernel-evidence").textContent()).length>10,"Pixel scan instruction missing");
    const probe=await page.evaluate(()=>{
     const api=window.SSImageFFTApp,core=window.SSImageFFTCore;
     return core.kernelProbe(api.result.input.pixels,api.state.N,api.state.kernel,api.state.probeX,api.state.probeY);
@@ -114,6 +115,7 @@ try{
    await page.locator("#image-check").click();
    check((await page.locator("#image-feedback").getAttribute("data-result"))==="retry","Stage 3 must require evidence from the scan");
    await page.locator("#image-scan-next").click();
+   check((await page.locator("#image-kernel-evidence").textContent()).includes("FFT2"),"Pixel sum and FFT evidence not connected");
    await page.locator("#image-scan-next").click();
    await page.locator("#image-scan-next").click();
    check((await page.locator("#image-scan-counter").textContent())==="3 / 25","Step animation does not advance");
