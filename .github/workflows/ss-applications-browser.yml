@@ -30,6 +30,9 @@ on:
       - 'tests/ss-extra-labs-browser.mjs'
       - 'signals-systems/assets/ss-common-header.js'
       - 'tests/ss-applications-browser.mjs'
+      - 'tests/ss-partb-system-browser.mjs'
+      - 'signals-systems/assets/ss-system-lab-core.js'
+      - 'signals-systems/tests/partb-system-labs.mjs'
       - '.github/workflows/ss-applications-browser.yml'
   workflow_dispatch:
 permissions:
@@ -63,6 +66,11 @@ jobs:
           node --check signals-systems/assets/ss-app-extra-labs.js
           node --check tests/ss-extra-labs-browser.mjs
           node --check tests/ss-applications-browser.mjs
+          node --check signals-systems/assets/ss-app-system-labs.js
+          node --check signals-systems/assets/ss-app-system-explorers.js
+          node --check signals-systems/assets/ss-system-lab-core.js
+          node --check tests/ss-partb-system-browser.mjs
+          node signals-systems/tests/partb-system-labs.mjs
           node --check tests/ss-applications-math-audit.mjs
       - name: Install Playwright Chromium
         run: |
@@ -100,6 +108,10 @@ jobs:
         id: fingerprint
         continue-on-error: true
         run: node tests/ss-sound-fingerprint-browser.mjs
+      - name: Check RC circuit and moving-average walkthrough interactions
+        id: partb
+        continue-on-error: true
+        run: node tests/ss-partb-system-browser.mjs
       - name: Check mathematical notation across all Applications and language modes
         id: math
         continue-on-error: true
@@ -116,6 +128,7 @@ jobs:
           REALFFT_RESULT: ${{ steps.realfft.outcome }}
           DTMF_RESULT: ${{ steps.dtmf.outcome }}
           FINGERPRINT_RESULT: ${{ steps.fingerprint.outcome }}
+          PARTB_RESULT: ${{ steps.partb.outcome }}
         run: |
           mkdir -p qa
           python3 - <<'PY'
@@ -132,6 +145,7 @@ jobs:
             "real_fft_upload_outcome":os.environ["REALFFT_RESULT"],
             "dtmf_mystery_outcome":os.environ["DTMF_RESULT"],
             "sound_fingerprint_outcome":os.environ["FINGERPRINT_RESULT"],
+            "partb_system_browser_outcome":os.environ["PARTB_RESULT"],
             "viewport_widths":[1366,390],
             "coverage":["FFT arithmetic","graph missions","KaTeX","language modes","five themes","responsive overflow"]
           }
@@ -164,6 +178,7 @@ jobs:
           REALFFT: ${{ steps.realfft.outcome }}
           DTMF: ${{ steps.dtmf.outcome }}
           FINGERPRINT: ${{ steps.fingerprint.outcome }}
+          PARTB: ${{ steps.partb.outcome }}
         run: |
-          echo "original=$PRIMARY extra=$EXTRA fft=$FFT stft=$STFT realfft=$REALFFT dtmf=$DTMF fingerprint=$FINGERPRINT math=$MATH"
-          test "$PRIMARY" = success && test "$EXTRA" = success && test "$FFT" = success && test "$STFT" = success && test "$REALFFT" = success && test "$DTMF" = success && test "$FINGERPRINT" = success && test "$MATH" = success
+          echo "original=$PRIMARY extra=$EXTRA fft=$FFT stft=$STFT realfft=$REALFFT dtmf=$DTMF fingerprint=$FINGERPRINT math=$MATH partb=$PARTB"
+          test "$PRIMARY" = success && test "$EXTRA" = success && test "$FFT" = success && test "$STFT" = success && test "$REALFFT" = success && test "$DTMF" = success && test "$FINGERPRINT" = success && test "$MATH" = success && test "$PARTB" = success
