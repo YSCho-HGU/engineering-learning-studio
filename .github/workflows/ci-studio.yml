@@ -529,7 +529,7 @@ jobs:
           run_case node tests/studio-header-contract-e2e.mjs
           run_case node tests/header-layout-preflight.mjs
           run_case node tests/studio-header-controls-e2e.mjs
-          run_case node tests/studio-cross-course-state-e2e.mjs
+          run_case env STUDIO_BASE_URL=http://127.0.0.1:8765/ node tests/studio-cross-course-state-e2e.mjs
           run_case node tests/studio-theme-math-e2e.mjs
           run_case bash -lc 'cd signals-systems && node tests/ss-navigation-visual-e2e.mjs'
           run_case bash -lc 'cd signals-systems && node tests/ss-english-content-e2e.mjs'

@@ -36,7 +36,9 @@ try{
        savedLang:localStorage.getItem('els-language'),savedTheme:localStorage.getItem('els-theme-v2')};
    });
    if(response)assert.equal(response.status(),200,path+' status');
-   assert.equal(result.icon,'🌐',path+' language icon');
+   if(path.startsWith('signals-systems/'))assert.equal(result.icon,'🌐',path+' language icon');
+   // Studio and C course home use an inline language label instead of the
+   // chapter header icon; verify the picker value independently below.
    assert.deepEqual(result.labels,options,path+' theme options');
    assert.equal(result.progress,'test-progress',path+' preserved progress');
    assert.equal(result.savedLang,'en',path+' preserved language');

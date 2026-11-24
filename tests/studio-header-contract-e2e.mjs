@@ -129,7 +129,7 @@ async function test(view,width){
       const theme=header?.querySelector(".ss-common-actions [data-els-theme-picker]");
       const nav=header?.querySelector(":scope > nav.ss-four-navigation");
       const rect=x=>{if(!x)return null;const r=x.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,height:r.height}};
-      return {count:header?.querySelectorAll(".ss-common-language-select,#c-shared-language select").length||0,
+      return {count:header?.querySelectorAll(":scope > .els-course-language-slot select").length||0,
         labels:[...select?.options||[]].map(o=>o.textContent.trim()),
         href:home?.href,slot:rect(slot),select:rect(select),nav:rect(nav),theme:rect(theme),
         overflow:document.documentElement.scrollWidth-innerWidth};
