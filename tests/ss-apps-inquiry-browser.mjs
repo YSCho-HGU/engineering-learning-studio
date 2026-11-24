@@ -41,6 +41,15 @@ try{
     const evidence=await page.locator("#ss-al-guidance .ss-inquiry-evidence").textContent();
     check(lab==="harmonics"?evidence.includes("220"):lab==="beats"?evidence.includes("0.125"):evidence.includes("500"),lab+" numerical evidence incorrect: "+evidence);
     check((await page.locator("#ss-al-guidance .ss-inquiry-progress").textContent()).includes("2 / 2"),lab+" comparison incomplete");
+    await page.locator("#ss-al-language").selectOption("en");
+    check(!/[가-힣]/.test(await page.locator("#ss-al-guidance .ss-inquiry-question").textContent()),lab+" English question contains Korean");
+    await page.locator("#ss-al-language").selectOption("ko");
+    check(/[가-힣]/.test(await page.locator("#ss-al-guidance .ss-inquiry-question").textContent()),lab+" Korean question missing");
+    await page.locator("#ss-al-language").selectOption("mixed");
+    for(const theme of ["white-clean","neutral-dark"]){
+     await page.locator("#ss-al-theme").selectOption(theme);
+     check(await page.locator("html").getAttribute("data-els-theme")===theme,lab+" theme failed "+theme);
+    }
     await inspect(page,lab,width);
    }
    await open(page,"applications-dft-fft.html",()=>window.__FFTFocusedReady===true && !!document.querySelector("#dft-evidence-choice"));
@@ -58,6 +67,10 @@ try{
    await page.locator("#dft-speed-choice").selectOption("four");
    await page.locator("#dft-speed-check").click();
    check(await page.locator("#dft-speed-feedback").getAttribute("data-result")==="correct","DFT complexity reasoning failed");
+   await page.locator("#dft-language").selectOption("en");
+   check(!/[가-힣]/.test(await page.locator("#dft-speed-predict-title").textContent()),"DFT English challenge contains Korean");
+   await page.locator("#dft-language").selectOption("ko");
+   check(/[가-힣]/.test(await page.locator("#dft-speed-predict-title").textContent()),"DFT Korean challenge missing");
    await inspect(page,"dft-fft",width);
    await open(page,"applications-fft-dtmf.html?seed=129",()=>!!window.SSDTMF&&!!document.querySelector("#dtmf-evidence-check"));
    check(await page.locator("#dtmf-check").isDisabled(),"Key answer should start locked");
@@ -76,6 +89,10 @@ try{
    await page.locator(".ss-dtmf-options summary").click();
    await page.locator("#dtmf-fft-n").selectOption("512");
    check(await page.locator("#dtmf-check").isDisabled(),"Changing FFT parameters must invalidate old answer");
+   await page.locator("#dtmf-language").selectOption("en");
+   check(!/[가-힣]/.test(await page.locator("#dtmf-evidence-title").textContent()),"DTMF English evidence contains Korean");
+   await page.locator("#dtmf-language").selectOption("ko");
+   check(/[가-힣]/.test(await page.locator("#dtmf-evidence-title").textContent()),"DTMF Korean evidence missing");
    await inspect(page,"dtmf",width);
    await open(page,"applications-fft-sound-fingerprint.html",()=>!!window.SSSoundFingerprint && !!document.querySelector("#finger-evidence-check") && !!document.querySelector("#finger-spectrum .ss-finger-wave"));
    await page.locator("#finger-play-b").click();
@@ -90,6 +107,10 @@ try{
    await page.locator("#finger-quiz").selectOption("harmonics");
    await page.locator("#finger-quiz-check").click();
    check((await page.locator("#finger-quiz-feedback").textContent()).length>5,"Transfer explanation missing");
+   await page.locator("#finger-language").selectOption("en");
+   check(!/[가-힣]/.test(await page.locator("#finger-evidence-title").textContent()),"Fingerprint English evidence contains Korean");
+   await page.locator("#finger-language").selectOption("ko");
+   check(/[가-힣]/.test(await page.locator("#finger-evidence-title").textContent()),"Fingerprint Korean evidence missing");
    await inspect(page,"fingerprint",width);
    check(errors.length===0,"Page JS errors: "+errors.join(" | "));
    console.log("PASS all six inquiry-first labs at "+width+"px");
