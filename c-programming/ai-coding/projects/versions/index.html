@@ -1,0 +1,218 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Project Build Journey</title><style>:root[data-els-theme="neutral-dark"]{
+ color-scheme:dark;--els-page:#101010;--els-surface:#1c1c1c;--els-surface-alt:#292929;--els-ink:#f0f0ed;--els-muted:#c1c5c1;--els-border:#565b57;--els-primary:#aecfc0;--els-primary-text:#101712;--els-link:#b9d7c8;--els-focus:#ead18b;--els-success:#a2dec0;--els-info-bg:#293833;--els-info-ink:#e0f2e6;--els-code-bg:#171819;--els-code-ink:#f0f0ed;
+ --page:#101010;--bg:#101010;--surface:#1c1c1c;--paper:#1c1c1c;--panel:#1c1c1c;--ink:#f0f0ed;--text:#f0f0ed;--muted:#c1c5c1;--line:#565b57;--border:#565b57;--soft:#292929;--blue:#b9d7c8;--accent:#b9d7c8;--link:#b9d7c8;--code:#171819;--codeink:#f0f0ed;
+}
+:root[data-els-theme="warm-dark"]{
+ color-scheme:dark;--els-page:#1d2323;--els-surface:#293130;--els-surface-alt:#34413d;--els-ink:#e5e9e3;--els-muted:#bdc9c2;--els-border:#56665e;--els-primary:#9ebcad;--els-primary-text:#15201b;--els-link:#b0d2bf;--els-focus:#ead18b;--els-success:#a2ddbd;--els-info-bg:#34443d;--els-info-ink:#e2efe7;--els-code-bg:#171d1d;--els-code-ink:#e5e9e3;
+ --page:#1d2323;--bg:#1d2323;--surface:#293130;--paper:#293130;--panel:#293130;--ink:#e5e9e3;--text:#e5e9e3;--muted:#bdc9c2;--line:#56665e;--border:#56665e;--soft:#34413d;--blue:#b0d2bf;--accent:#b0d2bf;--link:#b0d2bf;--code:#171d1d;--codeink:#e5e9e3;
+}
+:root[data-els-theme="navy-dark"]{
+ color-scheme:dark;--els-page:#101827;--els-surface:#1c293a;--els-surface-alt:#27394e;--els-ink:#edf3fa;--els-muted:#c1cfdf;--els-border:#60768f;--els-primary:#90caff;--els-primary-text:#102338;--els-link:#a8d8ff;--els-focus:#ffe29c;--els-success:#a2dec0;--els-info-bg:#294760;--els-info-ink:#eaf5ff;--els-code-bg:#101b2b;--els-code-ink:#edf3fa;
+ --page:#101827;--bg:#101827;--surface:#1c293a;--paper:#1c293a;--panel:#1c293a;--ink:#edf3fa;--text:#edf3fa;--muted:#c1cfdf;--line:#60768f;--border:#60768f;--soft:#27394e;--blue:#a8d8ff;--accent:#a8d8ff;--link:#a8d8ff;--code:#101b2b;--codeink:#edf3fa;
+}
+:root[data-els-theme="warm-neutral"]{
+ color-scheme:light;--els-page:#f7f6f2;--els-surface:#fffefa;--els-surface-alt:#edf1eb;--els-ink:#28312f;--els-muted:#51665b;--els-border:#aab9ac;--els-primary:#355e4e;--els-primary-text:#ffffff;--els-link:#2c5c48;--els-focus:#28584a;--els-success:#246548;--els-info-bg:#e0eae1;--els-info-ink:#283f32;--els-code-bg:#232725;--els-code-ink:#f4f5ee;
+ --page:#f7f6f2;--bg:#f7f6f2;--surface:#fffefa;--paper:#fffefa;--panel:#fffefa;--ink:#28312f;--text:#28312f;--muted:#51665b;--line:#aab9ac;--border:#aab9ac;--soft:#edf1eb;--blue:#2c5c48;--accent:#2c5c48;--link:#2c5c48;--code:#232725;--codeink:#f4f5ee;
+}
+:root[data-els-theme="white-clean"]{
+ color-scheme:light;
+ --els-page:#f4f6f7;--els-surface:#ffffff;--els-surface-alt:#edf2f4;
+ --els-ink:#1b2730;--els-muted:#455663;--els-border:#c9d3db;
+ --els-primary:#205b73;--els-primary-text:#ffffff;--els-link:#145b78;
+ --els-focus:#b56b18;--els-success:#216f50;--els-info-bg:#eef5f9;
+ --els-info-ink:#23485b;--els-code-bg:#202b35;--els-code-ink:#ffffff;
+ --page:#f4f6f7;--bg:#f4f6f7;--surface:#ffffff;--paper:#ffffff;
+ --panel:#ffffff;--ink:#1b2730;--text:#1b2730;--muted:#455663;
+ --line:#c9d3db;--border:#c9d3db;--soft:#edf2f4;
+ --blue:#145b78;--accent:#145b78;--link:#145b78;
+ --code:#202b35;--codeink:#ffffff;
+}
+:root[data-els-theme="warm-neutral"]{
+ color-scheme:only light!important;
+}*{box-sizing:border-box}body{margin:0;background:var(--els-page,#101010);color:var(--els-ink,#eee);font:16px/1.6 system-ui,"Malgun Gothic",sans-serif}header{background:var(--els-surface);border-bottom:1px solid var(--els-border)}.bar{max-width:1140px;margin:auto;padding:8px 18px;display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap}main{max-width:1140px;margin:auto;padding:18px}h1{font-size:clamp(24px,3vw,34px);line-height:1.25;margin:7px 0}h2{font-size:19px;margin:0 0 10px}p{margin:7px 0;overflow-wrap:anywhere}a{color:var(--els-link)}button,input,select,textarea,.nav a{font:inherit;color:var(--els-ink);border:1px solid var(--els-border);background:var(--els-surface-alt);border-radius:7px;padding:8px 10px;max-width:100%;min-width:0}button,.nav a{cursor:pointer;min-height:40px}button:disabled{opacity:.5;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--els-focus);outline-offset:2px}.row,.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.nav{margin:12px 0}.nav a{text-decoration:none;min-width:43px;text-align:center}.nav [aria-current=page]{border:2px solid var(--els-link);font-weight:800;color:var(--els-link)}.panel{background:var(--els-surface);border:1px solid var(--els-border);border-radius:12px;padding:16px;min-width:0}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}.panel label{display:block;margin:8px 0}.panel label input:not([type=checkbox]),.panel select,.panel textarea{display:block;width:100%;margin-top:5px}.panel textarea{min-height:112px;resize:vertical}.panel input[type=range]{padding:0;accent-color:var(--els-link)}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(94px,1fr));gap:6px;margin:8px 0}.stats div{background:var(--els-surface-alt);border-radius:7px;padding:8px}.stats span{display:block;font-size:12px;color:var(--els-muted)}.stats strong{display:block;font-size:20px;overflow-wrap:anywhere}svg{width:100%;height:auto;color:var(--els-ink);display:block}.prompt{white-space:pre-line;padding:12px;border-radius:8px;background:var(--els-surface-alt);margin:8px 0}.muted,.eyebrow{color:var(--els-muted);font-size:14px}.eyebrow{font-weight:750;letter-spacing:.05em}.stage-info{margin-bottom:10px}.status{min-height:1.5em}.pass{color:var(--els-success)}.fail{font-weight:750;color:var(--els-ink);border-left:3px solid #b65d46;padding-left:7px}.pad{display:block;width:100%;height:145px;font-size:24px;font-weight:800;margin:12px 0}.pad.wait{background:#a02e35;color:white}.pad.ready{background:#167747;color:white}.item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--els-border);overflow-wrap:anywhere}.item span{min-width:0}.item input{flex:none}.progress{height:10px;border-radius:6px;background:var(--els-surface-alt);overflow:hidden}.progress span{display:block;background:var(--els-link);height:100%}details{margin:14px 0}summary{cursor:pointer;font-weight:700}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse}td,th{padding:5px 6px;border-bottom:1px solid var(--els-border);text-align:left}code,pre{font-family:Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}footer{margin-top:18px;font-size:13px;color:var(--els-muted)}@media(max-width:720px){.grid{grid-template-columns:1fr}.panel{padding:12px}main{padding:12px}.bar{padding:7px 12px}.bar select{font-size:12px;max-width:135px}.nav a{padding:6px 10px}.pad{height:112px}}</style><script>/* Shared theme: one localStorage key for Studio and both courses. */
+(()=>{"use strict";
+const KEY="els-theme-v2",CHOICES=[["white-clean","White Clean"],["warm-neutral","Warm Neutral"],["warm-dark","Warm Dark"],["navy-dark","Navy Dark"],["neutral-dark","Neutral Dark"]],VALID=CHOICES.map(x=>x[0]),DEFAULT="neutral-dark";
+const root=document.documentElement;
+function safeGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function inferLegacy(){
+ const ss=safeGet("ss-visual-lab-theme");
+ if(ss==="light")return "warm-neutral";
+ if(ss==="dark")return "navy-dark";
+ const c=safeGet("els-theme");
+ if(c==="light")return "warm-neutral";
+ if(c==="dark")return "navy-dark";
+ return DEFAULT;
+}
+function selected(){
+ const v=safeGet(KEY);
+ // Migrate the retired pure-white option without losing user preference.
+ return v==="white"?"white-clean":VALID.includes(v)?v:inferLegacy();
+}
+function apply(value,persist=true){
+ const normalized=value==="white"?"white-clean":value;
+ const v=VALID.includes(normalized)?normalized:DEFAULT;
+ const light=["warm-neutral","white-clean"].includes(v);
+ root.dataset.elsTheme=v;
+ root.dataset.theme=light?"light":"dark";
+ root.dataset.mode=light?"light":"dark";
+ root.style.colorScheme=light?"only light":"dark";
+ if(persist||safeGet(KEY)==="white")try{localStorage.setItem(KEY,v)}catch(e){}
+ document.querySelectorAll("[data-els-theme-picker]").forEach(s=>{if(s.value!==v)s.value=v});
+ const schemeMeta=document.querySelector('meta[name="color-scheme"]');
+ if(schemeMeta)schemeMeta.content=light?"only light":"dark";
+ const meta=document.querySelector('meta[name="theme-color"]');
+ if(meta)meta.content={"neutral-dark":"#101010","warm-dark":"#1d2323","navy-dark":"#101827","warm-neutral":"#f7f6f2","white-clean":"#f4f6f7"}[v];
+ window.dispatchEvent(new CustomEvent("els:themechange",{detail:{theme:v,scheme:light?"light":"dark"}}));
+ return v;
+}
+window.ELSTheme={get:()=>root.dataset.elsTheme||selected(),set:apply,options:VALID,choices:CHOICES.map(x=>x.slice())};
+function setup(){
+ if(safeGet(KEY)==="white")try{localStorage.setItem(KEY,"white-clean")}catch(e){}
+ const old=document.getElementById("theme-select"),portal=document.getElementById("theme");
+ if(old&&old.tagName==="SELECT"&&!(old.hasAttribute("data-els-theme-picker")))old.setAttribute("data-els-theme-picker","");
+ if(portal&&portal.tagName==="SELECT"&&!portal.hasAttribute("data-els-theme-picker"))portal.setAttribute("data-els-theme-picker","");
+ if(!document.querySelector("[data-els-theme-picker]")){
+  const top=document.querySelector(".toplinks,.topbar,.topnav,header .wrap,header,.links,.hero");
+  if(top){
+   const wrapper=document.createElement("label");wrapper.className="els-theme-control";
+   const title=document.createElement("span");title.textContent="Theme";wrapper.append(title);
+   const select=document.createElement("select");select.setAttribute("data-els-theme-picker","");select.setAttribute("aria-label","Theme / 화면 테마");
+   wrapper.append(select);top.append(wrapper);
+  }
+ }
+ document.querySelectorAll("[data-els-theme-picker]").forEach(select=>{
+  select.replaceChildren();
+  for(const [value,label] of CHOICES){
+   const o=document.createElement("option");o.value=value;o.textContent=label;select.append(o);
+  }
+  select.value=selected();
+  select.addEventListener("change",()=>apply(select.value));
+ });
+ apply(selected(),false);
+}
+apply(selected(),false);
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",setup,{once:true});else setup();
+window.addEventListener("storage",e=>{if(e.key===KEY)apply(selected(),false)});
+})();
+</script><script>/* Engineering Learning Studio language preference contract v1.0.
+ * ES5-compatible browser script, no dependencies, no automatic page reload.
+ * Shared by same-origin GitHub Pages projects: els-language.
+ * The caller controls the actual content and any state-preserving rerender.
+ */
+(function (window, document) {
+  "use strict";
+  if (window.ELSLanguage && window.ELSLanguage.version === "1.0.0") return;
+
+  var KEY = "els-language";
+  var MODES = ["mixed", "en", "ko"];
+  var DEFAULT = "mixed";
+  var listeners = [];
+  var mode = read() || DEFAULT;
+
+  function valid(value) { return MODES.indexOf(value) !== -1; }
+  function read() {
+    try {
+      var value = window.localStorage.getItem(KEY);
+      return valid(value) ? value : null;
+    } catch (_) { return null; }
+  }
+  function write(value) {
+    try { window.localStorage.setItem(KEY, value); return true; }
+    catch (_) { return false; }
+  }
+  function notify(source) {
+    for (var i = 0; i < listeners.length; i++) {
+      try { listeners[i](mode, { source: source }); } catch (error) {
+        window.setTimeout(function () { throw error; }, 0);
+      }
+    }
+    try {
+      document.dispatchEvent(new CustomEvent("els-language-change", { detail: { lang: mode, source: source } }));
+    } catch (_) {}
+  }
+  function apply(value, source, persist) {
+    if (!valid(value)) return false;
+    if (persist) write(value);
+    if (value === mode) return true;
+    mode = value;
+    document.documentElement.lang = mode === "en" ? "en" : "ko";
+    document.documentElement.dataset.elsLanguage = mode;
+    notify(source);
+    return true;
+  }
+  function get() { return mode; }
+  function set(value) { return apply(value, "local", true); }
+  function subscribe(fn, immediate) {
+    if (typeof fn !== "function") return function () {};
+    listeners.push(fn);
+    if (immediate) fn(mode, { source: "initial" });
+    return function () {
+      var index = listeners.indexOf(fn);
+      if (index >= 0) listeners.splice(index, 1);
+    };
+  }
+  function bindSelect(select) {
+    if (typeof select === "string") select = document.querySelector(select);
+    if (!select) return function () {};
+    select.value = mode;
+    var onChange = function () { set(select.value); };
+    var unsubscribe = subscribe(function (next) { if (select.value !== next) select.value = next; });
+    select.addEventListener("change", onChange);
+    return function () { select.removeEventListener("change", onChange); unsubscribe(); };
+  }
+  function pick(content) {
+    if (!content) return "";
+    if (typeof content === "string") return content;
+    return content[mode] != null ? content[mode] :
+      (mode === "mixed" ? (content.en != null ? content.en : content.ko) :
+      (content.en != null ? content.en : content.ko)) || "";
+  }
+  window.addEventListener("storage", function (event) {
+    if (event.key === KEY && valid(event.newValue)) apply(event.newValue, "storage", false);
+  });
+  window.addEventListener("pageshow", function () {
+    var saved = read();
+    if (saved && saved !== mode) apply(saved, "pageshow", false);
+  });
+  document.documentElement.dataset.elsLanguage = mode;
+  document.documentElement.lang = mode === "en" ? "en" : "ko";
+  // Shared bilingual content contract (C, Signals & Systems, future courses).
+  // Content is projected from immutable originals, never from the last render.
+  function textVariant(en, ko, chosen) {
+    if (chosen === "en") return en == null ? "" : en;
+    if (chosen === "ko") return ko == null ? "" : ko;
+    if (en == null || en === "") return ko == null ? "" : ko;
+    if (ko == null || ko === "" || en === ko) return en;
+    return String(en) + "\\n" + String(ko);
+  }
+  function content(entry, chosen) {
+    var target = valid(chosen) ? chosen : mode;
+    if (entry == null || typeof entry === "string") return entry == null ? "" : entry;
+    return textVariant(entry.en, entry.ko, target);
+  }
+  function project(base, localized, chosen) {
+    var target = valid(chosen) ? chosen : mode;
+    if (!base || typeof base !== "object") return base;
+    if (Array.isArray(base)) return base.map(function(item, i) {
+      return project(item, Array.isArray(localized) ? localized[i] : null, target);
+    });
+    var output = {};
+    Object.keys(base).forEach(function(key) {
+      var value = base[key];
+      var translated = localized && Object.prototype.hasOwnProperty.call(localized, key) ? localized[key] : undefined;
+      if (typeof value === "string" && typeof translated === "string") {
+        output[key] = textVariant(translated, value, target);
+      } else if (value && typeof value === "object") {
+        output[key] = project(value, translated, target);
+      } else {
+        output[key] = value;
+      }
+    });
+    return output;
+  }
+  window.ELSLanguage = Object.freeze({
+    version: "1.0.0", key: KEY, modes: MODES.slice(), get: get, set: set,
+    subscribe: subscribe, bindSelect: bindSelect, pick: pick, content: content, project: project
+  });
+})(window, document);
+</script></head><body><header><div class="bar"><a href="../../#projects"><span data-en="← Project Gallery" data-ko="← 프로젝트 갤러리">← Project Gallery</span></a><div class="row"><select id="language" aria-label="Language"><option value="mixed">한/영</option><option value="en">English</option><option value="ko">한국어</option></select><select data-els-theme-picker aria-label="Theme"></select></div></div></header><main><h1><span data-en="Project Build Journey" data-ko="프로젝트 개발 여정">Project Build Journey</span></h1><p><span data-en="Choose one project. Start at V1, try each new feature and copy the matching prompt. All 30 stages are working HTML pages; you do not need to complete every project." data-ko="프로젝트 하나를 골라 V1부터 시작하세요. 기능을 체험하고 해당 Prompt를 복사하세요. 30개 단계가 실제 실행되는 HTML이며 모든 프로젝트를 수행할 필요는 없습니다.">Choose one project. Start at V1, try each new feature and copy the matching prompt. All 30 stages are working HTML pages; you do not need to complete every project.</span></p><div class="grid"><section class="panel"><h2><span data-en="Reaction Time Game" data-ko="반응속도 게임">Reaction Time Game</span></h2><p><a href="01-reaction-time/v1.html">V1 · <span data-en="Measure once" data-ko="한 번 측정">Measure once</span></a></p><p><a href="01-reaction-time/v2.html">V2 · <span data-en="Detect early clicks" data-ko="조기 클릭 감지">Detect early clicks</span></a></p><p><a href="01-reaction-time/v3.html">V3 · <span data-en="Analyze five trials" data-ko="5회 기록 분석">Analyze five trials</span></a></p><p><a href="01-reaction-time/v4.html">V4 · <span data-en="Keep results" data-ko="결과 저장">Keep results</span></a></p><p><a href="01-reaction-time/v5.html">V5 · <span data-en="Customize the timing" data-ko="대기시간 직접 조절">Customize the timing</span></a></p></section><section class="panel"><h2><span data-en="GPA Calculator" data-ko="학점 계산기">GPA Calculator</span></h2><p><a href="02-gpa-calculator/v1.html">V1 · <span data-en="First calculation" data-ko="첫 학점 계산">First calculation</span></a></p><p><a href="02-gpa-calculator/v2.html">V2 · <span data-en="Manage courses" data-ko="과목 관리">Manage courses</span></a></p><p><a href="02-gpa-calculator/v3.html">V3 · <span data-en="Save the list" data-ko="목록 저장">Save the list</span></a></p><p><a href="02-gpa-calculator/v4.html">V4 · <span data-en="Separate data and UI" data-ko="데이터와 UI 분리">Separate data and UI</span></a></p><p><a href="02-gpa-calculator/v5.html">V5 · <span data-en="Verify the logic" data-ko="계산 로직 검증">Verify the logic</span></a></p></section><section class="panel"><h2><span data-en="Sorting Visualizer" data-ko="정렬 시각화">Sorting Visualizer</span></h2><p><a href="03-sorting-visualizer/v1.html">V1 · <span data-en="See the swap" data-ko="교환 관찰">See the swap</span></a></p><p><a href="03-sorting-visualizer/v2.html">V2 · <span data-en="Try your own array" data-ko="내 배열 사용">Try your own array</span></a></p><p><a href="03-sorting-visualizer/v3.html">V3 · <span data-en="Control the trace" data-ko="실행 제어">Control the trace</span></a></p><p><a href="03-sorting-visualizer/v4.html">V4 · <span data-en="Test edge cases" data-ko="경계조건 검사">Test edge cases</span></a></p><p><a href="03-sorting-visualizer/v5.html">V5 · <span data-en="Compare algorithms" data-ko="알고리즘 비교">Compare algorithms</span></a></p></section><section class="panel"><h2><span data-en="Signal Generator" data-ko="파형 생성기">Signal Generator</span></h2><p><a href="04-signal-generator/v1.html">V1 · <span data-en="Draw a sine wave" data-ko="사인파 그리기">Draw a sine wave</span></a></p><p><a href="04-signal-generator/v2.html">V2 · <span data-en="Explore waveforms" data-ko="파형 선택">Explore waveforms</span></a></p><p><a href="04-signal-generator/v3.html">V3 · <span data-en="Export data" data-ko="CSV 데이터 출력">Export data</span></a></p><p><a href="04-signal-generator/v4.html">V4 · <span data-en="Inspect numerical samples" data-ko="수치 샘플 확인">Inspect numerical samples</span></a></p><p><a href="04-signal-generator/v5.html">V5 · <span data-en="Verify the math" data-ko="수학적 검증">Verify the math</span></a></p></section><section class="panel"><h2><span data-en="Study Planner" data-ko="학습 계획표">Study Planner</span></h2><p><a href="05-study-planner/v1.html">V1 · <span data-en="Make a task list" data-ko="할 일 만들기">Make a task list</span></a></p><p><a href="05-study-planner/v2.html">V2 · <span data-en="See progress" data-ko="진행률 확인">See progress</span></a></p><p><a href="05-study-planner/v3.html">V3 · <span data-en="Save locally" data-ko="브라우저에 저장">Save locally</span></a></p><p><a href="05-study-planner/v4.html">V4 · <span data-en="Prepare to share" data-ko="공유 준비">Prepare to share</span></a></p><p><a href="05-study-planner/v5.html">V5 · <span data-en="Move records safely" data-ko="기기 간 데이터 이동">Move records safely</span></a></p></section><section class="panel"><h2><span data-en="Sensor Data Dashboard" data-ko="센서 대시보드">Sensor Data Dashboard</span></h2><p><a href="06-sensor-dashboard/v1.html">V1 · <span data-en="Analyze a CSV" data-ko="CSV 분석">Analyze a CSV</span></a></p><p><a href="06-sensor-dashboard/v2.html">V2 · <span data-en="Upload and detect alerts" data-ko="파일 업로드·경고">Upload and detect alerts</span></a></p><p><a href="06-sensor-dashboard/v3.html">V3 · <span data-en="Test bad input" data-ko="오류 입력 검사">Test bad input</span></a></p><p><a href="06-sensor-dashboard/v4.html">V4 · <span data-en="Generate sensor data" data-ko="센서 데이터 생성">Generate sensor data</span></a></p><p><a href="06-sensor-dashboard/v5.html">V5 · <span data-en="Connect to Signal Generator" data-ko="파형 생성기 연결">Connect to Signal Generator</span></a></p></section></div></main><script>const L=window.ELSLanguage;L.bindSelect("#language");L.subscribe(()=>document.querySelectorAll("[data-en][data-ko]").forEach(n=>n.textContent=L.get()==="en"?n.dataset.en:L.get()==="ko"?n.dataset.ko:n.dataset.en+" · "+n.dataset.ko),true);</script></body></html>

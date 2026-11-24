@@ -1,0 +1,2 @@
+# Project build journey
+30 distinct standalone HTML reference builds; 6 projects × 5 cumulative stages. Embedded shared theme palette and language preference scripts make downloaded files runnable without dependencies. Local persistence uses isolated per-version keys. V4/V5 technology alternatives are guidance, not deployed React/Python/backend implementations. The original completed demos and their 30 prompts remain available. Each stage includes its own aligned prompt and observation. The gallery links to the version index. No actual AI calls or server upload. 

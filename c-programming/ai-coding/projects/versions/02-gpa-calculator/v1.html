@@ -1,0 +1,256 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GPA Calculator V1</title><style>:root[data-els-theme="neutral-dark"]{
+ color-scheme:dark;--els-page:#101010;--els-surface:#1c1c1c;--els-surface-alt:#292929;--els-ink:#f0f0ed;--els-muted:#c1c5c1;--els-border:#565b57;--els-primary:#aecfc0;--els-primary-text:#101712;--els-link:#b9d7c8;--els-focus:#ead18b;--els-success:#a2dec0;--els-info-bg:#293833;--els-info-ink:#e0f2e6;--els-code-bg:#171819;--els-code-ink:#f0f0ed;
+ --page:#101010;--bg:#101010;--surface:#1c1c1c;--paper:#1c1c1c;--panel:#1c1c1c;--ink:#f0f0ed;--text:#f0f0ed;--muted:#c1c5c1;--line:#565b57;--border:#565b57;--soft:#292929;--blue:#b9d7c8;--accent:#b9d7c8;--link:#b9d7c8;--code:#171819;--codeink:#f0f0ed;
+}
+:root[data-els-theme="warm-dark"]{
+ color-scheme:dark;--els-page:#1d2323;--els-surface:#293130;--els-surface-alt:#34413d;--els-ink:#e5e9e3;--els-muted:#bdc9c2;--els-border:#56665e;--els-primary:#9ebcad;--els-primary-text:#15201b;--els-link:#b0d2bf;--els-focus:#ead18b;--els-success:#a2ddbd;--els-info-bg:#34443d;--els-info-ink:#e2efe7;--els-code-bg:#171d1d;--els-code-ink:#e5e9e3;
+ --page:#1d2323;--bg:#1d2323;--surface:#293130;--paper:#293130;--panel:#293130;--ink:#e5e9e3;--text:#e5e9e3;--muted:#bdc9c2;--line:#56665e;--border:#56665e;--soft:#34413d;--blue:#b0d2bf;--accent:#b0d2bf;--link:#b0d2bf;--code:#171d1d;--codeink:#e5e9e3;
+}
+:root[data-els-theme="navy-dark"]{
+ color-scheme:dark;--els-page:#101827;--els-surface:#1c293a;--els-surface-alt:#27394e;--els-ink:#edf3fa;--els-muted:#c1cfdf;--els-border:#60768f;--els-primary:#90caff;--els-primary-text:#102338;--els-link:#a8d8ff;--els-focus:#ffe29c;--els-success:#a2dec0;--els-info-bg:#294760;--els-info-ink:#eaf5ff;--els-code-bg:#101b2b;--els-code-ink:#edf3fa;
+ --page:#101827;--bg:#101827;--surface:#1c293a;--paper:#1c293a;--panel:#1c293a;--ink:#edf3fa;--text:#edf3fa;--muted:#c1cfdf;--line:#60768f;--border:#60768f;--soft:#27394e;--blue:#a8d8ff;--accent:#a8d8ff;--link:#a8d8ff;--code:#101b2b;--codeink:#edf3fa;
+}
+:root[data-els-theme="warm-neutral"]{
+ color-scheme:light;--els-page:#f7f6f2;--els-surface:#fffefa;--els-surface-alt:#edf1eb;--els-ink:#28312f;--els-muted:#51665b;--els-border:#aab9ac;--els-primary:#355e4e;--els-primary-text:#ffffff;--els-link:#2c5c48;--els-focus:#28584a;--els-success:#246548;--els-info-bg:#e0eae1;--els-info-ink:#283f32;--els-code-bg:#232725;--els-code-ink:#f4f5ee;
+ --page:#f7f6f2;--bg:#f7f6f2;--surface:#fffefa;--paper:#fffefa;--panel:#fffefa;--ink:#28312f;--text:#28312f;--muted:#51665b;--line:#aab9ac;--border:#aab9ac;--soft:#edf1eb;--blue:#2c5c48;--accent:#2c5c48;--link:#2c5c48;--code:#232725;--codeink:#f4f5ee;
+}
+:root[data-els-theme="white-clean"]{
+ color-scheme:light;
+ --els-page:#f4f6f7;--els-surface:#ffffff;--els-surface-alt:#edf2f4;
+ --els-ink:#1b2730;--els-muted:#455663;--els-border:#c9d3db;
+ --els-primary:#205b73;--els-primary-text:#ffffff;--els-link:#145b78;
+ --els-focus:#b56b18;--els-success:#216f50;--els-info-bg:#eef5f9;
+ --els-info-ink:#23485b;--els-code-bg:#202b35;--els-code-ink:#ffffff;
+ --page:#f4f6f7;--bg:#f4f6f7;--surface:#ffffff;--paper:#ffffff;
+ --panel:#ffffff;--ink:#1b2730;--text:#1b2730;--muted:#455663;
+ --line:#c9d3db;--border:#c9d3db;--soft:#edf2f4;
+ --blue:#145b78;--accent:#145b78;--link:#145b78;
+ --code:#202b35;--codeink:#ffffff;
+}
+:root[data-els-theme="warm-neutral"]{
+ color-scheme:only light!important;
+}
+*{box-sizing:border-box}body{margin:0;background:var(--els-page,#101010);color:var(--els-ink,#eee);font:16px/1.6 system-ui,"Malgun Gothic",sans-serif}header{background:var(--els-surface);border-bottom:1px solid var(--els-border)}.bar{max-width:1140px;margin:auto;padding:8px 18px;display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap}main{max-width:1140px;margin:auto;padding:18px}h1{font-size:clamp(24px,3vw,34px);line-height:1.25;margin:7px 0}h2{font-size:19px;margin:0 0 10px}p{margin:7px 0;overflow-wrap:anywhere}a{color:var(--els-link)}button,input,select,textarea,.nav a{font:inherit;color:var(--els-ink);border:1px solid var(--els-border);background:var(--els-surface-alt);border-radius:7px;padding:8px 10px;max-width:100%;min-width:0}button,.nav a{cursor:pointer;min-height:40px}button:disabled{opacity:.5;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--els-focus);outline-offset:2px}.row,.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.nav{margin:12px 0}.nav a{text-decoration:none;min-width:43px;text-align:center}.nav [aria-current=page]{border:2px solid var(--els-link);font-weight:800;color:var(--els-link)}.panel{background:var(--els-surface);border:1px solid var(--els-border);border-radius:12px;padding:16px;min-width:0}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}.panel label{display:block;margin:8px 0}.panel label input:not([type=checkbox]),.panel select,.panel textarea{display:block;width:100%;margin-top:5px}.panel textarea{min-height:112px;resize:vertical}.panel input[type=range]{padding:0;accent-color:var(--els-link)}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(94px,1fr));gap:6px;margin:8px 0}.stats div{background:var(--els-surface-alt);border-radius:7px;padding:8px}.stats span{display:block;font-size:12px;color:var(--els-muted)}.stats strong{display:block;font-size:20px;overflow-wrap:anywhere}svg{width:100%;height:auto;color:var(--els-ink);display:block}.prompt{white-space:pre-line;padding:12px;border-radius:8px;background:var(--els-surface-alt);margin:8px 0}.muted,.eyebrow{color:var(--els-muted);font-size:14px}.eyebrow{font-weight:750;letter-spacing:.05em}.stage-info{margin-bottom:10px}.status{min-height:1.5em}.pass{color:var(--els-success)}.fail{font-weight:750;color:var(--els-ink);border-left:3px solid #b65d46;padding-left:7px}.pad{display:block;width:100%;height:145px;font-size:24px;font-weight:800;margin:12px 0}.pad.wait{background:#a02e35;color:white}.pad.ready{background:#167747;color:white}.item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--els-border);overflow-wrap:anywhere}.item span{min-width:0}.item input{flex:none}.progress{height:10px;border-radius:6px;background:var(--els-surface-alt);overflow:hidden}.progress span{display:block;background:var(--els-link);height:100%}details{margin:14px 0}summary{cursor:pointer;font-weight:700}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse}td,th{padding:5px 6px;border-bottom:1px solid var(--els-border);text-align:left}code,pre{font-family:Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}footer{margin-top:18px;font-size:13px;color:var(--els-muted)}@media(max-width:720px){.grid{grid-template-columns:1fr}.panel{padding:12px}main{padding:12px}.bar{padding:7px 12px}.bar select{font-size:12px;max-width:135px}.nav a{padding:6px 10px}.pad{height:112px}}</style><script>/* Shared theme: one localStorage key for Studio and both courses. */
+(()=>{"use strict";
+const KEY="els-theme-v2",CHOICES=[["white-clean","White Clean"],["warm-neutral","Warm Neutral"],["warm-dark","Warm Dark"],["navy-dark","Navy Dark"],["neutral-dark","Neutral Dark"]],VALID=CHOICES.map(x=>x[0]),DEFAULT="neutral-dark";
+const root=document.documentElement;
+function safeGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function inferLegacy(){
+ const ss=safeGet("ss-visual-lab-theme");
+ if(ss==="light")return "warm-neutral";
+ if(ss==="dark")return "navy-dark";
+ const c=safeGet("els-theme");
+ if(c==="light")return "warm-neutral";
+ if(c==="dark")return "navy-dark";
+ return DEFAULT;
+}
+function selected(){
+ const v=safeGet(KEY);
+ // Migrate the retired pure-white option without losing user preference.
+ return v==="white"?"white-clean":VALID.includes(v)?v:inferLegacy();
+}
+function apply(value,persist=true){
+ const normalized=value==="white"?"white-clean":value;
+ const v=VALID.includes(normalized)?normalized:DEFAULT;
+ const light=["warm-neutral","white-clean"].includes(v);
+ root.dataset.elsTheme=v;
+ root.dataset.theme=light?"light":"dark";
+ root.dataset.mode=light?"light":"dark";
+ root.style.colorScheme=light?"only light":"dark";
+ if(persist||safeGet(KEY)==="white")try{localStorage.setItem(KEY,v)}catch(e){}
+ document.querySelectorAll("[data-els-theme-picker]").forEach(s=>{if(s.value!==v)s.value=v});
+ const schemeMeta=document.querySelector('meta[name="color-scheme"]');
+ if(schemeMeta)schemeMeta.content=light?"only light":"dark";
+ const meta=document.querySelector('meta[name="theme-color"]');
+ if(meta)meta.content={"neutral-dark":"#101010","warm-dark":"#1d2323","navy-dark":"#101827","warm-neutral":"#f7f6f2","white-clean":"#f4f6f7"}[v];
+ window.dispatchEvent(new CustomEvent("els:themechange",{detail:{theme:v,scheme:light?"light":"dark"}}));
+ return v;
+}
+window.ELSTheme={get:()=>root.dataset.elsTheme||selected(),set:apply,options:VALID,choices:CHOICES.map(x=>x.slice())};
+function setup(){
+ if(safeGet(KEY)==="white")try{localStorage.setItem(KEY,"white-clean")}catch(e){}
+ const old=document.getElementById("theme-select"),portal=document.getElementById("theme");
+ if(old&&old.tagName==="SELECT"&&!(old.hasAttribute("data-els-theme-picker")))old.setAttribute("data-els-theme-picker","");
+ if(portal&&portal.tagName==="SELECT"&&!portal.hasAttribute("data-els-theme-picker"))portal.setAttribute("data-els-theme-picker","");
+ if(!document.querySelector("[data-els-theme-picker]")){
+  const top=document.querySelector(".toplinks,.topbar,.topnav,header .wrap,header,.links,.hero");
+  if(top){
+   const wrapper=document.createElement("label");wrapper.className="els-theme-control";
+   const title=document.createElement("span");title.textContent="Theme";wrapper.append(title);
+   const select=document.createElement("select");select.setAttribute("data-els-theme-picker","");select.setAttribute("aria-label","Theme / 화면 테마");
+   wrapper.append(select);top.append(wrapper);
+  }
+ }
+ document.querySelectorAll("[data-els-theme-picker]").forEach(select=>{
+  select.replaceChildren();
+  for(const [value,label] of CHOICES){
+   const o=document.createElement("option");o.value=value;o.textContent=label;select.append(o);
+  }
+  select.value=selected();
+  select.addEventListener("change",()=>apply(select.value));
+ });
+ apply(selected(),false);
+}
+apply(selected(),false);
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",setup,{once:true});else setup();
+window.addEventListener("storage",e=>{if(e.key===KEY)apply(selected(),false)});
+})();
+</script><script>/* Engineering Learning Studio language preference contract v1.0.
+ * ES5-compatible browser script, no dependencies, no automatic page reload.
+ * Shared by same-origin GitHub Pages projects: els-language.
+ * The caller controls the actual content and any state-preserving rerender.
+ */
+(function (window, document) {
+  "use strict";
+  if (window.ELSLanguage && window.ELSLanguage.version === "1.0.0") return;
+
+  var KEY = "els-language";
+  var MODES = ["mixed", "en", "ko"];
+  var DEFAULT = "mixed";
+  var listeners = [];
+  var mode = read() || DEFAULT;
+
+  function valid(value) { return MODES.indexOf(value) !== -1; }
+  function read() {
+    try {
+      var value = window.localStorage.getItem(KEY);
+      return valid(value) ? value : null;
+    } catch (_) { return null; }
+  }
+  function write(value) {
+    try { window.localStorage.setItem(KEY, value); return true; }
+    catch (_) { return false; }
+  }
+  function notify(source) {
+    for (var i = 0; i < listeners.length; i++) {
+      try { listeners[i](mode, { source: source }); } catch (error) {
+        window.setTimeout(function () { throw error; }, 0);
+      }
+    }
+    try {
+      document.dispatchEvent(new CustomEvent("els-language-change", { detail: { lang: mode, source: source } }));
+    } catch (_) {}
+  }
+  function apply(value, source, persist) {
+    if (!valid(value)) return false;
+    if (persist) write(value);
+    if (value === mode) return true;
+    mode = value;
+    document.documentElement.lang = mode === "en" ? "en" : "ko";
+    document.documentElement.dataset.elsLanguage = mode;
+    notify(source);
+    return true;
+  }
+  function get() { return mode; }
+  function set(value) { return apply(value, "local", true); }
+  function subscribe(fn, immediate) {
+    if (typeof fn !== "function") return function () {};
+    listeners.push(fn);
+    if (immediate) fn(mode, { source: "initial" });
+    return function () {
+      var index = listeners.indexOf(fn);
+      if (index >= 0) listeners.splice(index, 1);
+    };
+  }
+  function bindSelect(select) {
+    if (typeof select === "string") select = document.querySelector(select);
+    if (!select) return function () {};
+    select.value = mode;
+    var onChange = function () { set(select.value); };
+    var unsubscribe = subscribe(function (next) { if (select.value !== next) select.value = next; });
+    select.addEventListener("change", onChange);
+    return function () { select.removeEventListener("change", onChange); unsubscribe(); };
+  }
+  function pick(content) {
+    if (!content) return "";
+    if (typeof content === "string") return content;
+    return content[mode] != null ? content[mode] :
+      (mode === "mixed" ? (content.en != null ? content.en : content.ko) :
+      (content.en != null ? content.en : content.ko)) || "";
+  }
+  window.addEventListener("storage", function (event) {
+    if (event.key === KEY && valid(event.newValue)) apply(event.newValue, "storage", false);
+  });
+  window.addEventListener("pageshow", function () {
+    var saved = read();
+    if (saved && saved !== mode) apply(saved, "pageshow", false);
+  });
+  document.documentElement.dataset.elsLanguage = mode;
+  document.documentElement.lang = mode === "en" ? "en" : "ko";
+  // Shared bilingual content contract (C, Signals & Systems, future courses).
+  // Content is projected from immutable originals, never from the last render.
+  function textVariant(en, ko, chosen) {
+    if (chosen === "en") return en == null ? "" : en;
+    if (chosen === "ko") return ko == null ? "" : ko;
+    if (en == null || en === "") return ko == null ? "" : ko;
+    if (ko == null || ko === "" || en === ko) return en;
+    return String(en) + "\\n" + String(ko);
+  }
+  function content(entry, chosen) {
+    var target = valid(chosen) ? chosen : mode;
+    if (entry == null || typeof entry === "string") return entry == null ? "" : entry;
+    return textVariant(entry.en, entry.ko, target);
+  }
+  function project(base, localized, chosen) {
+    var target = valid(chosen) ? chosen : mode;
+    if (!base || typeof base !== "object") return base;
+    if (Array.isArray(base)) return base.map(function(item, i) {
+      return project(item, Array.isArray(localized) ? localized[i] : null, target);
+    });
+    var output = {};
+    Object.keys(base).forEach(function(key) {
+      var value = base[key];
+      var translated = localized && Object.prototype.hasOwnProperty.call(localized, key) ? localized[key] : undefined;
+      if (typeof value === "string" && typeof translated === "string") {
+        output[key] = textVariant(translated, value, target);
+      } else if (value && typeof value === "object") {
+        output[key] = project(value, translated, target);
+      } else {
+        output[key] = value;
+      }
+    });
+    return output;
+  }
+  window.ELSLanguage = Object.freeze({
+    version: "1.0.0", key: KEY, modes: MODES.slice(), get: get, set: set,
+    subscribe: subscribe, bindSelect: bindSelect, pick: pick, content: content, project: project
+  });
+})(window, document);
+</script></head><body><header><div class="bar"><a href="../../../#projects"><span data-en="← Project Gallery" data-ko="← 프로젝트 갤러리">← Project Gallery</span></a><div class="row"><select id="language" aria-label="Language"><option value="mixed">한/영</option><option value="en">English</option><option value="ko">한국어</option></select><select data-els-theme-picker aria-label="Theme"></select></div></div></header><main><p class="eyebrow">PROJECT 02 · VERSION 1/5</p><h1><span data-en="GPA Calculator" data-ko="학점 계산기">GPA Calculator</span></h1><nav class="nav" aria-label="Development versions"><a href="v1.html" aria-current="page">V1</a><a href="v2.html">V2</a><a href="v3.html">V3</a><a href="v4.html">V4</a><a href="v5.html">V5</a><a href="../../02-gpa-calculator.html"><span data-en="Complete demo" data-ko="완성 예제">Complete demo</span></a></nav><h2><span data-en="V1 · First calculation" data-ko="V1 · 첫 학점 계산">V1 · First calculation</span></h2><p class="stage-info"><span data-en="3 × 4.5 and 2 × 3.5 give 4.10." data-ko="3학점 4.5와 2학점 3.5에서 4.10이 나옵니다.">3 × 4.5 and 2 × 3.5 give 4.10.</span></p><div class="grid"><section class="panel"><h2><span data-en="Input" data-ko="입력">Input</span></h2><label><span data-en="Credits 1" data-ko="학점 1">Credits 1</span><input id="c1" type="number" value="3" min="1" max="6" step="1"></label><label><span data-en="Grade 1" data-ko="평점 1">Grade 1</span><input id="g1" type="number" value="4.5" min="0" max="4.5" step="0.5"></label><label><span data-en="Credits 2" data-ko="학점 2">Credits 2</span><input id="c2" type="number" value="2" min="1" max="6" step="1"></label><label><span data-en="Grade 2" data-ko="평점 2">Grade 2</span><input id="g2" type="number" value="3.5" min="0" max="4.5" step="0.5"></label><button type="button" id="calc"><span data-en="Calculate" data-ko="계산">Calculate</span></button><p id="status" role="status" class="status"></p></section><section class="panel"><h2><span data-en="GPA" data-ko="학점 평균">GPA</span></h2><div id="stats" class="stats"></div><p>GPA = Σ(credit × grade) / Σ(credit)</p></section></div><section class="panel"><h2><span data-en="Build this version with AI" data-ko="AI와 이 버전 만들기">Build this version with AI</span></h2><div id="prompt" class="prompt" data-en="Create a two-course GPA calculator using credit-weighted grades on a 4.5 scale. Use one HTML file." data-ko="두 과목의 학점과 평점을 받아 4.5 만점 가중평균 GPA를 계산하는 HTML 파일 하나를 만들어 줘.">Create a two-course GPA calculator using credit-weighted grades on a 4.5 scale. Use one HTML file.</div><div class="row"><button type="button" id="copy-prompt"><span data-en="Copy prompt" data-ko="Prompt 복사">Copy prompt</span></button><span id="copy-state" role="status"></span><a href="v1.html" download="02-gpa-calculator-v1.html"><span data-en="Download this HTML" data-ko="이 HTML 다운로드">Download this HTML</span></a><a href="v2.html"><span data-en="Next version →" data-ko="다음 버전 →">Next version →</span></a></div></section><footer><span data-en="Working reference version. Try it, then use the prompt in your own coding tool. No live AI call or backend. Each version has separate state." data-ko="실행 가능한 참고 버전입니다. 체험한 후 자신의 AI 코딩 도구에서 Prompt를 사용하세요. 실제 AI 호출이나 Backend는 없으며 버전별 상태는 독립적입니다.">Working reference version. Try it, then use the prompt in your own coding tool. No live AI call or backend. Each version has separate state.</span></footer></main><script>
+const $=id=>document.getElementById(id), L=window.ELSLanguage;
+const T=(en,ko)=>L.get()==="en"?en:L.get()==="ko"?ko:en+" · "+ko;
+function el(tag,text){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n}
+function status(en,ko){if($("status")){$("status").dataset.en=en;$("status").dataset.ko=ko;$("status").textContent=T(en,ko)}}
+function stats(items){const out=$("stats");if(!out)return;out.replaceChildren();for(const [en,ko,value] of items){const d=el("div"),lab=el("span",T(en,ko));lab.dataset.en=en;lab.dataset.ko=ko;d.append(lab,el("strong",String(value)));out.append(d)}}
+function safeRead(key,fallback){try{return JSON.parse(localStorage.getItem(key))??fallback}catch(e){return fallback}}
+function safeWrite(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true}catch(e){return false}}
+function download(name,content,type="text/plain"){const url=URL.createObjectURL(new Blob([content],{type})),a=el("a");a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+function chart(values,{bars=false,highlight=[],threshold=null,labels=null,axis="Index"}={}){
+ const s=$("chart");if(!s)return;s.replaceChildren();if(!values.length)return;
+ const make=(tag,attrs,text)=>{const e=document.createElementNS("http://www.w3.org/2000/svg",tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));if(text!==undefined)e.textContent=text;s.append(e);return e};
+ const lo=Math.min(...values,...(bars?[0]:[]),...(threshold===null?[]:[threshold])),hi=Math.max(...values,...(bars?[0]:[]),...(threshold===null?[]:[threshold])),span=hi-lo||1,base=hi===lo?lo-.5:lo;
+ const y=v=>160-(v-base)/span*130,x=i=>bars?48+(i+.5)*452/values.length:48+(values.length===1?226:i*452/(values.length-1));
+ for(let i=0;i<=4;i++){const v=base+i*span/4;make("line",{x1:48,x2:500,y1:y(v),y2:y(v),stroke:"var(--els-border)"});make("text",{x:42,y:y(v)+4,fill:"currentColor","font-size":11,"text-anchor":"end"},Number(v.toPrecision(4)))}
+ make("path",{d:"M48 25 V160 H500",fill:"none",stroke:"currentColor"});
+ if(threshold!==null)make("line",{x1:48,x2:500,y1:y(threshold),y2:y(threshold),stroke:"#c98a34","stroke-width":2,"stroke-dasharray":"5 4"});
+ if(bars){values.forEach((v,i)=>{const w=Math.min(80,452/values.length*.76);make("rect",{x:x(i)-w/2,y:Math.min(y(v),y(0)),width:w,height:Math.max(2,Math.abs(y(v)-y(0))),rx:2,fill:highlight.includes(i)?"#c98a34":"var(--els-link)"});make("text",{x:x(i),y:v>=0?Math.max(14,y(v)-5):Math.min(175,y(v)+13),fill:"currentColor","font-size":12,"text-anchor":"middle"},v)})}
+ else{make("polyline",{points:values.map((v,i)=>x(i)+","+y(v)).join(" "),fill:"none",stroke:"var(--els-link)","stroke-width":2});if(values.length<=50)values.forEach((v,i)=>make("circle",{cx:x(i),cy:y(v),r:3.5,fill:threshold!==null&&v>threshold?"#c98a34":"var(--els-link)"}))}
+ for(const i of (values.length<=12?values.map((_,i)=>i):[0,Math.floor((values.length-1)/2),values.length-1]))make("text",{x:x(i),y:178,fill:"currentColor","font-size":11,"text-anchor":"middle"},labels?labels[i]:i);
+ make("text",{x:274,y:196,fill:"currentColor","font-size":11,"text-anchor":"middle"},axis)
+}
+function showTests(cases){const out=$("tests");out.replaceChildren();for(const [name,expected,actual] of cases){const p=el("p",(String(expected)===String(actual)?"PASS":"FAIL")+" · "+name+" | expected "+expected+" / actual "+actual);p.className=String(expected)===String(actual)?"pass":"fail";out.append(p)}}
+function fileText(input,limit=100000){return new Promise((resolve,reject)=>{const f=input.files[0];if(!f||f.size>limit){reject(Error("file size"));return}f.text().then(resolve,reject)})}
+function refreshLanguage(){document.querySelectorAll("[data-en][data-ko]").forEach(n=>n.textContent=T(n.dataset.en,n.dataset.ko));if(typeof renderLanguage==="function")renderLanguage()}
+L.bindSelect("#language");L.subscribe(refreshLanguage);
+$("copy-prompt").onclick=async()=>{const p=$("prompt");const str=L.get()==="ko"?p.dataset.ko:p.dataset.en;try{await navigator.clipboard.writeText(str);$("copy-state").textContent=T("Copied","복사 완료")}catch(e){const r=document.createRange();r.selectNodeContents(p);getSelection().removeAllRanges();getSelection().addRange(r);$("copy-state").textContent=T("Select and copy manually","선택된 텍스트를 직접 복사하세요")}};
+
+
+const sample=[{name:"C Programming",credit:3,grade:4.5},{name:"Mathematics",credit:2,grade:3.5}];
+function valid(r){return r&&typeof r.name==="string"&&r.name.trim()&&Number.isInteger(r.credit)&&r.credit>=1&&r.credit<=6&&Number.isFinite(r.grade)&&r.grade>=0&&r.grade<=4.5&&Number.isInteger(r.grade*2)}
+
+let records=sample.slice();
+function draw(){const credits=records.reduce((a,r)=>a+r.credit,0),points=records.reduce((a,r)=>a+r.credit*r.grade,0),gpa=credits?points/credits:null;stats([["GPA","평균",gpa===null?"—":gpa.toFixed(2)]]);}
+$("calc").onclick=()=>{const fields=["c1","g1","c2","g2"];if(fields.some(id=>!$(id).value.trim())){status("Enter all four values.","네 값을 모두 입력하세요.");return}const r=[{name:"1",credit:Number($("c1").value),grade:Number($("g1").value)},{name:"2",credit:Number($("c2").value),grade:Number($("g2").value)}];if(!r.every(valid)){status("Use 1–6 credits and grades 0–4.5 in steps of 0.5.","학점 1~6과 평점 0~4.5 (0.5 간격)를 입력하세요.");return}records=r;status("Calculated.","계산 완료");draw()};
+
+function renderLanguage(){draw()}draw();
+refreshLanguage();</script></body></html>
