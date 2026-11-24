@@ -6,7 +6,7 @@
 "use strict";
 const $=id=>document.getElementById(id),C=W.SSImageFFTCore;
 if(!C||!W.SSImageFFTApp||!$("image-fft-pipeline"))return;
-const equations=["R[y,u]=\\sum_{x=0}^{N-1}I[y,x]e^{-j2\\pi ux/N}","F[v,u]=\\sum_{y=0}^{N-1}R[y,u]e^{-j2\\pi vy/N}","G[v,u]=F[v,u]\\,H[v,u]","g[y,x]=\\mathrm{IFFT2}\\left\\{G[v,u]\\right\\}"];
+const equations=["R[y,u]=\\sum_{x=0}^{N-1}I[y,x]e^{-j2\\pi ux/N}","F[u,v]=\\sum_{y=0}^{N-1}R[y,u]e^{-j2\\pi vy/N}","G[u,v]=F[u,v]\\,H[u,v]","g[x,y]=\\mathrm{IFFT2}\\left\\{G[u,v]\\right\\}"];
 const labels=[
  {name:["1 · Row FFT","1 · 행 FFT"],q:["What changes when only the horizontal x coordinate is transformed?","가로 좌표 x만 FFT하면 무엇이 변할까요?"],
   left:["Image I[y,x]","입력 영상 I[y,x]"],right:["Row spectra R[y,u]","행 스펙트럼 R[y,u]"],
@@ -14,17 +14,17 @@ const labels=[
   rightNote:["Horizontal u is frequency; vertical y is still pixel position.","가로 u는 주파수, 세로 y는 여전히 픽셀 위치입니다."],
   note:["A 1D FFT is applied to each row. R[y,u] is COMPLEX; this image only displays its log magnitude.","각 행에 1D FFT를 적용합니다. R[y,u]는 복소수이며 그림에는 로그 크기만 표시합니다."]},
  {name:["2 · Column FFT","2 · 열 FFT"],q:["If u is already a frequency index, what happens when we transform the vertical direction?","u가 이미 주파수 인덱스라면 세로 방향을 FFT할 때 무엇이 달라질까요?"],
-  left:["Row spectra R[y,u]","행 스펙트럼 R[y,u]"],right:["2D spectrum F[v,u]","2D 스펙트럼 F[v,u]"],
+  left:["Row spectra R[y,u]","행 스펙트럼 R[y,u]"],right:["2D spectrum F[u,v]","2D 스펙트럼 F[u,v]"],
   leftNote:["Choose one frequency column u. Its vertical samples still vary with y.","주파수 열 u를 선택하세요. 세로 축은 아직 공간 인덱스 y입니다."],
   rightNote:["After the column FFT, both axes u and v are spatial-frequency indices.","열 FFT 후에는 두 축 u와 v가 모두 공간주파수 인덱스입니다."],
   note:["FFT down each frequency column turns y into v. Shifting the display centers DC; it does not change complex coefficients.","주파수 열마다 FFT하면 y가 v로 변합니다. 표시상 DC를 중앙 이동해도 복소 계수 자체는 변하지 않습니다."]},
  {name:["3 · Complex multiply","3 · 복소 곱셈"],q:["Where does the 3×3 spatial kernel appear in the frequency domain?","3×3 공간 커널은 주파수 영역에서 어떻게 적용될까요?"],
-  left:["F[v,u] · original","원래 스펙트럼 F[v,u]"],right:["F[v,u] × H[v,u]","필터링 스펙트럼 F[v,u]×H[v,u]"],
+  left:["F[u,v] · original","원래 스펙트럼 F[u,v]"],right:["F[u,v] × H[u,v]","필터링 스펙트럼 F[u,v]×H[u,v]"],
   leftNote:["The original centered 2D FFT spectrum.","필터 전 중심 이동 2D FFT 스펙트럼입니다."],
   rightNote:["Complex multiplication preserves both magnitude and phase information.","복소 곱셈에는 크기와 위상 정보가 모두 포함됩니다."],
   note:["H is the FFT of the zero-padded, circularly aligned 3×3 kernel. Filter the FULL complex spectrum, not the displayed log-magnitude image.","H는 3×3 커널을 순환 정렬하고 영으로 채운 뒤 계산한 FFT입니다. 표시된 로그 크기 영상이 아닌 복소 스펙트럼 전체에 곱합니다."]},
  {name:["4 · Inverse FFT2","4 · 역 FFT2"],q:["Can frequency multiplication reproduce the same pixels as the spatial 3×3 scan?","주파수 영역의 곱셈으로 공간 3×3 커널 이동과 같은 픽셀을 복원할 수 있을까요?"],
-  left:["F × H (complex spectrum)","F×H (복소 스펙트럼)"],right:["IFFT2 result g[y,x]","IFFT2 복원 결과 g[y,x]"],
+  left:["F × H (complex spectrum)","F×H (복소 스펙트럼)"],right:["IFFT2 result g[x,y]","IFFT2 복원 결과 g[x,y]"],
   leftNote:["Still in spatial-frequency coordinates (u,v).","여전히 공간주파수 좌표 (u,v)입니다."],
   rightNote:["The inverse 2D FFT gives the same image as circular spatial convolution.","2D IFFT 결과는 순환 공간 컨벌루션과 같은 영상입니다."],
   note:["Both paths match when the boundary convention agrees. A 3×3 spatial kernel may cost less than FFT processing; equivalence does not imply equal speed.","경계 처리 방식이 같을 때 두 결과는 일치합니다. 작은 3×3 커널은 직접 공간 계산이 더 빠를 수도 있습니다. 수학적 동등성이 속도까지 같다는 뜻은 아닙니다."]}
@@ -105,8 +105,8 @@ function evidence(model){
  }
  if(st===1){
   const k=bin,m=Math.hypot(state.stages.full.real[k],state.stages.full.imag[k]);
-  return ["Column u="+u+" · |F[v=0,u]| = "+m.toFixed(4)+". Max |two 1D passes − FFT2| = "+state.fullError.toExponential(2)+".",
-          "주파수 열 u="+u+" · |F[v=0,u]| = "+m.toFixed(4)+". 최대 |행·열 1D FFT − FFT2| = "+state.fullError.toExponential(2)+"."];
+  return ["Column u="+u+" · |F[u,v=0]| = "+m.toFixed(4)+". Max |two 1D passes − FFT2| = "+state.fullError.toExponential(2)+".",
+          "주파수 열 u="+u+" · |F[u,v=0]| = "+m.toFixed(4)+". 최대 |행·열 1D FFT − FFT2| = "+state.fullError.toExponential(2)+"."];
  }
  if(st===2){
   const k=bin,H=model.output.kernelSpectrum;
