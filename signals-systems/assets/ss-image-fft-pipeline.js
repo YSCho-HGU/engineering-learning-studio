@@ -6,6 +6,7 @@
 "use strict";
 const $=id=>document.getElementById(id),C=W.SSImageFFTCore;
 if(!C||!W.SSImageFFTApp||!$("image-fft-pipeline"))return;
+const equations=["R[y,u]=\\sum_{x=0}^{N-1}I[y,x]e^{-j2\\pi ux/N}","F[v,u]=\\sum_{y=0}^{N-1}R[y,u]e^{-j2\\pi vy/N}","G[v,u]=F[v,u]\\,H[v,u]","g[y,x]=\\mathrm{IFFT2}\\left\\{G[v,u]\\right\\}"];
 const labels=[
  {name:["1 · Row FFT","1 · 행 FFT"],q:["What changes when only the horizontal x coordinate is transformed?","가로 좌표 x만 FFT하면 무엇이 변할까요?"],
   left:["Image I[y,x]","입력 영상 I[y,x]"],right:["Row spectra R[y,u]","행 스펙트럼 R[y,u]"],
@@ -31,7 +32,6 @@ const labels=[
 const t=(en,ko)=>{const m=W.ELSLanguage?.get?.()||"mixed";return m==="en"?en:m==="ko"?ko:en+" · "+ko;};
 const text=(id,a)=>{$(id).textContent=t(...a);};
 const state={step:0,row:96,column:8,visited:new Set([0]),active:false,source:null,stages:null,model:null,fullError:0};
-const drawCache={};
 function maxComplexError(a,b){
  let max=0;
  for(let i=0;i<a.real.length;i++)
@@ -74,7 +74,7 @@ function paint(canvas,values,N,{mag=false,maximum=null,highlight=null}={}){
  const ctx=canvas.getContext("2d"),small=document.createElement("canvas");
  small.width=small.height=N;
  const temp=small.getContext("2d"),im=temp.createImageData(N,N);
- const peak=mag?(maximum||Math.max(...values)||1):1;
+ const peak=mag?(maximum||1):1;
  for(let i=0;i<values.length;i++){
   const normalized=mag?Math.pow(Math.min(1,values[i]/peak),.72):Math.max(0,Math.min(1,values[i]));
   const g=Math.round(normalized*255),o=4*i;
@@ -120,6 +120,11 @@ function evidence(model){
  return ["Pixel ("+p.probeX+","+p.probeY+"): spatial="+spatial.toFixed(6)+", FFT="+frequency.toFixed(6)+". Whole-image max error="+model.output.maxDifference.toExponential(2)+".",
          "픽셀 ("+p.probeX+","+p.probeY+"): 공간="+spatial.toFixed(6)+", FFT="+frequency.toFixed(6)+". 전체 영상 최대 오차="+model.output.maxDifference.toExponential(2)+"."];
 }
+function renderEquation(){
+ const host=$("image-fft-pipeline-equation"),latex=equations[state.step];
+ if(W.katex){try{W.katex.render(latex,host,{throwOnError:false});return;}catch(e){}}
+ host.textContent=latex;
+}
 function draw(model){
  const N=model.N,d=labels[state.step];
  for(const [k,s] of [
@@ -127,6 +132,7 @@ function draw(model){
  ["image-fft-left-caption",d.leftNote],["image-fft-right-caption",d.rightNote],
  ["image-fft-pipeline-question",d.q],["image-fft-pipeline-note",d.note]])text(k,s);
  text("image-fft-pipeline-evidence",evidence(model));
+ renderEquation();
  $("image-fft-pipeline-counter").textContent=(state.step+1)+" / 4";
  $("image-fft-row-value").textContent=String(state.row);
  $("image-fft-column-value").textContent=String(state.column);
