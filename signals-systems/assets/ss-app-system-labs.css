@@ -145,3 +145,8 @@ a:hover{text-decoration:underline}
  .ss-sys-ma-tap{flex-basis:115px}
 }
 @media(prefers-reduced-motion:reduce){.ss-sys-circuit .ss-sys-signal-direction{animation:none}}
+
+/* Compact four-step learning progression on both physical and digital system labs. */
+.ss-sys-step-label{display:block;margin:0 0 5px;font-size:11px;font-weight:800;letter-spacing:.035em;line-height:1.3;color:var(--els-link)}
+.ss-sys-plot .ss-sys-step-label+h2{margin-top:0}
+.ss-sys-rc-explorer>.ss-sys-step-label,.ss-sys-ma-explorer>.ss-sys-step-label{margin-bottom:6px}
