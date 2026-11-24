@@ -99,7 +99,7 @@ html.ss5-native :is(a,button,input,select):focus-visible{outline:3px solid var(-
  html.ss5-native .plots{grid-template-columns:1fr!important}
 }
 @media(max-width:780px){
- html.ss5-native .shell{display:block!important;min-height:0!important}
+ html.ss5-native .shell{min-height:0!important}
  
  
  
