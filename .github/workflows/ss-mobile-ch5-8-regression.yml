@@ -9,6 +9,7 @@ on:
       - 'signals-systems/assets/ss-ch5-standalone.css'
       - 'signals-systems/assets/ss-ui-standard.css'
       - 'signals-systems/assets/ss-mobile-ch5-8-repair.css'
+      - 'signals-systems/assets/ss-mobile-ch5-8-repair.js'
       - 'tests/ss-mobile-ch5-8-regression.mjs'
       - '.github/workflows/ss-mobile-ch5-8-regression.yml'
   workflow_dispatch:
