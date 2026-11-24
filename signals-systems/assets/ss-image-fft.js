@@ -10,7 +10,7 @@ const words={
  "image-title":["2D Image FFT Discovery","2D 이미지 FFT 발견 실습"],
  "image-intro":["Discover hidden spatial frequencies, remove periodic interference, and reconstruct an image.","이미지의 숨겨진 공간주파수를 발견하고 주기적 잡음을 제거·복원합니다."],
  "image-stage-1":["Patterns","패턴 발견"],"image-stage-2":["Spectrum","스펙트럼"],
- "image-stage-3":["Filtering","주파수 필터"],"image-stage-4":["Remove noise","잡음 제거"],
+ "image-stage-3":["Kernel → FFT","커널 → FFT"],"image-stage-4":["Remove noise","잡음 제거"],
  "image-controls-title":["Change · Observe","조절 · 관찰"],
  "image-controls-help":["One input updates every result; begin with the prepared four-step sequence.","하나의 입력이 모든 결과에 반영됩니다. 네 단계 실습부터 시작하세요."],
  "image-preset-label":["Input pattern","입력 패턴"],"image-cycles-label":["Cycles across image","이미지 내 반복 횟수"],
@@ -25,7 +25,13 @@ const words={
  "image-view-title-3":["03 · Frequency mask","03 · 주파수 마스크"],"image-view-title-4":["04 · IFFT result","04 · IFFT 복원 결과"],
  "image-view-note-1":["Grayscale intensity at pixel coordinates (x,y).","픽셀 좌표 (x,y)의 흑백 밝기 값입니다."],
  "image-view-note-2":["Centered log magnitude; click a peak to remove its conjugate pair.","중심 이동 로그 크기 스펙트럼입니다. 피크를 클릭하면 켤레 주파수 쌍이 제거됩니다."],
- "image-view-note-3":["Bright regions pass, dark regions are attenuated.","밝은 영역은 통과하고 어두운 영역은 감쇠합니다."],
+ "image-view-note-3":["Bright passes; dark attenuates. Kernel display shows normalized |H[u,v]|.","밝은 영역은 통과하고 어두운 영역은 감쇠합니다. 커널은 정규화된 |H[u,v]|을 보여줍니다."],
+ "image-kernel-title":["How does a 3×3 kernel transform one pixel?","3×3 커널은 한 픽셀을 어떻게 바꿀까요?"],
+ "image-kernel-choice-label":["Choose a kernel","커널 선택"],
+ "image-kernel-intro":["Select Box, Gaussian or Sharpen, then click an input pixel. Trace its nine neighbors and compare spatial summation with FFT filtering.","평균·가우시안·선명화 커널을 선택하고 입력 픽셀을 클릭하세요. 주변 9개 픽셀의 가중합과 FFT 필터 결과를 비교합니다."],
+ "image-kernel-patch-label":["3×3 neighboring pixels","주변 3×3 픽셀"],
+ "image-kernel-weight-label":["3×3 kernel weights","3×3 커널 가중치"],
+ "image-kernel-link":["Circular convolution in space equals complex FFT2 multiplication: G = FFT2(I) × FFT2(h). Both outputs are numerically identical.","공간 영역의 순환 컨벌루션은 복소 FFT2 곱셈과 같습니다: G = FFT2(I) × FFT2(h). 두 결과는 수치적으로 일치합니다."],
  "image-reason-title":["Predict → Observe → Explain","예측 → 관찰 → 설명"],
  "image-check":["Verify with evidence","근거로 확인"],"image-next":["Next discovery","다음 발견"],
  "image-advanced-title":["How 2D FFT works · Advanced","2D FFT 계산 원리 · 심화"],
@@ -44,11 +50,11 @@ const exercises={
  q:["Multiple peaks arise because…","여러 피크가 나타나는 이유는…"],
  a:[["Sharp repeating edges contribute harmonics","반복되는 날카로운 경계가 고조파를 만듭니다"],["FFT is nonlinear for images","이미지에서 FFT가 비선형이 되기 때문입니다"]],
  explain:["Unlike a sinusoidal grating, a checkerboard contains multiple harmonics on both spatial axes.","정현파 줄무늬와 달리 체커보드는 두 공간 축에 여러 고조파 성분이 존재합니다."]},
- 3:{title:["Which frequencies hold fine image details?","미세한 이미지 정보는 어떤 주파수에 있을까요?"],
- hint:["Compare low-pass and high-pass on the same synthetic city scene. Change the cutoff radius.","같은 합성 도시 장면에 저역·고역통과를 적용하고 반경을 조절하세요."],
- q:["Which filter blurs small details?","미세한 구조를 흐리게 하는 필터는?"],
- a:[["Low-pass; it attenuates fast spatial changes","빠른 공간 변화를 줄이는 저역통과"],["High-pass; it keeps only smooth changes","완만한 변화만 유지하는 고역통과"]],
- explain:["Low-pass suppresses edges and texture; high-pass emphasizes transitions. Signed high-pass values are displayed around middle gray.","저역통과는 경계와 질감을 줄이고 고역통과는 변화를 강조합니다. 부호 있는 고역통과 결과의 0은 중간 회색으로 표시합니다."]},
+ 3:{title:["How does a pixel kernel become a frequency filter?","픽셀 커널은 어떻게 주파수 필터가 될까요?"],
+ hint:["Click a pixel in the input image. Compare its 3×3 neighborhood, Box/Gaussian/Sharpen weights, and the FFT-derived filter response. Change kernels.","입력 이미지의 픽셀을 클릭하세요. 주변 3×3 값과 평균·가우시안·선명화 가중치, FFT로 계산한 필터 응답을 비교하고 커널을 바꿔 보세요."],
+ q:["Which kernel smooths a local image region?","주변 밝기 변화를 부드럽게 하는 커널은?"],
+ a:[["The Box or Gaussian averaging kernel","평균 또는 가우시안 가중 평균 커널"],["The Sharpen kernel with negative neighbor weights","이웃 픽셀에 음수 가중치를 주는 선명화 커널"]],
+ explain:["An averaging kernel combines neighbors with positive weights that add to one. Sharpen emphasizes local differences. With the same periodic boundary rule, spatial 3×3 convolution and multiplication by FFT2(kernel) produce the SAME output.","평균 커널은 양수 가중치를 합계 1이 되도록 주변에 적용합니다. 선명화 커널은 국소적인 차이를 강조합니다. 같은 주기적 경계 규칙을 쓰면 공간 3×3 컨벌루션과 FFT2(커널) 곱셈은 같은 결과를 냅니다."]},
  4:{title:["Can an FFT remove periodic image noise?","FFT로 주기적 이미지 잡음을 제거할 수 있을까요?"],
  hint:["Find bright peaks around (±12, ±7). Click either peak; the symmetric notch pair filters the image before IFFT.","(±12, ±7) 근처 밝은 피크 중 하나를 클릭하세요. 대칭 Notch 쌍이 적용되고 IFFT로 복원됩니다."],
  q:["Why reject both opposite peaks?","왜 서로 반대쪽 피크 두 개를 제거할까요?"],
@@ -56,8 +62,8 @@ const exercises={
  explain:["For real images, F(−u,−v)=F*(u,v). A paired symmetric notch retains that property. Targeted frequency removal can suppress image-wide interference.","실수 이미지의 F(−u,−v)=F*(u,v)이므로 대칭 Notch는 복소 켤레대칭을 유지합니다. 전체 이미지에 퍼진 주기 잡음을 특정 주파수만 제거해 줄일 수 있습니다."]}
 };
 const presets=[["stripes","Adjustable stripes","줄무늬 조절"],["checker","Checkerboard","체커보드"],["scene","Synthetic city scene","합성 도시 장면"],["noise","Scene + periodic noise","장면 + 주기적 잡음"]];
-const filters=[["none","No filter","필터 없음"],["low","Gaussian low-pass","가우시안 저역통과"],["high","Gaussian high-pass","가우시안 고역통과"],["notch","Symmetric notch reject","대칭 Notch 제거"]];
-const defaults={stage:1,kind:"stripes",N:256,cycles:8,angle:0,filter:"none",radius:22,notchU:12,notchV:7,notchRadius:2.5,view:"magnitude"};
+const filters=[["none","No filter","필터 없음"],["kernel","3×3 spatial kernel (FFT equivalent)","3×3 공간 커널 (FFT로 동일 계산)"],["low","Gaussian low-pass","가우시안 저역통과"],["high","Gaussian high-pass","가우시안 고역통과"],["notch","Symmetric notch reject","대칭 Notch 제거"]];
+const defaults={stage:1,kind:"stripes",N:256,cycles:8,angle:0,filter:"none",radius:22,notchU:12,notchV:7,notchRadius:2.5,view:"magnitude",kernel:"box",probeX:82,probeY:106};
 const state={...defaults};let bitmap=null,dirty=true,base=null,result=null,scheduled=0,interactions=0;
 function feedback(message="",status=""){const el=$("image-feedback");el.textContent=message;if(status)el.dataset.result=status;else delete el.dataset.result;}
 function labels(){
@@ -66,6 +72,7 @@ function labels(){
  const uploadedOption=$("image-preset").querySelector('option[value="upload"]');
  if(uploadedOption)uploadedOption.textContent=tr("Uploaded picture","업로드 이미지",true);
  for(const [i,o]of filters.entries())$("image-filter").options[i].textContent=tr(o[1],o[2],true);
+ for(const [i,word]of [[["Box average","3×3 평균"],["Gaussian blur","가우시안 블러"],["Sharpen","선명화"]]].flat().entries())$("image-kernel-choice").options[i].textContent=tr(...word,true);
  $("image-spectrum-view").options[0].textContent=tr("Log magnitude","로그 크기",true);
  $("image-spectrum-view").options[1].textContent=tr("Phase (advanced)","위상 (심화)",true);
  document.title=tr("2D Image FFT Discovery","2D 이미지 FFT 발견 실습",true)+" | Engineering Learning Studio";
@@ -88,11 +95,12 @@ function stageLabels(){
 function sync(){
  $("image-preset").value=state.kind;$("image-size").value=String(state.N);
  for(const [id,value]of [["cycles",state.cycles],["angle",state.angle],["radius",state.radius],["notch-radius",state.notchRadius]])$("image-"+id).value=String(value);
- $("image-filter").value=state.filter;$("image-spectrum-view").value=state.view;
+ $("image-filter").value=state.filter;$("image-kernel-choice").value=state.kernel;$("image-spectrum-view").value=state.view;
  $("image-cycles-value").textContent=state.cycles;$("image-angle-value").textContent=state.angle+"°";
  $("image-radius-value").textContent=state.radius;$("image-notch-radius-value").textContent=Number(state.notchRadius).toFixed(1);
  $("image-cycles-field").hidden=!["stripes","checker"].includes(state.kind);
  $("image-angle-field").hidden=state.kind!=="stripes";
+ $("image-kernel-panel").hidden=state.stage!==3;
  $("image-radius-field").hidden=!["low","high"].includes(state.filter);
  $("image-notch-radius-field").hidden=state.filter!=="notch";
  set("image-notch-hint",state.filter==="notch"?
@@ -122,7 +130,7 @@ function compute(){
   base={input,spectrum};dirty=false;
  }
  const {input,spectrum}=base;
- const output=C.applyMask(spectrum,state.N,{type:state.filter,radius:state.radius,notch:{u:state.notchU,v:state.notchV,radius:state.notchRadius}});
+ const output=state.filter==="kernel"?C.applyKernelFFT(spectrum,input.pixels,state.N,state.kernel):C.applyMask(spectrum,state.N,{type:state.filter,radius:state.radius,notch:{u:state.notchU,v:state.notchV,radius:state.notchRadius}});
  return {N:state.N,input,spectrum,output,peak:C.dominant(spectrum,state.N),
   originalRMSE:input.clean?C.rmse(input.pixels,input.clean):null,
   filteredRMSE:input.clean?C.rmse(output.pixels,input.clean):null};
@@ -168,9 +176,16 @@ function showSpectrum(m){
   }
  }
 }
-function showMask(N){
- const data=new Float64Array(N*N),notch={u:state.notchU,v:state.notchV,radius:state.notchRadius};
- for(let y=0;y<N;y++)for(let x=0;x<N;x++)data[y*N+x]=C.maskAt(x-N/2,y-N/2,state.filter,state.radius,notch);
+function showMask(m){
+ const N=m.N,data=new Float64Array(N*N),notch={u:state.notchU,v:state.notchV,radius:state.notchRadius};
+ if(state.filter==="kernel"){
+  const h=m.output.kernelSpectrum;let max=0;
+  for(let sy=0;sy<N;sy++)for(let sx=0;sx<N;sx++){
+   const k=C.shiftedToIndex(sx,sy,N),p=sy*N+sx;
+   data[p]=Math.hypot(h.real[k],h.imag[k]);max=Math.max(max,data[p]);
+  }
+  for(let i=0;i<data.length;i++)data[i]/=max||1;
+ }else for(let y=0;y<N;y++)for(let x=0;x<N;x++)data[y*N+x]=C.maskAt(x-N/2,y-N/2,state.filter,state.radius,notch);
  showRaster("image-mask-canvas",data,N);
 }
 function showMetrics(m){
@@ -178,7 +193,9 @@ function showMetrics(m){
  [["Dominant peak (u,v)","최대 피크 (u,v)"],"("+m.peak.u+", "+m.peak.v+")"],
  [["Spatial period","공간 주기"],state.kind==="stripes"?(m.N/state.cycles).toFixed(1)+" px":tr("Varies","다양함",true)],
  [["Retained energy","남은 에너지"],m.output.energyPercent.toFixed(1)+"%"],
- [["RMSE vs clean scene","원본 장면 대비 RMSE"],m.originalRMSE===null?tr("Not available","기준 없음",true):m.originalRMSE.toFixed(3)+" → "+m.filteredRMSE.toFixed(3)]
+ [m.output.maxDifference!==undefined?["Spatial vs FFT2 error","공간/FFT2 오차"]:["RMSE vs clean scene","원본 장면 대비 RMSE"],
+  m.output.maxDifference!==undefined?m.output.maxDifference.toExponential(2):
+   m.originalRMSE===null?tr("Not available","기준 없음",true):m.originalRMSE.toFixed(3)+" → "+m.filteredRMSE.toFixed(3)]
  ];
  const host=$("image-metrics");host.replaceChildren();
  for(const [[en,ko],v]of values){
@@ -186,9 +203,40 @@ function showMetrics(m){
   box.className="ss-image-metric";a.textContent=tr(en,ko,true);b.textContent=v;box.append(a,b);host.append(box);
  }
 }
+
+function showKernelInspector(m){
+ if(state.stage!==3)return;
+ const weights=C.kernelWeights(state.kernel),probe=C.kernelProbe(m.input.pixels,m.N,state.kernel,state.probeX,state.probeY);
+ const cells=[["image-kernel-pixels",probe.items.map(v=>v.pixel)],["image-kernel-weights",weights]];
+ for(const [id,values]of cells){
+  const host=$(id);host.replaceChildren();
+  for(const [i,v]of values.entries()){
+   const cell=document.createElement("span");cell.className="ss-image-kernel-cell";
+   if(i===4)cell.classList.add("ss-image-kernel-center");
+   cell.textContent=Number(v).toFixed(id==="image-kernel-pixels"?2:3);
+   host.append(cell);
+  }
+ }
+ if(state.filter==="kernel"){
+  const value=m.output.pixels[probe.y*m.N+probe.x];
+  set("image-kernel-evidence",
+   "At pixel ("+probe.x+", "+probe.y+"): weighted sum = "+probe.sum.toFixed(5)+"; FFT2 filtering = "+value.toFixed(5)+
+   ". Max |spatial − FFT| = "+m.output.maxDifference.toExponential(2)+".",
+   "픽셀 ("+probe.x+", "+probe.y+"): 공간 가중합 = "+probe.sum.toFixed(5)+
+   "; FFT2 결과 = "+value.toFixed(5)+". 최대 |공간 − FFT| 오차 = "+m.output.maxDifference.toExponential(2)+".");
+ }else set("image-kernel-evidence",
+   "Select the 3×3 kernel filter mode to compare its spatial and FFT results.",
+   "공간·FFT 결과를 비교하려면 필터 종류에서 3×3 커널을 선택하세요.");
+ // Mark the inspected 3×3 neighborhood, without changing source pixel samples.
+ const cv=$("image-input-canvas"),ctx=cv.getContext("2d"),scale=cv.width/m.N;
+ const x=probe.x*scale,y=probe.y*scale;
+ ctx.save();ctx.strokeStyle="#f4a464";ctx.lineWidth=2.5;
+ ctx.strokeRect(x-1.5*scale,y-1.5*scale,3*scale,3*scale);
+ ctx.beginPath();ctx.arc(x+.5*scale,y+.5*scale,Math.max(3,scale),0,2*Math.PI);ctx.stroke();ctx.restore();
+}
 function render(m){
  showRaster("image-input-canvas",m.input.pixels,m.N);
- showSpectrum(m);showMask(m.N);
+ showSpectrum(m);showMask(m);showKernelInspector(m);
  showRaster("image-output-canvas",m.output.pixels,m.N,state.filter==="high"?.5:0);
  set("image-view-note-4",state.filter==="high"?
   "Signed high-pass: zero is displayed as middle gray.":
@@ -202,7 +250,7 @@ function chooseStage(stage){
  state.stage=clamp(Number(stage),1,4);
  if(state.stage===1)Object.assign(state,{kind:"stripes",cycles:8,angle:0,filter:"none",view:"magnitude"});
  if(state.stage===2)Object.assign(state,{kind:"checker",cycles:8,filter:"none",view:"magnitude"});
- if(state.stage===3)Object.assign(state,{kind:"scene",filter:"low",radius:20,view:"magnitude"});
+ if(state.stage===3)Object.assign(state,{kind:"scene",filter:"kernel",kernel:"box",probeX:82,probeY:106,view:"magnitude"});
  if(state.stage===4)Object.assign(state,{kind:"noise",filter:"none",notchU:12,notchV:7,notchRadius:2.5,view:"magnitude"});
  $("image-prediction").value="";$("image-explanation").textContent="";feedback();
  interactions=0;dirty=true;stageLabels();sync();schedule();
@@ -256,8 +304,27 @@ function bind(){
   ["image-filter","filter","change",String],["image-radius","radius","input",Number],
   ["image-notch-radius","notchRadius","input",Number]
  ])$(id).addEventListener(event,e=>{state[field]=convert(e.target.value);interactions++;sync();schedule();});
+ $("image-kernel-choice").addEventListener("change",e=>{
+  state.kernel=e.target.value;state.filter="kernel";interactions++;sync();schedule();
+ });
  $("image-spectrum-view").addEventListener("change",e=>{state.view=e.target.value;schedule();});
  $("image-upload").addEventListener("change",e=>{void loadImage(e.target.files[0]);});
+ const input=$("image-input-canvas");
+ function setProbeFromPointer(cx,cy,rect){
+  if(state.stage!==3)return;
+  state.probeX=clamp(Math.floor((cx-rect.left)/rect.width*state.N),0,state.N-1);
+  state.probeY=clamp(Math.floor((cy-rect.top)/rect.height*state.N),0,state.N-1);
+  interactions++;schedule();
+ }
+ input.addEventListener("click",e=>setProbeFromPointer(e.clientX,e.clientY,input.getBoundingClientRect()));
+ input.addEventListener("keydown",e=>{
+  if(state.stage!==3)return;
+  if(e.key==="ArrowLeft")state.probeX--;else if(e.key==="ArrowRight")state.probeX++;
+  else if(e.key==="ArrowUp")state.probeY--;else if(e.key==="ArrowDown")state.probeY++;else return;
+  e.preventDefault();
+  state.probeX=clamp(state.probeX,0,state.N-1);state.probeY=clamp(state.probeY,0,state.N-1);
+  interactions++;schedule();
+ });
  const spectrum=$("image-spectrum-canvas");
  spectrum.addEventListener("click",e=>{
   const r=spectrum.getBoundingClientRect(),u=Math.floor((e.clientX-r.left)/r.width*state.N)-state.N/2;
@@ -284,6 +351,7 @@ function math(){
  try{
   W.katex.render('F[u,v]=\\sum_{y=0}^{N-1}\\sum_{x=0}^{N-1} I[x,y]e^{-j2\\pi(ux+vy)/N}',$("image-formula-1"),{throwOnError:false});
   W.katex.render('g[x,y]=\\mathcal{F}_{2D}^{-1}\\{H[u,v]F[u,v]\\}',$("image-formula-2"),{throwOnError:false});
+  W.katex.render('g[x,y]=\\sum_{a=-1}^{1}\\sum_{b=-1}^{1}h[a,b]I[(x-a)\\bmod N,(y-b)\\bmod N]',$("image-formula-kernel"),{throwOnError:false});
  }catch(e){}
 }
 bind();labels();math();schedule();
