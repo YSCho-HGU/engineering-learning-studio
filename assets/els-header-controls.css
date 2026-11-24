@@ -29,18 +29,3 @@
  .ss-common-header .ss-common-actions{min-width:0;max-width:100%;gap:8px!important}
  .ss-common-header .ss-common-actions select{max-width:min(40vw,150px)!important}
 }
-
-
-/* Unified, reusable header arrow presentation. Course modules own navigation. */
-.els-header-arrow{
- box-sizing:border-box!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;
- width:34px!important;min-width:34px!important;height:34px!important;min-height:34px!important;
- padding:0!important;border:1px solid var(--els-border,var(--border,#777))!important;
- border-radius:var(--els-header-control-radius,8px)!important;
- background:var(--els-surface-alt,var(--surface,#30383b))!important;
- color:var(--els-ink,var(--ink,#eee))!important;text-decoration:none!important;
- font-size:0!important;flex:0 0 34px!important;
-}
-.els-header-arrow svg{display:block;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2.15;stroke-linejoin:round;stroke-linecap:round}
-.els-header-arrow:is(:hover,:focus-visible){border-color:var(--els-link,#78c6c5)!important}
-.els-header-arrow:is(:disabled,[aria-disabled="true"]){opacity:.4!important;pointer-events:none!important}
