@@ -43,6 +43,15 @@ const dictionaries={
  "speed-ratio-label":["Measured speedup","측정 속도 향상"],
  "speed-chart-title":["As N grows: N² versus N log₂N","N 증가에 따른 N²와 N log₂N 비교"],
  "speed-discovery":["FFT reuses intermediate results. The chart shows asymptotic growth rather than exact operation counts; measured timing varies by browser, device and runtime optimizations.","FFT는 중간 계산을 재활용합니다. 그래프는 정확한 명령어 수가 아니라 점근적 증가율을 보여줍니다. 실행 시간은 기기·브라우저에 따라 달라집니다."],
+ "dft-evidence-title":["01 · Predict · Do samples change when fs changes?","01 · 예측 · fs가 변하면 표본의 FFT도 바뀔까요?"],
+ "dft-evidence-prompt":["Keep x[n] and N fixed. Which quantity changes if fs doubles?","x[n]과 N을 고정하고 fs를 2배로 하면 무엇이 변할까요?"],
+ "dft-evidence-test":["Double fs and compare","fs를 2배로 하여 비교"],
+ "dft-transfer-title":["Apply · Impulse input","응용 · 임펄스 입력"],
+ "dft-transfer-question":["Predict the eight FFT coefficients of δ[n].","δ[n]의 8개 FFT 계수를 예상하세요."],
+ "dft-transfer-test":["Calculate impulse FFT","임펄스 FFT 계산"],
+ "dft-speed-predict-title":["Apply · When N doubles","응용 · N이 2배가 될 때"],
+ "dft-speed-question":["How does the direct DFT's O(N²) work grow?","직접 DFT의 O(N²) 연산량은 어떻게 늘까요?"],
+ "dft-speed-check":["Verify complexity prediction","복잡도 예측 검증"],
  "related-label":["Related lessons:","관련 실습:"],
  "related-resolution":["Frequency bins & Zero-padding","주파수 Bin·Zero-padding"],
  "related-upload":["Real Audio & Sensor FFT","실제 음성·센서 FFT"]
@@ -61,6 +70,12 @@ function attachTranslation(){
  all("#butterfly-preset option").forEach((e,i)=>{e.textContent=L(...labels.presets[i])});
  all("#butterfly-stages button").forEach((b,i)=>{b.textContent=L(...labels.stages[i])});
  document.documentElement.lang=mode==="ko"?"ko":"en";
+ const options=[
+  ["dft-evidence-choice",[["Choose a hypothesis","가설 선택"],["X[k] itself changes","X[k] 자체가 변합니다"],["Only Hz labels and Δf change","Hz 축 및 Δf만 바뀝니다"]]],
+  ["dft-transfer-choice",[["Choose a prediction","예측 선택"],["All X[k] = 1 (impulse at n=0)","모든 X[k] = 1 (n=0 임펄스)"],["All X[k] = 0","모든 X[k] = 0"],["Only X[0] is nonzero","X[0]만 0이 아닙니다"]]],
+  ["dft-speed-choice",[["Choose a prediction","예측 선택"],["About 2×","약 2배"],["About 4×","약 4배"],["About 8×","약 8배"]]]
+ ];
+ for(const [id,words] of options)all("#"+id+" option").forEach((el,i)=>el.textContent=L(...words[i]));
  renderSame();renderButterfly();renderSpeedChart();
 }
 function svg(tag,attrs={},text){
@@ -260,6 +275,43 @@ function formula(){
   catch(e){console.warn("Optional formula rendering unavailable",e)}
  }
 }
+function setReason(id,correct,en,ko){
+ const el=$(id);el.dataset.result=correct?"correct":"retry";el.textContent=L(en,ko);
+}
+function testSamplingRateHypothesis(){
+ const selected=$("dft-evidence-choice").value;
+ if(!selected){setReason("dft-evidence-feedback",false,"Choose a hypothesis before testing.","먼저 가설을 선택하세요.");return;}
+ const fs=Number($("same-fs").value),N=Number($("same-n").value),type=$("same-signal").value;
+ if(!Number.isFinite(fs)||fs<=0){setReason("dft-evidence-feedback",false,"Enter a valid fs first.","먼저 올바른 fs를 입력하세요.");return;}
+ const samples=core.signal(N,type),before=core.direct(samples),after=core.radix2(samples);
+ const err=core.error(before,after),oldStep=fs/N,newStep=2*fs/N;
+ $("same-fs").value=String(2*fs);renderSame();
+ const correct=selected==="labels" && err<1e-7;
+ setReason("dft-evidence-feedback",correct,
+  "Identical x[n] and N → unchanged complex X[k] (difference "+err.toExponential(2)+"). Δf changes from "+oldStep.toFixed(2)+" to "+newStep.toFixed(2)+" Hz. FFT is not a new transform.",
+  "동일한 x[n], N → 복소 X[k]는 동일합니다(차이 "+err.toExponential(2)+"). Δf는 "+oldStep.toFixed(2)+"에서 "+newStep.toFixed(2)+"Hz로 변합니다. FFT는 새로운 변환이 아닙니다.");
+}
+function testImpulseTransfer(){
+ const selected=$("dft-transfer-choice").value;
+ if(!selected){setReason("dft-transfer-feedback",false,"Predict first, then calculate.","먼저 예측한 뒤 계산하세요.");return;}
+ $("butterfly-preset").value="impulse";
+ $("butterfly-input").value=traceCore.presets.impulse.join(",");
+ recalcButterfly();stageSelect(3,0);
+ const values=currentTrace.fft,allOne=values.every(v=>Math.abs(v.re-1)<1e-8&&Math.abs(v.im)<1e-8);
+ const correct=selected==="flat"&&allOne;
+ setReason("dft-transfer-feedback",correct,
+  "For δ[n] at n=0, every DFT/FFT coefficient X[k] = 1. This is true for ALL k because e^(−j2πk·0/N) = 1.",
+  "n=0에서의 δ[n]은 모든 DFT/FFT 계수 X[k]가 1입니다. 모든 k에서 e^(−j2πk·0/N)=1이기 때문입니다.");
+}
+function testGrowthPrediction(){
+ const choice=$("dft-speed-choice").value;
+ if(!choice){setReason("dft-speed-feedback",false,"Choose a growth hypothesis first.","연산량 증가에 대한 가설을 먼저 선택하세요.");return;}
+ const N=Number($("speed-n").value)||256,ratioFFT=2*Math.log2(2*N)/Math.log2(N);
+ const correct=choice==="four";
+ setReason("dft-speed-feedback",correct,
+  "Direct DFT work grows (2N)²/N² = 4×. FFT N log₂N grows by about "+ratioFFT.toFixed(2)+"× for N="+N+". Browser timing is a separate, noisy measurement.",
+  "직접 DFT는 (2N)²/N² = 4배로 늘어납니다. FFT의 N log₂N은 N="+N+"에서 약 "+ratioFFT.toFixed(2)+"배 증가합니다. 브라우저 실행시간은 측정 변동이 있는 별개 값입니다.");
+}
 function initialize(){
  window.ELSLanguage?.bindSelect?.($("dft-language"));
  window.ELSLanguage?.subscribe?.(next=>{mode=next;attachTranslation()});
@@ -270,6 +322,9 @@ function initialize(){
   switchTab(arr[next]);$("tab-"+arr[next]).focus();
  }));
  $("same-run").addEventListener("click",renderSame);
+ $("dft-evidence-test").addEventListener("click",testSamplingRateHypothesis);
+ $("dft-transfer-test").addEventListener("click",testImpulseTransfer);
+ $("dft-speed-check").addEventListener("click",testGrowthPrediction);
  ["same-signal","same-n"].forEach(id=>$(id).addEventListener("change",renderSame));
  $("same-fs").addEventListener("input",renderSame);
  $("same-fs").addEventListener("change",renderSame);
