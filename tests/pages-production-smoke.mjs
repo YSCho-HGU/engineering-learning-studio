@@ -16,8 +16,14 @@ const targets = [
 // Release fingerprint: never label a stale Pages publish as a successful UI fix.
 const cssResponse=await fetch(root+"assets/els-course-header.css",{cache:"no-store"});
 assert.equal(cssResponse.status,200,"Published common header CSS was not found");
+const identity=await fetch(root+"build-info.json",{cache:"no-store"});
+assert.equal(identity.status,200,"Deployment identity file is missing");
+const published=await identity.json();
+assert.equal(published.header,"v8-grid-adjacent","Live Pages is serving a different header release");
+if(process.env.GITHUB_SHA)assert.equal(published.commit,process.env.GITHUB_SHA,
+  "Live Pages commit is not the GitHub Actions deployment commit");
 const cssBody=await cssResponse.text();
-assert.ok(cssBody.includes("els-header-v7-single-component-20261124"),
+assert.ok(cssBody.includes("els-header-v8-grid-adjacent-20261124"),
   "The live Pages site is serving an older shared-header stylesheet; deployment is stale");
 const widths = [390,768,1280];
 const failures = [], results = [];

@@ -1,18 +1,19 @@
 /* Engineering Learning Studio course header — canonical geometry.
    Both C Programming and S&S use the same left / navigation / actions DOM.
    All earlier conflicting grid / flex / absolute overrides were removed.
-   Version: els-header-v7-single-component-20261124 */
+   Version: els-header-v8-grid-adjacent-20261124 */
 :root {
   --els-course-control-size:34px;
   --els-course-header-gap:10px;
 }
 html body > header.ss-common-header.els-course-header {
   box-sizing:border-box!important;
-  display:flex!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,max-content) max-content minmax(0,1fr)!important;
+  grid-template-areas:"left navigation actions"!important;
   align-items:center!important;
-  flex-wrap:nowrap!important;
-  justify-content:flex-start!important;
-  gap:var(--els-course-header-gap)!important;
+  column-gap:var(--els-course-header-gap)!important;
+  row-gap:6px!important;
   width:100%!important;
   max-width:100%!important;
   min-height:56px!important;
@@ -28,6 +29,7 @@ html body.c-ss-course > header.ss-common-header.els-course-header {
   top:0!important;
 }
 html body > header.ss-common-header.els-course-header > .els-header-left {
+  grid-area:left!important;
   display:flex!important;
   flex:0 0 auto!important;
   min-width:0!important;
@@ -59,6 +61,8 @@ html body > header.ss-common-header.els-course-header .ss-common-menu > summary.
   text-overflow:ellipsis!important;
 }
 html body > header.ss-common-header.els-course-header > .ss-common-actions {
+  grid-area:actions!important;
+  justify-self:end!important;
   display:flex!important;
   flex:0 0 auto!important;
   min-width:0!important;
@@ -74,6 +78,8 @@ html body > header.ss-common-header.els-course-header > .ss-common-actions selec
   border-radius:8px!important;
 }
 html body > header.ss-common-header.els-course-header > nav.ss-four-navigation.els-course-header-navigation {
+  grid-area:navigation!important;
+  justify-self:start!important;
   display:flex!important;
   position:static!important;
   inset:auto!important;
@@ -138,34 +144,29 @@ html body > header.ss-common-header.els-course-header :is(a,button,select,summar
   outline:2px solid var(--els-focus,#f2cc82)!important;
   outline-offset:2px!important;
 }
-/* Navigation follows the chapter chooser rather than anchoring to viewport center.
-   The chapter menu stays at intrinsic content width and actions remain right-aligned. */
-@media(max-width:1100px) {
+/* Compact responsive arrangement; never overlay the navigation on menus. */
+@media(max-width:1000px) {
   html body > header.ss-common-header.els-course-header {
-    flex-wrap:wrap!important;
-    row-gap:8px!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    grid-template-areas:"left actions" "navigation navigation"!important;
   }
   html body > header.ss-common-header.els-course-header > .els-header-left {
-    flex:0 1 auto!important;
     max-width:100%!important;
   }
   html body > header.ss-common-header.els-course-header > nav.ss-four-navigation.els-course-header-navigation {
-    position:static!important;
-    transform:none!important;
+    justify-self:start!important;
   }
 }
-@media(max-width:700px) {
-  html body > header.ss-common-header.els-course-header {padding:8px!important;}
-  html body > header.ss-common-header.els-course-header > .els-header-left {
-    flex:1 1 auto!important;
+@media(max-width:640px) {
+  html body > header.ss-common-header.els-course-header {
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-areas:"left" "navigation" "actions"!important;
+    padding:8px!important;
   }
   html body > header.ss-common-header.els-course-header > .els-header-left > .ss-common-menu {
-    max-width:calc(100vw - 102px)!important;
-  }
-  html body > header.ss-common-header.els-course-header > nav.ss-four-navigation.els-course-header-navigation {
-    margin-left:0!important;
+    max-width:calc(100vw - 105px)!important;
   }
   html body > header.ss-common-header.els-course-header > .ss-common-actions {
-    margin-left:auto!important;
+    justify-self:end!important;
   }
 }
