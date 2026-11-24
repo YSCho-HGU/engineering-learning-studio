@@ -141,7 +141,10 @@ async function test(view,width){
     assert.equal(parity.count,1,"one language picker inside right actions");
     assert.equal(parity.actionSelects,2,"language and theme both in right actions");
     assert.equal(parity.extra,0,"no separate language track or duplicate picker");
-    assert.deepEqual(parity.labels,["한/영","English","한국어"],"S&S reference language choices");
+    const originalOverview=view.startsWith("signals-systems/index.html");
+    assert.deepEqual(parity.labels,
+      originalOverview?["Mixed","English","한국어"]:["한/영","English","한국어"],
+      "preserve the original S&S language labels");
     assert.ok(parity.select&&Math.abs(parity.select.height-34)<=1.5,"picker height");
     assert.equal(parity.href,base,"Studio links to integrated Studio Home");
     assert.ok(parity.overflow<=3,"header overflow");
