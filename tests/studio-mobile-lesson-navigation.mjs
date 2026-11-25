@@ -37,6 +37,15 @@ try{
     const count=await buttons.count();
     assert.ok(count>=2,item.name+" requires two selectable lessons");
     const choice=buttons.nth(1);
+    if(width<=800){
+      const toggle=page.locator(".ss-mobile-index-toggle:visible").first();
+      if(await toggle.count() && (await toggle.getAttribute("aria-expanded"))!=="true")await toggle.click();
+    }
+    await choice.evaluate(el=>{
+      for(let node=el.parentElement;node;node=node.parentElement){
+        if(node.tagName==="DETAILS")node.open=true;
+      }
+    });
     await choice.scrollIntoViewIfNeeded();
     await choice.click();
     await page.waitForTimeout(420);
