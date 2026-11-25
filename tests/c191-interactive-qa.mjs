@@ -87,6 +87,26 @@ for(const width of [390,1280]){
   await page.locator('[data-action="step"]').click();
   assert.ok((await page.locator('.c191-metrics span').nth(1).innerText()).includes("0x95"),"bit 5 cleared");
 
+  // No unreachable C lines in READY, IDLE or error return paths.
+  await page.locator('#lesson-nav button[data-lesson="3"]').click();
+  await page.locator('[data-action="reset-step"]').click();
+  await page.locator('[data-action="flag"][data-flag="0"]').click();
+  const runningPath=[];
+  for(let i=0;i<4;i++){await page.locator('[data-action="step"]').click();runningPath.push(await page.locator('.c191-line.current').innerText());}
+  assert.ok(runningPath[3].includes("state = RUNNING"),"READY branch reaches RUNNING");
+  assert.ok(!runningPath.some(x=>x.includes("state = ERROR_STATE")),"READY does not execute error assignment");
+  await page.locator('[data-action="flag"][data-flag="0"]').click();
+  const idlePath=[];
+  for(let i=0;i<5;i++){await page.locator('[data-action="step"]').click();idlePath.push(await page.locator('.c191-line.current').innerText());}
+  assert.ok(idlePath[4].includes("state = IDLE"),"IDLE branch runs only after failed tests");
+  assert.ok(!idlePath.some(x=>x.includes("state = RUNNING")),"IDLE skips RUNNING assignment");
+
+  // Optional conditional compilation must skip the inactive DEBUG body.
+  await page.locator('#lesson-nav button[data-lesson="9"]').click();
+  for(let i=0;i<4;i++)await page.locator('[data-action="step"]').click();
+  assert.ok((await page.locator('.c191-line.current').innerText()).includes("#endif"),"DEBUG body is skipped");
+  assert.ok((await page.locator('.c191-trace').innerText()).includes("DEBUG"));
+
   // 19.5: macro expansion and arithmetic must appear only at their trace steps.
   await page.locator('#lesson-nav button[data-lesson="4"]').click();
   assert.equal(await page.locator('.c191-stage-list .c191-file.active').count(),0,"macro before first step");
