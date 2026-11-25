@@ -376,6 +376,7 @@ jobs:
           }
           run_case node tests/applications-abd-visual-regression.mjs
           run_case node tests/ss-applications-header-browser.mjs
+          run_case node tests/ss-applications-comprehensive-browser.mjs
           run_case node tests/ss-applications-browser.mjs
           run_case node tests/ss-extra-labs-browser.mjs
           run_case node tests/ss-apps-inquiry-browser.mjs
