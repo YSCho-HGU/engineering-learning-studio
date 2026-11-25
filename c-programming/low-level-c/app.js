@@ -168,7 +168,7 @@ function specializedScene(s,scene){
  const model=traceModel(s,scene);
  if(scene==="preprocessor"||scene==="modules"){
   return '<p class="c191-caption">'+(scene==="preprocessor"?tr("매크로는 전처리 시점에 치환되고, 산술 결과는 C 식의 평가입니다.","Macro expansion occurs during preprocessing; arithmetic is evaluated afterward."):tr("선언과 정의를 구별한 뒤 두 소스 파일의 컴파일·링킹을 확인합니다.","Distinguish declarations from definitions, then examine compilation and linking."))+'</p>'+
-  '<div class="c191-stage-list">'+model.rows.map(([label],i)=>'<div class="c191-file '+(i===model.idx?"active":"")+' '+(i>model.idx?"pending":"")+'"><small>'+tr("단계 ","Stage ")+(i+1)+'</small><strong>'+esc(label)+'</strong></div>').join("")+'</div>'+
+  '<div class="c191-stage-list">'+model.rows.map(([label],i)=>'<div class="c191-file '+(i===model.idx?"active":"")+' '+(i>model.idx?"pending":"")+'"><small>'+tr("단계 ","Stage ")+(i+1)+'</small><strong>'+(i>model.idx?tr("실행 전","Not yet executed"):esc(label))+'</strong></div>').join("")+'</div>'+
   '<p class="c191-stage-explain" role="status">'+esc(model.message)+'</p>';
  }
  if(scene==="lifetime"){
