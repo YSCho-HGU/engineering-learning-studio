@@ -145,7 +145,7 @@ function predictionHTML(s,scene){
  const p=s.prediction,stateOnly=scene==="state"||scene==="capstone",operatorOnly=scene==="operators",expected=p?.expectedByte;
  let h='<section class="c191-panel c191-prediction"><span class="c191-eyebrow">'+tr("1단계 · 먼저 예측","Step 1 · Predict first")+'</span><h3>'+tr("내 예상 결과","My expected result")+'</h3><p class="c191-caption">'+(stateOnly?tr("현재 입력 Byte에 대한 상태를 예측하세요.","Predict the state for the current input byte."):operatorOnly?tr("a=0x05, b=0x02일 때 result의 값을 예측하세요.","Predict result when a=0x05 and b=0x02."):tr("코드를 실행하거나 비트를 조작한 후의 Byte를 예측하세요.","Predict the byte after stepping through code or changing a bit."))+'</p><div class="c191-pred-controls"><div><small>'+tr("현재 Byte","Current byte")+'</small><strong>'+hex(s.byte)+' · '+binary(s.byte)+'</strong></div>'+
  (stateOnly?'<label>'+tr("예상 상태","Expected state")+' <select id="c191-pred-state" '+(p?"disabled":"")+'>'+options([["IDLE","IDLE"],["RUNNING","RUNNING"],["ERROR_STATE","ERROR_STATE"]],p?.expectedState||"IDLE")+'</select></label>':
- '<label>'+tr("예상 Byte (0–255)","Expected byte (0–255)")+' <input id="c191-pred-byte" type="number" min="0" max="255" step="1" value="'+(expected??s.byte)+'" '+(p?"disabled":"")+' /></label>')+
+ '<label>'+tr("예상 Byte (0–255)","Expected byte (0–255)")+' <input id="c191-pred-byte" type="number" min="0" max="255" step="1" value="'+(expected??(operatorOnly?7:s.byte))+'" '+(p?"disabled":"")+' /></label>')+
  (p?btn(tr("예측 수정","Edit prediction"),"predict-edit"):btn(tr("예측 고정","Lock prediction"),"predict-save"))+'</div>';
  if(p){
  const diff=p.observed?(expected^s.byte):0;
