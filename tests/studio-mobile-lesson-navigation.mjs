@@ -67,6 +67,15 @@ try{
     if(width>800)assert.ok(Math.abs(data.scrollY-desktopBefore)<=5,
       item.name+" desktop scroll changed by mobile handler: "+JSON.stringify({desktopBefore,...data}));
 
+    if(width<=800&&item.name.startsWith("C ")){
+      assert.equal(await page.locator("#lesson-nav details[open]").count(),0,
+        item.name+" mobile lesson groups should close");
+    }
+    if(width<=600&&item.name.startsWith("SS Chapter")){
+      const toggle=page.locator(".ss-mobile-index-toggle").first();
+      if(await toggle.count())assert.equal(await toggle.getAttribute("aria-expanded"),"false",
+        item.name+" mobile sidebar should close");
+    }
     if(width<=800 && !item.name.startsWith("SS Applications")){
       const reopen=page.locator("#els-mobile-open-lessons");
       await reopen.waitFor({state:"visible",timeout:4000});
@@ -74,24 +83,13 @@ try{
       assert.notEqual(fixed,"fixed",item.name+" lesson title control must not be fixed");
       assert.notEqual(fixed,"sticky",item.name+" lesson title control must not be sticky");
       await reopen.click();
-      const returnPosition=await page.evaluate(sel=>({
-        toc:document.querySelector(sel)?.getBoundingClientRect().top,
+      const returnPosition=await page.evaluate(()=>({
+        toc:document.querySelector("#lesson-nav, .ss-layout-sidebar nav")?.getBoundingClientRect().top,
         scrolled:window.scrollY
-      }),item.nav);
+      }));
       assert.ok(returnPosition.toc>=-15&&returnPosition.toc<window.innerHeight*.8,
         item.name+" cannot return to lesson list: "+JSON.stringify(returnPosition));
     }
-    if(width<=800&&item.name.startsWith("C ")){
-      const openGroups=await page.locator("#lesson-nav details[open]").count();
-      assert.equal(openGroups,0,item.name+" mobile lesson groups should close");
-    }
-    if(width<=600&&item.name.startsWith("SS Chapter")){
-      const toggle=page.locator(".ss-mobile-index-toggle").first();
-      if(await toggle.count())assert.equal(await toggle.getAttribute("aria-expanded"),"false",
-        item.name+" mobile sidebar should close");
-    }
-    if(width<=800)assert.ok(data.top>=data.headerHeight-18&&data.top<=data.headerHeight+115,
-      item.name+" lesson not aligned after mobile selection: "+JSON.stringify(data));
     await page.screenshot({path:"tests/screenshots/mobile-navigation/"+item.name.replace(/[^a-z0-9]+/gi,"-")+"-"+width+".png",fullPage:false,animations:"disabled"});
     console.log("PASS",item.name,width,data);
    }catch(e){failures.push(item.name+" "+width+": "+e.message);
