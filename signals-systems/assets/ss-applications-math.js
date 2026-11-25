@@ -4,6 +4,17 @@
 (function(global){
 "use strict";
 const pairs=[
+ ["x(t)=exp[(σ+j2πf)t]","x(t)=e^{(\\sigma+j2\\pi f)t}"],
+ ["exp(σt)","e^{\\sigma t}"],
+ ["Ω=2πf/fₛ","\\Omega=\\frac{2\\pi f}{f_s}"],
+ ["fₖ=k fₛ/N","f_k=\\frac{kf_s}{N}"],
+ ["|f₂−f₁|","|f_2-f_1|"],
+ ["|X_N(e^{jΩ})|/N","\\frac{|X_N(e^{j\\Omega})|}{N}"],
+ ["x[n]=x(nTₛ)","x[n]=x(nT_s)"],
+ ["fₛ/N","\\frac{f_s}{N}"],
+ ["2πft","2\\pi ft"],
+ ["fₖ","f_k"],
+ ["f₂","f_2"],
  ["e^(σ+jω)t","e^{(\\sigma+j\\omega)t}"],
  ["fₛ/2","\\frac{f_s}{2}"],
  ["|X[k]|","\\lvert X[k]\\rvert"],
