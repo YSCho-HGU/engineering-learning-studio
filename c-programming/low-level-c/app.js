@@ -17,7 +17,7 @@ const match=location.hash.match(/^#s(\d+)$/);
 if(match)selected=Math.max(0,Math.min(10,Number(match[1])-1));
 let states=read("els-c191-model-v1",{}),done=read("els-c191-done-v1",[]);
 if(!Array.isArray(done))done=[];
-const initialFor=i=>{const v=initial();if(i===1)v.byte=5;else if(i===2)v.byte=4;else if(i===3)v.byte=0;else if(i===8)v.byte=1;return v;};
+const initialFor=i=>{const v=initial();if(i===1)v.byte=5;else if(i===2)v.byte=4;else if(i===3)v.byte=0;return v;};
 const S=()=>states[selected]||(states[selected]=initialFor(selected));
 const save=()=>{try{localStorage.setItem("els-c191-model-v1",JSON.stringify(states));localStorage.setItem("els-c191-done-v1",JSON.stringify(done))}catch(e){}};
 const nav=byId("lesson-nav"),stage=byId("lesson");
