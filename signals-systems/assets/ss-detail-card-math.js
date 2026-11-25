@@ -53,7 +53,7 @@ function queue(){
  requestAnimationFrame(()=>{scheduled=false;scan()});
 }
 function init(){
- const root=document.querySelector("main")||document.body;
+ const root=document.body; // Stable host: Ch2-4 replace the entire <main> on lesson changes.
  new MutationObserver(records=>{
   if(working)return;
   if(records.some(r=>[...r.addedNodes].some(n=>
