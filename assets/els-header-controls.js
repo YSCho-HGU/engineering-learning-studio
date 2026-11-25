@@ -180,7 +180,59 @@
      if(wrapper){wrapper.classList.add("els-header-theme");for(const child of wrapper.children){if(child!==select&&child.matches("span"))child.hidden=true}}
    }
  }
- function ready(){normalize();win.addEventListener("els:themechange",()=>normalize());}
+ // Keep the selected lesson visible after a mobile TOC changes the content.
+ // Native anchors retain their hash and course-owned event listeners; no navigation is intercepted.
+ function setupMobileLessonScroll(){
+   if(doc.documentElement.dataset.elsMobileScrollBound==="1")return;
+   doc.documentElement.dataset.elsMobileScrollBound="1";
+   const query=win.matchMedia("(max-width: 800px)");
+   const menuSelector=[
+     ".ss-layout-sidebar nav button",
+     ".ss-vertical-sidebar nav button",
+     ".ss-app-toc a[href^='#']",
+     ".ss-app-shortcuts a[href^='#']",
+     "#lesson-nav button[data-lesson]",
+     "#lesson-nav button[data-nav]",
+     "#lesson-nav a[href^='#lab-']",
+     "#lesson-nav .c-nav-item",
+     ".cp-menu .cp-nav-item",
+     ".side-nav a[data-lab-link]",
+     ".ss-al-tabs a[href^='#']",
+     ".ss-sys-tabs a[href^='#']"
+   ].join(",");
+   let sequence=0;
+   function targetFor(control){
+     const hash=control.getAttribute("href");
+     if(hash&&hash.startsWith("#")&&hash.length>1){
+       const found=doc.getElementById(decodeURIComponent(hash.slice(1)));
+       if(found)return found;
+     }
+     return doc.querySelector(
+       "#lesson, .ss-layout-main, .ss-vertical-main, .ss-app-main, .ss-al-workspace, .ss-sys-root, main.main, main#app, main"
+     );
+   }
+   function align(control,token){
+     if(token!==sequence||!query.matches||!control.isConnected)return;
+     const target=targetFor(control);
+     if(!target||target.hidden)return;
+     const header=doc.querySelector("body > header.ss-common-header, body > header.els-course-header, body > header.site-header");
+     const height=header?header.getBoundingClientRect().height:0;
+     const offset=Math.max(12,Math.min(190,height+10));
+     const top=Math.max(0,win.scrollY+target.getBoundingClientRect().top-offset);
+     if(Math.abs(win.scrollY-top)>3)win.scrollTo({top,behavior:"instant"});
+   }
+   doc.addEventListener("click",event=>{
+     if(!query.matches)return;
+     const control=event.target.closest?.(menuSelector);
+     if(!control||control.closest(".ss-common-header, .els-course-header"))return;
+     if(control.matches("a")&&control.getAttribute("href")?.startsWith("http"))return;
+     const token=++sequence;
+     win.requestAnimationFrame(()=>win.requestAnimationFrame(()=>align(control,token)));
+     win.setTimeout(()=>align(control,token),100);
+     win.setTimeout(()=>align(control,token),260);
+   });
+ }
+ function ready(){normalize();setupMobileLessonScroll();win.addEventListener("els:themechange",()=>normalize());}
  if(doc.readyState==="loading")doc.addEventListener("DOMContentLoaded",ready,{once:true});else ready();
  win.ELSHeaderControls=Object.freeze({normalize:()=>normalize(),mountSlots,createCourseHeader,makeNavigationArrow,themes:win.ELSTheme?.options?.slice()||[]});
 })(window,document);
