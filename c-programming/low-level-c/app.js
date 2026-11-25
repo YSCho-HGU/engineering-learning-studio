@@ -123,8 +123,12 @@ function predictionHTML(s,scene){
  (p?btn(tr("예측 수정","Edit prediction"),"predict-edit"):btn(tr("예측 고정","Lock prediction"),"predict-save"))+'</div>';
  if(p){
  const diff=p.observed?(expected^s.byte):0;
- h+='<div class="c191-pred-compare"><div class="c191-pred-side"><strong>'+tr("예상 결과","Prediction")+'</strong>'+(stateOnly?'<p>State: <strong>'+p.expectedState+'</strong></p><p class="c191-caption">'+tr("상태만 예측합니다. Byte/LED는 실행 결과에서 확인하세요.","Predict the state only. Inspect bytes and LEDs after execution.")+'</p>':'<div class="c191-pred-value">'+hex(expected)+' · '+binary(expected)+'</div>'+miniBits(expected,diff)+miniLeds(expected,scene==="register")+(scene==="register"?'': '<p>State: '+p.expectedState+'</p>')+'+'</p>')+'</div>'+
- '<div class="c191-pred-side"><strong>'+tr("실행 결과","Observed result")+'</strong>'+(p.observed?'<div class="c191-pred-value">'+hex(s.byte)+' · '+binary(s.byte)+'</div>'+miniBits(s.byte,diff)+miniLeds(s.byte,scene==="register")+(scene==="register"?'':'<p>State: '+state(s.byte)+'</p>')+'+'</p>':'<p class="c191-pred-pending">'+tr("Step/Run 또는 비트 조작 후 표시됩니다.","Revealed after Step/Run or bit interaction.")+'</p>')+'</div></div>';
+ h+='<div class="c191-pred-compare"><div class="c191-pred-side"><strong>'+tr("예상 결과","Prediction")+'</strong>'+
+ (stateOnly?'<p>State: <strong>'+p.expectedState+'</strong></p><p class="c191-caption">'+tr("상태만 예측합니다. Byte/LED는 실행 결과에서 확인하세요.","Predict the state only. Inspect bytes and LEDs after execution.")+'</p>':
+ '<div class="c191-pred-value">'+hex(expected)+' · '+binary(expected)+'</div>'+miniBits(expected,diff)+miniLeds(expected,scene==="register")+(scene==="register"?'':'<p>State: '+p.expectedState+'</p>'))+'</div>'+
+ '<div class="c191-pred-side"><strong>'+tr("실행 결과","Observed result")+'</strong>'+
+ (p.observed?'<div class="c191-pred-value">'+hex(s.byte)+' · '+binary(s.byte)+'</div>'+miniBits(s.byte,diff)+miniLeds(s.byte,scene==="register")+(scene==="register"?'':'<p>State: '+state(s.byte)+'</p>'):
+ '<p class="c191-pred-pending">'+tr("Step/Run 또는 비트 조작 후 표시됩니다.","Revealed after Step/Run or bit interaction.")+'</p>')+'</div></div>';
  if(p.observed){
  const matched=stateOnly?p.expectedState===state(s.byte):expected===s.byte;
  h+='<p class="c191-pred-feedback '+(matched?"matched":"unmatched")+'" role="status">'+(matched?tr("예측이 일치합니다. 어떤 연산·조건이 그 결과를 만들었나요?","Prediction matches. Which operation or condition produced it?"):tr("예측과 다릅니다. 강조된 비트 및 상태 판정 조건을 다시 추적하세요.","Prediction differs. Trace the highlighted bits and state conditions."))+'</p>';
