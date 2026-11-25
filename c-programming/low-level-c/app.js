@@ -1,0 +1,151 @@
+/* Chapter 19: synchronized educational C/code/device simulator, not a C interpreter. */
+(function(){
+"use strict";
+const D=window.C191_DATA,L=window.ELSLanguage;
+if(!D||!L)throw Error("C191 data and language required");
+const byId=id=>document.getElementById(id);
+const tr=(ko,en)=>L.get()==="en"?en:L.get()==="ko"?ko:en+" · "+ko;
+const esc=t=>String(t==null?"":t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const binary=n=>(n&255).toString(2).padStart(8,"0");
+const hex=n=>"0x"+(n&255).toString(16).toUpperCase().padStart(2,"0");
+const state=n=>(n&18)?"ERROR_STATE":(n&1)?"RUNNING":"IDLE";
+const read=(key,def)=>{try{return JSON.parse(localStorage.getItem(key))??def}catch(e){return def}};
+const initial=()=>({byte:181,target:1,op:"set",operator:"or",step:0,build:0,calls:0,argv:"./sensor data.txt -v",choice:-1,checked:false,note:""});
+let selected=0;
+const match=location.hash.match(/^#s(\d+)$/);
+if(match)selected=Math.max(0,Math.min(10,Number(match[1])-1));
+let states=read("els-c191-model-v1",{}),done=read("els-c191-done-v1",[]);
+if(!Array.isArray(done))done=[];
+const S=()=>states[selected]||(states[selected]=initial());
+const save=()=>{try{localStorage.setItem("els-c191-model-v1",JSON.stringify(states));localStorage.setItem("els-c191-done-v1",JSON.stringify(done))}catch(e){}};
+const nav=byId("lesson-nav"),stage=byId("lesson");
+const btn=(label,action)=>'<button type="button" data-action="'+action+'">'+label+'</button>';
+const options=(entries,value)=>entries.map(([v,label])=>'<option value="'+v+'" '+(value==v?"selected":"")+'>'+label+'</option>').join("");
+function bits(s){
+ return '<div class="c191-bits" role="group" aria-label="Bit register">'+Array.from({length:8},(_,i)=>{
+  const b=7-i,on=!!(s.byte&(1<<b));
+  return '<button type="button" class="c191-bit '+(on?"on ":"")+(s.target===b?"hot":"")+'" data-bit="'+b+'" aria-label="Bit '+b+' '+(on?"ON":"OFF")+'" aria-pressed="'+on+'"><small>b'+b+'</small><b>'+(on?1:0)+'</b></button>';
+ }).join("")+'</div><div class="c191-metrics"><span>Binary '+binary(s.byte)+'</span><span>Hex '+hex(s.byte)+'</span><span>Decimal '+s.byte+'</span></div>';
+}
+function device(s){
+ const names=[[0,"READY"],[1,"ERROR"],[4,"ALARM"],[5,"LOW_BAT"]];
+ return '<div class="c191-device"><div class="c191-device-head"><span>'+tr("장치 상태","Device status")+'</span><span>'+state(s.byte)+'</span></div><div class="c191-leds">'+
+ names.map(([b,name])=>'<div class="c191-led"><div class="c191-led-dot '+(s.byte&(1<<b)?"on ":"")+(b===1||b===4?"alarm":"")+'" aria-label="'+name+' '+(s.byte&(1<<b)?"ON":"OFF")+'"></div><small>'+name+'</small><small>'+(s.byte&(1<<b)?"ON":"OFF")+'</small></div>').join("")+'</div></div>';
+}
+function maskExpression(s){const m="(1u << "+s.target+")";return s.op==="set"?"value |= "+m:s.op==="clear"?"value &= ~"+m:s.op==="toggle"?"value ^= "+m:"result = value & "+m;}
+function terminal(s,scene){
+ if(scene==="lifetime")return "next_id() → "+(s.calls?1000+s.calls:"not called");
+ if(scene==="preprocessor")return ["Source: SQUARE(1+2)","Expanded: 1+2*1+2","Expression result: 5, not 9"][s.build%3];
+ if(scene==="modules")return ["Header interface declarations","Source translation units","Two compiled object files","Linker resolves references","Executable sensor program"][s.build%5];
+ if(scene==="optional")return "Recursive frames: "+s.build+" / 3";
+ if(scene==="cli"){const a=s.argv.trim().split(/\s+/).filter(Boolean);return "argc = "+a.length+"\n"+a.map((t,i)=>"argv["+i+"] = "+t).join("\n");}
+ return "status = "+hex(s.byte)+" | "+binary(s.byte)+"\nREADY="+Number(!!(s.byte&1))+"  ERROR="+Number(!!(s.byte&2))+"  ALARM="+Number(!!(s.byte&16))+"\nstate = "+state(s.byte);
+}
+function sceneHTML(){
+ const s=S(),scene=D.lessons[selected].scene;
+ let html='<h3>'+tr("시각 모델 · 장치 관찰","Visual model · Device observation")+'</h3>';
+ if(["bits","operators","register","state","capstone","review"].includes(scene))html+=bits(s)+device(s);
+ if(["operators","register","review"].includes(scene)){
+  html+='<div class="c191-task"><label>'+tr("대상 비트","Target bit")+' <select data-setting="target">'+options(Array.from({length:8},(_,i)=>[i,"b"+i]),s.target)+'</select></label><label>'+tr("연산","Operation")+' <select data-setting="op">'+options([["check","Check &"],["set","Set |"],["clear","Clear &~"],["toggle","Toggle ^"]],s.op)+'</select></label>'+btn(tr("마스크 적용","Apply mask"),"mask")+'</div>';
+  html+='<p class="c191-legend">'+esc(maskExpression(s))+';</p>';
+ }
+ if(scene==="operators")html+='<div class="c191-task"><select data-setting="operator">'+options([["and","&"],["or","|"],["xor","^"],["not","~ (8-bit)"],["left","<< 1"],["right",">> 1"]],s.operator)+'</select>'+btn(tr("비트 연산 실행","Execute operator"),"operator")+'</div>';
+ if(scene==="state"||scene==="capstone"){
+  html+='<div class="c191-task">'+[[0,"Reset status"],[1,"READY"],[2,"ERROR"],[4,"ALARM"],[5,"LOW_BAT"]].map(([b,t])=>'<button type="button" data-action="flag" data-flag="'+b+'">'+t+'</button>').join("")+'</div>';
+  html+='<div class="c191-states">'+["IDLE","RUNNING","ERROR_STATE"].map(t=>'<span class="c191-state '+(state(s.byte)===t?"active":"")+'">'+t+'</span>').join('<span class="c191-arrow">→</span>')+'</div>';
+ }
+ if(scene==="preprocessor"||scene==="modules"||scene==="optional"){
+  const items=scene==="preprocessor"?["#define","1+2*1+2","5"]:scene==="modules"?["status.h","main.c + status.c","main.o + status.o","Linker","sensor.exe"]:["count_down(3)","count_down(2)","count_down(1)"];
+  html+='<div class="c191-files">'+items.map((x,i)=>'<div class="c191-file '+(s.build===i?"active":"")+'">'+esc(x)+'</div>').join('<span class="c191-arrow">→</span>')+'</div>';
+  html+='<div class="c191-task">'+btn(tr("다음 단계","Next stage"),"build")+btn("Reset","reset-build")+'</div>';
+ }
+ if(scene==="lifetime")html+='<div class="c191-memory"><div><small>automatic local</small><br/><strong>new each call</strong></div><div><small>static local</small><br/><strong>'+(1000+s.calls)+'</strong></div><div><small>calls</small><br/><strong>'+s.calls+'</strong></div></div><div class="c191-task">'+btn("Call next_id()","call")+btn("Reset","reset-call")+'</div>';
+ if(scene==="cli")html+='<label for="c191-command">'+tr("실행 명령 (간단한 공백 분리 모델)","Command line (simplified whitespace model)")+'</label><div class="c191-task"><input id="c191-command" data-setting="argv" style="flex:1;min-width:170px" value="'+esc(s.argv)+'"/>'+btn(tr("인자 분석","Parse arguments"),"parse")+'</div>';
+ if(scene==="review")html+='<p class="c191-caption">'+tr("AI에게 정답을 먼저 요청하지 말고 본인의 bit diagram과 마스크를 검토받으세요.","Draft your bit diagram and masks before using AI for review.")+'</p>';
+ html+='<div class="c191-terminal" aria-live="polite">'+esc(terminal(s,scene))+'</div>';
+ return html;
+}
+function renderNav(){
+ nav.replaceChildren();
+ D.groups.forEach(group=>{
+  const block=document.createElement("div");block.className="c191-toc-group";
+  const title=document.createElement("strong");title.textContent=tr(group.ko,group.title);block.append(title);
+  for(let i=group.start;i<group.end;i++){
+   const b=document.createElement("button");b.type="button";b.className="c191-nav"+(i===selected?" active":"");b.dataset.lesson=String(i);
+   b.textContent=(done.includes(i)?"✓ ":"")+"19."+(i+1)+" "+D.lessons[i].title;
+   if(i===selected)b.setAttribute("aria-current","step");block.append(b);
+  }nav.append(block);
+ });
+ byId("progress-text").textContent=tr("학습 확인 ","Sections reviewed ")+done.length+"/11";
+ byId("progress-bar").style.width=(100*done.length/11)+"%";
+ document.querySelector(".meter")?.setAttribute("aria-valuenow",String(done.length));
+ byId("assessment-status").textContent=tr("학습 확인 ","Sections reviewed ")+done.length+"/11";
+}
+function render(){
+ const l=D.lessons[selected],s=S();
+ const codeLines=l.code.split("\n");
+ stage.innerHTML='<div class="c191-flow"><article><span class="c191-eyebrow">CHAPTER 19 · '+(selected+1)+'/11</span><h2>19.'+(selected+1)+' '+esc(l.title)+'</h2><div class="c191-story"><p>'+esc(tr(l.ko,l.en))+'</p><p class="c191-caption">'+esc(tr(l.conceptKo,l.conceptEn))+'</p></div></article>'+
+ '<div class="c191-grid"><section class="c191-panel" aria-label="C reference code"><h3>'+tr("코드 실행 줄 추적","Code execution trace")+'</h3><div class="c191-code">'+codeLines.map((line,i)=>'<span class="c191-line '+(s.step>0&&i===Math.min(codeLines.length-1,s.step-1)?"current":"")+'">'+(esc(line)||" ")+'</span>').join("")+'</div><div class="c191-task">'+btn("Step","step")+btn("Run","run")+btn("Reset","reset-step")+'</div><p class="c191-caption">'+tr("교육용 C 로직 시각화입니다. GCC 실행 결과는 별도 Coding Challenge로 검증합니다.","Educational C logic model, not an actual compiler. Verify C11 behavior in Coding Challenges.")+'</p></section><section class="c191-panel" id="c191-visual" aria-label="Visual experiment">'+sceneHTML()+'</section></div>'+
+ '<div class="c191-grid"><section class="c191-panel"><h3>'+tr("예상 결과 먼저 생각하기","Predict before running")+'</h3><p>'+esc(tr(l.qko,l.qen))+'</p><div class="c191-quiz">'+l.answers.map((answer,i)=>'<label><input name="c191-answer" type="radio" value="'+i+'" '+(s.choice===i?"checked":"")+'/> '+esc(answer)+'</label>').join("")+'</div><div class="c191-task">'+btn(tr("예측 확인","Check prediction"),"check")+'</div><div class="c191-result" role="status">'+(s.checked?(s.choice===l.correct?tr("정답입니다. 코드와 장치의 관계를 설명해 보세요.","Correct. Explain the code-device relationship."):tr("비트와 실행 조건을 다시 관찰하세요.","Revisit the bits and conditions.")):tr("답을 고른 뒤 확인하세요.","Choose your answer before checking."))+'</div></section>'+
+ '<section class="c191-panel"><h3>'+tr("원리 설명과 응용","Explain and apply")+'</h3><p>'+esc(tr(l.insightKo,l.insightEn))+'</p><label for="c191-note">'+tr("내 생각 기록","My reasoning notes")+'</label><textarea id="c191-note" rows="4" style="width:100%;background:var(--els-surface-alt);color:var(--els-ink);border:1px solid var(--els-border);border-radius:8px;padding:9px">'+esc(s.note)+'</textarea><div class="c191-task">'+btn(done.includes(selected)?tr("학습 기록됨 ✓","Reviewed ✓"):tr("학습 확인 기록","Record review"),"complete")+'</div></section></div>'+
+ '<nav class="c191-links"><a href="./practice/#p'+Math.min(selected+1,6)+'">'+tr("관련 Coding Challenge","Related Coding Challenge")+' →</a>'+(selected<10?'<a href="#s'+(selected+2)+'">'+tr("다음 Section","Next section")+' →</a>':'')+'</nav></div>';
+ renderNav();
+ window.ELSCourseShell?.refreshArrows?.();
+}
+function changeSection(index){
+ if(index<0||index>10)return;
+ selected=index;history.replaceState(null,"","#s"+(index+1));render();
+ window.scrollTo({top:0,behavior:"instant"});
+}
+function refreshVisual(){
+ byId("c191-visual").innerHTML=sceneHTML();
+ const lines=stage.querySelectorAll(".c191-line"),s=S();
+ lines.forEach((el,i)=>el.classList.toggle("current",s.step>0&&i===Math.min(lines.length-1,s.step-1)));
+ save();
+}
+nav.addEventListener("click",event=>{
+ const b=event.target.closest("button[data-lesson]");if(b)changeSection(Number(b.dataset.lesson));
+});
+stage.addEventListener("click",event=>{
+ const b=event.target.closest("button[data-action],button[data-bit]");if(!b)return;
+ const s=S(),scene=D.lessons[selected].scene;
+ if(b.dataset.bit!==undefined){s.byte^=1<<Number(b.dataset.bit);s.byte&=255;refreshVisual();return;}
+ const action=b.dataset.action,mask=1<<s.target;
+ if(action==="step")s.step=Math.min(D.lessons[selected].code.split("\n").length,s.step+1);
+ if(action==="run")s.step=D.lessons[selected].code.split("\n").length;
+ if(action==="reset-step")s.step=0;
+ if(action==="mask"){if(s.op==="set")s.byte|=mask;else if(s.op==="clear")s.byte&=~mask;else if(s.op==="toggle")s.byte^=mask;s.byte&=255;s.step=Math.max(2,s.step);}
+ if(action==="operator"){const n=s.byte,op=s.operator;s.byte=op==="and"?n&15:op==="or"?n|2:op==="xor"?n^15:op==="not"?~n&255:op==="left"?n<<1&255:n>>>1;s.step=Math.max(3,s.step);}
+ if(action==="flag"){const bit=Number(b.dataset.flag);s.byte=bit===0?0:s.byte^(1<<bit);s.step=Math.max(2,s.step);}
+ if(action==="build")s.build=(s.build+1)%(scene==="modules"?5:3);
+ if(action==="reset-build")s.build=0;
+ if(action==="call")s.calls++;
+ if(action==="reset-call")s.calls=0;
+ if(action==="parse")s.step=2;
+ if(action==="check")s.checked=s.choice>=0;
+ if(action==="complete"){if(!done.includes(selected))done.push(selected);save();render();return;}
+ refreshVisual();
+});
+stage.addEventListener("change",event=>{
+ const e=event.target,s=S();
+ if(e.name==="c191-answer"){s.choice=Number(e.value);s.checked=false;save();render();return;}
+ if(e.dataset.setting){s[e.dataset.setting]=e.dataset.setting==="target"?Number(e.value):e.value;refreshVisual();}
+});
+stage.addEventListener("input",event=>{
+ if(event.target.id==="c191-note")S().note=event.target.value;
+ if(event.target.id==="c191-command")S().argv=event.target.value;
+ save();
+});
+window.addEventListener("hashchange",()=>{
+ const m=location.hash.match(/^#s(\d+)$/);
+ if(m&&Number(m[1])-1!==selected){selected=Math.max(0,Math.min(10,Number(m[1])-1));render();}
+});
+L.subscribe(()=>{
+ const isNote=document.activeElement?.id==="c191-note";
+ const cursor=isNote?document.activeElement.selectionStart:0;
+ const x=window.scrollX,y=window.scrollY;render();
+ if(isNote){byId("c191-note").focus({preventScroll:true});byId("c191-note").setSelectionRange(cursor,cursor);}
+ requestAnimationFrame(()=>window.scrollTo(x,y));
+});
+render();
+})();
