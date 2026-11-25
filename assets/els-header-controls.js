@@ -219,8 +219,30 @@
    }
 
    // A lightweight in-content return control: no sticky heading, no desktop layout impact.
+   function installMobileLessonStyles(){
+     if(doc.getElementById("els-mobile-learning-styles"))return;
+     const style=doc.createElement("style");
+     style.id="els-mobile-learning-styles";
+     style.textContent=[
+       ".els-mobile-open-lessons{display:none!important}",
+       "@media(max-width:800px){",
+       "#lesson>.els-mobile-open-lessons,.ss-layout-main>.els-mobile-open-lessons{",
+       "display:inline-flex!important;align-items:center;min-height:40px;margin:0 0 12px;",
+       "padding:8px 14px;border-radius:9px;border:1px solid var(--els-border,var(--line,#718096));",
+       "background:var(--els-surface-alt,var(--card,#293747));color:var(--els-ink,var(--ink,#f1f5f9));",
+       "font:600 14px/1.4 system-ui,sans-serif;cursor:pointer}",
+       ".els-mobile-open-lessons:focus-visible{outline:3px solid var(--els-link,#5caac0);outline-offset:2px}",
+       "#lesson,.ss-layout-main,.ss-vertical-main{min-width:0;max-width:100%}",
+       "#lesson pre,.ss-layout-main pre{max-width:100%;overflow-x:auto}",
+       "#lesson canvas,#lesson svg,.ss-layout-main canvas,.ss-layout-main svg{max-width:100%}",
+       "}",
+       "@media(min-width:801px){.els-mobile-open-lessons{display:none!important}}"
+     ].join("");
+     doc.head.append(style);
+   }
    function ensureReturnToLessons(){
      if(!query.matches)return;
+     installMobileLessonStyles();
      const toc=doc.querySelector("#lesson-nav, .ss-layout-sidebar nav");
      const content=doc.querySelector("#lesson, .ss-layout-main");
      if(!toc||!content)return;
