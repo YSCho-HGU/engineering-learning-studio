@@ -34,7 +34,7 @@ let requested=false;
 function schedule(){if(requested)return;requested=true;requestAnimationFrame(()=>{requested=false;scan();});}
 function init(){
  styles();
- const root=document.querySelector("main")||document.body;
+ const root=document.body; // Stable host: Ch2-4 replace the entire <main> on lesson changes.
  new MutationObserver(m=>{if(m.some(record=>record.target?.id==="formula"||[...record.addedNodes].some(node=>
  node.nodeType===1&&(node.matches?.("#formula.formula")||node.querySelector?.("#formula.formula")))))schedule();
  }).observe(root,{childList:true,subtree:true});
