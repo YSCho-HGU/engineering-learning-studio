@@ -141,3 +141,15 @@
 .c191-extra .c191-task{margin:0}
 .c191-extra .c191-caption{margin:0}
 @media(max-width:620px){.c191-stage-list{display:grid;grid-template-columns:minmax(0,1fr)}.c191-stage-list .c191-file{min-width:0}}
+
+/* 19.5-19.8 source-synchronized trace cards */
+.c191-stage-list .c191-file.pending{opacity:.65;border-style:dashed}
+.c191-stage-list .c191-file.pending strong{font-weight:500;color:var(--els-muted,#bac4d0)}
+.c191-stage-explain{border-inline-start:3px solid var(--els-link,#8abbd7);background:var(--els-surface-alt,#26394e);border-radius:6px;padding:12px 14px;line-height:1.65}
+.c191-argv{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:12px 0}
+.c191-argv>div{display:grid;gap:5px;min-width:0;background:var(--els-surface-alt,#26394e);border:1px solid var(--els-border,#40546c);border-radius:9px;padding:9px 11px}
+.c191-argv small{color:var(--els-muted,#bac4d0)}
+.c191-argv code{overflow-wrap:anywhere;color:var(--els-ink,#eaf2fc)}
+.c191-memory>div{display:grid;align-content:center;gap:7px;min-height:90px}
+.c191-memory>div strong{overflow-wrap:anywhere}
+@media(prefers-reduced-motion:reduce){.c191-stage-list .c191-file.active{transition:none;transform:none}}
