@@ -51,3 +51,24 @@ html[data-els-theme] .ss-graph-axis-x .katex{font-size:1.0em}
  padding:1px 3px!important;
  box-sizing:border-box!important;
 }
+
+/* Keep math in graph titles, legends and axis notes readable in compact cards.
+   No plotting surface or desktop axis positions are modified. */
+.ss-graph-caption-math{
+  display:inline-block;
+  max-width:100%;
+  vertical-align:baseline;
+  overflow-x:auto;
+  overflow-y:hidden;
+  color:inherit;
+}
+.ss-graph-caption-math .katex{font-size:1em!important;color:inherit!important}
+.plot-card :is(.legend,.axis-key,.plot-title),
+.figure :is(.legend,.axis-key,.sub),
+.plotbox :is(.legend,.axis-key){overflow-wrap:normal}
+@media(max-width:600px){
+ .plot-card :is(.legend,.axis-key),
+ .figure :is(.legend,.axis-key),
+ .plotbox :is(.legend,.axis-key){column-gap:10px;row-gap:5px}
+ .ss-graph-caption-math .katex{font-size:.98em!important}
+}
