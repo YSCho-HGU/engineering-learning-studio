@@ -3,9 +3,20 @@ import {chromium} from "playwright";
 const base=process.env.SS_TEST_BASE||"http://127.0.0.1:8765";
 const cases=[
  {name:"SS Chapter 1",url:"/signals-systems/chapter1.html",nav:".ss-layout-sidebar nav button",target:".ss-layout-main"},
+ {name:"SS Chapter 2",url:"/signals-systems/chapter2.html",nav:".ss-layout-sidebar nav button",target:".ss-layout-main"},
+ {name:"SS Chapter 3",url:"/signals-systems/chapter3.html",nav:".ss-layout-sidebar nav button",target:".ss-layout-main"},
+ {name:"SS Chapter 4",url:"/signals-systems/chapter4.html",nav:".ss-layout-sidebar nav button",target:".ss-layout-main"},
  {name:"SS Chapter 5",url:"/signals-systems/chapter5.html",nav:".ss-layout-sidebar nav button",target:".ss-layout-main"},
+ {name:"SS Chapter 6",url:"/signals-systems/chapter6.html",nav:".ss-layout-sidebar nav button",target:".ss-layout-main"},
+ {name:"SS Chapter 7",url:"/signals-systems/chapter7.html",nav:".ss-layout-sidebar nav button",target:".ss-layout-main"},
  {name:"SS Chapter 8",url:"/signals-systems/chapter8.html",nav:".ss-layout-sidebar nav button",target:".ss-layout-main"},
  {name:"C Arrays",url:"/c-programming/arrays/",nav:"#lesson-nav button[data-lesson]",target:"#lesson"},
+ {name:"C functions",url:"/c-programming/functions/",nav:"#lesson-nav button[data-lesson]",target:"#lesson"},
+ {name:"C strings",url:"/c-programming/strings/",nav:"#lesson-nav button[data-lesson]",target:"#lesson"},
+ {name:"C structure",url:"/c-programming/structure/",nav:"#lesson-nav button[data-lesson]",target:"#lesson"},
+ {name:"C pointer",url:"/c-programming/pointer/",nav:"#lesson-nav button[data-lesson]",target:"#lesson"},
+ {name:"C standard-library",url:"/c-programming/standard-library/",nav:"#lesson-nav button[data-lesson]",target:"#lesson"},
+ {name:"C dynamic-memory",url:"/c-programming/dynamic-memory/",nav:"#lesson-nav button[data-lesson]",target:"#lesson"},
  {name:"C File I/O",url:"/c-programming/file-io/",nav:"#lesson-nav button[data-nav]",target:"#lesson"},
  {name:"C Low-Level",url:"/c-programming/low-level-c/",nav:"#lesson-nav button[data-lesson]",target:"#lesson"}
 ];
