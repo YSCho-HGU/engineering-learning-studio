@@ -84,17 +84,16 @@ function assess(code,idx){
   ];
   const add=(pass,desc)=>findings.push({pass,desc});
   add(/#include\s*<stdlib\.h>/.test(code),"stdlib.h 헤더 포함");
-  if(d.slug==="low-level-c"&&idx===5)
-  add(/\bint\s+main\s*\(\s*int\s+argc\s*,\s*char\s*\*\s*argv\s*\[\s*\]\s*\)/.test(code),
-      "int main(int argc, char *argv[])");
- else add(/\bint\s+main\s*\(\s*void\s*\)/.test(code),"int main(void)");
+  add(/\bint\s+main\s*\(\s*void\s*\)/.test(code),"int main(void)");
   add(!/\/\*\s*TODO|\/\/\s*TODO/.test(code),"남은 TODO를 완성하세요.");
   for(const [pass,desc] of tests[idx])add(pass,desc);
   return {findings,ok:findings.every(x=>x.pass)};
  }
  const add=(pass,desc)=>findings.push({pass,desc});
  add(code.includes("#include <stdio.h>"),"stdio.h 헤더");
- add(/\bint\s+main\s*\(\s*void\s*\)/.test(code),"int main(void)");
+ if(d.slug==="low-level-c"&&idx===5)
+  add(/\bint\s+main\s*\(\s*int\s+argc\s*,\s*char\s*\*\s*argv\s*\[\s*\]\s*\)/.test(code),"int main(int argc, char *argv[])");
+ else add(/\bint\s+main\s*\(\s*void\s*\)/.test(code),"int main(void)");
  add(!/\/\*\s*TODO|\/\/\s*TODO/.test(code),"미완성 TODO 없음");
  let bal=0,min=0;for(const ch of code){if(ch==="{")bal++;if(ch==="}")bal--;min=Math.min(min,bal)}
  add(bal===0&&min>=0,"중괄호 균형 (단순 검사)");
