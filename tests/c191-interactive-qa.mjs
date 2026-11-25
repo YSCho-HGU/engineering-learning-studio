@@ -53,16 +53,46 @@ for(const width of [390,1280]){
   assert.ok((await page.locator(".c191-state.active").innerText()).includes("RUNNING"));
   await page.locator('[data-action="flag"][data-flag="4"]').click();
   assert.ok((await page.locator(".c191-state.active").innerText()).includes("ERROR"));
+  // 19.5: macro expansion and arithmetic must appear only at their trace steps.
+  await page.locator('#lesson-nav button[data-lesson="4"]').click();
+  assert.equal(await page.locator('.c191-stage-list .c191-file.active').count(),0,"macro before first step");
+  for(let i=0;i<3;i++)await page.locator('[data-action="step"]').click();
+  assert.ok((await page.locator('.c191-file.active').innerText()).includes("1+2*1+2"),"macro token substitution");
+  await page.locator('[data-action="step"]').click();
+  assert.ok((await page.locator('.c191-file.active').innerText()).includes("5"),"macro expression result");
+  await page.locator('[data-action="reset-step"]').click();
+  assert.equal(await page.locator('.c191-stage-list .c191-file.active').count(),0,"macro reset");
+
+  // 19.6: compiler and linker order; focus highlights source line.
   await page.locator('#lesson-nav button[data-lesson="5"]').click();
-  await page.locator('[data-action="build"]').click();
-  assert.equal(await page.locator(".c191-file.active").innerText(),"main.c + status.c");
+  assert.equal(await page.locator('.c191-file.active').count(),0,"files initially unprocessed");
+  for(let i=0;i<5;i++)await page.locator('[data-action="step"]').click();
+  assert.ok((await page.locator('.c191-file.active').innerText()).includes("Executable"));
+  assert.ok((await page.locator('.c191-stage-explain').innerText()).length>20);
+  await page.locator('[data-action="reset-step"]').click();
+  assert.equal(await page.locator('.c191-file.active').count(),0,"compile reset");
+
+  // 19.7: four steps per call; static persists when frames return.
   await page.locator('#lesson-nav button[data-lesson="6"]').click();
+  assert.ok((await page.locator('.c191-memory').innerText()).includes("1000"));
+  for(let i=0;i<4;i++)await page.locator('[data-action="step"]').click();
+  assert.ok((await page.locator('.c191-memory').innerText()).includes("1001"));
   await page.locator('[data-action="call"]').click();
-  await page.locator('[data-action="call"]').click();
-  assert.ok((await page.locator(".c191-terminal").innerText()).includes("1002"));
+  assert.ok((await page.locator('.c191-memory').innerText()).includes("1002"));
+  await page.locator('[data-action="reset-step"]').click();
+  assert.ok((await page.locator('.c191-memory').innerText()).includes("1000"));
+
+  // 19.8: argc mismatch exits early; simulated fopen success/failure is explicit.
   await page.locator('#lesson-nav button[data-lesson="7"]').click();
-  await page.locator('[data-action="parse"]').click();
-  assert.ok((await page.locator(".c191-terminal").innerText()).includes("argc = 2"));
+  assert.ok((await page.locator('.c191-argv').innerText()).includes("argc = 2"));
+  await page.locator('#c191-command').fill("./sensor data.txt -v");
+  await page.locator('[data-action="step"]').click();
+  await page.locator('[data-action="step"]').click();
+  assert.ok((await page.locator('.c191-stage-explain').innerText()).includes("return 1"));
+  await page.locator('#c191-command').fill("./sensor data.txt");
+  await page.locator('[data-setting="fileAvailable"]').check();
+  for(let i=0;i<5;i++)await page.locator('[data-action="step"]').click();
+  assert.ok((await page.locator('.c191-file.active').innerText()).includes("fclose"));
   await page.locator('#lesson-nav button[data-lesson="8"]').click();
   await page.locator(".c191-bit[data-bit='0']").click();
   const status=await page.locator(".c191-terminal").innerText();
@@ -104,7 +134,7 @@ for(const width of [390,1280]){
    assert.ok((await page.locator('.c191-code .c191-line').count())>=2,"code section "+(section+1));
    if(section===1) assert.equal(await page.locator('#c191-visual .c191-op-variable').count(),3,"three C variables");
    else if([0,10].includes(section)) assert.equal(await page.locator('#c191-visual .c191-bit').count(),8,"bit-only model section "+(section+1));
-   else assert.equal(await page.locator('#c191-visual .c191-terminal').count(),1,"result section "+(section+1));
+   else if(![4,5,6,7].includes(section)) assert.equal(await page.locator('#c191-visual .c191-terminal').count(),1,"result section "+(section+1));
    if([0,1,10].includes(section)) assert.equal(await page.locator('#c191-visual .c191-device').count(),0,"no irrelevant hardware section "+(section+1));
    if([4,5,9].includes(section)) assert.ok(await page.locator('#c191-visual .c191-stage-list').count()===1,"stage model section "+(section+1));
    if([2,3,8,10].includes(section)) assert.equal(await page.locator('.c191-extra').count(),1,"separate exploration card section "+(section+1));
