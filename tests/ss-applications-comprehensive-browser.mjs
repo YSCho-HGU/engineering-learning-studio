@@ -69,6 +69,35 @@ async function checkOne(context,item,width,mode){
    assert.equal(await theme.inputValue(),choice,item.id+" theme picker matches active theme");
    assert.equal(page.url(),startUrl,item.id+" theme change unexpectedly navigated");
   }
+
+  // Part A: every signal lab must redraw its primary canvas when a model control changes.
+  if(item.id.startsWith("a-")){
+   const canvas=page.locator("#ss-al-canvas-1");
+   const range=page.locator("#ss-al-control-fields input[type=range]").first();
+   if(await range.count()){
+    const before=await canvas.evaluate(e=>e.toDataURL());
+    await range.evaluate(input=>{
+     const lo=Number(input.min),hi=Number(input.max),cur=Number(input.value);
+     const next=Math.abs(cur-hi)>1e-8?hi:lo;
+     input.value=String(next);
+     input.dispatchEvent(new Event("input",{bubbles:true}));
+     input.dispatchEvent(new Event("change",{bubbles:true}));
+    });
+    await page.waitForTimeout(220);
+    const afterBitmap=await canvas.evaluate(e=>e.toDataURL());
+    assert.notEqual(afterBitmap,before,item.id+" graph does not update when control changes");
+   }
+   if(item.id==="a-helix"){
+    const play=page.locator("#ss-al-play-motion");
+    await play.click();
+    const running=await play.innerText();
+    assert.ok(/Pause|일시/.test(running),item.id+" animation did not start");
+    await page.waitForTimeout(220);
+    await play.click();
+    const paused=await play.innerText();
+    assert.ok(/Play|재생/.test(paused),item.id+" animation did not pause");
+   }
+  }
   const after=await page.evaluate(()=>{
    const main=document.querySelector("main");const graphics=[...document.querySelectorAll("main canvas,main svg,.ss-al-root canvas")];
    return {scroll:document.documentElement.scrollWidth,client:innerWidth,mainWidth:main?.getBoundingClientRect().width,
