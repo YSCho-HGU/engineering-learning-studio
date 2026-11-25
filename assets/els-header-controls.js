@@ -189,6 +189,11 @@
    const menuSelector=[
      ".ss-layout-sidebar nav button",
      ".ss-vertical-sidebar nav button",
+     "aside nav button[data-exp]",
+     "aside nav button[data-lab]",
+     "aside nav a[href^='#']",
+     ".ss-app-topic > summary",
+     ".ss-app-abd-planned > summary",
      ".ss-app-toc a[href^='#']",
      ".ss-app-shortcuts a[href^='#']",
      "#lesson-nav button[data-lesson]",
@@ -202,6 +207,7 @@
    ].join(",");
    let sequence=0;
    function targetFor(control){
+     if(control.tagName==="SUMMARY"&&control.parentElement?.tagName==="DETAILS")return control.parentElement;
      const hash=control.getAttribute("href");
      if(hash&&hash.startsWith("#")&&hash.length>1){
        const found=doc.getElementById(decodeURIComponent(hash.slice(1)));
