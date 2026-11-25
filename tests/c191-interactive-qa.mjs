@@ -166,6 +166,7 @@ for(const width of [390,1280]){
 
   for(let section=0;section<11;section++){
    await page.locator('#lesson-nav button[data-lesson="'+section+'"]').click();
+   await page.locator('[data-action="reset-step"]').click();
    assert.equal(await page.locator('#lesson h2').count(),1,"heading section "+(section+1));
    assert.equal(await page.locator('.c191-concept-check').count(),1,"one optional quiz per section");
    assert.equal(await page.locator('.c191-reflect').count(),1,"one reflection panel per section");
