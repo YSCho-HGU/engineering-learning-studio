@@ -240,6 +240,31 @@
      ].join("");
      doc.head.append(style);
    }
+   function findCurrentLesson(nav){
+     if(!nav)return null;
+     const selectors=[
+       '[aria-current="step"]','[aria-current="page"]','[aria-current="true"]',
+       'button.current','button.active','button.on',
+       'a.current','a.active','a.on','button[aria-selected="true"]',
+       'button[data-active="true"]'
+     ];
+     for(const selector of selectors){
+       const matches=nav.querySelectorAll(selector);
+       for(const candidate of matches){
+         if(candidate.closest(".ss-mobile-index-toggle,.ss-side-toggle"))continue;
+         return candidate;
+       }
+     }
+     return null;
+   }
+   function markCurrentLesson(nav){
+     if(!query.matches||!nav)return;
+     const current=findCurrentLesson(nav);
+     nav.querySelectorAll(".els-current-lesson").forEach(item=>{
+       if(item!==current)item.classList.remove("els-current-lesson");
+     });
+     if(current)current.classList.add("els-current-lesson");
+   }
    function ensureReturnToLessons(){
      if(!query.matches)return;
      installMobileLessonStyles();
@@ -256,22 +281,53 @@
        control.textContent="☰  "+(win.ELSLanguage?.get?.()==="en"?"Lessons":"목차");
        control.addEventListener("click",()=>{
          if(!query.matches)return;
-         const side=toc.closest(".ss-layout-sidebar");
-         const toggle=side?.querySelector(".ss-mobile-index-toggle");
+         const currentToc=doc.querySelector("#lesson-nav, .ss-layout-sidebar nav");
+         if(!currentToc)return;
+         const currentSide=currentToc.closest(".ss-layout-sidebar");
+         const toggle=currentSide?.querySelector(".ss-mobile-index-toggle");
          if(toggle&&toggle.getAttribute("aria-expanded")==="false")toggle.click();
-         else if(!side){
-           const current=toc.querySelector('[aria-current="step"], .current, .active');
-           const group=current?.closest("details")||toc.querySelector("details");
+         const current=findCurrentLesson(currentToc);
+         if(current){
+           for(let parent=current.parentElement;parent&&parent!==currentToc;parent=parent.parentElement){
+             if(parent.tagName==="DETAILS")parent.open=true;
+           }
+         }else if(!currentSide){
+           const group=currentToc.querySelector("details");
            if(group)group.open=true;
          }
-         const top=Math.max(0,win.scrollY+toc.getBoundingClientRect().top-12);
-         win.scrollTo({top,behavior:"instant"});
-         const focus=toggle&&toggle.offsetParent!==null?toggle:toc.querySelector("button,summary,a");
-         focus?.focus?.({preventScroll:true});
+         const reveal=()=>{
+           if(!query.matches)return;
+           const nav=doc.querySelector("#lesson-nav, .ss-layout-sidebar nav");
+           if(!nav)return;
+           const active=findCurrentLesson(nav);
+           if(active){
+             markCurrentLesson(nav);
+             // Align the chosen lesson in its own scrollable list before
+             // changing page scroll; scrolling the whole nav to its start
+             // hides the current item on long chapter menus.
+             for(let parent=active.parentElement;parent;parent=parent.parentElement){
+               const style=win.getComputedStyle(parent);
+               if(parent.scrollHeight>parent.clientHeight+4&&/auto|scroll/.test(style.overflowY)){
+                 const a=active.getBoundingClientRect(),b=parent.getBoundingClientRect();
+                 parent.scrollTop+=a.top-b.top-(b.height-a.height)/2;
+                 break;
+               }
+               if(parent===nav)break;
+             }
+           }
+           const selected=active&&active.getClientRects().length?active:nav;
+           const header=doc.querySelector("body > header.ss-common-header, body > header.els-course-header, body > header.site-header");
+           const headerHeight=header?.getBoundingClientRect().height||0;
+           const top=Math.max(0,win.scrollY+selected.getBoundingClientRect().top-headerHeight-14);
+           win.scrollTo({top,behavior:"instant"});
+         };
+         win.requestAnimationFrame(()=>win.requestAnimationFrame(reveal));
+         win.setTimeout(reveal,100);
        });
      }
      if(control.parentElement!==content)content.prepend(control);
      control.textContent="☰  "+(win.ELSLanguage?.get?.()==="en"?"Lessons":"목차");
+     markCurrentLesson(toc);
    }
    // Only a student-initiated lesson selection closes the mobile course list.
    // Keep open/closed preferences and desktop navigation completely untouched.
