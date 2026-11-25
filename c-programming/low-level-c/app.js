@@ -33,7 +33,7 @@ function device(s){
  const register=D.lessons[selected].scene==="register";
  const names=register?Array.from({length:8},(_,bit)=>[bit,"LED"+bit]):[[0,"READY"],[1,"ERROR"],[4,"ALARM"],[5,"LOW_BAT"]];
  return '<div class="c191-device"><div class="c191-device-head"><span>'+(register?tr("LED 출력 레지스터","LED output register"):tr("장치 상태","Device status"))+'</span><span>'+(register?hex(s.byte):state(s.byte))+'</span></div><div class="c191-leds">'+
- names.map(([b,name])=>'<div class="c191-led"><div class="c191-led-dot '+(s.byte&(1<<b)?"on ":"")+(b===1||b===4?"alarm ":"")+(s.changed&(1<<b)?"changed":"")+'" aria-label="'+name+' '+(s.byte&(1<<b)?"ON":"OFF")+'"></div><small>'+name+'</small><small>'+(s.byte&(1<<b)?"ON":"OFF")+'</small></div>').join("")+'</div>'+signalDiagram(s)+'</div>';
+ names.map(([b,name])=>'<div class="c191-led"><div class="c191-led-dot '+(s.byte&(1<<b)?"on ":"")+(!register&&(b===1||b===4)?"alarm ":"")+(s.changed&(1<<b)?"changed":"")+'" aria-label="'+name+' '+(s.byte&(1<<b)?"ON":"OFF")+'"></div><small>'+name+'</small><small>'+(s.byte&(1<<b)?"ON":"OFF")+'</small></div>').join("")+'</div>'+signalDiagram(s)+'</div>';
 }
 function signalDiagram(s){
  const register=D.lessons[selected].scene==="register";
@@ -46,7 +46,7 @@ function signalDiagram(s){
  '<path d="M142 63 H184" stroke="'+color+'" stroke-width="4" class="c191-hardware-wire" fill="none"/>'+
  '<polygon points="185,63 174,57 174,69" fill="'+color+'"/>'+
  '<rect x="191" y="28" width="150" height="70" rx="12" class="c191-hardware-box"/>'+
- '<text x="266" y="52" text-anchor="middle" class="c191-hardware-label">C MASK / enum</text>'+
+ '<text x="266" y="52" text-anchor="middle" class="c191-hardware-label">'+(register?"C LED MASK":"C MASK / enum")+'</text>'+
  '<text x="266" y="77" text-anchor="middle" class="c191-hardware-sub">'+hex(s.byte)+'</text>'+
  '<path d="M345 63 H388" stroke="'+color+'" stroke-width="4" class="c191-hardware-wire" fill="none"/>'+
  '<polygon points="389,63 378,57 378,69" fill="'+color+'"/>'+
@@ -113,7 +113,7 @@ const ledNames=[[0,"READY"],[1,"ERROR"],[4,"ALARM"],[5,"LOW_BAT"]];
 function miniBits(n,diff){
  return '<div class="c191-mini-bits">'+Array.from({length:8},(_,i)=>{const b=7-i;return '<span class="'+(n&(1<<b)?"one ":"")+(diff&(1<<b)?"mismatch":"")+'"><small>b'+b+'</small><strong>'+Number(!!(n&(1<<b)))+'</strong></span>';}).join("")+'</div>';
 }
-function miniLeds(n,register=false){const names=register?Array.from({length:8},(_,b)=>[b,"LED"+b]):ledNames;return '<div class="c191-mini-leds">'+names.map(([b,name])=>'<span><i class="'+(n&(1<<b)?"lit ":"")+(b===1||b===4?"alarm":"")+'"></i>'+name+'</span>').join("")+'</div>';}
+function miniLeds(n,register=false){const names=register?Array.from({length:8},(_,b)=>[b,"LED"+b]):ledNames;return '<div class="c191-mini-leds">'+names.map(([b,name])=>'<span><i class="'+(n&(1<<b)?"lit ":"")+(!register&&(b===1||b===4)?"alarm":"")+'"></i>'+name+'</span>').join("")+'</div>';}
 function predictionHTML(s,scene){
  if(!predictionScenes.has(scene))return "";
  const p=s.prediction,stateOnly=scene==="state"||scene==="capstone",expected=p?.expectedByte;
