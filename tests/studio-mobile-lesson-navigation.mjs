@@ -101,12 +101,30 @@ try{
       assert.notEqual(fixed,"fixed",item.name+" lesson title control must not be fixed");
       assert.notEqual(fixed,"sticky",item.name+" lesson title control must not be sticky");
       await reopen.click();
-      const returnPosition=await page.evaluate(()=>({
-        toc:document.querySelector("#lesson-nav, .ss-layout-sidebar nav")?.getBoundingClientRect().top,
-        scrolled:window.scrollY
-      }));
-      assert.ok(returnPosition.toc>=-15&&returnPosition.toc<window.innerHeight*.8,
-        item.name+" cannot return to lesson list: "+JSON.stringify(returnPosition));
+      await page.waitForTimeout(160);
+      const returnPosition=await page.evaluate(()=>{
+        const toc=document.querySelector("#lesson-nav, .ss-layout-sidebar nav");
+        const active=toc?.querySelector(".els-current-lesson");
+        const rect=active?.getBoundingClientRect();
+        const header=document.querySelector("body > header.ss-common-header,body > header.els-course-header,body > header.site-header");
+        return {
+          active:!!active,
+          itemLabel:active?.textContent?.trim()?.slice(0,90)||"",
+          visible:!!rect&&rect.height>0&&rect.width>0,
+          top:rect?.top,
+          bottom:rect?.bottom,
+          headerHeight:header?.getBoundingClientRect().height||0,
+          viewport:innerHeight,
+          groupOpen:active?.closest("details")?.open??true,
+          selected:!!active?.matches('[aria-current],.active,.current,.on,[aria-selected="true"]')
+        };
+      });
+      assert.ok(returnPosition.active&&returnPosition.selected,
+        item.name+" reopened TOC did not highlight selected lesson: "+JSON.stringify(returnPosition));
+      assert.ok(returnPosition.visible&&returnPosition.groupOpen,
+        item.name+" reopened TOC kept selected section hidden: "+JSON.stringify(returnPosition));
+      assert.ok(returnPosition.top>=returnPosition.headerHeight-22&&returnPosition.top<returnPosition.viewport*.85,
+        item.name+" selected TOC item is off-screen: "+JSON.stringify(returnPosition));
     }
     await page.screenshot({path:"tests/screenshots/mobile-navigation/"+item.name.replace(/[^a-z0-9]+/gi,"-")+"-"+width+".png",fullPage:false,animations:"disabled"});
     console.log("PASS",item.name,width,data);
