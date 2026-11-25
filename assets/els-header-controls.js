@@ -236,7 +236,13 @@
        "#lesson pre,.ss-layout-main pre{max-width:100%;overflow-x:auto}",
        "#lesson canvas,#lesson svg,.ss-layout-main canvas,.ss-layout-main svg{max-width:100%}",
        "}",
-       "@media(min-width:801px){.els-mobile-open-lessons{display:none!important}}"
+       "@media(min-width:801px){.els-mobile-open-lessons{display:none!important}}",
+       "@media(max-width:800px){",
+       "#lesson-nav .els-current-lesson,.ss-layout-sidebar nav .els-current-lesson{",
+       "box-shadow:inset 3px 0 0 var(--els-link,var(--els-accent,#4dabb3))!important;",
+       "background:var(--els-surface-alt,var(--card,rgba(77,171,179,.12)))!important;",
+       "color:var(--els-ink,var(--ink,inherit))!important;font-weight:750!important}",
+       "}"
      ].join("");
      doc.head.append(style);
    }
