@@ -62,8 +62,25 @@ try{
     const layout=await page.evaluate(()=>({scrollWidth:document.documentElement.scrollWidth,viewport:innerWidth,
       title:document.querySelector("#lesson h1,#lesson h2,.ss-layout-main h1,.ss-layout-main h2")?.getBoundingClientRect().top??null}));
     assert.ok(layout.scrollWidth<=width+10,item.name+" horizontal overflow: "+JSON.stringify(layout));
+    if(width>800)assert.equal(await page.locator("#els-mobile-open-lessons:visible").count(),0,
+      item.name+" desktop should not display mobile lessons control");
     if(width>800)assert.ok(Math.abs(data.scrollY-desktopBefore)<=5,
       item.name+" desktop scroll changed by mobile handler: "+JSON.stringify({desktopBefore,...data}));
+
+    if(width<=800 && !item.name.startsWith("SS Applications")){
+      const reopen=page.locator("#els-mobile-open-lessons");
+      await reopen.waitFor({state:"visible",timeout:4000});
+      const fixed=await reopen.evaluate(el=>getComputedStyle(el).position);
+      assert.notEqual(fixed,"fixed",item.name+" lesson title control must not be fixed");
+      assert.notEqual(fixed,"sticky",item.name+" lesson title control must not be sticky");
+      await reopen.click();
+      const returnPosition=await page.evaluate(sel=>({
+        toc:document.querySelector(sel)?.getBoundingClientRect().top,
+        scrolled:window.scrollY
+      }),item.nav);
+      assert.ok(returnPosition.toc>=-15&&returnPosition.toc<window.innerHeight*.8,
+        item.name+" cannot return to lesson list: "+JSON.stringify(returnPosition));
+    }
     if(width<=800&&item.name.startsWith("C ")){
       const openGroups=await page.locator("#lesson-nav details[open]").count();
       assert.equal(openGroups,0,item.name+" mobile lesson groups should close");
