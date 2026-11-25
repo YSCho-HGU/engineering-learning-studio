@@ -52,10 +52,12 @@ async function checkOne(context,item,width,mode){
   assert.equal(page.url(),startUrl,item.id+" language change unexpectedly navigated");
   const english=await lang.inputValue();
   assert.equal(english,"en",item.id+" English mode selection");
+  assert.equal(await page.evaluate(()=>window.ELSLanguage?.get?.()),"en",item.id+" language store updates");
   await lang.selectOption("ko");
   await page.waitForTimeout(80);
   assert.equal(page.url(),startUrl,item.id+" Korean mode unexpectedly navigated");
   assert.equal(await lang.inputValue(),"ko",item.id+" Korean mode selection");
+  assert.equal(await page.evaluate(()=>window.ELSLanguage?.get?.()),"ko",item.id+" Korean mode is actually active");
   await lang.selectOption("mixed");
   const theme=header.locator("select[data-els-theme-picker]").first();
   assert.equal(await theme.count(),1,item.id+" missing theme selector");
@@ -64,6 +66,7 @@ async function checkOne(context,item,width,mode){
    await page.waitForTimeout(120);
    const actual=await page.evaluate(()=>document.documentElement.dataset.elsTheme);
    assert.equal(actual,choice,item.id+" theme sync");
+   assert.equal(await theme.inputValue(),choice,item.id+" theme picker matches active theme");
    assert.equal(page.url(),startUrl,item.id+" theme change unexpectedly navigated");
   }
   const after=await page.evaluate(()=>{
@@ -73,6 +76,7 @@ async function checkOne(context,item,width,mode){
   });
   assert.ok(after.scroll<=after.client+12,item.id+" post-theme mobile overflow");
   assert.equal(after.zeroPlots,0,item.id+" graphs collapsed after theme/language changes");
+  if(errors.length)throw Error(item.id+" uncaught JS errors: "+errors.slice(0,5).join(" | "));
   if(mode==="mobile"&&item.id==="a-helix"){
     const canvas=page.locator("#ss-al-canvas-1");
     const rect=await canvas.boundingBox();
