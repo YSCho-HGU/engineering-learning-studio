@@ -121,7 +121,7 @@ function predictionHTML(s,scene){
  (p?btn(tr("예측 수정","Edit prediction"),"predict-edit"):btn(tr("예측 고정","Lock prediction"),"predict-save"))+'</div>';
  if(p){
  const diff=p.observed?(expected^s.byte):0;
- h+='<div class="c191-pred-compare"><div class="c191-pred-side"><strong>'+tr("예상 결과","Prediction")+'</strong><div class="c191-pred-value">'+hex(expected)+' · '+binary(expected)+'</div>'+miniBits(expected,diff)+miniLeds(expected)+'<p>State: '+p.expectedState+'</p></div>'+
+ h+='<div class="c191-pred-compare"><div class="c191-pred-side"><strong>'+tr("예상 결과","Prediction")+'</strong>'+(stateOnly?'<p>State: <strong>'+p.expectedState+'</strong></p><p class="c191-caption">'+tr("상태만 예측합니다. Byte/LED는 실행 결과에서 확인하세요.","Predict the state only. Inspect bytes and LEDs after execution.")+'</p>':'<div class="c191-pred-value">'+hex(expected)+' · '+binary(expected)+'</div>'+miniBits(expected,diff)+miniLeds(expected)+'<p>State: '+p.expectedState+'</p>')+'</div>'+
  '<div class="c191-pred-side"><strong>'+tr("실행 결과","Observed result")+'</strong>'+(p.observed?'<div class="c191-pred-value">'+hex(s.byte)+' · '+binary(s.byte)+'</div>'+miniBits(s.byte,diff)+miniLeds(s.byte)+'<p>State: '+state(s.byte)+'</p>':'<p class="c191-pred-pending">'+tr("Step/Run 또는 비트 조작 후 표시됩니다.","Revealed after Step/Run or bit interaction.")+'</p>')+'</div></div>';
  if(p.observed){
  const matched=stateOnly?p.expectedState===state(s.byte):expected===s.byte;
