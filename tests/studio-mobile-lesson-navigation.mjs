@@ -18,7 +18,9 @@ const cases=[
  {name:"C standard-library",url:"/c-programming/standard-library/",nav:"#lesson-nav button[data-lesson]",target:"#lesson"},
  {name:"C dynamic-memory",url:"/c-programming/dynamic-memory/",nav:"#lesson-nav button[data-lesson]",target:"#lesson"},
  {name:"C File I/O",url:"/c-programming/file-io/",nav:"#lesson-nav button[data-nav]",target:"#lesson"},
- {name:"C Low-Level",url:"/c-programming/low-level-c/",nav:"#lesson-nav button[data-lesson]",target:"#lesson"}
+ {name:"C Low-Level",url:"/c-programming/low-level-c/",nav:"#lesson-nav button[data-lesson]",target:"#lesson"},
+ {name:"C AI Coding",url:"/c-programming/ai-coding/",nav:"#lesson-nav button",target:"#lesson"},
+ {name:"SS Applications topics",url:"/signals-systems/applications.html",nav:"#part-c details.ss-app-topic > summary",target:"#part-c details.ss-app-topic"}
 ];
 const browser=await chromium.launch({headless:true});
 const failures=[];
