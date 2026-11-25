@@ -118,22 +118,72 @@ function extraHTML(s,scene){
  }
  return "";
 }
-function conceptSceneHTML(s,scene){
- if(scene==="bits")return bits(s)+'<p class="c191-caption">'+tr("이 예제의 값은 숫자 181을 8개 비트로 표현합니다. 여기서는 LED나 센서 제어를 수행하지 않습니다.","This example represents the number 181 as eight bits; it does not operate a device or LEDs.")+'</p>';
- if(scene==="preprocessor"){
-  const stages=[["SQUARE(1+2)",tr("호출 전","Source invocation")],["1+2*1+2",tr("토큰 치환","Token substitution")],["5",tr("식 계산","Expression evaluation")]];
-  return '<div class="c191-stage-list">'+stages.map(([v,label],i)=>'<div class="c191-file '+(s.build===i?"active":"")+'"><small>'+label+'</small><strong>'+esc(v)+'</strong></div>').join("")+'</div><div class="c191-task">'+btn(tr("다음 단계","Next stage"),"build")+btn("Reset","reset-build")+'</div><p class="c191-caption">'+tr("전처리기의 텍스트 치환과 C의 산술 계산은 별개의 단계입니다.","Preprocessor substitution and C arithmetic evaluation are different stages.")+'</p>';
+function traceModel(s,scene){
+ const k=Math.max(0,s.step||0),args=s.argv.trim().split(/\s+/).filter(Boolean),argc=args.length;
+ const stages={
+  preprocessor:[
+   ["#define SQUARE(x) x*x",tr("매크로 정의: 아직 함수를 호출하지 않았습니다.","Macro definition; no function is called."),0],
+   ["SQUARE(1+2)",tr("소스의 매크로 호출을 확인합니다.","Locate the macro invocation."),1],
+   ["1+2*1+2",tr("전처리기가 토큰을 치환합니다.","Preprocessor substitutes tokens."),1],
+   ["5",tr("컴파일된 식을 계산하면 5입니다. 9가 아닙니다.","C evaluates the expanded expression to 5, not 9."),1]
+  ],
+  modules:[
+   ["status.h",tr("헤더에서 led_set의 선언을 확인합니다.","Read the led_set declaration in the header."),3],
+   ["main.c + status.c",tr("각 소스 파일은 헤더를 포함하여 별도 번역 단위가 됩니다.","Each .c file is a separate translation unit."),5],
+   ["main.o + status.o",tr("각 번역 단위를 컴파일합니다.","Compile each translation unit."),5],
+   ["Linker",tr("링커가 main.o의 호출을 status.o의 정의에 연결합니다.","Linker resolves main.o's call using the definition in status.o."),6],
+   ["Executable",tr("정의가 있으면 링크되어 실행 파일이 만들어집니다.","The executable is created if all references resolve."),6]
+  ]
+ };
+ if(scene==="preprocessor"||scene==="modules"){
+  const rows=stages[scene],idx=k===0?-1:Math.min(k-1,rows.length-1);
+  return {rows,idx,focus:idx<0?null:rows[idx][2],message:idx<0?tr("Step을 눌러 첫 단계부터 확인하세요.","Use Step to start the trace."):rows[idx][1],done:idx===rows.length-1};
  }
- if(scene==="modules"){
-  const files=["status.h", "main.c + status.c","main.o + status.o","Linker","Executable"];
-  return '<div class="c191-stage-list">'+files.map((v,i)=>'<div class="c191-file '+(s.build===i?"active":"")+'"><small>'+(i+1)+'</small><strong>'+esc(v)+'</strong></div>').join("")+'</div><div class="c191-task">'+btn(tr("다음 단계","Next stage"),"build")+btn("Reset","reset-build")+'</div>';
+ if(scene==="lifetime"){
+  const phase=k===0?0:(k-1)%4,call=k===0?0:Math.ceil(k/4),value=1000+Math.max(0,call-1)+(phase===3?1:0);
+  const stages=[
+   tr("첫 호출 전: static 객체의 초기화 값은 1000입니다.","Before the first call, the static object's initializer is 1000."),
+   tr("함수에 진입합니다. static 저장 공간은 새로 생성되지 않습니다.","Enter function. Static storage is not recreated."),
+   tr("count는 이전 호출에서 유지된 값을 갖습니다.","count keeps the value retained from the previous call."),
+   tr("++count가 값을 1 증가시킵니다.","++count increments the retained value."),
+   tr("증가된 값을 반환하고 함수 프레임이 종료됩니다.","Return the incremented value and leave the call frame.")
+  ];
+  return {idx:phase,call,value,focus:phase===1?0:phase===2?1:phase===3?2:null,message:stages[k===0?0:phase+1],done:false};
  }
- if(scene==="optional"){
-  const items=[["union Data",tr("공유 저장 공간","Shared storage")],["function pointer",tr("함수를 가리키는 포인터","Pointer to function")],["#ifdef DEBUG",tr("조건부 컴파일","Conditional compilation")]];
-  return '<div class="c191-stage-list">'+items.map(([v,label],i)=>'<div class="c191-file '+(s.build===i?"active":"")+'"><small>'+label+'</small><strong>'+esc(v)+'</strong></div>').join("")+'</div><div class="c191-task">'+btn(tr("다음 개념","Next concept"),"build")+btn("Reset","reset-build")+'</div>';
+ if(scene==="cli"){
+  const valid=argc===2,passed=!!s.fileAvailable;
+  const rows=[
+   [tr("프로그램 시작","Program entry"),tr("argc와 argv 배열을 전달받습니다.","Receive argc and argv."),0],
+   ["argc != 2",valid?tr("조건이 거짓이므로 계속 실행합니다.","Condition is false; continue."):tr("인자 수가 맞지 않아 return 1로 종료합니다.","Wrong argument count: return 1."),1],
+   ["fopen(argv[1], \"r\")",tr("파일 열기를 요청합니다. 실제 파일을 열지는 않습니다.","Request a file open; this visualization does not open a real file."),2],
+   ["fp == NULL",passed?tr("모의 파일 열기 성공, NULL이 아닙니다.","Simulated open succeeds; fp is not NULL."):tr("모의 파일 열기 실패, fp == NULL이므로 return 1입니다.","Simulated open fails; fp == NULL, return 1."),3],
+   ["fclose(fp)",tr("파일을 닫고 정상 경로를 마칩니다.","Close the file and finish the successful path."),4]
+  ];
+  let idx=k===0?-1:Math.min(k-1,valid?(passed?4:3):1);
+  return {rows,idx,focus:idx<0?null:rows[idx][2],message:idx<0?tr("인자를 입력하고 Step으로 분기를 추적하세요.","Enter arguments and trace branches with Step."):rows[idx][1],done:idx===(valid?(passed?4:3):1),valid,passed,args,argc};
  }
- if(scene==="lifetime")return '<div class="c191-memory"><div><small>automatic local</small><br/><strong>'+tr("호출마다 새로 생성","New for each call")+'</strong></div><div><small>static count</small><br/><strong>'+(1000+s.calls)+'</strong></div><div><small>calls</small><br/><strong>'+s.calls+'</strong></div></div><div class="c191-task">'+btn("Call next_id()","call")+btn("Reset","reset-call")+'</div><p class="c191-caption">'+tr("static count는 함수가 끝나도 값을 유지하며, 호출 시 1씩 증가합니다.","The static count retains its value between calls and increments with each call.")+'</p>';
- if(scene==="cli")return '<label for="c191-command">'+tr("명령행 입력","Command line input")+'</label><div class="c191-task"><input id="c191-command" data-setting="argv" style="flex:1;min-width:170px" value="'+esc(s.argv)+'"/>'+btn(tr("인자 분석","Parse arguments"),"parse")+'</div><p class="c191-caption">'+tr("공백 기반 단순 모델입니다. 실제 셸의 따옴표 해석까지 구현한 것은 아닙니다.","Simplified whitespace-based model; shell quoting is not simulated.")+'</p>';
+ return null;
+}
+function specializedScene(s,scene){
+ const model=traceModel(s,scene);
+ if(scene==="preprocessor"||scene==="modules"){
+  return '<p class="c191-caption">'+(scene==="preprocessor"?tr("매크로는 전처리 시점에 치환되고, 산술 결과는 C 식의 평가입니다.","Macro expansion occurs during preprocessing; arithmetic is evaluated afterward."):tr("선언과 정의를 구별한 뒤 두 소스 파일의 컴파일·링킹을 확인합니다.","Distinguish declarations from definitions, then examine compilation and linking."))+'</p>'+
+  '<div class="c191-stage-list">'+model.rows.map(([label],i)=>'<div class="c191-file '+(i===model.idx?"active":"")+' '+(i>model.idx?"pending":"")+'"><small>'+tr("단계 ","Stage ")+(i+1)+'</small><strong>'+esc(label)+'</strong></div>').join("")+'</div>'+
+  '<p class="c191-stage-explain" role="status">'+esc(model.message)+'</p>';
+ }
+ if(scene==="lifetime"){
+  return '<div class="c191-memory"><div><small>static count</small><strong>'+model.value+'</strong></div><div><small>'+tr("함수 호출","Call number")+'</small><strong>'+model.call+'</strong></div><div><small>'+tr("현재 위치","Current phase")+'</small><strong>'+(s.step===0?tr("시작 전","Before entry"):["Enter","Retain","Increment","Return"][model.idx])+'</strong></div></div>'+
+  '<p class="c191-stage-explain" role="status">'+esc(model.message)+'</p>'+
+  '<p class="c191-caption">'+tr("Step 4개가 함수 호출 1회입니다. Reset은 static 값을 1000으로 되돌립니다. 이는 실행 시뮬레이션입니다.","Four steps make one function call. Reset restores the simulated static value to 1000.")+'</p>';
+ }
+ if(scene==="cli"){
+  return '<label for="c191-command">'+tr("실행 명령","Command line")+'</label><div class="c191-task"><input id="c191-command" data-setting="argv" style="flex:1;min-width:170px" value="'+esc(s.argv)+'"/></div>'+
+  '<div class="c191-argv"><div><strong>argc = '+model.argc+'</strong></div>'+model.args.map((arg,i)=>'<div><small>argv['+i+']</small><code>'+esc(arg)+'</code></div>').join("")+'</div>'+
+  '<label class="c191-task"><input type="checkbox" data-setting="fileAvailable" '+(model.passed?"checked":"")+'/> '+tr("모의 파일 열기 성공","Simulate file-open success")+'</label>'+
+  '<div class="c191-stage-list">'+model.rows.map(([label],i)=>'<div class="c191-file '+(i===model.idx?"active":i>model.idx?"pending":"")+'"><small>'+tr("단계 ","Stage ")+(i+1)+'</small><strong>'+esc(label)+'</strong></div>').join("")+'</div>'+
+  '<p class="c191-stage-explain" role="status">'+esc(model.message)+'</p>'+
+  '<p class="c191-caption">'+tr("단순 공백 분리 모델이며 실제 파일이나 C 프로그램을 실행하지 않습니다.","Whitespace-only argument model; it does not actually open a file or execute C.")+'</p>';
+ }
  return "";
 }
 
@@ -141,7 +191,8 @@ function sceneHTML(){
  const s=S(),scene=D.lessons[selected].scene;
  let html='<h3>'+sceneTitle(scene)+'</h3>';
  if(scene==="operators")html+=operatorVars(s);
- else if(["bits","preprocessor","modules","optional","lifetime","cli"].includes(scene))html+=conceptSceneHTML(s,scene);
+ else if(["preprocessor","modules","lifetime","cli"].includes(scene))html+=specializedScene(s,scene);
+ else if(["bits","optional"].includes(scene))html+=conceptSceneHTML(s,scene);
  else if(["register","state","capstone","review"].includes(scene)){
   html+=bits(s);
   if(["register","state","capstone"].includes(scene))html+=device(s);
@@ -152,26 +203,37 @@ function sceneHTML(){
   if(scene==="review")html+='<p class="c191-caption">'+tr("마스크를 적용한 전후의 값에서 바뀐 비트만 확인하세요.","Check only the bits changed by the mask.")+'</p>';
  }
  html+='<p class="c191-caption c191-trace" aria-live="polite">'+esc(s.trace||tr("코드를 단계별로 실행해 보세요.","Step through the code."))+'</p>';
- if(!["operators","bits","review"].includes(scene))html+='<div class="c191-terminal" aria-live="polite">'+esc(terminal(s,scene))+'</div>';
+ if(!["operators","bits","review","preprocessor","modules","lifetime","cli"].includes(scene))html+='<div class="c191-terminal" aria-live="polite">'+esc(terminal(s,scene))+'</div>';
  return html;
 }
 function advance(){
- const s=S(),lines=D.lessons[selected].code.split("\n"),scene=D.lessons[selected].scene;
- if(s.step>=lines.length)return false;
+ const s=S(),scene=D.lessons[selected].scene,lines=D.lessons[selected].code.split("\n");
+ const special=["preprocessor","modules","lifetime","cli"].includes(scene);
+ const model=traceModel(s,scene);
+ const max=scene==="preprocessor"?4:scene==="modules"?5:scene==="cli"?(model.valid?(model.passed?5:4):2):scene==="lifetime"?Infinity:lines.length;
+ if(s.step>=max)return false;
  const before=s.byte;s.step++;
- if(scene==="operators"){s.byte=s.step===3?7:0;s.trace=[tr("아직 실행되지 않았습니다.","Not executed yet."),"a = 0x05 (0000 0101)","b = 0x02 (0000 0010)","result = a | b = 0x07 (0000 0111)"][s.step];}
+ if(scene==="operators"){s.byte=s.step===3?7:0;s.trace=["","a = 0x05 (0000 0101)","b = 0x02 (0000 0010)","result = a | b = 0x07 (0000 0111)"][s.step];}
  if(scene==="register"&&s.step===2)s.byte=0x04|2;
  if(scene==="bits"&&s.step===2)s.byte=181;
- if(s.step===lines.length||(scene==="register"&&s.step===2)||(scene==="operators"&&s.step===3))markObserved(s);
+ if(special){
+  const now=traceModel(s,scene);
+  s.focus=now.focus;
+  s.trace=now.message;
+  if(scene==="lifetime")s.calls=now.call;
+ }else{
+  s.focus=s.step-1;
+  s.trace=scene==="operators"?s.trace:tr("실행 단계 ","Execution step ")+s.step+"/"+lines.length+": "+lines[s.focus].trim()+
+   (before!==s.byte?" · "+hex(before)+" → "+hex(s.byte):"");
+ }
+ if(s.step===max||(scene==="register"&&s.step===2))markObserved(s);
  s.changed=(before^s.byte)&255;
- s.trace=(scene==="operators"?s.trace:tr("실행 단계 ","Execution step ")+s.step+"/"+lines.length+": "+lines[s.step-1].trim())+
- (scene==="operators"?"":s.changed?" · "+hex(before)+" → "+hex(s.byte):" · "+tr("레지스터 변경 없음","register unchanged"));
  return true;
 }
 function play(){
  if(!advance()){stop();refreshVisual();return;}
  if(S().prediction?.observed)render();
- if(S().step<D.lessons[selected].code.split("\n").length)timer=setTimeout(play,650);
+ if((D.lessons[selected].scene==="lifetime"&&S().step%4!==0)||(!["lifetime","preprocessor","modules","cli"].includes(D.lessons[selected].scene)&&S().step<D.lessons[selected].code.split("\n").length)||(["preprocessor","modules","cli"].includes(D.lessons[selected].scene)&&!traceModel(S(),D.lessons[selected].scene).done))timer=setTimeout(play,650);
  else stop();
  refreshVisual();
 }
@@ -227,7 +289,7 @@ function render(){
  const intro=byId("c191-intro");if(intro)intro.textContent=tr("하나의 Sensor Status Byte가 C 코드, 상태도, LED 패널과 어떻게 연결되는지 예측하고 관찰합니다.","Predict and observe how one sensor status byte connects C code, a state diagram and LED indicators.");
  const codeLines=l.code.split("\n");
  stage.innerHTML='<div class="c191-flow"><article><span class="c191-eyebrow">CHAPTER 19 · '+(selected+1)+'/11</span><h2>19.'+(selected+1)+' '+esc(l.title)+'</h2><div class="c191-story"><p>'+esc(tr(l.ko,l.en))+'</p><p class="c191-caption">'+esc(tr(l.conceptKo,l.conceptEn))+'</p></div></article>'+predictionHTML(s,l.scene)+
- '<div class="c191-grid"><section class="c191-panel" aria-label="C reference code"><h3>'+tr("코드 실행 줄 추적","Code execution trace")+'</h3><div class="c191-code">'+codeLines.map((line,i)=>'<span class="c191-line '+(s.step>0&&i===Math.min(codeLines.length-1,s.step-1)?"current":"")+'">'+(esc(line)||" ")+'</span>').join("")+'</div><div class="c191-task">'+btn("Step","step")+btn(timer!==null?tr("일시정지","Pause"):"Run","run")+btn("Reset","reset-step")+'</div><p class="c191-caption">'+tr("교육용 C 로직 시각화입니다. GCC 실행 결과는 별도 Coding Challenge로 검증합니다.","Educational C logic model, not an actual compiler. Verify C11 behavior in Coding Challenges.")+'</p></section><section class="c191-panel" id="c191-visual" aria-label="Visual experiment">'+sceneHTML()+'</section></div>'+
+ '<div class="c191-grid"><section class="c191-panel" aria-label="C reference code"><h3>'+tr("코드 실행 줄 추적","Code execution trace")+'</h3><div class="c191-code">'+codeLines.map((line,i)=>'<span class="c191-line '+(s.step>0&&i===(Number.isInteger(s.focus)?s.focus:Math.min(codeLines.length-1,s.step-1))?"current":"")+'">'+(esc(line)||" ")+'</span>').join("")+'</div><div class="c191-task">'+btn("Step","step")+btn(timer!==null?tr("일시정지","Pause"):"Run","run")+btn("Reset","reset-step")+'</div><p class="c191-caption">'+tr("교육용 C 로직 시각화입니다. GCC 실행 결과는 별도 Coding Challenge로 검증합니다.","Educational C logic model, not an actual compiler. Verify C11 behavior in Coding Challenges.")+'</p></section><section class="c191-panel" id="c191-visual" aria-label="Visual experiment">'+sceneHTML()+'</section></div>'+
  extraHTML(s,l.scene)+'<div class="c191-grid"><section class="c191-panel"><h3>'+tr("예상 결과 먼저 생각하기","Predict before running")+'</h3><p>'+esc(tr(l.qko,l.qen))+'</p><div class="c191-quiz">'+answerLabels.map((answer,i)=>'<label><input name="c191-answer" type="radio" value="'+i+'" '+(s.choice===i?"checked":"")+'/> '+esc(answer)+'</label>').join("")+'</div><div class="c191-task">'+btn(tr("예측 확인","Check prediction"),"check")+'</div><div class="c191-result" role="status">'+(s.checked?(s.choice===l.correct?tr("정답입니다. 코드와 장치의 관계를 설명해 보세요.","Correct. Explain the code-device relationship."):tr("비트와 실행 조건을 다시 관찰하세요.","Revisit the bits and conditions.")):tr("답을 고른 뒤 확인하세요.","Choose your answer before checking."))+'</div></section>'+
  '<section class="c191-panel"><h3>'+tr("원리 설명과 응용","Explain and apply")+'</h3><p>'+esc(tr(l.insightKo,l.insightEn))+'</p><label for="c191-note">'+tr("내 생각 기록","My reasoning notes")+'</label><textarea id="c191-note" rows="4" style="width:100%;background:var(--els-surface-alt);color:var(--els-ink);border:1px solid var(--els-border);border-radius:8px;padding:9px">'+esc(s.note)+'</textarea><div class="c191-task">'+btn(done.includes(selected)?tr("학습 기록됨 ✓","Reviewed ✓"):tr("학습 확인 기록","Record review"),"complete")+'</div></section></div>'+
  '<nav class="c191-links"><a href="./practice/#p'+Math.min(selected+1,6)+'">'+tr("관련 Coding Challenge","Related Coding Challenge")+' →</a>'+(selected<10?'<a href="#s'+(selected+2)+'">'+tr("다음 Section","Next section")+' →</a>':'')+'</nav></div>';
@@ -243,7 +305,7 @@ function refreshVisual(){
  byId("c191-visual").innerHTML=sceneHTML();
  const lines=stage.querySelectorAll(".c191-line"),s=S();
  const runBtn=stage.querySelector('button[data-action="run"]');if(runBtn)runBtn.textContent=timer!==null?tr("일시정지","Pause"):"Run";
- lines.forEach((el,i)=>el.classList.toggle("current",s.step>0&&i===Math.min(lines.length-1,s.step-1)));
+ lines.forEach((el,i)=>el.classList.toggle("current",s.step>0&&i===(Number.isInteger(s.focus)?s.focus:Math.min(lines.length-1,s.step-1))));
  if(D.lessons[selected].scene==="operators")byId("c191-visual").innerHTML=sceneHTML();
  save();
 }
@@ -259,22 +321,22 @@ stage.addEventListener("click",event=>{
  if(action==="predict-edit"){s.prediction=null;save();render();return;}
  if(action==="run"){
   if(timer!==null)stop();
-  else {if(s.step>=D.lessons[selected].code.split("\n").length){s.step=0;s.byte=initialFor(selected).byte;s.changed=0;if(s.prediction)s.prediction.observed=false;}play();return;}
+  else {if(s.step>=D.lessons[selected].code.split("\n").length&& !["preprocessor","modules","lifetime","cli"].includes(scene)){s.step=0;s.focus=null;s.byte=initialFor(selected).byte;s.changed=0;if(s.prediction)s.prediction.observed=false;}play();return;}
  }
  if(action!=="run")stop();
- if(action==="step"){advance();if(scene==="operators"||s.prediction?.observed){render();return;}}
+ if(action==="step"){advance();if(["operators","preprocessor","modules","lifetime","cli"].includes(scene)||s.prediction?.observed){render();return;}}
  if(action==="reset-operator"){s.experimentByte=5;s.experimentTrace="";}
- if(action==="reset-step"){const original=initialFor(selected);s.byte=original.byte;s.step=0;s.build=0;s.calls=0;s.parsed=false;s.changed=0;s.prediction=null;s.trace=tr("초기 상태 복원","Initial state restored");}
+ if(action==="reset-step"){const original=initialFor(selected);s.byte=original.byte;s.step=0;s.focus=null;s.build=0;s.calls=0;s.parsed=false;s.changed=0;s.prediction=null;s.trace=tr("초기 상태 복원","Initial state restored");}
  if(action==="mask"){const before=Number.isInteger(s.maskByte)?s.maskByte:s.byte;let n=before;if(s.op==="set")n|=mask;else if(s.op==="clear")n&=~mask;else if(s.op==="toggle")n^=mask;s.maskByte=n&255;s.maskTrace=maskExpression(s)+"; "+hex(before)+" → "+hex(s.maskByte);}
  if(action==="reset-mask"){s.maskByte=undefined;s.maskTrace="";}
  if(action==="operator"){const n=Number.isInteger(s.experimentByte)?s.experimentByte:5,op=s.operator;s.experimentByte=op==="and"?n&2:op==="or"?n|2:op==="xor"?n^2:op==="not"?(~n)&255:op==="left"?(n<<1)&255:n>>>1;s.experimentTrace=hex(n)+" "+({and:"& 0x02",or:"| 0x02",xor:"^ 0x02",not:"~ (8-bit)",left:"<< 1",right:">> 1"}[op])+" → "+hex(s.experimentByte);}
  if(action==="flag"){const before=s.byte,bit=Number(b.dataset.flag);s.byte=bit===-1?0:s.byte^(1<<bit);s.changed=before^s.byte;s.step=0;s.trace=tr("입력 변경","Input changed")+": "+hex(before)+" → "+hex(s.byte)+"; "+state(s.byte);markObserved(s);}
  if(action==="build")s.build=(s.build+1)%(scene==="modules"?5:3);
  if(action==="reset-build")s.build=0;
- if(action==="call")s.calls++;
- if(action==="reset-call")s.calls=0;
+ if(action==="call"){for(let j=0;j<4;j++)advance();}
+ if(action==="reset-call"){s.calls=0;s.step=0;s.focus=null;}
  if(["reset-step","build","reset-build","call","reset-call","parse"].includes(action))s.changed=0;
- if(action==="parse"){s.step=0;s.parsed=true;s.trace=tr("인자 분석 완료","Arguments parsed");}
+ if(action==="parse"){s.step=0;s.focus=null;s.parsed=true;s.trace=tr("명령행 분기 추적 준비","Ready to trace command-line branches");}
  if(action==="check")s.checked=s.choice>=0;
  if(action==="complete"){if(!done.includes(selected))done.push(selected);save();render();return;}
  if(["mask","reset-mask","operator","reset-operator","flag","reset-step","parse","build","reset-build","call","reset-call"].includes(action))render();else refreshVisual();
@@ -282,11 +344,11 @@ stage.addEventListener("click",event=>{
 stage.addEventListener("change",event=>{
  const e=event.target,s=S();
  if(e.name==="c191-answer"){s.choice=Number(e.value);s.checked=false;save();render();return;}
- if(e.dataset.setting){stop();s[e.dataset.setting]=e.dataset.setting==="target"?Number(e.value):e.value;s.changed=0;refreshVisual();}
+ if(e.dataset.setting){stop();s[e.dataset.setting]=e.dataset.setting==="target"?Number(e.value):e.dataset.setting==="fileAvailable"?e.checked:e.value;if(e.dataset.setting==="fileAvailable"){s.step=0;s.focus=null;}s.changed=0;render();}
 });
 stage.addEventListener("input",event=>{
  if(event.target.id==="c191-note")S().note=event.target.value;
- if(event.target.id==="c191-command"){S().argv=event.target.value;S().parsed=false;}
+ if(event.target.id==="c191-command"){S().argv=event.target.value;S().parsed=false;S().step=0;S().focus=null;}
  save();
 });
 window.addEventListener("hashchange",()=>{
