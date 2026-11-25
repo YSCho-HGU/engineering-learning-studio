@@ -98,6 +98,17 @@ async function checkOne(context,item,width,mode){
     assert.ok(/Play|재생/.test(paused),item.id+" animation did not pause");
    }
   }
+  const mathState=await page.evaluate(()=>{
+   window.SSMathCore?.renderNow?.();
+   const root=document.querySelector("main");
+   return {rendered:root?.querySelectorAll(".katex").length||0,
+    errors:root?.querySelectorAll(".katex-error,[data-ss-math-error]").length||0,
+    failed:window.SSMathCore?.recentErrors?.slice(-4)||[],
+    raw:[...root?.querySelectorAll("[data-ss-math],[data-latex]")||[]].filter(el=>
+      el.getClientRects().length&&!el.querySelector(".katex")).length};
+  });
+  assert.equal(mathState.errors,0,item.id+" malformed detail-card equation");
+  assert.equal(mathState.raw,0,item.id+" unrendered explicit detail-card math");
   const after=await page.evaluate(()=>{
    const main=document.querySelector("main");const graphics=[...document.querySelectorAll("main canvas,main svg,.ss-al-root canvas")];
    return {scroll:document.documentElement.scrollWidth,client:innerWidth,mainWidth:main?.getBoundingClientRect().width,
@@ -112,7 +123,7 @@ async function checkOne(context,item,width,mode){
     assert.ok(rect&&rect.width>=240&&rect.width<=width+1,"Helix canvas mobile geometry");
   }
   await page.screenshot({path:output+"/"+item.id+"-"+width+"-verified.png",fullPage:false,animations:"disabled"});
-  results.push({id:item.id,width,charts:initial.charts,lang:"PASS",theme:"PASS",layout:"PASS"});
+  results.push({id:item.id,width,charts:initial.charts,math:mathState.rendered,lang:"PASS",theme:"PASS",layout:"PASS"});
  }catch(err){
   failures.push({id:item.id,width,error:String(err)});
   await page.screenshot({path:output+"/"+item.id+"-"+width+"-failure.png",fullPage:true,animations:"disabled"}).catch(()=>{});
