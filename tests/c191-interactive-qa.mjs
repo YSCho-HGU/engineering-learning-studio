@@ -56,7 +56,8 @@ for(const width of [390,1280]){
   await page.locator('[data-action="call"]').click();
   assert.ok((await page.locator(".c191-terminal").innerText()).includes("1002"));
   await page.locator('#lesson-nav button[data-lesson="7"]').click();
-  assert.ok((await page.locator(".c191-terminal").innerText()).includes("argc = 3"));
+  await page.locator('[data-action="parse"]').click();
+  assert.ok((await page.locator(".c191-terminal").innerText()).includes("argc = 2"));
   await page.locator('#lesson-nav button[data-lesson="8"]').click();
   await page.locator(".c191-bit[data-bit='0']").click();
   const status=await page.locator(".c191-terminal").innerText();
@@ -97,7 +98,11 @@ for(const width of [390,1280]){
    assert.equal(await page.locator('#lesson h2').count(),1,"heading section "+(section+1));
    assert.ok((await page.locator('.c191-code .c191-line').count())>=2,"code section "+(section+1));
    if(section===1) assert.equal(await page.locator('#c191-visual .c191-op-variable').count(),3,"three C variables");
+   else if([0,10].includes(section)) assert.equal(await page.locator('#c191-visual .c191-bit').count(),8,"bit-only model section "+(section+1));
    else assert.equal(await page.locator('#c191-visual .c191-terminal').count(),1,"result section "+(section+1));
+   if([0,1,10].includes(section)) assert.equal(await page.locator('#c191-visual .c191-device').count(),0,"no irrelevant hardware section "+(section+1));
+   if([4,5,9].includes(section)) assert.ok(await page.locator('#c191-visual .c191-stage-list').count()===1,"stage model section "+(section+1));
+   if([2,3,8,10].includes(section)) assert.equal(await page.locator('.c191-extra').count(),1,"separate exploration card section "+(section+1));
    if([0,1,2,3,8,10].includes(section))
     assert.equal(await page.locator('.c191-prediction').count(),1,"prediction section "+(section+1));
    await page.locator('[data-action="reset-step"]').click();
