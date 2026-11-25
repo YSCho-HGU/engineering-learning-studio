@@ -5,7 +5,7 @@
 const chapters=[
  ["arrays","13","Arrays"],["strings","13","Strings"],["standard-library","13","Standard Library Functions"],
  ["functions","14","User-Defined Functions"],["pointer","15","Pointers"],["structure","16","Structures"],
- ["file-io","17","File I/O"],["dynamic-memory","18","Dynamic Memory"],["ai-coding","21","AI-Assisted Coding"]
+ ["file-io","17","File I/O"],["dynamic-memory","18","Dynamic Memory"],["low-level-c","19","Practical / Low-Level C"],["ai-coding","21","AI-Assisted Coding"]
 ];
 const path=location.pathname;
 // Chapter 211 is now listed after the eight original published C units.
