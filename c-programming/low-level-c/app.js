@@ -99,9 +99,9 @@ function advance(){
 }
 function play(){
  if(!advance()){stop();refreshVisual();return;}
- refreshVisual();
  if(S().step<D.lessons[selected].code.split("\n").length)timer=setTimeout(play,650);
- else {stop();refreshVisual();}
+ else stop();
+ refreshVisual();
 }
 function renderNav(){
  nav.replaceChildren();
