@@ -18,6 +18,24 @@ for(const width of [390,1280]){
   assert.equal(await page.locator("#c191-visual .c191-bit").count(),8);
   assert.equal(await page.locator("#c191-visual .c191-bit.on").count(),5);
   assert.equal(await page.locator(".ss-common-language select").count(),1,"single standard language picker");
+  // 19.2: declarations execute in source order; no sensor status in this scene.
+  await page.locator('#lesson-nav button[data-lesson="1"]').click();
+  assert.equal(await page.locator('#c191-visual .c191-op-variable').count(),3);
+  assert.equal(await page.locator('#c191-visual .c191-op-unknown').count(),3,"a,b,result initially unknown");
+  assert.equal(await page.locator('#c191-visual .c191-device').count(),0,"no unrelated device panel");
+  assert.equal(await page.locator('.c191-op-experiment').count(),1,"extra experiment separate");
+  await page.locator('[data-action="step"]').click();
+  assert.equal(await page.locator('.c191-op-variable[data-variable="a"] .c191-op-number').count(),1,"a initialized first");
+  assert.equal(await page.locator('.c191-op-unknown').count(),2);
+  await page.locator('[data-action="step"]').click();
+  assert.equal(await page.locator('.c191-op-variable[data-variable="b"] .c191-op-number').count(),1,"b initialized second");
+  assert.equal(await page.locator('.c191-op-unknown').count(),1);
+  await page.locator('[data-action="step"]').click();
+  assert.ok((await page.locator('.c191-op-variable[data-variable="result"] .c191-op-number').innerText()).includes("0x07"),"OR produces result 7");
+  await page.locator('[data-action="reset-step"]').click();
+  assert.equal(await page.locator('.c191-op-unknown').count(),3,"reset restores unknown variables");
+  await page.locator('[data-action="operator"]').click();
+  assert.equal(await page.locator('.c191-op-unknown').count(),3,"independent experiment cannot initialize sample");
   await page.locator('#lesson-nav button[data-lesson="2"]').click();
   assert.equal(await page.locator(".c191-metrics span").nth(1).innerText(),"Hex 0x04");
   await page.locator('[data-action="step"]').click();
