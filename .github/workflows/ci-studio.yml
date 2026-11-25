@@ -161,6 +161,7 @@ jobs:
           run_case node tests/c211-version-static.mjs
           run_case node tests/phase0-storage-scan.mjs
           run_case node tests/c-course-gcc.mjs
+          run_case bash tests/c191-sensor-c11.sh
           if [ "$failures" -ne 0 ]; then echo "$failures test(s) failed"; exit 1; fi
 
   c-browser:
