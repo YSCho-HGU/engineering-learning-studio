@@ -110,7 +110,7 @@ function extraHTML(s,scene){
  if(scene==="operators")return operatorExperiment(s);
  if(scene==="register"||scene==="review"){
   return '<section class="c191-panel c191-extra"><span class="c191-eyebrow">'+tr("별도 연습","Independent exploration")+'</span><h3>'+tr("비트 마스크 직접 실험","Explore a bit mask")+'</h3><p class="c191-caption">'+tr("여기에서 실행하는 Set/Clear/Toggle은 위의 예제 코드와 독립된 조작입니다.","Set, Clear and Toggle here are separate from the reference code above.")+'</p>'+
-  '<div class="c191-task"><label>'+tr("대상 비트","Target bit")+' <select data-setting="target">'+options(Array.from({length:8},(_,i)=>[i,"b"+i]),s.target)+'</select></label><label>'+tr("연산","Operation")+' <select data-setting="op">'+options([["check","Check &"],["set","Set |"],["clear","Clear &~"],["toggle","Toggle ^"]],s.op)+'</select></label>'+btn(tr("마스크 적용","Apply mask"),"mask")+'</div><p class="c191-legend">'+esc(maskExpression(s))+';</p></section>';
+  '<div class="c191-task"><label>'+tr("대상 비트","Target bit")+' <select data-setting="target">'+options(Array.from({length:8},(_,i)=>[i,"b"+i]),s.target)+'</select></label><label>'+tr("연산","Operation")+' <select data-setting="op">'+options([["check","Check &"],["set","Set |"],["clear","Clear &~"],["toggle","Toggle ^"]],s.op)+'</select></label>'+btn(tr("마스크 적용","Apply mask"),"mask")+btn("Reset","reset-mask")+'</div>'+miniBits(Number.isInteger(s.maskByte)?s.maskByte:s.byte,0)+'<p class="c191-legend">'+esc(s.maskTrace||maskExpression(s))+';</p></section>';
  }
  if(scene==="state"||scene==="capstone"){
   return '<section class="c191-panel c191-extra"><span class="c191-eyebrow">'+tr("추가 입력 실험","Explore another input")+'</span><h3>'+tr("센서 플래그 바꾸기","Change sensor flags")+'</h3><p class="c191-caption">'+tr("입력 비트를 바꾸면 우선순위 규칙에 따라 상태를 다시 판정합니다.","Changing the input bits re-evaluates the state according to the priority rule.")+'</p>'+
@@ -265,7 +265,8 @@ stage.addEventListener("click",event=>{
  if(action==="step"){advance();if(scene==="operators"||s.prediction?.observed){render();return;}}
  if(action==="reset-operator"){s.experimentByte=5;s.experimentTrace="";}
  if(action==="reset-step"){const original=initialFor(selected);s.byte=original.byte;s.step=0;s.build=0;s.calls=0;s.parsed=false;s.changed=0;s.prediction=null;s.trace=tr("초기 상태 복원","Initial state restored");}
- if(action==="mask"){const before=s.byte;if(s.op==="set")s.byte|=mask;else if(s.op==="clear")s.byte&=~mask;else if(s.op==="toggle")s.byte^=mask;s.byte&=255;s.changed=before^s.byte;s.step=0;s.trace=maskExpression(s)+"; "+hex(before)+" → "+hex(s.byte);markObserved(s);}
+ if(action==="mask"){const before=Number.isInteger(s.maskByte)?s.maskByte:s.byte;let n=before;if(s.op==="set")n|=mask;else if(s.op==="clear")n&=~mask;else if(s.op==="toggle")n^=mask;s.maskByte=n&255;s.maskTrace=maskExpression(s)+"; "+hex(before)+" → "+hex(s.maskByte);}
+ if(action==="reset-mask"){s.maskByte=undefined;s.maskTrace="";}
  if(action==="operator"){const n=Number.isInteger(s.experimentByte)?s.experimentByte:5,op=s.operator;s.experimentByte=op==="and"?n&2:op==="or"?n|2:op==="xor"?n^2:op==="not"?(~n)&255:op==="left"?(n<<1)&255:n>>>1;s.experimentTrace=hex(n)+" "+({and:"& 0x02",or:"| 0x02",xor:"^ 0x02",not:"~ (8-bit)",left:"<< 1",right:">> 1"}[op])+" → "+hex(s.experimentByte);}
  if(action==="flag"){const before=s.byte,bit=Number(b.dataset.flag);s.byte=bit===-1?0:s.byte^(1<<bit);s.changed=before^s.byte;s.step=0;s.trace=tr("입력 변경","Input changed")+": "+hex(before)+" → "+hex(s.byte)+"; "+state(s.byte);markObserved(s);}
  if(action==="build")s.build=(s.build+1)%(scene==="modules"?5:3);
@@ -276,7 +277,7 @@ stage.addEventListener("click",event=>{
  if(action==="parse"){s.step=0;s.parsed=true;s.trace=tr("인자 분석 완료","Arguments parsed");}
  if(action==="check")s.checked=s.choice>=0;
  if(action==="complete"){if(!done.includes(selected))done.push(selected);save();render();return;}
- if(["mask","operator","reset-operator","flag","reset-step","parse","build","reset-build","call","reset-call"].includes(action))render();else refreshVisual();
+ if(["mask","reset-mask","operator","reset-operator","flag","reset-step","parse","build","reset-build","call","reset-call"].includes(action))render();else refreshVisual();
 });
 stage.addEventListener("change",event=>{
  const e=event.target,s=S();
