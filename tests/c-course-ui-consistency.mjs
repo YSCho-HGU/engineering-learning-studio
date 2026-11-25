@@ -6,7 +6,7 @@ import {readFileSync} from "node:fs";
 const read=path=>readFileSync(path,"utf8");
 const parse=(path,globalName)=>JSON.parse(read(path).replace(new RegExp("^\\s*window\\."+globalName+"\\s*=\\s*"),"").replace(/;\s*$/,""));
 const catalog=JSON.parse(read("c-programming/course-catalog.json"));
-const slugs=catalog.chapters.filter(c=>c.published&&c.kind!=="ai-capstone"&&c.url!=="./file-io/").map(c=>c.url.match(/^\.\/([^/]+)\/$/)?.[1]).filter(Boolean);
+const slugs=catalog.chapters.filter(c=>c.published&&c.kind!=="ai-capstone"&&c.kind!=="visual-chapter"&&c.url!=="./file-io/").map(c=>c.url.match(/^\.\/([^/]+)\/$/)?.[1]).filter(Boolean);
 const errors=[],warnings=[];let lessons=0,practices=0;
 const check=(ok,msg)=>{if(!ok)errors.push(msg)};
 for(const slug of slugs){
@@ -51,6 +51,22 @@ for(const slug of slugs){
  }
 }
 function labelFor(slug,i){return slug+" practice "+(i+1)}
+// Visual Chapter 19 has its own teaching engine; hold it to its own contract
+// instead of falsely requiring the generic C_JOURNEY full-program renderer.
+const visual=catalog.chapters.find(c=>c.id==="191");
+check(visual?.published&&visual.kind==="visual-chapter","Chapter 19 must be a published visual chapter");
+const c191Page=read("c-programming/low-level-c/index.html");
+const c191Practice=read("c-programming/low-level-c/practice/index.html");
+const c191App=read("c-programming/low-level-c/app.js");
+const c191Data=read("c-programming/low-level-c/data.js");
+check(c191Page.includes("app.js?v=")&&c191Page.includes("lesson-nav"),"Chapter 19 visual engine navigation");
+check(c191Practice.includes("practice-engine.js"),"Chapter 19 P1–P6 coding editor");
+check(c191App.includes("c191-bits")&&c191App.includes("c191-led")&&c191App.includes("signalDiagram"),"Chapter 19 synchronized bit/device visuals");
+check(c191App.includes("L.subscribe")&&c191App.includes("els-c191-model-v1"),"Chapter 19 state-preserving language mode");
+const c191Context={window:{}};new Function("window",c191Data)(c191Context.window);
+check(c191Context.window.C191_DATA.lessons.length===11,"Chapter 19 must cover 11 sections");
+check(c191Context.window.C191_DATA.practice.length===6,"Chapter 19 P1–P6 must exist");
+check(c191Context.window.C191_DATA.lessons.every(l=>l.quizChoice===undefined&&Array.isArray(l.answers)&&l.answers.length>=3),"Chapter 19 prediction questions");
 const engine=read("c-programming/journey.js");
 const css=read("c-programming/journey.css");
 const practiceEngine=read("c-programming/practice-engine.js");

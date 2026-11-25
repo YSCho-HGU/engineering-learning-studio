@@ -1,6 +1,7 @@
 /* Reusable GCC C11 checks for any C_JOURNEY chapter with standalone reference code.
  * node tests/c-course-gcc.mjs [slug...]
  * Defaults to published chapters implemented by the common learning engine.
+ * Chapter 19 visual engine is compiled via tests/c191-sensor-c11.sh.
  */
 import {readFileSync,existsSync,mkdtempSync,rmSync,writeFileSync} from "node:fs";
 import {tmpdir} from "node:os";
@@ -8,7 +9,7 @@ import {join} from "node:path";
 import {spawnSync} from "node:child_process";
 const chapters=JSON.parse(readFileSync("c-programming/course-catalog.json","utf8")).chapters;
 const argumentsSlugs=process.argv.slice(2);
-const slugs=argumentsSlugs.length?argumentsSlugs:chapters.filter(c=>c.published).map(c=>c.url.match(/^\.\/([^/]+)\/$/)?.[1]).filter(slug=>slug&&existsSync("c-programming/"+slug+"/data.js"));
+const slugs=argumentsSlugs.length?argumentsSlugs:chapters.filter(c=>c.published&&c.kind!=="visual-chapter").map(c=>c.url.match(/^\.\/([^/]+)\/$/)?.[1]).filter(slug=>slug&&existsSync("c-programming/"+slug+"/data.js"));
 const errs=[],tmp=mkdtempSync(join(tmpdir(),"c-course-gcc-"));let checked=0,skipped=0;
 try{
  for(const slug of slugs){

@@ -7,8 +7,11 @@ const failures=[];
 const current=catalog.chapters.filter(c=>c.published);
 if(catalog.chapters.filter(c=>c.kind!=="ai-capstone").length!==18)failures.push("Original 18 C units must remain");
 if(!catalog.chapters.some(c=>c.id==="211"&&c.kind==="ai-capstone"&&existsSync(join(root,c.url.slice(2),"index.html"))))failures.push("Missing AI capstone route");
-if(current.filter(c=>c.kind!=="ai-capstone").length!==8)failures.push("Eight original finished units must remain public");
-if(current.length!==9||!current.some(c=>c.id==="211"&&c.kind==="ai-capstone"))failures.push("Published AI capstone missing");
+if(current.filter(c=>c.kind!=="ai-capstone"&&c.kind!=="visual-chapter").length!==8)failures.push("Eight original finished units must remain public");
+if(current.length!==10||!current.some(c=>c.id==="211"&&c.kind==="ai-capstone"))
+ failures.push("Ten published units must include the AI capstone and Chapter 19");
+if(!current.some(c=>c.id==="191"&&c.kind==="visual-chapter"&&existsSync(join(root,"low-level-c/index.html"))))
+ failures.push("Chapter 19 visual course missing");
 const seen=new Set();
 for(const c of catalog.chapters){
  if(seen.has(c.id))failures.push("Duplicate catalog unit "+c.id);seen.add(c.id);

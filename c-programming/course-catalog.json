@@ -173,7 +173,8 @@
       "url": "./low-level-c/",
       "published": true,
       "description": "Bitwise 연산, mask와 register, enum 상태 제어, 전처리, 모듈 구성, static, argc/argv · 시각적 실습과 P1–P6",
-      "book": "https://docs.google.com/document/d/1I9WSNdDCT0D7ehQ1KT3PoUJ0399bnio0/edit"
+      "book": "https://docs.google.com/document/d/1I9WSNdDCT0D7ehQ1KT3PoUJ0399bnio0/edit",
+      "kind": "visual-chapter"
     },
     {
       "id": "201",

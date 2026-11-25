@@ -9,7 +9,7 @@ const read=p=>readFileSync(p,"utf8");
 const parse=(path,kind)=>JSON.parse(read(path).replace(new RegExp("^\\s*window\\.C_JOURNEY"+(kind==="en"?"_EN":"")+"\\s*=\\s*"),"").replace(/;\s*$/,""));
 const slugs=["arrays","strings","standard-library","functions","pointer","structure","dynamic-memory"];
 const catalog=JSON.parse(read("c-programming/course-catalog.json"));
-const published=catalog.chapters.filter(x=>x.published&&x.kind!=="ai-capstone"); // Legacy C lesson-engine contract; 211 has its own suite.
+const published=catalog.chapters.filter(x=>x.published&&x.kind!=="ai-capstone"&&x.kind!=="visual-chapter"); // Legacy C lesson-engine contract; 211 has its own suite.
 const bad=[];
 const ok=(condition,message)=>{if(!condition)bad.push(message)};
 const context=vm.createContext({window:{}});
@@ -65,7 +65,15 @@ const shell=read("c-programming/c-ss-shell.js");
 const fileio=read("c-programming/file-io/index.html");
 const labs=read("c-programming/file-io/core-labs/index.html");
 const editor=read("c-programming/file-io/practice/app.js");
-ok(published.length===8,"published 8 C units");
+ok(published.length===8,"original eight common-engine C units");
+const chapter191=catalog.chapters.find(c=>c.id==="191");
+ok(chapter191?.published&&chapter191.kind==="visual-chapter","Chapter 19 visual learning published");
+const visualText=read("c-programming/low-level-c/data.js");
+const visualContext={window:{}};
+vm.runInContext(visualText,vm.createContext(visualContext));
+ok(visualContext.window.C191_DATA?.lessons?.length===11,"Chapter 19 has 11 concept sections");
+ok(visualContext.window.C191_DATA?.practice?.length===6,"Chapter 19 has six C coding challenges");
+ok(visualContext.window.C191_DATA?.lessons?.every(x=>x.ko&&x.en&&x.code&&x.answers?.length===3),"Chapter 19 bilingual visual lesson coverage");
 ok(/id="prerequisite-checkpoint"/.test(read("c-programming/index.html")),"published chapter prerequisite checkpoint");
 ok((fileio.match(/<section class="stage" data-stage="/g)||[]).length===8,"File I/O 7 core + 1 optional");
 ok((labs.match(/data-lab-link=/g)||[]).length===3,"File I/O has exactly three standalone guided labs");
