@@ -43,4 +43,10 @@ window.C_PRACTICE_GUIDES["low-level-c"]=[
       "data.txt에 숫자 3개가 있으면 count = 3입니다. 파일 경로가 없을 때도 검사하세요.",
       "With three numbers in data.txt, count = 3. Also test a missing file.")
 ];
+const intro=document.querySelector(".hero p");
+const update=()=>{if(intro)intro.textContent=window.ELSLanguage?.get()==="en"?
+"Implement status flags, bit masks, enum state machines, modules, static locals and argc/argv. Drafts stay in this browser.":
+"상태 플래그, bit mask, enum, 다중 소스 파일, static, argc/argv를 직접 구현합니다. 편집기 초안은 이 브라우저에만 저장됩니다.";};
+window.ELSLanguage?.subscribe(update);
+update();
 })();

@@ -48,6 +48,14 @@ rulebook.functions=[
  ["add","return"],["triple","return"],["max2","return"],
  ["positives","for"],["avg","return"],["add","multiply"]
 ];
+rulebook["low-level-c"]=[
+ ["READY_MASK","ERROR_MASK","ALARM_MASK","&","printf"],
+ ["set_bit","clear_bit","toggle_bit","<<"],
+ ["enum State","switch","RUNNING","ERROR_STATE"],
+ ["status.h","status_decode","printf"],
+ ["static int","next_id","printf"],
+ ["argc","argv","fopen","fscanf","fclose"]
+];
 const rules=rulebook[d.slug]||[];
 function assess(code,idx){
  const findings=[];
@@ -76,7 +84,10 @@ function assess(code,idx){
   ];
   const add=(pass,desc)=>findings.push({pass,desc});
   add(/#include\s*<stdlib\.h>/.test(code),"stdlib.h 헤더 포함");
-  add(/\bint\s+main\s*\(\s*void\s*\)/.test(code),"int main(void)");
+  if(d.slug==="low-level-c"&&idx===5)
+  add(/\bint\s+main\s*\(\s*int\s+argc\s*,\s*char\s*\*\s*argv\s*\[\s*\]\s*\)/.test(code),
+      "int main(int argc, char *argv[])");
+ else add(/\bint\s+main\s*\(\s*void\s*\)/.test(code),"int main(void)");
   add(!/\/\*\s*TODO|\/\/\s*TODO/.test(code),"남은 TODO를 완성하세요.");
   for(const [pass,desc] of tests[idx])add(pass,desc);
   return {findings,ok:findings.every(x=>x.pass)};
