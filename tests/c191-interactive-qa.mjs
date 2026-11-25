@@ -43,6 +43,11 @@ for(const width of [390,1280]){
   assert.equal(await page.locator(".c191-metrics span").nth(1).innerText(),"Hex 0x06","C line to LED register");
   await page.locator('[data-action="reset-step"]').click();
   assert.equal(await page.locator(".c191-metrics span").nth(1).innerText(),"Hex 0x04");
+  // Independent mask exploration must not mutate the reference LED register.
+  await page.locator('[data-action="mask"]').click();
+  assert.equal(await page.locator('.c191-metrics span').nth(1).innerText(),"Hex 0x04","reference register unchanged by extra exploration");
+  assert.equal(await page.locator('.c191-extra .c191-mini-bits').count(),1,"exploration has its own byte");
+  await page.locator('[data-action="reset-mask"]').click();
   await page.locator('#lesson-nav button[data-lesson="3"]').click();
   await page.locator('[data-action="flag"][data-flag="0"]').click();
   assert.ok((await page.locator(".c191-state.active").innerText()).includes("RUNNING"));
