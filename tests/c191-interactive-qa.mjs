@@ -18,6 +18,14 @@ for(const width of [390,1280]){
   assert.equal(await page.locator("#c191-visual .c191-bit").count(),8);
   assert.equal(await page.locator("#c191-visual .c191-bit.on").count(),5);
   assert.equal(await page.locator(".ss-common-language select").count(),1,"single standard language picker");
+  assert.equal(await page.locator('.c191-concept-check').count(),1);
+  assert.equal(await page.locator('.c191-concept-check').evaluate(el=>el.open),false);
+  await page.locator('.c191-concept-check summary').click();
+  await page.locator('input[name="c191-answer"][value="0"]').check();
+  assert.equal(await page.locator('.c191-concept-check').evaluate(el=>el.open),true);
+  await page.locator('[data-action="check"]').click();
+  assert.ok((await page.locator('.c191-result').innerText()).length>4);
+
   // 19.2: declarations execute in source order; no sensor status in this scene.
   await page.locator('#lesson-nav button[data-lesson="1"]').click();
   assert.equal(await page.locator('#c191-visual .c191-op-variable').count(),3);
@@ -131,6 +139,10 @@ for(const width of [390,1280]){
   for(let section=0;section<11;section++){
    await page.locator('#lesson-nav button[data-lesson="'+section+'"]').click();
    assert.equal(await page.locator('#lesson h2').count(),1,"heading section "+(section+1));
+   assert.equal(await page.locator('.c191-concept-check').count(),1,"one optional quiz per section");
+   assert.equal(await page.locator('.c191-reflect').count(),1,"one reflection panel per section");
+   assert.equal(await page.locator('#lesson .c191-grid').count(),1,"one main code-observation grid");
+
    assert.ok((await page.locator('.c191-code .c191-line').count())>=2,"code section "+(section+1));
    if(section===1) assert.equal(await page.locator('#c191-visual .c191-op-variable').count(),3,"three C variables");
    else if([0,10].includes(section)) assert.equal(await page.locator('#c191-visual .c191-bit').count(),8,"bit-only model section "+(section+1));
