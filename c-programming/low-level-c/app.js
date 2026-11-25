@@ -16,6 +16,7 @@ let selected=0;
 const match=location.hash.match(/^#s(\d+)$/);
 if(match)selected=Math.max(0,Math.min(10,Number(match[1])-1));
 let states=read("els-c191-model-v1",{}),done=read("els-c191-done-v1",[]);
+if(!states||typeof states!=="object"||Array.isArray(states))states={};
 if(!Array.isArray(done))done=[];
 const initialFor=i=>{const v=initial();if(i===1){v.byte=0;v.step=0;v.operator="or";v.experimentByte=5;}else if(i===2)v.byte=4;else if(i===3)v.byte=0;return v;};
 const S=()=>states[selected]||(states[selected]=initialFor(selected));
@@ -43,7 +44,7 @@ function signalDiagram(s){
  const color=register?"#30b692":alarming?"#e16b73":ready?"#30b692":"#829bac";
  return '<svg class="c191-hardware" viewBox="0 0 580 132" role="img" aria-label="Sensor byte to C logic to device output model">'+
  '<rect x="6" y="28" width="132" height="70" rx="12" class="c191-hardware-box"/>'+
- '<text x="72" y="52" text-anchor="middle" class="c191-hardware-label">SENSOR</text>'+
+ '<text x="72" y="52" text-anchor="middle" class="c191-hardware-label">'+(register?"LED REGISTER":"SENSOR")+'</text>'+
  '<text x="72" y="77" text-anchor="middle" class="c191-hardware-sub">8-bit byte</text>'+
  '<path d="M142 63 H184" stroke="'+color+'" stroke-width="4" class="c191-hardware-wire" fill="none"/>'+
  '<polygon points="185,63 174,57 174,69" fill="'+color+'"/>'+
@@ -54,7 +55,7 @@ function signalDiagram(s){
  '<polygon points="389,63 378,57 378,69" fill="'+color+'"/>'+
  '<rect x="395" y="28" width="175" height="70" rx="12" class="c191-hardware-box"/>'+
  '<circle cx="418" cy="62" r="11" fill="'+color+'"/>'+
- '<text x="487" y="56" text-anchor="middle" class="c191-hardware-label">DEVICE</text>'+
+ '<text x="487" y="56" text-anchor="middle" class="c191-hardware-label">'+(register?"LED ARRAY":"DEVICE")+'</text>'+
  '<text x="487" y="79" text-anchor="middle" class="c191-hardware-sub">'+(register?"LED OUTPUT":alarming?"ALARM":ready?"RUNNING":"IDLE")+'</text></svg>';
 }
 function maskExpression(s){const m="(1u << "+s.target+")";return s.op==="set"?"value |= "+m:s.op==="clear"?"value &= ~"+m:s.op==="toggle"?"value ^= "+m:"result = value & "+m;}
@@ -160,6 +161,7 @@ function advance(){
  const before=s.byte;s.step++;
  if(scene==="operators"){s.byte=s.step===3?7:0;s.trace=[tr("아직 실행되지 않았습니다.","Not executed yet."),"a = 0x05 (0000 0101)","b = 0x02 (0000 0010)","result = a | b = 0x07 (0000 0111)"][s.step];}
  if(scene==="register"&&s.step===2)s.byte=0x04|2;
+ if(scene==="bits"&&s.step===2)s.byte=181;
  if(s.step===lines.length||(scene==="register"&&s.step===2)||(scene==="operators"&&s.step===3))markObserved(s);
  s.changed=(before^s.byte)&255;
  s.trace=(scene==="operators"?s.trace:tr("실행 단계 ","Execution step ")+s.step+"/"+lines.length+": "+lines[s.step-1].trim())+
@@ -274,7 +276,7 @@ stage.addEventListener("click",event=>{
  if(action==="parse"){s.step=0;s.parsed=true;s.trace=tr("인자 분석 완료","Arguments parsed");}
  if(action==="check")s.checked=s.choice>=0;
  if(action==="complete"){if(!done.includes(selected))done.push(selected);save();render();return;}
- if(["mask","operator","reset-operator","flag","reset-step"].includes(action))render();else refreshVisual();
+ if(["mask","operator","reset-operator","flag","reset-step","parse","build","reset-build","call","reset-call"].includes(action))render();else refreshVisual();
 });
 stage.addEventListener("change",event=>{
  const e=event.target,s=S();
