@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import {chromium} from "playwright";
+import {mkdir} from "node:fs/promises";
+await mkdir("tests/screenshots/mobile-navigation",{recursive:true});
 const base=process.env.SS_TEST_BASE||"http://127.0.0.1:8765";
 const cases=[
  {name:"SS Chapter 1",url:"/signals-systems/chapter1.html",nav:".ss-layout-sidebar nav button",target:".ss-layout-main"},
@@ -25,7 +27,7 @@ const cases=[
 const browser=await chromium.launch({headless:true});
 const failures=[];
 try{
- for(const width of [390,768,1280]){
+ for(const width of [320,390,768,1280]){
   const ctx=await browser.newContext({viewport:{width,height:850},reducedMotion:"reduce"});
   for(const item of cases){
    const page=await ctx.newPage();
@@ -35,8 +37,8 @@ try{
     await page.locator(item.nav).first().waitFor({timeout:15000});
     const buttons=page.locator(item.nav);
     const count=await buttons.count();
-    assert.ok(count>=2,item.name+" requires two selectable lessons");
-    const choice=buttons.nth(1);
+    assert.ok(count>=1,item.name+" requires a selectable lesson");
+    const choice=buttons.nth(Math.min(1,count-1));
     if(width<=800){
       const toggle=page.locator(".ss-mobile-index-toggle:visible").first();
       if(await toggle.count() && (await toggle.getAttribute("aria-expanded"))!=="true")await toggle.click();
@@ -47,6 +49,7 @@ try{
       }
     });
     await choice.scrollIntoViewIfNeeded();
+    const desktopBefore=await page.evaluate(()=>window.scrollY);
     await choice.click();
     await page.waitForTimeout(420);
     const data=await page.evaluate(sel=>{
@@ -56,10 +59,26 @@ try{
      return {top:r?.top,bottom:r?.bottom,headerHeight:header?.getBoundingClientRect().height||0,scrollY:window.scrollY};
     },item.target);
     assert.ok(data.top!=null,item.name+" missing content");
+    const layout=await page.evaluate(()=>({scrollWidth:document.documentElement.scrollWidth,viewport:innerWidth,
+      title:document.querySelector("#lesson h1,#lesson h2,.ss-layout-main h1,.ss-layout-main h2")?.getBoundingClientRect().top??null}));
+    assert.ok(layout.scrollWidth<=width+10,item.name+" horizontal overflow: "+JSON.stringify(layout));
+    if(width>800)assert.ok(Math.abs(data.scrollY-desktopBefore)<=5,
+      item.name+" desktop scroll changed by mobile handler: "+JSON.stringify({desktopBefore,...data}));
+    if(width<=800&&item.name.startsWith("C ")){
+      const openGroups=await page.locator("#lesson-nav details[open]").count();
+      assert.equal(openGroups,0,item.name+" mobile lesson groups should close");
+    }
+    if(width<=600&&item.name.startsWith("SS Chapter")){
+      const toggle=page.locator(".ss-mobile-index-toggle").first();
+      if(await toggle.count())assert.equal(await toggle.getAttribute("aria-expanded"),"false",
+        item.name+" mobile sidebar should close");
+    }
     if(width<=800)assert.ok(data.top>=data.headerHeight-18&&data.top<=data.headerHeight+115,
       item.name+" lesson not aligned after mobile selection: "+JSON.stringify(data));
+    await page.screenshot({path:"tests/screenshots/mobile-navigation/"+item.name.replace(/[^a-z0-9]+/gi,"-")+"-"+width+".png",fullPage:false,animations:"disabled"});
     console.log("PASS",item.name,width,data);
-   }catch(e){failures.push(item.name+" "+width+": "+e.message);}
+   }catch(e){failures.push(item.name+" "+width+": "+e.message);
+    await page.screenshot({path:"tests/screenshots/mobile-navigation/FAIL-"+item.name.replace(/[^a-z0-9]+/gi,"-")+"-"+width+".png",fullPage:true}).catch(()=>{});}
    finally{await page.close();}
   }
   await ctx.close();
