@@ -108,3 +108,25 @@
 .c191-pred-feedback{border-inline-start:3px solid var(--els-link,#8abbd7);padding:10px 12px;background:var(--els-surface-alt,#26394e);border-radius:5px;margin:0}
 .c191-pred-feedback.unmatched{border-inline-start-color:#d28e4c}
 @media(max-width:650px){.c191-pred-compare{grid-template-columns:1fr}}
+
+/* 19.2: code-declaration timeline, with independent operator experiment. */
+.c191-op-flow{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:center;margin:12px 0}
+.c191-op-variable{min-width:0;background:var(--els-surface-alt,#26394e);border:1px solid var(--els-border,#40546c);border-radius:12px;padding:12px}
+.c191-op-variable.current{border:2px solid var(--els-link,#8abbd7);box-shadow:0 0 0 2px var(--els-info-bg,#244e41)}
+.c191-op-variable-head{display:flex;justify-content:space-between;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+.c191-op-variable-head strong{font:700 1.12rem ui-monospace,Consolas,monospace}
+.c191-op-variable-head span{font-size:.72rem;color:var(--els-muted,#bac4d0)}
+.c191-op-unknown{font:700 1.1rem ui-monospace,Consolas,monospace;min-height:27px;color:var(--els-muted,#bac4d0)}
+.c191-op-number{font:700 1.1rem ui-monospace,Consolas,monospace;margin-bottom:9px}
+.c191-op-number small{font-size:.77rem;color:var(--els-muted,#bac4d0)}
+.c191-op-unknown-bits{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:2px}
+.c191-op-unknown-bits>span{display:grid;text-align:center;min-width:0;border:1px dashed var(--els-border,#40546c);border-radius:5px;padding:5px 0}
+.c191-op-unknown-bits small{font-size:.6rem}
+.c191-op-unknown-bits b{font-size:.9rem}
+.c191-op-join{color:var(--els-muted,#bac4d0);font-size:1.2rem}
+.c191-op-equation{border-left:3px solid var(--els-link,#8abbd7);padding:10px 12px;background:var(--els-surface-alt,#26394e);border-radius:6px;overflow-wrap:anywhere}
+.c191-op-equation code{font-size:.9rem;white-space:normal}
+.c191-op-experiment{display:grid;gap:10px}
+.c191-op-experiment>h3{margin:0}
+@media(max-width:1100px){.c191-op-flow{grid-template-columns:1fr}.c191-op-join{text-align:center;transform:rotate(90deg)}}
+@media(prefers-reduced-motion:reduce){.c191-op-variable{transition:none}}
