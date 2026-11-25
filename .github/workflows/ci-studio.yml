@@ -324,7 +324,6 @@ jobs:
             fi
           }
           run_case node tests/ss-applications-header-contract.mjs
-          run_case node tests/studio-mobile-lesson-navigation.mjs
           run_case node tests/fft-butterfly-invariants.mjs
           run_case node tests/fft-content-invariants.mjs
           run_case node tests/image-fft-core-invariants.mjs
@@ -534,6 +533,7 @@ jobs:
           }
           run_case node tests/studio-header-contract-e2e.mjs
           run_case node tests/header-layout-preflight.mjs
+          run_case node tests/studio-mobile-lesson-navigation.mjs
           run_case node tests/studio-header-controls-e2e.mjs
           run_case env STUDIO_BASE_URL=http://127.0.0.1:8765/ node tests/studio-cross-course-state-e2e.mjs
           run_case node tests/studio-theme-math-e2e.mjs
