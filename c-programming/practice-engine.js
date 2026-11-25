@@ -154,6 +154,7 @@ function show(i){
  selection=i;const task=d.practice[i];title.textContent=taskHeading(i);richText(description,task.task);expected.textContent=task.expected;renderTaskGuide(i);
  editor.value=Object.prototype.hasOwnProperty.call(drafts,i)?drafts[i]:task.starter;verified.checked=!!evidence[i];
  status.textContent="정적 점검은 구문 누락을 알려주는 힌트이며 컴파일·실행 검증이 아닙니다.";
+ status.dataset.kind="idle";
  navButtons.forEach((b,j)=>{b.classList.toggle("active",i===j);if(i===j)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
 }
 function persistDraft(){drafts[selection]=editor.value;store()}
@@ -161,9 +162,9 @@ d.practice.forEach((task,i)=>{
  const b=txt("button","cp-nav-item",sidebar,taskHeading(i));b.type="button";b.addEventListener("click",()=>{persistDraft();show(i)});navButtons.push(b);
 });
 editor.addEventListener("input",()=>{drafts[selection]=editor.value;store();if(evidence[selection]){delete evidence[selection];verified.checked=false;store()}});
-check.addEventListener("click",()=>{persistDraft();const result=assess(editor.value,selection);status.textContent=(result.ok?"정적 구문 단서가 확인되었습니다. GCC 실행 검증은 별도로 필요합니다.":"검토가 필요한 구문이 있습니다. (실제 컴파일 판정 아님)")+"\n"+result.findings.map(x=>(x.pass?"✓ ":"△ ")+x.desc).join("\n")});
-save.addEventListener("click",()=>{persistDraft();status.textContent="초안을 이 브라우저에 저장했습니다. 서버로 제출되지 않습니다."});
-verified.addEventListener("change",()=>{if(verified.checked)evidence[selection]={checked:true,at:new Date().toISOString()};else delete evidence[selection];persistDraft();store();status.textContent=verified.checked?"GCC 실행 확인을 자기보고로 기록했습니다.": "GCC 확인 기록을 해제했습니다."});
+check.addEventListener("click",()=>{persistDraft();status.dataset.kind="check";const result=assess(editor.value,selection);status.textContent=(result.ok?"정적 구문 단서가 확인되었습니다. GCC 실행 검증은 별도로 필요합니다.":"검토가 필요한 구문이 있습니다. (실제 컴파일 판정 아님)")+"\n"+result.findings.map(x=>(x.pass?"✓ ":"△ ")+x.desc).join("\n")});
+save.addEventListener("click",()=>{persistDraft();status.dataset.kind="saved";status.textContent="초안을 이 브라우저에 저장했습니다. 서버로 제출되지 않습니다."});
+verified.addEventListener("change",()=>{status.dataset.kind="verification";if(verified.checked)evidence[selection]={checked:true,at:new Date().toISOString()};else delete evidence[selection];persistDraft();store();status.textContent=verified.checked?"GCC 실행 확인을 자기보고로 기록했습니다.": "GCC 확인 기록을 해제했습니다."});
 reset.addEventListener("click",()=>{if(!confirm("현재 과제의 초안을 Starter Code로 복원할까요?"))return;delete drafts[selection];delete evidence[selection];store();show(selection)});
 download.addEventListener("click",()=>{
  persistDraft();const file=new Blob([editor.value],{type:"text/x-c;charset=utf-8"}),url=URL.createObjectURL(file),a=document.createElement("a");
@@ -179,12 +180,21 @@ document.addEventListener("c-language-content-change",()=>{
  const editing=document.activeElement===editor,from=editor.selectionStart,to=editor.selectionEnd;
  const hints=[...guideSection.querySelectorAll(".cp-guided-hint")].map(node=>!node.hidden);
  const expanded=more.open;
+ const feedbackKind=status.dataset.kind||"idle";
  persistDraft();
  navButtons.forEach((button,i)=>{button.textContent=taskHeading(i)});
  scenarioTitle.textContent=ui("문제 상황 · 무엇을 만들까요?","Scenario · What are you building?");
  stepsTitle.textContent=ui("코드 작성 순서 · 단계별 가이드","Writing the Code · Step by Step");
  checkTitle.textContent=ui("실행 결과 확인","Verify Your Result");
  show(selection);
+ if(feedbackKind==="check")check.click();
+ else if(feedbackKind==="saved"){
+  status.dataset.kind="saved";status.textContent=ui("초안을 이 브라우저에 저장했습니다. 서버로 제출되지 않습니다.","Draft saved in this browser. It has not been submitted to a server.");
+ }else if(feedbackKind==="verification"){
+  status.dataset.kind="verification";status.textContent=verified.checked?
+   ui("GCC 실행 확인을 자기보고로 기록했습니다.","Your self-reported GCC check has been saved."):
+   ui("GCC 확인 기록을 해제했습니다.","The self-reported GCC check has been cleared.");
+ }
  more.open=expanded;
  [...guideSection.querySelectorAll(".cp-guided-hint")].forEach((hint,i)=>{
   if(!hints[i])return;

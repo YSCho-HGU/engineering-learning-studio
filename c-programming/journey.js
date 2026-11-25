@@ -277,6 +277,7 @@ function renderTrace(stage,l){
  function showTrace(userAction=false){
   const step=steps[pointer];
   rendered.forEach((row,i)=>{row.classList.toggle("active",i+1===step.line);if(i+1===step.line)row.setAttribute("aria-current","step");else row.removeAttribute("aria-current")});
+  section.dataset.traceIndex=String(pointer);
   status.textContent=ui("단계 ","Step ")+(pointer+1)+" / "+steps.length+" · "+ui("코드 줄 ","Line ")+step.line;
   currentState.textContent=step.state.replaceAll("\\n","\n");
   renderMemoryDiagram(diagram,step,l);
@@ -285,6 +286,11 @@ function renderTrace(stage,l){
   previous.disabled=pointer===0;next.disabled=pointer===steps.length-1;
   if(userAction){const row=rendered.find((r,i)=>i+1===step.line);if(row)code.parentElement.scrollTop=Math.max(0,row.offsetTop-code.offsetTop-65)}
  }
+ // Restore the runtime pointer itself, not only the highlight.
+ section.restoreTraceIndex=i=>{
+  const value=Number(i);pointer=Number.isFinite(value)?Math.max(0,Math.min(steps.length-1,Math.trunc(value))):0;
+  if(steps.length)showTrace(false);
+ };
  previous.addEventListener("click",()=>{pointer=Math.max(0,pointer-1);showTrace(true)});
  next.addEventListener("click",()=>{pointer=Math.min(steps.length-1,pointer+1);showTrace(true)});
  restart.addEventListener("click",()=>{pointer=0;showTrace(true)});
@@ -429,6 +435,13 @@ document.addEventListener("c-language-content-change",()=>{
  const explanations=[...stage.querySelectorAll(".explain,.feedback")].map(node=>({
   hidden:node.hidden,text:node.textContent
  }));
+ // Simulation state is held in JavaScript closures. A DOM-only screenshot is
+ // insufficient: capture the trace pointer and Heap runtime before rerendering.
+ const traceState=[...stage.querySelectorAll(".trace-lab")].map(node=>({
+  index:Number(node.dataset.traceIndex||0),
+  codeScroll:node.querySelector(".trace-code")?.scrollTop||0
+ }));
+ const heapState=stage.querySelector(".dm-heap")?.getLanguageSnapshot?.()||null;
  const keepStep=current,keepLab=activeLab;
  $("hero-title").textContent=D.title;
  richText($("hero-summary"),D.summary);
@@ -446,6 +459,12 @@ document.addEventListener("c-language-content-change",()=>{
   if(node.tagName==="TEXTAREA"&&saved.start!==null)node.setSelectionRange(saved.start,saved.end);
  });
  [...stage.querySelectorAll("details")].forEach((node,i)=>{if(i<opened.length)node.open=opened[i]});
+ [...stage.querySelectorAll(".trace-lab")].forEach((node,i)=>{
+  const saved=traceState[i];if(!saved)return;
+  node.restoreTraceIndex?.(saved.index);
+  const code=node.querySelector(".trace-code");if(code)code.scrollTop=saved.codeScroll;
+ });
+ if(heapState)stage.querySelector(".dm-heap")?.restoreLanguageSnapshot?.(heapState);
  const currentExplanations=[...stage.querySelectorAll(".explain,.feedback")];
  currentExplanations.forEach((node,i)=>{
   if(!explanations[i]||explanations[i].hidden)return;
