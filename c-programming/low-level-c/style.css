@@ -68,3 +68,13 @@
 .c191-hardware-wire{stroke-dasharray:9 7;animation:c191-signal-once .7s ease-out 1}
 @keyframes c191-signal-once{from{stroke-dashoffset:65;opacity:.3}to{stroke-dashoffset:0;opacity:1}}
 @media(prefers-reduced-motion:reduce){.c191-hardware-wire{animation:none}}
+
+/* Execution feedback shares one visual vocabulary across register, LED and trace. */
+.c191-bit.changed{outline:3px solid var(--els-link,#8abbd7);outline-offset:2px;animation:c191-change .55s ease-out}
+.c191-led-dot.changed{animation:c191-led-change .55s ease-out}
+.c191-trace{padding:10px 12px;background:var(--els-surface-alt,#26394e);border-inline-start:3px solid var(--els-link,#8abbd7);border-radius:8px;overflow-wrap:anywhere}
+.c191-states{gap:9px}
+.c191-state.active{box-shadow:0 0 0 2px var(--els-link,#8abbd7);transition:background .2s,border-color .2s}
+@keyframes c191-change{0%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes c191-led-change{0%{transform:scale(1.2)}100%{transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.c191-bit.changed,.c191-led-dot.changed{animation:none}}
