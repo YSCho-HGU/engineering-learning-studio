@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import {chromium} from "playwright";
 const base=process.env.SS_TEST_BASE||"http://127.0.0.1:8765";
 const pages=[
+ ...Array.from({length:8},(_,i)=>"chapter"+(i+1)+".html"),
  "applications.html","applications-lab.html?lab=helix","applications-system-lab.html",
  "applications-system-compare.html","applications-dft-fft.html","applications-fft-lab.html",
  "applications-fft-resolution.html","applications-fft-dtmf.html",
@@ -44,4 +45,4 @@ try{
   await context.close();
  }
 }finally{await browser.close();}
-assert.deepEqual(problems,[],"Applications all-pages visual shell QA");
+assert.deepEqual(problems,[],"SS chapters and Applications all-pages visual shell QA");
