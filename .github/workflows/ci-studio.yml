@@ -202,6 +202,7 @@ jobs:
               failures=$((failures+1))
             fi
           }
+          run_case node tests/c191-interactive-qa.mjs
           run_case node tests/c-language-contract.mjs
           run_case node tests/c-browser-regression.mjs
           run_case node tests/c-four-chapters-browser.mjs
