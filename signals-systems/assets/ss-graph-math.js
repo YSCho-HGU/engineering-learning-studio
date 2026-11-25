@@ -152,10 +152,52 @@ function enhanceSvg(){
   });
  });
 }
+/* Mathematical typography for chart titles, legends and axis-range notes.
+ * Never modify the Canvas/SVG data or geometry. */
+const legendContainer='.plot-card .plot-title,.plot-card .axis-key,.plot-card .legend,.figure .sub,.figure .axis-key,.figure .legend,.plotbox .axis-key,.plotbox .legend,.ss-al-legend,.ss-sys-legend';
+const legendSkip='script,style,code,pre,svg,canvas,input,button,textarea,select,option,math,.katex,.ss-graph-caption-math,.ss-detail-inline-math,.ss5-prose-math,.ss7-prose-math,.ss8-prose-math,[data-ss-math],[data-latex],[contenteditable]';
+const captionTokens=entries.filter(([raw])=>raw.length>2&&(raw.includes('(')||raw.includes('[')||/[ΩωπΣ∑Δτₛ₀₁₂ₖ]/u.test(raw)))
+ .sort((a,b)=>b[0].length-a[0].length);
+function typesetCaptionText(){
+ if(!ready())return;
+ const main=document.querySelector('main');if(!main)return;
+ const walker=document.createTreeWalker(main,NodeFilter.SHOW_TEXT,{acceptNode(node){
+  const parent=node.parentElement;
+  if(!parent||!node.nodeValue?.trim()||parent.closest(legendSkip)||!parent.closest(legendContainer))
+   return NodeFilter.FILTER_REJECT;
+  return captionTokens.some(([token])=>node.nodeValue.includes(token))?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT;
+ }});
+ const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+ for(const node of nodes){
+  if(!node.isConnected)continue;
+  const source=node.nodeValue,ranges=[];
+  for(const [raw,latex] of captionTokens){
+   let cursor=0,at;
+   while((at=source.indexOf(raw,cursor))!==-1){
+    ranges.push({start:at,end:at+raw.length,raw,latex});cursor=at+raw.length;
+   }
+  }
+  ranges.sort((a,b)=>a.start-b.start||(b.end-b.start)-(a.end-a.start));
+  const selected=[];let end=0;
+  for(const item of ranges)if(item.start>=end){selected.push(item);end=item.end;}
+  if(!selected.length)continue;
+  const fragment=document.createDocumentFragment();let cursor=0;
+  for(const item of selected){
+   if(item.start>cursor)fragment.append(document.createTextNode(source.slice(cursor,item.start)));
+   const span=document.createElement('span');span.className='ss-graph-caption-math';
+   span.dataset.ssOriginal=item.raw;
+   if(typeset(span,item.latex))fragment.append(span);
+   else fragment.append(document.createTextNode(item.raw));
+   cursor=item.end;
+  }
+  if(cursor<source.length)fragment.append(document.createTextNode(source.slice(cursor)));
+  node.replaceWith(fragment);
+ }
+}
 let queued=false;
 function enhanceAll(){
  if(queued)return;queued=true;
- requestAnimationFrame(()=>{queued=false;enhanceSvg();if(ready()){for(const row of pendingCanvas.values())renderCanvas(row.ref,row.side,row.value,row.position)}});
+ requestAnimationFrame(()=>{queued=false;enhanceSvg();typesetCaptionText();if(ready()){for(const row of pendingCanvas.values())renderCanvas(row.ref,row.side,row.value,row.position)}});
 }
 function resize(){
  for(const node of canvasSpans){if(node.isConnected)alignCanvas(node);else canvasSpans.delete(node)}
@@ -163,7 +205,7 @@ function resize(){
 }
 function init(){new MutationObserver(enhanceAll).observe(document.body,{subtree:true,childList:true});enhanceAll();window.addEventListener('resize',resize,{passive:true});
  requestAnimationFrame(()=>{if(ready())window.dispatchEvent(new Event('resize'))});}
-window.SSGraphMath=Object.freeze({latexFor,renderCanvas,enhanceAll});
+window.SSGraphMath=Object.freeze({latexFor,renderCanvas,enhanceAll,typesetCaptionText});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
  window.addEventListener('load',enhanceAll,{once:true});
 })();
