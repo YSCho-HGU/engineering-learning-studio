@@ -84,7 +84,6 @@ for(const width of [390,1280]){
   await page.locator('#lesson-nav button[data-lesson="10"]').click();
   await page.locator('[data-action="reset-step"]').click();
   await page.locator('[data-action="step"]').click();
-  await page.locator('[data-action="step"]').click();
   assert.ok((await page.locator('.c191-metrics span').nth(1).innerText()).includes("0x95"),"bit 5 cleared");
 
   // No unreachable C lines in READY, IDLE or error return paths.
@@ -131,7 +130,8 @@ for(const width of [390,1280]){
   assert.ok((await page.locator('.c191-memory').innerText()).includes("1000"));
   for(let i=0;i<4;i++)await page.locator('[data-action="step"]').click();
   assert.ok((await page.locator('.c191-memory').innerText()).includes("1001"));
-  await page.locator('[data-action="call"]').click();
+  await page.locator('[data-action="run"]').click();
+  await page.waitForFunction(() => document.querySelector('.c191-memory')?.textContent.includes('1002'),{timeout:10000});
   assert.ok((await page.locator('.c191-memory').innerText()).includes("1002"));
   await page.locator('[data-action="reset-step"]').click();
   assert.ok((await page.locator('.c191-memory').innerText()).includes("1000"));
