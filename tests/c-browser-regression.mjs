@@ -19,7 +19,7 @@ try{
    if(/2026\s*[·•]\s*SELF-STUDY|Learning Journey/.test(visibleText))throw Error('stale heading');
    const sectionButtons=await page.locator('#lesson-nav button').count();
    if(sectionButtons<4)throw Error('too few navigation items: '+sectionButtons);
-   const arrows=page.locator('.c-four-navigation .ss-chapter-arrow');
+   const arrows=page.locator('.ss-four-navigation .ss-chapter-arrow');
    if(await arrows.count()!==4)throw Error('expected 4 navigation arrows');
    if(name!=='file-io'){
     await page.locator('#lesson h2').waitFor();
