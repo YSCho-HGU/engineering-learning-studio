@@ -30,13 +30,15 @@ function bits(s){
  }).join("")+'</div><div class="c191-metrics"><span>Binary '+binary(s.byte)+'</span><span>Hex '+hex(s.byte)+'</span><span>Decimal '+s.byte+'</span></div>';
 }
 function device(s){
- const names=[[0,"READY"],[1,"ERROR"],[4,"ALARM"],[5,"LOW_BAT"]];
- return '<div class="c191-device"><div class="c191-device-head"><span>'+tr("장치 상태","Device status")+'</span><span>'+state(s.byte)+'</span></div><div class="c191-leds">'+
+ const register=D.lessons[selected].scene==="register";
+ const names=register?Array.from({length:8},(_,bit)=>[bit,"LED"+bit]):[[0,"READY"],[1,"ERROR"],[4,"ALARM"],[5,"LOW_BAT"]];
+ return '<div class="c191-device"><div class="c191-device-head"><span>'+(register?tr("LED 출력 레지스터","LED output register"):tr("장치 상태","Device status"))+'</span><span>'+(register?hex(s.byte):state(s.byte))+'</span></div><div class="c191-leds">'+
  names.map(([b,name])=>'<div class="c191-led"><div class="c191-led-dot '+(s.byte&(1<<b)?"on ":"")+(b===1||b===4?"alarm ":"")+(s.changed&(1<<b)?"changed":"")+'" aria-label="'+name+' '+(s.byte&(1<<b)?"ON":"OFF")+'"></div><small>'+name+'</small><small>'+(s.byte&(1<<b)?"ON":"OFF")+'</small></div>').join("")+'</div>'+signalDiagram(s)+'</div>';
 }
 function signalDiagram(s){
- const alarming=(s.byte&18)!==0,ready=(s.byte&1)!==0;
- const color=alarming?"#e16b73":ready?"#30b692":"#829bac";
+ const register=D.lessons[selected].scene==="register";
+ const alarming=!register&&(s.byte&18)!==0,ready=(s.byte&1)!==0;
+ const color=register?"#30b692":alarming?"#e16b73":ready?"#30b692":"#829bac";
  return '<svg class="c191-hardware" viewBox="0 0 580 132" role="img" aria-label="Sensor byte to C logic to device output model">'+
  '<rect x="6" y="28" width="132" height="70" rx="12" class="c191-hardware-box"/>'+
  '<text x="72" y="52" text-anchor="middle" class="c191-hardware-label">SENSOR</text>'+
@@ -51,7 +53,7 @@ function signalDiagram(s){
  '<rect x="395" y="28" width="175" height="70" rx="12" class="c191-hardware-box"/>'+
  '<circle cx="418" cy="62" r="11" fill="'+color+'"/>'+
  '<text x="487" y="56" text-anchor="middle" class="c191-hardware-label">DEVICE</text>'+
- '<text x="487" y="79" text-anchor="middle" class="c191-hardware-sub">'+(alarming?"ALARM":ready?"RUNNING":"IDLE")+'</text></svg>';
+ '<text x="487" y="79" text-anchor="middle" class="c191-hardware-sub">'+(register?"LED OUTPUT":alarming?"ALARM":ready?"RUNNING":"IDLE")+'</text></svg>';
 }
 function maskExpression(s){const m="(1u << "+s.target+")";return s.op==="set"?"value |= "+m:s.op==="clear"?"value &= ~"+m:s.op==="toggle"?"value ^= "+m:"result = value & "+m;}
 function terminal(s,scene){
@@ -111,7 +113,7 @@ const ledNames=[[0,"READY"],[1,"ERROR"],[4,"ALARM"],[5,"LOW_BAT"]];
 function miniBits(n,diff){
  return '<div class="c191-mini-bits">'+Array.from({length:8},(_,i)=>{const b=7-i;return '<span class="'+(n&(1<<b)?"one ":"")+(diff&(1<<b)?"mismatch":"")+'"><small>b'+b+'</small><strong>'+Number(!!(n&(1<<b)))+'</strong></span>';}).join("")+'</div>';
 }
-function miniLeds(n){return '<div class="c191-mini-leds">'+ledNames.map(([b,name])=>'<span><i class="'+(n&(1<<b)?"lit ":"")+(b===1||b===4?"alarm":"")+'"></i>'+name+'</span>').join("")+'</div>';}
+function miniLeds(n,register=false){const names=register?Array.from({length:8},(_,b)=>[b,"LED"+b]):ledNames;return '<div class="c191-mini-leds">'+names.map(([b,name])=>'<span><i class="'+(n&(1<<b)?"lit ":"")+(b===1||b===4?"alarm":"")+'"></i>'+name+'</span>').join("")+'</div>';}
 function predictionHTML(s,scene){
  if(!predictionScenes.has(scene))return "";
  const p=s.prediction,stateOnly=scene==="state"||scene==="capstone",expected=p?.expectedByte;
@@ -121,8 +123,8 @@ function predictionHTML(s,scene){
  (p?btn(tr("예측 수정","Edit prediction"),"predict-edit"):btn(tr("예측 고정","Lock prediction"),"predict-save"))+'</div>';
  if(p){
  const diff=p.observed?(expected^s.byte):0;
- h+='<div class="c191-pred-compare"><div class="c191-pred-side"><strong>'+tr("예상 결과","Prediction")+'</strong>'+(stateOnly?'<p>State: <strong>'+p.expectedState+'</strong></p><p class="c191-caption">'+tr("상태만 예측합니다. Byte/LED는 실행 결과에서 확인하세요.","Predict the state only. Inspect bytes and LEDs after execution.")+'</p>':'<div class="c191-pred-value">'+hex(expected)+' · '+binary(expected)+'</div>'+miniBits(expected,diff)+miniLeds(expected)+'<p>State: '+p.expectedState+'</p>')+'</div>'+
- '<div class="c191-pred-side"><strong>'+tr("실행 결과","Observed result")+'</strong>'+(p.observed?'<div class="c191-pred-value">'+hex(s.byte)+' · '+binary(s.byte)+'</div>'+miniBits(s.byte,diff)+miniLeds(s.byte)+'<p>State: '+state(s.byte)+'</p>':'<p class="c191-pred-pending">'+tr("Step/Run 또는 비트 조작 후 표시됩니다.","Revealed after Step/Run or bit interaction.")+'</p>')+'</div></div>';
+ h+='<div class="c191-pred-compare"><div class="c191-pred-side"><strong>'+tr("예상 결과","Prediction")+'</strong>'+(stateOnly?'<p>State: <strong>'+p.expectedState+'</strong></p><p class="c191-caption">'+tr("상태만 예측합니다. Byte/LED는 실행 결과에서 확인하세요.","Predict the state only. Inspect bytes and LEDs after execution.")+'</p>':'<div class="c191-pred-value">'+hex(expected)+' · '+binary(expected)+'</div>'+miniBits(expected,diff)+miniLeds(expected,scene==="register")+(scene==="register"?'': '<p>State: '+p.expectedState+'</p>')+'+'</p>')+'</div>'+
+ '<div class="c191-pred-side"><strong>'+tr("실행 결과","Observed result")+'</strong>'+(p.observed?'<div class="c191-pred-value">'+hex(s.byte)+' · '+binary(s.byte)+'</div>'+miniBits(s.byte,diff)+miniLeds(s.byte,scene==="register")+(scene==="register"?'':'<p>State: '+state(s.byte)+'</p>')+'+'</p>':'<p class="c191-pred-pending">'+tr("Step/Run 또는 비트 조작 후 표시됩니다.","Revealed after Step/Run or bit interaction.")+'</p>')+'</div></div>';
  if(p.observed){
  const matched=stateOnly?p.expectedState===state(s.byte):expected===s.byte;
  h+='<p class="c191-pred-feedback '+(matched?"matched":"unmatched")+'" role="status">'+(matched?tr("예측이 일치합니다. 어떤 연산·조건이 그 결과를 만들었나요?","Prediction matches. Which operation or condition produced it?"):tr("예측과 다릅니다. 강조된 비트 및 상태 판정 조건을 다시 추적하세요.","Prediction differs. Trace the highlighted bits and state conditions."))+'</p>';
