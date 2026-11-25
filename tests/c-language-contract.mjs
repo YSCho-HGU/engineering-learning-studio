@@ -244,7 +244,7 @@ try{
   // AI-Assisted Coding and File I/O Guided Labs have their own translation
   // engines. Removing the shared right-hand select must not strand either.
   for(const target of [
-    {route:"c-programming/ai-coding/",picker:"#c-ai-language",text:"#studio-content",
+    {route:"c-programming/ai-coding/",picker:"#c-shared-language select",text:"#studio-content",
       contentEn:null},
     {route:"c-programming/file-io/core-labs/",picker:"#language-mode",
       text:'[data-i18n="writeTitle"]',contentEn:"Write One Line to a File"}
