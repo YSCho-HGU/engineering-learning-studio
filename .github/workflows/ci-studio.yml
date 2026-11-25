@@ -202,6 +202,7 @@ jobs:
               failures=$((failures+1))
             fi
           }
+          run_case node tests/c-language-contract.mjs
           run_case node tests/c-browser-regression.mjs
           run_case node tests/c-four-chapters-browser.mjs
           run_case node tests/c-fileio-buffer-browser.mjs
@@ -215,7 +216,6 @@ jobs:
           run_case node tests/c211-release-browser.mjs
           run_case node tests/c-journey-qa.mjs
           run_case node tests/c-integrated-qa.mjs
-          if [ -f tests/c-language-contract.mjs ]; then run_case node tests/c-language-contract.mjs; fi
           run_case node tests/c-grouped-navigation-e2e.mjs
           run_case node tests/phase0-c-baseline.mjs
           run_case node tests/els-theme-qa.mjs

@@ -68,6 +68,16 @@ try{
   const selectedGoal=await page.evaluate(()=>window.C_JOURNEY.lessons[3].goal);
   assert.ok(selectedGoal.length>8,"Fourth C Functions topic exists");
   await page.evaluate(()=>{window.__cLanguagePageIdentity="same-document"});
+  const correct=await page.evaluate(()=>window.C_JOURNEY.lessons[3].quiz.correct);
+  await page.locator('#lesson .quiz input[type="radio"]').nth(correct).check();
+  await page.locator('#lesson .quiz button').click();
+  await page.locator('#lesson .explain').evaluate(e=>e.previousElementSibling.click());
+  await page.locator('#lesson .trace-controls button').nth(1).click();
+  await page.locator('#model-control').evaluate(e=>{
+    e.value=e.max;e.dispatchEvent(new Event("input",{bubbles:true}));
+  });
+  await page.locator('#lesson .transfer textarea').fill("Unsaved user explanation");
+  await page.locator('#lesson details').first().evaluate(e=>e.open=true);
   const topicTitle=()=>page.locator("#lesson h2").first().innerText();
   for(const mode of ["mixed","en","ko","mixed"]){
     const current=await page.evaluate(()=>window.ELSLanguage?.get());
@@ -86,6 +96,16 @@ try{
       mode+" language change must not reload the C chapter");
     assert.equal(await page.locator('#lesson-nav button[aria-current="step"]').getAttribute("data-lesson"),
       "3",mode+" must keep current C topic");
+    assert.equal(await page.locator('#lesson .trace-lab').getAttribute('data-trace-index'),'1',
+      mode+" trace position lost");
+    assert.equal(await page.locator('#model-control').inputValue(),
+      await page.locator('#model-control').getAttribute('max'),mode+" slider value lost");
+    assert.equal(await page.locator('#lesson .quiz input:checked').count(),1,mode+" quiz choice lost");
+    assert.equal(await page.locator('#lesson .quiz .feedback').isVisible(),true,mode+" quiz feedback hidden");
+    assert.equal(await page.locator('#lesson .explain').isVisible(),true,mode+" revealed result hidden");
+    assert.equal(await page.locator('#lesson details').first().evaluate(e=>e.open),true,mode+" hint collapsed");
+    assert.equal(await page.locator('#lesson .transfer textarea').inputValue(),
+      "Unsaved user explanation",mode+" explanation draft lost");
     const result=await inspect(page);
     verify(result,mode);
     console.log("PASS: C Functions body language mode",mode);
@@ -126,6 +146,64 @@ try{
   assert.equal(await fileTab.evaluate(()=>window.__cFileIdentity),"same-document",
     "File I/O language change must not reload");
   await fileContext.close();
+
+  // Keep actual simulation closure state (not just the selected Chapter).
+  {
+    const ctx=await browser.newContext({viewport:{width:1280,height:900}});
+    await ctx.addInitScript(()=>localStorage.setItem("els-language","mixed"));
+    const tab=await ctx.newPage();
+    await tab.goto(root+"c-programming/dynamic-memory/",{waitUntil:"domcontentloaded"});
+    await tab.locator('#lesson-nav button[data-lesson="3"]').click();
+    await tab.locator('.dm-heap [data-phase="used"]').click();
+    await tab.locator('.dm-heap .dm-cell').nth(3).click();
+    await tab.locator('.dm-heap [data-leak="lost"]').click();
+    await tab.locator('.dm-heap .dm-leak').evaluate(e=>e.open=true);
+    await tab.locator('#lesson .trace-controls button').nth(1).click();
+    await tab.evaluate(()=>window.__heapDocumentMarker="unchanged");
+    for(const mode of ["en","ko","mixed"]){
+      await tab.locator('#c-shared-language select').selectOption(mode);
+      await tab.waitForFunction(m=>window.ELSLanguage?.get()===m,mode);
+      assert.equal(await tab.evaluate(()=>window.__heapDocumentMarker),"unchanged",
+        mode+" reloaded heap");
+      assert.equal(await tab.locator('.dm-heap').getAttribute('data-phase'),'used');
+      assert.equal(await tab.locator('.dm-heap .dm-cell.selected')
+        .evaluate(e=>Array.from(e.parentElement.children).indexOf(e)),3);
+      assert.equal(await tab.locator('.dm-heap [data-leak="lost"]')
+        .getAttribute('aria-pressed'),'true');
+      assert.equal(await tab.locator('.dm-heap .dm-leak').evaluate(e=>e.open),true);
+      assert.equal(await tab.locator('#lesson .trace-lab')
+        .getAttribute('data-trace-index'),'1');
+    }
+    await tab.locator('#dm-play').click();
+    await tab.locator('#c-shared-language select').selectOption("en");
+    assert.equal(await tab.locator('.dm-heap').evaluate(e=>e.getLanguageSnapshot().playing),
+      true,"autoplay was reset by language selection");
+    await ctx.close();
+  }
+  // Preserve source code, syntax-check result and an expanded hint in P3.
+  {
+    const ctx=await browser.newContext({viewport:{width:1280,height:900}});
+    await ctx.addInitScript(()=>localStorage.setItem("els-language","mixed"));
+    const tab=await ctx.newPage();
+    await tab.goto(root+"c-programming/functions/practice/",{waitUntil:"domcontentloaded"});
+    await tab.locator('.cp-nav-item').nth(2).click();
+    const draftCode="/* Keep this C draft */\\nint main(void){return 31;}";
+    await tab.locator('#cp-editor').fill(draftCode);
+    await tab.locator('.cp-guided-reveal').first().click();
+    await tab.locator('.cp-button.cp-primary').click();
+    await tab.evaluate(()=>window.__practiceDocumentMarker="unchanged");
+    for(const mode of ["en","ko","mixed"]){
+      await tab.locator('#c-shared-language select').selectOption(mode);
+      await tab.waitForFunction(m=>window.ELSLanguage?.get()===m,mode);
+      assert.equal(await tab.evaluate(()=>window.__practiceDocumentMarker),"unchanged");
+      assert.ok((await tab.locator('.cp-nav-item.active').innerText()).startsWith("P3"));
+      assert.equal(await tab.locator('#cp-editor').inputValue(),draftCode);
+      assert.equal(await tab.locator('.cp-feedback').getAttribute('data-kind'),'check');
+      assert.ok((await tab.locator('.cp-feedback').innerText()).includes('✓'));
+      assert.equal(await tab.locator('.cp-guided-hint').first().isVisible(),true);
+    }
+    await ctx.close();
+  }
 
   // AI-Assisted Coding and File I/O Guided Labs have their own translation
   // engines. Removing the shared right-hand select must not strand either.
