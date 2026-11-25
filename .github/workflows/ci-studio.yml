@@ -276,11 +276,13 @@ jobs:
           run_case node signals-systems/tests/ss-data-language-contract.mjs
           run_case node signals-systems/tests/theme-contrast-audit.mjs
           run_case node signals-systems/tests/ss-theme-qa.mjs
+          run_case node tests/ss-graph-label-contract.mjs
           run_case node tests/ss-chapters-math-audit.mjs
           run_case node tests/ss-detail-math-browser.mjs
           run_case node tests/ss-chapters-full-qa.mjs
           run_case node tests/ss-responsive-unified-browser.mjs
           run_case node tests/ss-plot-typography-browser.mjs
+          run_case node tests/ss-graph-label-math-browser.mjs
           run_case node tests/ss-ch4-mobile-standard-browser.mjs
           run_case node tests/ss-header-language-theme-e2e.mjs
           run_case node tests/ss-sidebar-ch4-standard-e2e.mjs
