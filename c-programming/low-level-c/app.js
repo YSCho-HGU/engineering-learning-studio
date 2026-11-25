@@ -200,6 +200,8 @@ function branchPath(s,scene){
 function traceLimit(s,scene){
  if(scene==="state"||scene==="capstone")return branchPath(s,scene).length;
  if(scene==="optional")return 4;
+ if(scene==="bits"||scene==="register")return 2;
+ if(scene==="review")return 1;
  if(scene==="preprocessor")return 4;
  if(scene==="modules")return 5;
  if(scene==="cli"){const m=traceModel(s,scene);return m.valid?(m.passed?5:4):2;}
@@ -262,12 +264,13 @@ function advance(){
   s.step++;const m=traceModel(s,scene);focus=m.focus;s.trace=m.message;
   if(scene==="lifetime")s.calls=Math.floor(s.step/4);
  }else{
-  focus=s.step++;
+  focus=scene==="review"?1:s.step;
+  s.step++;
   if(scene==="bits"&&focus===1)s.byte=181;
   if(scene==="register"&&focus===0)s.byte=4;
   if(scene==="register"&&focus===1)s.byte=(s.byte|2)&255;
   if(scene==="review"&&focus===1)s.byte=(s.byte&~32)&255;
-  s.trace=tr("실행한 문장: ","Executed line: ")+lines[focus].trim()+(before!==s.byte?" · "+hex(before)+" → "+hex(s.byte):"");
+  s.trace=(scene==="bits"&&focus===0?tr("전처리 지시문 확인: ","Inspect preprocessing directive: "):tr("실행한 문장: ","Executed line: "))+lines[focus].trim()+(before!==s.byte?" · "+hex(before)+" → "+hex(s.byte):"");
  }
  s.focus=focus;s.changed=(before^s.byte)&255;
  if(s.step===limit||(scene==="register"&&focus===1))markObserved(s);
