@@ -367,7 +367,7 @@ stage.addEventListener("click",event=>{
  if(action==="predict-edit"){s.prediction=null;save();render();return;}
  if(action==="run"){
   if(timer!==null)stop();
-  else {if(s.step>=traceLimit(s,scene)&& !["preprocessor","modules","lifetime","cli"].includes(scene)){s.step=0;s.focus=null;s.byte=initialFor(selected).byte;s.decoded=null;s.changed=0;if(s.prediction)s.prediction.observed=false;}play();return;}
+  else {if(s.step>=traceLimit(s,scene)&&scene!=="lifetime"){s.step=0;s.focus=null;s.byte=initialFor(selected).byte;s.decoded=null;s.changed=0;if(s.prediction)s.prediction.observed=false;}play();return;}
  }
  if(action!=="run")stop();
  if(action==="step"){advance();if(["operators","preprocessor","modules","lifetime","cli"].includes(scene)||s.prediction?.observed){render();return;}}
