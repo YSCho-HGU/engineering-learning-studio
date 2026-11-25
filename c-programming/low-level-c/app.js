@@ -101,7 +101,7 @@ function play(){
  if(!advance()){stop();refreshVisual();return;}
  refreshVisual();
  if(S().step<D.lessons[selected].code.split("\n").length)timer=setTimeout(play,650);
- else stop();
+ else {stop();refreshVisual();}
 }
 function renderNav(){
  nav.replaceChildren();
@@ -154,7 +154,7 @@ stage.addEventListener("click",event=>{
  const action=b.dataset.action,mask=1<<s.target;
  if(action==="run"){
   if(timer!==null)stop();
-  else {if(s.step>=D.lessons[selected].code.split("\n").length){s.step=0;s.byte=initialFor(selected).byte;}play();return;}
+  else {if(s.step>=D.lessons[selected].code.split("\n").length){s.step=0;s.byte=initialFor(selected).byte;s.changed=0;}play();return;}
  }
  if(action!=="run")stop();
  if(action==="step")advance();
