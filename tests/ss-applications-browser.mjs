@@ -11,6 +11,21 @@ for(const name of ["harmonics","chirp","helix"]){
   const response=await page.goto(base+"/signals-systems/applications-lab.html?lab="+name,{waitUntil:"domcontentloaded",timeout:25000});
   if(!response?.ok())throw Error("HTTP "+response?.status());
   await page.locator("#ss-al-metrics .ss-al-metric").first().waitFor();
+  // Regression: shared header SVG must not expand into an enormous black triangle.
+  const headerGeometry=await page.evaluate(()=>{
+   const header=document.querySelector('.ss-common-header');
+   const arrows=[...document.querySelectorAll('.ss-common-header .ss-four-navigation svg')];
+   const h=header?.getBoundingClientRect();
+   return {height:h?.height||0,arrowSizes:arrows.map(svg=>{
+     const r=svg.getBoundingClientRect(),style=getComputedStyle(svg);
+     return {width:r.width,height:r.height,stroke:style.stroke,fill:style.fill};
+   }),hasSharedStyle:[...document.styleSheets].some(sheet=>(sheet.href||'').includes('els-course-header.css'))};
+  });
+  if(!headerGeometry.hasSharedStyle)throw Error("Missing shared course header CSS");
+  if(headerGeometry.height>110||headerGeometry.height<28)throw Error("Unexpected header height: "+JSON.stringify(headerGeometry));
+  if(headerGeometry.arrowSizes.length<2||headerGeometry.arrowSizes.some(v=>v.width>28||v.height>28||v.width<10||v.height<10))
+    throw Error("Oversized/hidden SVG navigation arrow: "+JSON.stringify(headerGeometry));
+
   if(await page.locator("#ss-al-metrics .ss-al-metric").count()!==4)throw Error("Missing metrics");
   const math=page.locator("#ss-al-equation");
   await math.locator("math,.katex").first().waitFor({timeout:15000});
