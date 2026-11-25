@@ -17,8 +17,10 @@ const match=location.hash.match(/^#s(\d+)$/);
 if(match)selected=Math.max(0,Math.min(10,Number(match[1])-1));
 let states=read("els-c191-model-v1",{}),done=read("els-c191-done-v1",[]);
 if(!Array.isArray(done))done=[];
-const initialFor=i=>{const v=initial();if(i===1)v.byte=5;else if(i===2)v.byte=4;else if(i===3)v.byte=0;return v;};
+const initialFor=i=>{const v=initial();if(i===1){v.byte=0;v.step=0;v.operator="or";v.experimentByte=5;}else if(i===2)v.byte=4;else if(i===3)v.byte=0;return v;};
 const S=()=>states[selected]||(states[selected]=initialFor(selected));
+// Versioned reset: older Chapter 19.2 records used a sensor byte, not three variables.
+if(states[1]&&!states[1].operatorModelV2){const keep={note:states[1].note||"",choice:states[1].choice??-1};states[1]={...initialFor(1),...keep,operatorModelV2:true};}
 const save=()=>{try{localStorage.setItem("els-c191-model-v1",JSON.stringify(states));localStorage.setItem("els-c191-done-v1",JSON.stringify(done))}catch(e){}};
 const nav=byId("lesson-nav"),stage=byId("lesson");
 const btn=(label,action)=>'<button type="button" data-action="'+action+'">'+label+'</button>';
@@ -64,15 +66,38 @@ function terminal(s,scene){
  if(scene==="cli"){const a=s.argv.trim().split(/\s+/).filter(Boolean);return "argc = "+a.length+"\n"+a.map((t,i)=>"argv["+i+"] = "+t).join("\n");}
  return "status = "+hex(s.byte)+" | "+binary(s.byte)+"\nREADY="+Number(!!(s.byte&1))+"  ERROR="+Number(!!(s.byte&2))+"  ALARM="+Number(!!(s.byte&16))+"\nstate = "+state(s.byte);
 }
+
+function operatorVars(s){
+ const step=Math.min(Math.max(0,s.step),3);
+ const cells=[["a",step>=1?5:null],["b",step>=2?2:null],["result",step>=3?7:null]];
+ return '<div class="c191-op-flow">'+cells.map(([name,n],i)=>
+ '<div class="c191-op-variable '+(step===i+1?"current":"")+'" data-variable="'+name+'"><div class="c191-op-variable-head"><strong>'+name+'</strong><span>'+ (n===null?tr("초기화 전","Not initialized"):tr("초기화됨","Initialized"))+'</span></div>'+
+ (n===null?'<div class="c191-op-unknown">'+tr("Unknown","Unknown")+'</div><div class="c191-op-unknown-bits">'+Array.from({length:8},(_,j)=>'<span><small>b'+(7-j)+'</small><b>?</b></span>').join("")+'</div>':
+ '<div class="c191-op-number">'+hex(n)+' <small>('+n+')</small></div>'+miniBits(n,0))+'</div>').join('<span class="c191-op-join">→</span>')+'</div>'+
+ '<div class="c191-op-equation" aria-live="polite">'+(step<3?
+ tr("a와 b가 초기화되면 OR 연산으로 result를 계산합니다.","After a and b are initialized, OR computes result."):
+ '<code>0000 0101 | 0000 0010 = 0000 0111</code>')+'</div>'+
+ '<p class="c191-caption">'+tr("순서: a 초기화 → b 초기화 → result = a | b. Unknown은 아직 선언·초기화된 값을 보여주지 않았다는 교육용 표시이며 실제 C 값이 아닙니다.","Order: initialize a → initialize b → result = a | b. Unknown is a visual placeholder before declarations execute, not a real C value.")+'</p>';
+}
+function operatorExperiment(s){
+ const n=Number.isInteger(s.experimentByte)?s.experimentByte:5;
+ const op=s.operator||"or";
+ return '<section class="c191-panel c191-op-experiment"><span class="c191-eyebrow">'+tr("추가 실험 · 독립된 변수","Extra exploration · Separate value")+'</span><h3>'+tr("다른 비트 연산도 실험하기","Try other bitwise operations")+'</h3>'+
+ '<p class="c191-caption">'+tr("위의 a, b, result 예제에는 영향을 주지 않습니다. 별도 실험 레지스터에만 적용됩니다.","This experiment changes only its own register; it never changes a, b, or result above.")+'</p>'+
+ '<div class="c191-task"><label>'+tr("연산","Operation")+' <select data-setting="operator">'+options([["and","& 0x02"],["or","| 0x02"],["xor","^ 0x02"],["not","~ (8-bit)"],["left","<< 1"],["right",">> 1"]],op)+'</select></label>'+btn(tr("실험 실행","Try operation"),"operator")+btn("Reset","reset-operator")+'</div>'+
+ miniBits(n,0)+'<div class="c191-metrics"><span>Binary '+binary(n)+'</span><span>Hex '+hex(n)+'</span><span>Decimal '+n+'</span></div><p class="c191-caption" aria-live="polite">'+esc(s.experimentTrace||tr("초기 실험값 0x05. 연산을 선택해 결과를 관찰하세요.","Experiment starts at 0x05. Choose an operator to observe the result."))+'</p></section>';
+}
+
 function sceneHTML(){
  const s=S(),scene=D.lessons[selected].scene;
  let html='<h3>'+tr("시각 모델 · 장치 관찰","Visual model · Device observation")+'</h3>';
- if(["bits","operators","register","state","capstone","review"].includes(scene))html+=bits(s)+device(s);
- if(["operators","register","review"].includes(scene)){
+ if(scene==="operators")html+=operatorVars(s);
+ if(["bits","register","state","capstone","review"].includes(scene))html+=bits(s)+device(s);
+ if(["register","review"].includes(scene)){
   html+='<div class="c191-task"><label>'+tr("대상 비트","Target bit")+' <select data-setting="target">'+options(Array.from({length:8},(_,i)=>[i,"b"+i]),s.target)+'</select></label><label>'+tr("연산","Operation")+' <select data-setting="op">'+options([["check","Check &"],["set","Set |"],["clear","Clear &~"],["toggle","Toggle ^"]],s.op)+'</select></label>'+btn(tr("마스크 적용","Apply mask"),"mask")+'</div>';
   html+='<p class="c191-legend">'+esc(maskExpression(s))+';</p>';
  }
- if(scene==="operators")html+='<div class="c191-task"><select data-setting="operator">'+options([["and","& 0x02"],["or","| 0x02"],["xor","^ 0x02"],["not","~ (8-bit)"],["left","<< 1"],["right",">> 1"]],s.operator)+'</select>'+btn(tr("비트 연산 실행","Execute operator"),"operator")+'</div>';
+
  if(scene==="state"||scene==="capstone"){
   html+='<div class="c191-task">'+[[-1,"Reset status"],[0,"READY"],[1,"ERROR"],[4,"ALARM"],[5,"LOW_BAT"]].map(([b,t])=>'<button type="button" data-action="flag" data-flag="'+b+'">'+t+'</button>').join("")+'</div>';
   html+='<p class="c191-caption">'+tr("판정 우선순위: ERROR/ALARM → READY → IDLE","Decision priority: ERROR/ALARM → READY → IDLE")+'</p><div class="c191-states">'+["IDLE","RUNNING","ERROR_STATE"].map(t=>'<span class="c191-state '+(state(s.byte)===t?"active":"")+'">'+t+'</span>').join("")+'</div>';
@@ -85,18 +110,19 @@ function sceneHTML(){
  if(scene==="lifetime")html+='<div class="c191-memory"><div><small>automatic local</small><br/><strong>new each call</strong></div><div><small>static local</small><br/><strong>'+(1000+s.calls)+'</strong></div><div><small>calls</small><br/><strong>'+s.calls+'</strong></div></div><div class="c191-task">'+btn("Call next_id()","call")+btn("Reset","reset-call")+'</div>';
  if(scene==="cli")html+='<label for="c191-command">'+tr("실행 명령 (간단한 공백 분리 모델)","Command line (simplified whitespace model)")+'</label><div class="c191-task"><input id="c191-command" data-setting="argv" style="flex:1;min-width:170px" value="'+esc(s.argv)+'"/>'+btn(tr("인자 분석","Parse arguments"),"parse")+'</div>';
  if(scene==="review")html+='<p class="c191-caption">'+tr("AI에게 정답을 먼저 요청하지 말고 본인의 bit diagram과 마스크를 검토받으세요.","Draft your bit diagram and masks before using AI for review.")+'</p>';
- html+='<p class="c191-caption c191-trace" aria-live="polite">'+esc(s.trace||tr("Step을 실행하거나 비트를 변경하며 결과를 관찰하세요.","Step through the code or change a bit to observe its effect."))+'</p><div class="c191-terminal" aria-live="polite">'+esc(terminal(s,scene))+'</div>';
+ html+='<p class="c191-caption c191-trace" aria-live="polite">'+esc(s.trace||tr("Step을 실행하거나 비트를 변경하며 결과를 관찰하세요.","Step through the code or change a bit to observe its effect."))+'</p>';
+ if(scene!=="operators")html+='<div class="c191-terminal" aria-live="polite">'+esc(terminal(s,scene))+'</div>';
  return html;
 }
 function advance(){
  const s=S(),lines=D.lessons[selected].code.split("\n"),scene=D.lessons[selected].scene;
  if(s.step>=lines.length)return false;
  const before=s.byte;s.step++;
- if(scene==="operators"&&s.step===3)s.byte=0x05|0x02;
+ if(scene==="operators"){s.byte=s.step===3?7:0;s.trace=[tr("아직 실행되지 않았습니다.","Not executed yet."),"a = 0x05 (0000 0101)","b = 0x02 (0000 0010)","result = a | b = 0x07 (0000 0111)"][s.step];}
  if(scene==="register"&&s.step===2)s.byte=0x04|2;
  if(s.step===lines.length||(scene==="register"&&s.step===2)||(scene==="operators"&&s.step===3))markObserved(s);
  s.changed=(before^s.byte)&255;
- s.trace=tr("실행 단계 ","Execution step ")+s.step+"/"+lines.length+": "+lines[s.step-1].trim()+
+ s.trace=(scene==="operators"?s.trace:tr("실행 단계 ","Execution step ")+s.step+"/"+lines.length+": "+lines[s.step-1].trim())+
  (s.changed?" · "+hex(before)+" → "+hex(s.byte):" · "+tr("레지스터 변경 없음","register unchanged"));
  return true;
 }
@@ -116,8 +142,8 @@ function miniBits(n,diff){
 function miniLeds(n,register=false){const names=register?Array.from({length:8},(_,b)=>[b,"LED"+b]):ledNames;return '<div class="c191-mini-leds">'+names.map(([b,name])=>'<span><i class="'+(n&(1<<b)?"lit ":"")+(!register&&(b===1||b===4)?"alarm":"")+'"></i>'+name+'</span>').join("")+'</div>';}
 function predictionHTML(s,scene){
  if(!predictionScenes.has(scene))return "";
- const p=s.prediction,stateOnly=scene==="state"||scene==="capstone",expected=p?.expectedByte;
- let h='<section class="c191-panel c191-prediction"><span class="c191-eyebrow">'+tr("1단계 · 먼저 예측","Step 1 · Predict first")+'</span><h3>'+tr("내 예상 결과","My expected result")+'</h3><p class="c191-caption">'+(stateOnly?tr("현재 입력 Byte에 대한 상태를 예측하세요.","Predict the state for the current input byte."):tr("코드를 실행하거나 비트를 조작한 후의 Byte를 예측하세요.","Predict the byte after stepping through code or changing a bit."))+'</p><div class="c191-pred-controls"><div><small>'+tr("현재 Byte","Current byte")+'</small><strong>'+hex(s.byte)+' · '+binary(s.byte)+'</strong></div>'+
+ const p=s.prediction,stateOnly=scene==="state"||scene==="capstone",operatorOnly=scene==="operators",expected=p?.expectedByte;
+ let h='<section class="c191-panel c191-prediction"><span class="c191-eyebrow">'+tr("1단계 · 먼저 예측","Step 1 · Predict first")+'</span><h3>'+tr("내 예상 결과","My expected result")+'</h3><p class="c191-caption">'+(stateOnly?tr("현재 입력 Byte에 대한 상태를 예측하세요.","Predict the state for the current input byte."):operatorOnly?tr("a=0x05, b=0x02일 때 result의 값을 예측하세요.","Predict result when a=0x05 and b=0x02."):tr("코드를 실행하거나 비트를 조작한 후의 Byte를 예측하세요.","Predict the byte after stepping through code or changing a bit."))+'</p><div class="c191-pred-controls"><div><small>'+tr("현재 Byte","Current byte")+'</small><strong>'+hex(s.byte)+' · '+binary(s.byte)+'</strong></div>'+
  (stateOnly?'<label>'+tr("예상 상태","Expected state")+' <select id="c191-pred-state" '+(p?"disabled":"")+'>'+options([["IDLE","IDLE"],["RUNNING","RUNNING"],["ERROR_STATE","ERROR_STATE"]],p?.expectedState||"IDLE")+'</select></label>':
  '<label>'+tr("예상 Byte (0–255)","Expected byte (0–255)")+' <input id="c191-pred-byte" type="number" min="0" max="255" step="1" value="'+(expected??s.byte)+'" '+(p?"disabled":"")+' /></label>')+
  (p?btn(tr("예측 수정","Edit prediction"),"predict-edit"):btn(tr("예측 고정","Lock prediction"),"predict-save"))+'</div>';
@@ -125,9 +151,9 @@ function predictionHTML(s,scene){
  const diff=p.observed?(expected^s.byte):0;
  h+='<div class="c191-pred-compare"><div class="c191-pred-side"><strong>'+tr("예상 결과","Prediction")+'</strong>'+
  (stateOnly?'<p>State: <strong>'+p.expectedState+'</strong></p><p class="c191-caption">'+tr("상태만 예측합니다. Byte/LED는 실행 결과에서 확인하세요.","Predict the state only. Inspect bytes and LEDs after execution.")+'</p>':
- '<div class="c191-pred-value">'+hex(expected)+' · '+binary(expected)+'</div>'+miniBits(expected,diff)+miniLeds(expected,scene==="register")+(scene==="register"?'':'<p>State: '+p.expectedState+'</p>'))+'</div>'+
+ '<div class="c191-pred-value">'+hex(expected)+' · '+binary(expected)+'</div>'+miniBits(expected,diff)+(operatorOnly?'':miniLeds(expected,scene==="register")+(scene==="register"?'':'<p>State: '+p.expectedState+'</p>')))+'</div>'+
  '<div class="c191-pred-side"><strong>'+tr("실행 결과","Observed result")+'</strong>'+
- (p.observed?'<div class="c191-pred-value">'+hex(s.byte)+' · '+binary(s.byte)+'</div>'+miniBits(s.byte,diff)+miniLeds(s.byte,scene==="register")+(scene==="register"?'':'<p>State: '+state(s.byte)+'</p>'):
+ (p.observed?'<div class="c191-pred-value">'+hex(s.byte)+' · '+binary(s.byte)+'</div>'+miniBits(s.byte,diff)+(operatorOnly?'':miniLeds(s.byte,scene==="register")+(scene==="register"?'':'<p>State: '+state(s.byte)+'</p>')):
  '<p class="c191-pred-pending">'+tr("Step/Run 또는 비트 조작 후 표시됩니다.","Revealed after Step/Run or bit interaction.")+'</p>')+'</div></div>';
  if(p.observed){
  const matched=stateOnly?p.expectedState===state(s.byte):expected===s.byte;
@@ -160,7 +186,7 @@ function render(){
  const codeLines=l.code.split("\n");
  stage.innerHTML='<div class="c191-flow"><article><span class="c191-eyebrow">CHAPTER 19 · '+(selected+1)+'/11</span><h2>19.'+(selected+1)+' '+esc(l.title)+'</h2><div class="c191-story"><p>'+esc(tr(l.ko,l.en))+'</p><p class="c191-caption">'+esc(tr(l.conceptKo,l.conceptEn))+'</p></div></article>'+predictionHTML(s,l.scene)+
  '<div class="c191-grid"><section class="c191-panel" aria-label="C reference code"><h3>'+tr("코드 실행 줄 추적","Code execution trace")+'</h3><div class="c191-code">'+codeLines.map((line,i)=>'<span class="c191-line '+(s.step>0&&i===Math.min(codeLines.length-1,s.step-1)?"current":"")+'">'+(esc(line)||" ")+'</span>').join("")+'</div><div class="c191-task">'+btn("Step","step")+btn(timer!==null?tr("일시정지","Pause"):"Run","run")+btn("Reset","reset-step")+'</div><p class="c191-caption">'+tr("교육용 C 로직 시각화입니다. GCC 실행 결과는 별도 Coding Challenge로 검증합니다.","Educational C logic model, not an actual compiler. Verify C11 behavior in Coding Challenges.")+'</p></section><section class="c191-panel" id="c191-visual" aria-label="Visual experiment">'+sceneHTML()+'</section></div>'+
- '<div class="c191-grid"><section class="c191-panel"><h3>'+tr("예상 결과 먼저 생각하기","Predict before running")+'</h3><p>'+esc(tr(l.qko,l.qen))+'</p><div class="c191-quiz">'+answerLabels.map((answer,i)=>'<label><input name="c191-answer" type="radio" value="'+i+'" '+(s.choice===i?"checked":"")+'/> '+esc(answer)+'</label>').join("")+'</div><div class="c191-task">'+btn(tr("예측 확인","Check prediction"),"check")+'</div><div class="c191-result" role="status">'+(s.checked?(s.choice===l.correct?tr("정답입니다. 코드와 장치의 관계를 설명해 보세요.","Correct. Explain the code-device relationship."):tr("비트와 실행 조건을 다시 관찰하세요.","Revisit the bits and conditions.")):tr("답을 고른 뒤 확인하세요.","Choose your answer before checking."))+'</div></section>'+
+ (l.scene==="operators"?operatorExperiment(s):'')+'<div class="c191-grid"><section class="c191-panel"><h3>'+tr("예상 결과 먼저 생각하기","Predict before running")+'</h3><p>'+esc(tr(l.qko,l.qen))+'</p><div class="c191-quiz">'+answerLabels.map((answer,i)=>'<label><input name="c191-answer" type="radio" value="'+i+'" '+(s.choice===i?"checked":"")+'/> '+esc(answer)+'</label>').join("")+'</div><div class="c191-task">'+btn(tr("예측 확인","Check prediction"),"check")+'</div><div class="c191-result" role="status">'+(s.checked?(s.choice===l.correct?tr("정답입니다. 코드와 장치의 관계를 설명해 보세요.","Correct. Explain the code-device relationship."):tr("비트와 실행 조건을 다시 관찰하세요.","Revisit the bits and conditions.")):tr("답을 고른 뒤 확인하세요.","Choose your answer before checking."))+'</div></section>'+
  '<section class="c191-panel"><h3>'+tr("원리 설명과 응용","Explain and apply")+'</h3><p>'+esc(tr(l.insightKo,l.insightEn))+'</p><label for="c191-note">'+tr("내 생각 기록","My reasoning notes")+'</label><textarea id="c191-note" rows="4" style="width:100%;background:var(--els-surface-alt);color:var(--els-ink);border:1px solid var(--els-border);border-radius:8px;padding:9px">'+esc(s.note)+'</textarea><div class="c191-task">'+btn(done.includes(selected)?tr("학습 기록됨 ✓","Reviewed ✓"):tr("학습 확인 기록","Record review"),"complete")+'</div></section></div>'+
  '<nav class="c191-links"><a href="./practice/#p'+Math.min(selected+1,6)+'">'+tr("관련 Coding Challenge","Related Coding Challenge")+' →</a>'+(selected<10?'<a href="#s'+(selected+2)+'">'+tr("다음 Section","Next section")+' →</a>':'')+'</nav></div>';
  renderNav();
@@ -176,6 +202,7 @@ function refreshVisual(){
  const lines=stage.querySelectorAll(".c191-line"),s=S();
  const runBtn=stage.querySelector('button[data-action="run"]');if(runBtn)runBtn.textContent=timer!==null?tr("일시정지","Pause"):"Run";
  lines.forEach((el,i)=>el.classList.toggle("current",s.step>0&&i===Math.min(lines.length-1,s.step-1)));
+ if(D.lessons[selected].scene==="operators")byId("c191-visual").innerHTML=sceneHTML();
  save();
 }
 nav.addEventListener("click",event=>{
@@ -193,10 +220,11 @@ stage.addEventListener("click",event=>{
   else {if(s.step>=D.lessons[selected].code.split("\n").length){s.step=0;s.byte=initialFor(selected).byte;s.changed=0;if(s.prediction)s.prediction.observed=false;}play();return;}
  }
  if(action!=="run")stop();
- if(action==="step"){advance();if(s.prediction?.observed){render();return;}}
+ if(action==="step"){advance();if(scene==="operators"||s.prediction?.observed){render();return;}}
+ if(action==="reset-operator"){s.experimentByte=5;s.experimentTrace="";}
  if(action==="reset-step"){const original=initialFor(selected);s.byte=original.byte;s.step=0;s.build=0;s.calls=0;s.changed=0;s.prediction=null;s.trace=tr("초기 상태 복원","Initial state restored");}
  if(action==="mask"){const before=s.byte;if(s.op==="set")s.byte|=mask;else if(s.op==="clear")s.byte&=~mask;else if(s.op==="toggle")s.byte^=mask;s.byte&=255;s.changed=before^s.byte;s.step=0;s.trace=maskExpression(s)+"; "+hex(before)+" → "+hex(s.byte);markObserved(s);}
- if(action==="operator"){const n=s.byte,op=s.operator;s.byte=op==="and"?n&2:op==="or"?n|2:op==="xor"?n^2:op==="not"?(~n)&255:op==="left"?(n<<1)&255:n>>>1;s.changed=n^s.byte;s.step=0;s.trace=hex(n)+" "+({and:"& 0x02",or:"| 0x02",xor:"^ 0x02",not:"~ (8-bit)",left:"<< 1",right:">> 1"}[op])+" → "+hex(s.byte);markObserved(s);}
+ if(action==="operator"){const n=Number.isInteger(s.experimentByte)?s.experimentByte:5,op=s.operator;s.experimentByte=op==="and"?n&2:op==="or"?n|2:op==="xor"?n^2:op==="not"?(~n)&255:op==="left"?(n<<1)&255:n>>>1;s.experimentTrace=hex(n)+" "+({and:"& 0x02",or:"| 0x02",xor:"^ 0x02",not:"~ (8-bit)",left:"<< 1",right:">> 1"}[op])+" → "+hex(s.experimentByte);}
  if(action==="flag"){const before=s.byte,bit=Number(b.dataset.flag);s.byte=bit===-1?0:s.byte^(1<<bit);s.changed=before^s.byte;s.step=0;s.trace=tr("입력 변경","Input changed")+": "+hex(before)+" → "+hex(s.byte)+"; "+state(s.byte);markObserved(s);}
  if(action==="build")s.build=(s.build+1)%(scene==="modules"?5:3);
  if(action==="reset-build")s.build=0;
@@ -206,7 +234,7 @@ stage.addEventListener("click",event=>{
  if(action==="parse"){s.step=0;s.trace=tr("인자 분석 완료","Arguments parsed");}
  if(action==="check")s.checked=s.choice>=0;
  if(action==="complete"){if(!done.includes(selected))done.push(selected);save();render();return;}
- if(["mask","operator","flag","reset-step"].includes(action))render();else refreshVisual();
+ if(["mask","operator","reset-operator","flag","reset-step"].includes(action))render();else refreshVisual();
 });
 stage.addEventListener("change",event=>{
  const e=event.target,s=S();
