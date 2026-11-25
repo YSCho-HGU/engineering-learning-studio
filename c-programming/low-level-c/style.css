@@ -153,3 +153,20 @@
 .c191-memory>div{display:grid;align-content:center;gap:7px;min-height:90px}
 .c191-memory>div strong{overflow-wrap:anywhere}
 @media(prefers-reduced-motion:reduce){.c191-stage-list .c191-file.active{transition:none;transform:none}}
+
+/* Chapter 19 clarity pass: compact optional checks after the primary code-to-model flow. */
+.c191-concept-check{padding:0;overflow:hidden}
+.c191-concept-check>summary{cursor:pointer;list-style:none;padding:15px 18px;min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:750;color:var(--els-ink,#eaf2fc)}
+.c191-concept-check>summary::-webkit-details-marker{display:none}
+.c191-concept-check>summary:after{content:"+";font-weight:800;font-size:1.2rem;color:var(--els-muted,#bac4d0)}
+.c191-concept-check[open]>summary:after{content:"−"}
+.c191-concept-check>summary:focus-visible{outline:3px solid var(--els-link,#8abbd7);outline-offset:-3px}
+.c191-concept-body{border-top:1px solid var(--els-border,#40546c);padding:14px 18px 18px;display:grid;gap:10px}
+.c191-concept-body h3{font-size:1rem;margin:0}
+.c191-concept-body p{margin:0}
+.c191-concept-body .c191-task{margin:0}
+.c191-reflect{display:grid;gap:10px}
+.c191-reflect h3,.c191-reflect p{margin:0}
+.c191-reflect textarea{min-height:88px}
+.c191-flow>.c191-grid{align-items:start}
+@media(max-width:850px){.c191-concept-check>summary{padding:13px 14px}.c191-concept-body{padding:12px 14px 16px}}
