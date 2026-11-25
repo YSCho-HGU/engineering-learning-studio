@@ -43,6 +43,32 @@ try{
    assert.equal(result.progress,'test-progress',path+' preserved progress');
    assert.equal(result.savedLang,'en',path+' preserved language');
    assert.equal(result.savedTheme,index===0?'neutral-dark':'warm-neutral',path+' saved theme');
+   if(index===1){
+     const head=await page.evaluate(()=>{
+       const header=document.querySelector("header.site-header");
+       const nav=header?.querySelector(".header-nav");
+       const select=nav?.querySelector("#c-language");
+       const theme=nav?.querySelector("#theme");
+       const rect=x=>{const r=x.getBoundingClientRect();return{x:r.x,right:r.right,y:r.y,bottom:r.bottom,height:r.height}};
+       return {links:nav?.querySelectorAll("a").length,
+         selectors:nav?.querySelectorAll("select").length,
+         labels:[...select?.options||[]].map(o=>o.textContent.trim()),
+         lang:rect(select),theme:rect(theme),
+         navRect:rect(nav),headerRect:rect(header),
+         progressInHeader:!!header?.querySelector("#c-progress-link"),
+         progressInBody:!!document.querySelector(".course-intro #c-progress-link"),
+         overflow:document.documentElement.scrollWidth-innerWidth};
+     });
+     assert.equal(head.links,0,"C home must not show Learning Paths or Course Roadmap in header");
+     assert.equal(head.selectors,2,"C home header has only Language and Theme");
+     assert.deepEqual(head.labels,["ENG + 한국어","English","한국어"],"C home uses Studio Home language labels");
+     assert.ok(Math.abs(head.lang.height-34)<=1,"C home language picker matches Studio Home height");
+     assert.ok(Math.abs(head.theme.height-34)<=1,"C home theme picker matches Studio Home height");
+     assert.equal(head.progressInHeader,false,"progress link must not be inserted into display settings");
+     assert.equal(head.progressInBody,true,"learning progress is still accessible");
+     assert.ok(head.lang.x>=0&&head.theme.right<=width+2,"header selectors must fit viewport");
+     assert.ok(head.overflow<=3,"no horizontal scroll in C home");
+   }
    if(index===0){
      // Only the two currently published courses are interactive.
      const active=page.locator("#available-courses .course-card--available");
