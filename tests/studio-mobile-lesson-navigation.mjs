@@ -67,6 +67,23 @@ try{
     if(width>800)assert.ok(Math.abs(data.scrollY-desktopBefore)<=5,
       item.name+" desktop scroll changed by mobile handler: "+JSON.stringify({desktopBefore,...data}));
 
+    const visual=await page.evaluate(sel=>{
+      const root=document.querySelector(sel),heading=root?.querySelector("h1,h2,h3");
+      const paragraph=root?.querySelector("p"),code=root?.querySelector("pre,code");
+      const figures=[...root?.querySelectorAll("canvas,svg")||[]].filter(e=>{
+        const r=e.getBoundingClientRect();return r.width>30&&r.height>30&&getComputedStyle(e).display!=="none";
+      });
+      const size=e=>e?parseFloat(getComputedStyle(e).fontSize):null;
+      return {heading:size(heading),paragraph:size(paragraph),code:size(code),
+        figures:figures.length,figureWidths:figures.map(e=>Math.round(e.getBoundingClientRect().width)).slice(0,6)};
+    },item.target);
+    if(width<=800 && visual.heading!==null)assert.ok(visual.heading>=12,
+      item.name+" mobile heading too small: "+JSON.stringify(visual));
+    if(width<=800 && visual.paragraph!==null)assert.ok(visual.paragraph>=11,
+      item.name+" mobile body text too small: "+JSON.stringify(visual));
+    await page.screenshot({path:"tests/screenshots/mobile-navigation/content-"+item.name.replace(/[^a-z0-9]+/gi,"-")+"-"+width+".png",
+      fullPage:false,animations:"disabled"});
+    console.log("VISUAL",item.name,width,JSON.stringify(visual));
     if(width<=800&&item.name.startsWith("C ")){
       assert.equal(await page.locator("#lesson-nav details[open]").count(),0,
         item.name+" mobile lesson groups should close");
