@@ -96,7 +96,8 @@ for(const width of [390,1280]){
    await page.locator('#lesson-nav button[data-lesson="'+section+'"]').click();
    assert.equal(await page.locator('#lesson h2').count(),1,"heading section "+(section+1));
    assert.ok((await page.locator('.c191-code .c191-line').count())>=2,"code section "+(section+1));
-   assert.equal(await page.locator('#c191-visual .c191-terminal').count(),1,"result section "+(section+1));
+   if(section===1) assert.equal(await page.locator('#c191-visual .c191-op-variable').count(),3,"three C variables");
+   else assert.equal(await page.locator('#c191-visual .c191-terminal').count(),1,"result section "+(section+1));
    if([0,1,2,3,8,10].includes(section))
     assert.equal(await page.locator('.c191-prediction').count(),1,"prediction section "+(section+1));
    await page.locator('[data-action="reset-step"]').click();
