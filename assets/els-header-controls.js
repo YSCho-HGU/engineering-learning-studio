@@ -217,6 +217,40 @@
        "#lesson, .ss-layout-main, .ss-vertical-main, .ss-app-main, .ss-al-workspace, .ss-sys-root, main.main, main#app, main"
      );
    }
+
+   // A lightweight in-content return control: no sticky heading, no desktop layout impact.
+   function ensureReturnToLessons(){
+     if(!query.matches)return;
+     const toc=doc.querySelector("#lesson-nav, .ss-layout-sidebar nav");
+     const content=doc.querySelector("#lesson, .ss-layout-main");
+     if(!toc||!content)return;
+     let control=doc.getElementById("els-mobile-open-lessons");
+     if(!control){
+       control=doc.createElement("button");
+       control.id="els-mobile-open-lessons";
+       control.type="button";
+       control.className="els-mobile-open-lessons";
+       control.setAttribute("aria-label","Open lesson list / 학습 목차 열기");
+       control.textContent="☰  "+(win.ELSLanguage?.get?.()==="en"?"Lessons":"목차");
+       control.addEventListener("click",()=>{
+         if(!query.matches)return;
+         const side=toc.closest(".ss-layout-sidebar");
+         const toggle=side?.querySelector(".ss-mobile-index-toggle");
+         if(toggle&&toggle.getAttribute("aria-expanded")==="false")toggle.click();
+         else if(!side){
+           const current=toc.querySelector('[aria-current="step"], .current, .active');
+           const group=current?.closest("details")||toc.querySelector("details");
+           if(group)group.open=true;
+         }
+         const top=Math.max(0,win.scrollY+toc.getBoundingClientRect().top-12);
+         win.scrollTo({top,behavior:"instant"});
+         const focus=toggle&&toggle.offsetParent!==null?toggle:toc.querySelector("button,summary,a");
+         focus?.focus?.({preventScroll:true});
+       });
+     }
+     if(control.parentElement!==content)content.prepend(control);
+     control.textContent="☰  "+(win.ELSLanguage?.get?.()==="en"?"Lessons":"목차");
+   }
    // Only a student-initiated lesson selection closes the mobile course list.
    // Keep open/closed preferences and desktop navigation completely untouched.
    function collapseMobileList(control,token){
@@ -251,12 +285,13 @@
      if(!control||control.closest(".ss-common-header, .els-course-header"))return;
      if(control.matches("a")&&control.getAttribute("href")?.startsWith("http"))return;
      const token=++sequence;
-     win.requestAnimationFrame(()=>win.requestAnimationFrame(()=>{collapseMobileList(control,token);align(control,token);}));
+     ensureReturnToLessons();
+     win.requestAnimationFrame(()=>win.requestAnimationFrame(()=>{ensureReturnToLessons();collapseMobileList(control,token);align(control,token);}));
      win.setTimeout(()=>{collapseMobileList(control,token);align(control,token);},100);
      win.setTimeout(()=>align(control,token),260);
    });
  }
- function ready(){normalize();setupMobileLessonScroll();win.addEventListener("els:themechange",()=>normalize());}
+ function ready(){normalize();setupMobileLessonScroll();win.addEventListener("els:themechange",()=>normalize());win.ELSLanguage?.subscribe?.(()=>{const b=doc.getElementById("els-mobile-open-lessons");if(b)b.textContent="☰  "+(win.ELSLanguage.get()==="en"?"Lessons":"목차");});}
  if(doc.readyState==="loading")doc.addEventListener("DOMContentLoaded",ready,{once:true});else ready();
  win.ELSHeaderControls=Object.freeze({normalize:()=>normalize(),mountSlots,createCourseHeader,makeNavigationArrow,themes:win.ELSTheme?.options?.slice()||[]});
 })(window,document);
