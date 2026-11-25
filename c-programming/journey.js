@@ -414,4 +414,53 @@ function init(){
  window.addEventListener("hashchange",()=>{if(hashLab()>=0&&hashLab()<labSpecs.length)showLab(hashLab());else if(/^#step-\d+$/.test(location.hash))show(hashStep())});
 }
 init();
+// Language changes update the current lesson or Guided Lab without navigation.
+// Keep user input, open explanations, expanded TOC groups and scroll position.
+document.addEventListener("c-language-content-change",()=>{
+ const stage=$("lesson"),oldScroll={x:window.scrollX,y:window.scrollY};
+ const oldFields=[...stage.querySelectorAll("input,select,textarea")];
+ const state=oldFields.map(node=>({
+  tag:node.tagName,type:node.type,name:node.name,value:node.value,
+  checked:node.checked,start:node.tagName==="TEXTAREA"?node.selectionStart:null,
+  end:node.tagName==="TEXTAREA"?node.selectionEnd:null
+ }));
+ const focused=oldFields.indexOf(document.activeElement);
+ const opened=[...stage.querySelectorAll("details")].map(node=>node.open);
+ const explanations=[...stage.querySelectorAll(".explain,.feedback")].map(node=>({
+  hidden:node.hidden,text:node.textContent
+ }));
+ const keepStep=current,keepLab=activeLab;
+ $("hero-title").textContent=D.title;
+ richText($("hero-summary"),D.summary);
+ $("phase-one").textContent=D.phases[0];
+ $("phase-two").textContent=D.phases[1];
+ $("phase-three").textContent=D.phases[2];
+ if(keepLab>=0)showLab(keepLab);else show(keepStep);
+ const updated=[...stage.querySelectorAll("input,select,textarea")];
+ state.forEach((saved,i)=>{
+  const node=updated[i];
+  if(!node||node.tagName!==saved.tag||node.type!==saved.type||node.name!==saved.name)return;
+  if(node.type==="radio"||node.type==="checkbox")node.checked=saved.checked;
+  else node.value=saved.value;
+  if(node.type==="range")node.dispatchEvent(new Event("input",{bubbles:true}));
+  if(node.tagName==="TEXTAREA"&&saved.start!==null)node.setSelectionRange(saved.start,saved.end);
+ });
+ [...stage.querySelectorAll("details")].forEach((node,i)=>{if(i<opened.length)node.open=opened[i]});
+ const currentExplanations=[...stage.querySelectorAll(".explain,.feedback")];
+ currentExplanations.forEach((node,i)=>{
+  if(!explanations[i]||explanations[i].hidden)return;
+  if(node.classList.contains("explain")){
+   const reveal=node.previousElementSibling;
+   if(reveal?.tagName==="BUTTON")reveal.click();
+  }else if(node.classList.contains("feedback")){
+   const section=node.closest(".quiz");
+   const check=section?.querySelector("button");
+   if(check)check.click();
+  }
+ });
+ if(focused>=0&&updated[focused])updated[focused].focus({preventScroll:true});
+ updateAssessmentSummary();
+ window.ELSCourseShell?.refreshArrows?.();
+ requestAnimationFrame(()=>window.scrollTo(oldScroll.x,oldScroll.y));
+});
 })();

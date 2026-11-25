@@ -62,26 +62,70 @@ try{
   });
   const response=await page.goto(url,{waitUntil:"domcontentloaded",timeout:30000});
   assert.equal(response?.status(),200,"C Functions not served");
+  // Select a non-first topic without changing the URL. Changing language must
+  // leave the live document and selected topic in place, just as S&S does.
+  await page.locator('#lesson-nav button[data-lesson="3"]').click();
+  const selectedGoal=await page.evaluate(()=>window.C_JOURNEY.lessons[3].goal);
+  assert.ok(selectedGoal.length>8,"Fourth C Functions topic exists");
+  await page.evaluate(()=>{window.__cLanguagePageIdentity="same-document"});
+  const topicTitle=()=>page.locator("#lesson h2").first().innerText();
   for(const mode of ["mixed","en","ko","mixed"]){
     const current=await page.evaluate(()=>window.ELSLanguage?.get());
-    if(current!==mode){
-      await Promise.all([
-        page.waitForNavigation({waitUntil:"domcontentloaded",timeout:15000}),
-        page.locator("#c-shared-language select").selectOption(mode)
-      ]);
-    }
+    if(current!==mode)await page.locator("#c-shared-language select").selectOption(mode);
     await page.waitForFunction(m=>{
       return window.ELSLanguage?.get()===m &&
         document.querySelector("#c-shared-language select")?.value===m &&
         !!window.C_JOURNEY?.lessons?.[0]?.goal;
     },mode,{timeout:15000});
-    // Language choice reloads the page; wait for projection to be available.
-    await page.waitForTimeout(350);
+    await page.waitForFunction(m=>{
+      const topic=document.querySelector("#lesson h2");
+      const expected=window.C_JOURNEY?.lessons?.[3]?.title;
+      return topic?.textContent===expected && window.ELSLanguage?.get()===m;
+    },mode,{timeout:12000});
+    assert.equal(await page.evaluate(()=>window.__cLanguagePageIdentity),"same-document",
+      mode+" language change must not reload the C chapter");
+    assert.equal(await page.locator('#lesson-nav button[aria-current="step"]').getAttribute("data-lesson"),
+      "3",mode+" must keep current C topic");
     const result=await inspect(page);
     verify(result,mode);
     console.log("PASS: C Functions body language mode",mode);
   }
   await context.close();
+
+  // Coding practice: retain P3 and an edited C draft across all modes.
+  const editorContext=await browser.newContext({viewport:{width:1280,height:900}});
+  await editorContext.addInitScript(()=>localStorage.setItem("els-language","mixed"));
+  const editorTab=await editorContext.newPage();
+  const draft="/* keep this work */\\nint main(void){return 7;}";
+  await editorTab.goto(root+"c-programming/functions/practice/",{waitUntil:"domcontentloaded"});
+  await editorTab.locator(".cp-nav-item").nth(2).click();
+  await editorTab.locator("#cp-editor").fill(draft);
+  await editorTab.evaluate(()=>{window.__cPracticeIdentity="same-document"});
+  await editorTab.locator("#c-shared-language select").selectOption("en");
+  await editorTab.waitForFunction(()=>window.ELSLanguage?.get()==="en");
+  assert.equal(await editorTab.locator("#cp-editor").inputValue(),draft,"C draft preserved");
+  assert.equal(await editorTab.locator(".cp-nav-item.active").innerText().then(x=>x.slice(0,2)),"P3",
+    "Coding Practice remains on P3");
+  assert.equal(await editorTab.evaluate(()=>window.__cPracticeIdentity),"same-document",
+    "Practice language change must not reload");
+  await editorContext.close();
+
+  // The static File I/O lesson must also keep its current active stage.
+  const fileContext=await browser.newContext({viewport:{width:1280,height:900}});
+  await fileContext.addInitScript(()=>localStorage.setItem("els-language","mixed"));
+  const fileTab=await fileContext.newPage();
+  await fileTab.goto(root+"c-programming/file-io/",{waitUntil:"domcontentloaded"});
+  await fileTab.locator("#lesson-nav [data-nav]").nth(3).click();
+  const fileStage=await fileTab.locator(".stage[data-stage]:not([hidden])").first().getAttribute("data-stage");
+  assert.notEqual(fileStage,"0","File I/O stage moved away from first topic");
+  await fileTab.evaluate(()=>{window.__cFileIdentity="same-document"});
+  await fileTab.locator("#c-shared-language select").selectOption("en");
+  await fileTab.waitForFunction(()=>window.ELSLanguage?.get()==="en");
+  assert.equal(await fileTab.locator(".stage[data-stage]:not([hidden])").first().getAttribute("data-stage"),
+    fileStage,"File I/O current stage preserved");
+  assert.equal(await fileTab.evaluate(()=>window.__cFileIdentity),"same-document",
+    "File I/O language change must not reload");
+  await fileContext.close();
 
   // AI-Assisted Coding and File I/O Guided Labs have their own translation
   // engines. Removing the shared right-hand select must not strand either.

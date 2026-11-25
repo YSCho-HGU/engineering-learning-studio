@@ -172,4 +172,28 @@ download.addEventListener("click",()=>{
 const hashTask=()=>{const match=/^#p(\d+)$/i.exec(location.hash);return match?Math.max(0,Math.min(d.practice.length-1,Number(match[1])-1)):0};
 show(hashTask());
 window.addEventListener("hashchange",()=>show(hashTask()));
+// The content model has already been re-projected by c-programming/language.js.
+// Repaint the same challenge, retaining the editor, saved draft and verification.
+document.addEventListener("c-language-content-change",()=>{
+ const oldScroll={x:window.scrollX,y:window.scrollY};
+ const editing=document.activeElement===editor,from=editor.selectionStart,to=editor.selectionEnd;
+ const hints=[...guideSection.querySelectorAll(".cp-guided-hint")].map(node=>!node.hidden);
+ const expanded=more.open;
+ persistDraft();
+ navButtons.forEach((button,i)=>{button.textContent=taskHeading(i)});
+ scenarioTitle.textContent=ui("문제 상황 · 무엇을 만들까요?","Scenario · What are you building?");
+ stepsTitle.textContent=ui("코드 작성 순서 · 단계별 가이드","Writing the Code · Step by Step");
+ checkTitle.textContent=ui("실행 결과 확인","Verify Your Result");
+ show(selection);
+ more.open=expanded;
+ [...guideSection.querySelectorAll(".cp-guided-hint")].forEach((hint,i)=>{
+  if(!hints[i])return;
+  hint.hidden=false;
+  const button=hint.previousElementSibling;
+  if(button){button.setAttribute("aria-expanded","true");button.textContent=ui("단계 ","Step ")+(i+1)+ui(" · 힌트 닫기"," · Hide hint")}
+ });
+ if(editing){editor.focus({preventScroll:true});editor.setSelectionRange(from,to)}
+ window.ELSCourseShell?.refreshArrows?.();
+ requestAnimationFrame(()=>window.scrollTo(oldScroll.x,oldScroll.y));
+});
 })();

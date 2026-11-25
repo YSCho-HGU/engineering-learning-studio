@@ -5,7 +5,7 @@ const language=window.ELSLanguage;
 if(!language)throw Error("Load assets/els-language.js before c-programming/language.js");
 const original=window.C_JOURNEY;
 const english=window.C_JOURNEY_EN;
-const lang=language.get();
+let lang=language.get();
 const pristine=original?JSON.parse(JSON.stringify(original)):null;
 function applyContent(mode){
  if(!original||!pristine)return;
@@ -110,11 +110,17 @@ function setup(){
  }
  renderLang();observer.observe(document.body,{subtree:true,childList:true,characterData:true});
 }
-/* Existing C engines construct lesson and task content at initialization.
-   A language switch requires one page refresh; progress/editor drafts remain
-   under the original stable keys, independent of translation data. */
+/* Keep the current learning activity in place. Re-project from immutable
+   Korean/English originals, then notify the live lesson/practice renderers.
+   Reloading here used to return hashless C lessons to their first topic. */
 language.subscribe(next=>{
- if(next!==lang)location.reload();
+ if(next===lang)return;
+ observer.disconnect();
+ lang=next;
+ applyContent(next);
+ document.dispatchEvent(new CustomEvent("c-language-content-change",{detail:{lang:next}}));
+ renderLang();
+ observer.observe(document.body,{subtree:true,childList:true,characterData:true});
 });
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",setup,{once:true});else setup();
 })();
