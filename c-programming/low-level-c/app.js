@@ -18,10 +18,11 @@ if(match)selected=Math.max(0,Math.min(10,Number(match[1])-1));
 let states=read("els-c191-model-v1",{}),done=read("els-c191-done-v1",[]);
 if(!states||typeof states!=="object"||Array.isArray(states))states={};
 if(!Array.isArray(done))done=[];
-const initialFor=i=>{const v=initial();if(i===1){v.byte=0;v.step=0;v.operator="or";v.experimentByte=5;}else if(i===2)v.byte=4;else if(i===3)v.byte=0;return v;};
+const initialFor=i=>{const v=initial();if(i===0)v.byte=0;else if(i===1){v.byte=0;v.step=0;v.operator="or";v.experimentByte=5;}else if(i===2)v.byte=0;else if(i===3)v.byte=0;return v;};
 const S=()=>states[selected]||(states[selected]=initialFor(selected));
 // Versioned reset: older Chapter 19.2 records used a sensor byte, not three variables.
 if(states[1]&&!states[1].operatorModelV2){const keep={note:states[1].note||"",choice:states[1].choice??-1};states[1]={...initialFor(1),...keep,operatorModelV2:true};}
+for(const i of [0,2,3,8,10])if(states[i]&&!states[i].executionTraceV3){const p=states[i];states[i]={...initialFor(i),note:p.note||"",choice:p.choice??-1,checked:!!p.checked,executionTraceV3:true};}
 const save=()=>{try{localStorage.setItem("els-c191-model-v1",JSON.stringify(states));localStorage.setItem("els-c191-done-v1",JSON.stringify(done))}catch(e){}};
 const nav=byId("lesson-nav"),stage=byId("lesson");
 const btn=(label,action)=>'<button type="button" data-action="'+action+'">'+label+'</button>';
@@ -187,6 +188,35 @@ function specializedScene(s,scene){
  return "";
 }
 
+
+function branchPath(s,scene){
+ const error=!!(s.byte&18),ready=!!(s.byte&1);
+ if(scene==="state")return error?[0,1,2]:ready?[0,1,3,4]:[0,1,3,5,6];
+ if(scene==="capstone")return error?[0,1,2]:ready?[0,1,3]:[0,1,3,4];
+ return [];
+}
+function traceLimit(s,scene){
+ if(scene==="state"||scene==="capstone")return branchPath(s,scene).length;
+ if(scene==="preprocessor")return 4;
+ if(scene==="modules")return 5;
+ if(scene==="cli"){const m=traceModel(s,scene);return m.valid?(m.passed?5:4):2;}
+ if(scene==="lifetime")return Infinity;
+ return D.lessons[selected].code.split("\n").length;
+}
+function unknownByte(label){
+ return '<div class="c191-uninitialized" role="status"><strong>'+esc(label)+' · '+tr("아직 초기화되지 않음","Not initialized yet")+'</strong>'+
+ '<div class="c191-op-unknown-bits">'+Array.from({length:8},(_,i)=>'<span><small>b'+(7-i)+'</small><b>?</b></span>').join("")+'</div></div>';
+}
+function conceptSceneHTML(s,scene){
+ if(scene==="bits")return (s.step<2?unknownByte("status"):bits(s))+'<p class="c191-caption">'+tr("숫자 181의 8-bit 표현을 관찰합니다.","Observe the eight-bit representation of decimal 181.")+'</p>';
+ if(scene==="optional"){
+  const stages=[["union Data",tr("공유 저장 공간 선언","Shared storage declaration")],["function pointer",tr("함수 포인터 선언","Function pointer declaration")],["#ifdef DEBUG",tr("조건부 컴파일 지시문","Conditional compilation directive")]];
+  return '<div class="c191-stage-list">'+stages.map(([name,desc],i)=>'<div class="c191-file '+(s.step===i+1?"active":"")+'"><small>'+desc+'</small><strong>'+name+'</strong></div>').join("")+'</div>'+
+  '<p class="c191-caption">'+tr("서로 독립된 개념을 소스 순서대로 살펴봅니다. 이는 실행 시뮬레이션이 아닌 코드 해설입니다.","These are separate concepts inspected in source order, not an executable program.")+'</p>';
+ }
+ return "";
+}
+
 function sceneHTML(){
  const s=S(),scene=D.lessons[selected].scene;
  let html='<h3>'+sceneTitle(scene)+'</h3>';
@@ -194,8 +224,8 @@ function sceneHTML(){
  else if(["preprocessor","modules","lifetime","cli"].includes(scene))html+=specializedScene(s,scene);
  else if(["bits","optional"].includes(scene))html+=conceptSceneHTML(s,scene);
  else if(["register","state","capstone","review"].includes(scene)){
-  html+=bits(s);
-  if(["register","state","capstone"].includes(scene))html+=device(s);
+  html+=(scene==="register"&&s.step===0?unknownByte("led"):bits(s));
+  if(["register","state","capstone"].includes(scene)&&!(scene==="register"&&s.step===0))html+=device(s);
   if(scene==="state"||scene==="capstone"){
    html+='<p class="c191-caption">'+tr("우선순위: ERROR/ALARM → READY → IDLE","Priority: ERROR/ALARM → READY → IDLE")+'</p>'+
    '<div class="c191-states">'+["IDLE","RUNNING","ERROR_STATE"].map(v=>'<span class="c191-state '+(state(s.byte)===v?"active":"")+'">'+v+'</span>').join("")+'</div>';
@@ -208,32 +238,38 @@ function sceneHTML(){
 }
 function advance(){
  const s=S(),scene=D.lessons[selected].scene,lines=D.lessons[selected].code.split("\n");
- const special=["preprocessor","modules","lifetime","cli"].includes(scene);
- const model=traceModel(s,scene);
- const max=scene==="preprocessor"?4:scene==="modules"?5:scene==="cli"?(model.valid?(model.passed?5:4):2):scene==="lifetime"?Infinity:lines.length;
- if(s.step>=max)return false;
- const before=s.byte;s.step++;
- if(scene==="operators"){s.byte=s.step===3?7:0;s.trace=["","a = 0x05 (0000 0101)","b = 0x02 (0000 0010)","result = a | b = 0x07 (0000 0111)"][s.step];}
- if(scene==="register"&&s.step===2)s.byte=0x04|2;
- if(scene==="bits"&&s.step===2)s.byte=181;
- if(special){
-  const now=traceModel(s,scene);
-  s.focus=now.focus;
-  s.trace=now.message;
+ const limit=traceLimit(s,scene);
+ if(s.step>=limit)return false;
+ const before=s.byte;
+ let focus=null;
+ if(scene==="operators"){s.step++;s.byte=s.step===3?7:0;s.trace=["","a = 0x05 (0000 0101)","b = 0x02 (0000 0010)","result = a | b = 0x07 (0000 0111)"][s.step];focus=s.step-1;}
+ else if(scene==="state"||scene==="capstone"){
+  const path=branchPath(s,scene);
+  focus=path[s.step++];
+  if(scene==="state"){if(focus===2)s.decoded="ERROR_STATE";else if(focus===4)s.decoded="RUNNING";else if(focus===6)s.decoded="IDLE";}
+  else if(focus===2)s.decoded="ERROR_STATE";else if(focus===3&&(s.byte&1))s.decoded="RUNNING";else if(focus===4)s.decoded="IDLE";
+  s.trace=tr("실행한 문장: ","Executed line: ")+lines[focus].trim();
+  if(s.step===path.length)s.trace+=" · "+tr("해당 분기 종료","branch complete");
+ }
+ else if(["preprocessor","modules","lifetime","cli"].includes(scene)){
+  s.step++;const m=traceModel(s,scene);focus=m.focus;s.trace=m.message;
   if(scene==="lifetime")s.calls=Math.floor(s.step/4);
  }else{
-  s.focus=s.step-1;
-  s.trace=scene==="operators"?s.trace:tr("실행 단계 ","Execution step ")+s.step+"/"+lines.length+": "+lines[s.focus].trim()+
-   (before!==s.byte?" · "+hex(before)+" → "+hex(s.byte):"");
+  focus=s.step++;
+  if(scene==="bits"&&focus===1)s.byte=181;
+  if(scene==="register"&&focus===0)s.byte=4;
+  if(scene==="register"&&focus===1)s.byte=(s.byte|2)&255;
+  if(scene==="review"&&focus===1)s.byte=(s.byte&~32)&255;
+  s.trace=tr("실행한 문장: ","Executed line: ")+lines[focus].trim()+(before!==s.byte?" · "+hex(before)+" → "+hex(s.byte):"");
  }
- if(s.step===max||(scene==="register"&&s.step===2))markObserved(s);
- s.changed=(before^s.byte)&255;
+ s.focus=focus;s.changed=(before^s.byte)&255;
+ if(s.step===limit||(scene==="register"&&focus===1))markObserved(s);
  return true;
 }
 function play(){
  if(!advance()){stop();refreshVisual();return;}
  if(["preprocessor","modules","lifetime","cli"].includes(D.lessons[selected].scene)||S().prediction?.observed)render();
- if((D.lessons[selected].scene==="lifetime"&&S().step%4!==0)||(!["lifetime","preprocessor","modules","cli"].includes(D.lessons[selected].scene)&&S().step<D.lessons[selected].code.split("\n").length)||(["preprocessor","modules","cli"].includes(D.lessons[selected].scene)&&!traceModel(S(),D.lessons[selected].scene).done))timer=setTimeout(play,650);
+ if((D.lessons[selected].scene==="lifetime"&&S().step%4!==0)||(D.lessons[selected].scene!=="lifetime"&&S().step<traceLimit(S(),D.lessons[selected].scene)))timer=setTimeout(play,650);
  else stop();
  refreshVisual();
 }
@@ -315,22 +351,22 @@ nav.addEventListener("click",event=>{
 stage.addEventListener("click",event=>{
  const b=event.target.closest("button[data-action],button[data-bit]");if(!b)return;
  const s=S(),scene=D.lessons[selected].scene;
- if(b.dataset.bit!==undefined){stop();const before=s.byte;s.byte^=1<<Number(b.dataset.bit);s.byte&=255;s.changed=before^s.byte;s.step=0;s.trace="b"+b.dataset.bit+": "+hex(before)+" → "+hex(s.byte);markObserved(s);render();return;}
+ if(b.dataset.bit!==undefined){stop();const before=s.byte;s.byte^=1<<Number(b.dataset.bit);s.byte&=255;s.changed=before^s.byte;s.step=0;s.decoded=null;s.focus=null;s.trace="b"+b.dataset.bit+": "+hex(before)+" → "+hex(s.byte);markObserved(s);render();return;}
  const action=b.dataset.action,mask=1<<s.target;
  if(action==="predict-save"){const stateOnly=scene==="state"||scene==="capstone";const input=byId("c191-pred-byte");const n=stateOnly?s.byte:Number(input?.value);if(!stateOnly&&(!input?.value.trim()||!Number.isInteger(n)||n<0||n>255)){input?.setCustomValidity(tr("0–255 정수를 입력하세요.","Enter an integer from 0 to 255."));input?.reportValidity();return;}s.prediction={expectedByte:n,expectedState:stateOnly?byId("c191-pred-state").value:state(n),observed:false};save();render();return;}
  if(action==="predict-edit"){s.prediction=null;save();render();return;}
  if(action==="run"){
   if(timer!==null)stop();
-  else {if(s.step>=D.lessons[selected].code.split("\n").length&& !["preprocessor","modules","lifetime","cli"].includes(scene)){s.step=0;s.focus=null;s.byte=initialFor(selected).byte;s.changed=0;if(s.prediction)s.prediction.observed=false;}play();return;}
+  else {if(s.step>=traceLimit(s,scene)&& !["preprocessor","modules","lifetime","cli"].includes(scene)){s.step=0;s.focus=null;s.byte=initialFor(selected).byte;s.decoded=null;s.changed=0;if(s.prediction)s.prediction.observed=false;}play();return;}
  }
  if(action!=="run")stop();
  if(action==="step"){advance();if(["operators","preprocessor","modules","lifetime","cli"].includes(scene)||s.prediction?.observed){render();return;}}
  if(action==="reset-operator"){s.experimentByte=5;s.experimentTrace="";}
- if(action==="reset-step"){const original=initialFor(selected);s.byte=original.byte;s.step=0;s.focus=null;s.build=0;s.calls=0;s.parsed=false;s.changed=0;s.prediction=null;s.trace=tr("초기 상태 복원","Initial state restored");}
+ if(action==="reset-step"){const original=initialFor(selected);s.byte=original.byte;s.step=0;s.focus=null;s.decoded=null;s.build=0;s.calls=0;s.parsed=false;s.changed=0;s.prediction=null;s.trace=tr("초기 상태 복원","Initial state restored");}
  if(action==="mask"){const before=Number.isInteger(s.maskByte)?s.maskByte:s.byte;let n=before;if(s.op==="set")n|=mask;else if(s.op==="clear")n&=~mask;else if(s.op==="toggle")n^=mask;s.maskByte=n&255;s.maskTrace=maskExpression(s)+"; "+hex(before)+" → "+hex(s.maskByte);}
  if(action==="reset-mask"){s.maskByte=undefined;s.maskTrace="";}
  if(action==="operator"){const n=Number.isInteger(s.experimentByte)?s.experimentByte:5,op=s.operator;s.experimentByte=op==="and"?n&2:op==="or"?n|2:op==="xor"?n^2:op==="not"?(~n)&255:op==="left"?(n<<1)&255:n>>>1;s.experimentTrace=hex(n)+" "+({and:"& 0x02",or:"| 0x02",xor:"^ 0x02",not:"~ (8-bit)",left:"<< 1",right:">> 1"}[op])+" → "+hex(s.experimentByte);}
- if(action==="flag"){const before=s.byte,bit=Number(b.dataset.flag);s.byte=bit===-1?0:s.byte^(1<<bit);s.changed=before^s.byte;s.step=0;s.trace=tr("입력 변경","Input changed")+": "+hex(before)+" → "+hex(s.byte)+"; "+state(s.byte);markObserved(s);}
+ if(action==="flag"){const before=s.byte,bit=Number(b.dataset.flag);s.byte=bit===-1?0:s.byte^(1<<bit);s.changed=before^s.byte;s.step=0;s.decoded=null;s.focus=null;s.trace=tr("입력 변경","Input changed")+": "+hex(before)+" → "+hex(s.byte)+"; "+state(s.byte);markObserved(s);}
  if(action==="build")s.build=(s.build+1)%(scene==="modules"?5:3);
  if(action==="reset-build"){s.build=0;s.step=0;s.focus=null;}
  if(action==="call"){const remaining=4-(s.step%4);for(let j=0;j<remaining;j++)advance();}
