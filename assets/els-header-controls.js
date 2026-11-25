@@ -275,10 +275,10 @@
    }
    // Only a student-initiated lesson selection closes the mobile course list.
    // Keep open/closed preferences and desktop navigation completely untouched.
-   function collapseMobileList(control,token){
+   function collapseMobileList(control,token,wasLessonNav){
      if(token!==sequence||!query.matches)return;
      const toc=doc.getElementById("lesson-nav");
-     if(toc&&toc.contains(control)||toc&&control.closest?.("#lesson-nav")){
+     if(toc&&wasLessonNav){
        toc.querySelectorAll("details[open]").forEach(group=>{group.open=false;});
      }
      const sidebar=control.closest?.(".ss-layout-sidebar");
@@ -307,8 +307,9 @@
      if(!control||control.closest(".ss-common-header, .els-course-header"))return;
      if(control.matches("a")&&control.getAttribute("href")?.startsWith("http"))return;
      const token=++sequence;
+     const wasLessonNav=!!control.closest("#lesson-nav");
      ensureReturnToLessons();
-     win.requestAnimationFrame(()=>win.requestAnimationFrame(()=>{ensureReturnToLessons();collapseMobileList(control,token);align(control,token);}));
+     win.requestAnimationFrame(()=>win.requestAnimationFrame(()=>{ensureReturnToLessons();collapseMobileList(control,token,wasLessonNav);align(control,token);}));
      win.setTimeout(()=>{collapseMobileList(control,token);align(control,token);},100);
      win.setTimeout(()=>align(control,token),260);
    });
