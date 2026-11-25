@@ -170,3 +170,10 @@
 .c191-reflect textarea{min-height:88px}
 .c191-flow>.c191-grid{align-items:start}
 @media(max-width:850px){.c191-concept-check>summary{padding:13px 14px}.c191-concept-body{padding:12px 14px 16px}}
+
+/* C execution fidelity: uninitialized reference values have no fabricated bit pattern. */
+.c191-uninitialized{display:grid;gap:12px;margin:14px 0;padding:14px;border-radius:10px;border:1px dashed var(--els-border,#40546c);background:var(--els-surface-alt,#26394e)}
+.c191-uninitialized>strong{font-size:.9rem;color:var(--els-muted,#bac4d0)}
+.c191-uninitialized .c191-op-unknown-bits{max-width:100%;grid-template-columns:repeat(8,minmax(0,1fr))}
+.c191-uninitialized .c191-op-unknown-bits>span{min-width:0}
+@media(max-width:480px){.c191-uninitialized{padding:10px}.c191-uninitialized .c191-op-unknown-bits small{font-size:.55rem}}
