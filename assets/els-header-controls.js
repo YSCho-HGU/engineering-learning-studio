@@ -212,7 +212,7 @@
      );
    }
    function align(control,token){
-     if(token!==sequence||!query.matches||!control.isConnected)return;
+     if(token!==sequence||!query.matches)return;
      const target=targetFor(control);
      if(!target||target.hidden)return;
      const header=doc.querySelector("body > header.ss-common-header, body > header.els-course-header, body > header.site-header");
