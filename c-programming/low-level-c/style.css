@@ -1,0 +1,61 @@
+/* Chapter 19: one shared visual learning grammar across all 11 sections. */
+.c191-eyebrow{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:var(--els-link,#8abbd7)}
+.c191-caption{font-size:.88rem;color:var(--els-muted,#bac4d0);line-height:1.6}
+.c191-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;min-width:0}
+.c191-grid>*{min-width:0}
+.c191-panel{background:var(--els-surface,#1c293a);border:1px solid var(--els-border,#40546c);border-radius:14px;padding:18px;min-width:0}
+.c191-panel>h3{font-size:1.08rem;margin:0 0 9px;color:var(--els-ink,#eaf2fc)}
+.c191-flow{display:grid;gap:14px}
+.c191-flow article h2{font-size:clamp(1.5rem,2.5vw,2.1rem);line-height:1.28;margin:6px 0 9px}
+.c191-story{border-left:4px solid var(--els-link,#7db9df);padding:13px 17px;background:var(--els-surface-alt,#26394e);border-radius:0 10px 10px 0}
+.c191-story p{margin:5px 0;font-size:1rem;line-height:1.75}
+.c191-task{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:10px 0}
+.c191-task button,.c191-task select,.c191-task input{border:1px solid var(--els-border,#40546c);background:var(--els-surface-alt,#26394e);color:var(--els-ink,#eaf2fc);border-radius:8px;padding:8px 12px;min-height:42px;font:inherit}
+.c191-task button{cursor:pointer;font-weight:650}
+.c191-task button:hover{border-color:var(--els-link,#7db9df)}
+.c191-task button:focus-visible,.c191-bit:focus-visible,.c191-nav:focus-visible{outline:3px solid var(--els-link,#7db9df);outline-offset:2px}
+.c191-task input[type=number]{width:95px}
+.c191-code{font:14px/1.8 ui-monospace,Consolas,monospace;color:#e9f4ff;background:#132033;padding:13px;border-radius:10px;overflow:auto;white-space:pre;tab-size:4}
+.c191-line{display:block;border-left:3px solid transparent;padding-left:8px;min-height:25px}
+.c191-line.current{background:#235653;border-left-color:#6cf1c0;color:#fff}
+.c191-bits{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin:15px 0}
+.c191-bit{border-radius:9px;border:1px solid var(--els-border,#40546c);display:grid;gap:3px;justify-items:center;padding:9px 1px;min-width:0;background:var(--els-surface-alt,#26394e);color:var(--els-ink,#eaf2fc);cursor:pointer;transition:background .22s,transform .22s}
+.c191-bit.on{background:var(--els-info-bg,#244e41);border-color:var(--els-link,#8abbd7)}
+.c191-bit.hot{box-shadow:inset 0 0 0 2px var(--els-link,#8abbd7);transform:translateY(-2px)}
+.c191-bit b{font-size:clamp(16px,2.1vw,24px)}
+.c191-bit small{font-size:.67rem}
+.c191-metrics{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.c191-metrics span{padding:8px 12px;background:var(--els-surface-alt,#26394e);border:1px solid var(--els-border,#40546c);border-radius:8px;font:650 .82rem ui-monospace,Consolas,monospace}
+.c191-leds{display:flex;justify-content:space-around;gap:8px;flex-wrap:wrap;margin:14px 0}
+.c191-led{text-align:center;display:grid;justify-items:center;gap:5px}
+.c191-led-dot{width:33px;height:33px;border:2px solid var(--els-border,#40546c);border-radius:50%;background:var(--els-surface-alt,#26394e);transition:all .22s ease}
+.c191-led-dot.on{background:#33caa0;border-color:#25af85;box-shadow:0 0 15px #33caa088}
+.c191-led-dot.alarm.on{background:#ef7979;border-color:#d94a4a;box-shadow:0 0 15px #ef797977}
+.c191-led small{font-size:.75rem}
+.c191-states{display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap;margin:20px 0}
+.c191-state{padding:13px 12px;border-radius:999px;border:1px solid var(--els-border,#40546c);font-size:.8rem;font-weight:800}
+.c191-state.active{border:2px solid #30bd96;background:var(--els-info-bg,#244e41)}
+.c191-arrow{color:var(--els-muted,#a5b6c6)}
+.c191-files{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:18px 0}
+.c191-file{background:var(--els-surface-alt,#26394e);border:1px solid var(--els-border,#40546c);border-radius:10px;min-width:90px;padding:16px;text-align:center;font-weight:700;transition:transform .24s,border-color .24s}
+.c191-file.active{border-color:#30bd96;transform:translateY(-5px)}
+.c191-terminal{background:#0e1d28;color:#d5f4eb;padding:13px 16px;border-radius:9px;font:14px/1.7 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;min-height:73px}
+.c191-memory{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}
+.c191-memory>div{border:1px solid var(--els-border,#40546c);border-radius:10px;padding:12px;flex:1 1 115px}
+.c191-memory strong{font-size:1.2rem}
+.c191-quiz{display:grid;gap:10px}
+.c191-quiz label{display:flex;gap:9px;align-items:center;min-height:42px;border:1px solid var(--els-border,#40546c);border-radius:9px;padding:8px 11px;cursor:pointer}
+.c191-quiz label:has(input:checked){border-color:var(--els-link,#8abbd7);background:var(--els-info-bg,#244e41)}
+.c191-result{padding:10px 13px;border-left:3px solid var(--els-link,#8abbd7);border-radius:6px;background:var(--els-surface-alt,#26394e);font-size:.9rem;min-height:45px}
+.c191-links{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:15px}
+.c191-links a{display:inline-flex;align-items:center;min-height:44px;border:1px solid var(--els-border,#40546c);border-radius:9px;padding:7px 13px;font-weight:700}
+.c191-toc-group{display:grid;gap:3px;padding:10px 0}
+.c191-toc-group>strong{font-size:.75rem;color:var(--els-muted,#b2c4d5);padding:4px 9px}
+#lesson-nav .c191-nav{display:block;width:100%;text-align:left;background:transparent;color:var(--els-ink,#eaf2fc);border:1px solid transparent;padding:9px 10px;border-radius:8px;font-size:.86rem;line-height:1.5;cursor:pointer;min-height:40px}
+#lesson-nav .c191-nav.active{background:var(--els-info-bg,#244e41);border-color:var(--els-link,#8abbd7);font-weight:760}
+.c191-legend{border-left:3px solid var(--els-link,#8abbd7);padding-left:10px;margin:12px 0;font-size:.85rem}
+.c191-device{border:1px solid var(--els-border,#40546c);border-radius:12px;padding:14px;background:var(--els-surface-alt,#26394e)}
+.c191-device-head{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:.82rem;font-weight:750}
+.c191-motion{transition:transform .26s,opacity .26s}
+@media(max-width:850px){.c191-grid{grid-template-columns:1fr}.c191-bits{gap:3px}.c191-bit{padding:8px 1px}.c191-panel{padding:14px}}
+@media(prefers-reduced-motion:reduce){.c191-bit,.c191-led-dot,.c191-file,.c191-motion{transition:none!important;animation:none!important}}
