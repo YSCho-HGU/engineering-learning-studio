@@ -35,7 +35,7 @@ function schedule(){if(requested)return;requested=true;requestAnimationFrame(()=
 function init(){
  styles();
  const root=document.querySelector("main")||document.body;
- new MutationObserver(m=>{if(m.some(record=>[...record.addedNodes].some(node=>
+ new MutationObserver(m=>{if(m.some(record=>record.target?.id==="formula"||[...record.addedNodes].some(node=>
  node.nodeType===1&&(node.matches?.("#formula.formula")||node.querySelector?.("#formula.formula")))))schedule();
  }).observe(root,{childList:true,subtree:true});
  document.addEventListener("els:languagechange",schedule);
