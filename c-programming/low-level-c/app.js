@@ -16,7 +16,8 @@ const match=location.hash.match(/^#s(\d+)$/);
 if(match)selected=Math.max(0,Math.min(10,Number(match[1])-1));
 let states=read("els-c191-model-v1",{}),done=read("els-c191-done-v1",[]);
 if(!Array.isArray(done))done=[];
-const S=()=>states[selected]||(states[selected]=initial());
+const initialFor=i=>{const v=initial();if(i===1)v.byte=5;else if(i===2)v.byte=4;else if(i===3)v.byte=0;return v;};
+const S=()=>states[selected]||(states[selected]=initialFor(selected));
 const save=()=>{try{localStorage.setItem("els-c191-model-v1",JSON.stringify(states));localStorage.setItem("els-c191-done-v1",JSON.stringify(done))}catch(e){}};
 const nav=byId("lesson-nav"),stage=byId("lesson");
 const btn=(label,action)=>'<button type="button" data-action="'+action+'">'+label+'</button>';
@@ -111,9 +112,16 @@ stage.addEventListener("click",event=>{
  const s=S(),scene=D.lessons[selected].scene;
  if(b.dataset.bit!==undefined){s.byte^=1<<Number(b.dataset.bit);s.byte&=255;refreshVisual();return;}
  const action=b.dataset.action,mask=1<<s.target;
- if(action==="step")s.step=Math.min(D.lessons[selected].code.split("\n").length,s.step+1);
- if(action==="run")s.step=D.lessons[selected].code.split("\n").length;
- if(action==="reset-step")s.step=0;
+ if(action==="step"||action==="run"){
+  const before=s.step;
+  s.step=action==="run"?D.lessons[selected].code.split("\n").length:Math.min(D.lessons[selected].code.split("\n").length,s.step+1);
+  // Execute the modeled statement as its highlighted line is reached.
+  if(before<2&&s.step>=2&&scene==="register")s.byte=(s.byte|(1<<1))&255;
+  if(before<3&&s.step>=3&&scene==="operators")s.byte=(s.byte|2)&255;
+ }
+ if(action==="reset-step"){
+  const original=initialFor(selected);s.byte=original.byte;s.step=0;s.build=0;s.calls=0;
+ }
  if(action==="mask"){if(s.op==="set")s.byte|=mask;else if(s.op==="clear")s.byte&=~mask;else if(s.op==="toggle")s.byte^=mask;s.byte&=255;s.step=Math.max(2,s.step);}
  if(action==="operator"){const n=s.byte,op=s.operator;s.byte=op==="and"?n&15:op==="or"?n|2:op==="xor"?n^15:op==="not"?~n&255:op==="left"?n<<1&255:n>>>1;s.step=Math.max(3,s.step);}
  if(action==="flag"){const bit=Number(b.dataset.flag);s.byte=bit===0?0:s.byte^(1<<bit);s.step=Math.max(2,s.step);}
