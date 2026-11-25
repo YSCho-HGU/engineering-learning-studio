@@ -277,6 +277,7 @@ jobs:
           run_case node signals-systems/tests/theme-contrast-audit.mjs
           run_case node signals-systems/tests/ss-theme-qa.mjs
           run_case node tests/ss-chapters-math-audit.mjs
+          run_case node tests/ss-detail-math-browser.mjs
           run_case node tests/ss-chapters-full-qa.mjs
           run_case node tests/ss-responsive-unified-browser.mjs
           run_case node tests/ss-plot-typography-browser.mjs
