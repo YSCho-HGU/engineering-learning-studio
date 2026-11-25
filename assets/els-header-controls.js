@@ -217,6 +217,24 @@
        "#lesson, .ss-layout-main, .ss-vertical-main, .ss-app-main, .ss-al-workspace, .ss-sys-root, main.main, main#app, main"
      );
    }
+   // Only a student-initiated lesson selection closes the mobile course list.
+   // Keep open/closed preferences and desktop navigation completely untouched.
+   function collapseMobileList(control,token){
+     if(token!==sequence||!query.matches)return;
+     const toc=doc.getElementById("lesson-nav");
+     if(toc&&toc.contains(control)||toc&&control.closest?.("#lesson-nav")){
+       toc.querySelectorAll("details[open]").forEach(group=>{group.open=false;});
+     }
+     const sidebar=control.closest?.(".ss-layout-sidebar");
+     if(sidebar){
+       const toggle=sidebar.querySelector(".ss-mobile-index-toggle");
+       if(toggle&&toggle.getAttribute("aria-expanded")==="true"){
+         // SS sidebar owns mobileOpen; a click on the selected lesson already
+         // closes it. Dispatch only when it remains open after its handler.
+         toggle.click();
+       }
+     }
+   }
    function align(control,token){
      if(token!==sequence||!query.matches)return;
      const target=targetFor(control);
@@ -233,8 +251,8 @@
      if(!control||control.closest(".ss-common-header, .els-course-header"))return;
      if(control.matches("a")&&control.getAttribute("href")?.startsWith("http"))return;
      const token=++sequence;
-     win.requestAnimationFrame(()=>win.requestAnimationFrame(()=>align(control,token)));
-     win.setTimeout(()=>align(control,token),100);
+     win.requestAnimationFrame(()=>win.requestAnimationFrame(()=>{collapseMobileList(control,token);align(control,token);}));
+     win.setTimeout(()=>{collapseMobileList(control,token);align(control,token);},100);
      win.setTimeout(()=>align(control,token),260);
    });
  }
