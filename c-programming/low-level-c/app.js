@@ -18,7 +18,7 @@ if(match)selected=Math.max(0,Math.min(10,Number(match[1])-1));
 let states=read("els-c191-model-v1",{}),done=read("els-c191-done-v1",[]);
 if(!states||typeof states!=="object"||Array.isArray(states))states={};
 if(!Array.isArray(done))done=[];
-const initialFor=i=>{const v=initial();if(i===0)v.byte=0;else if(i===1){v.byte=0;v.step=0;v.operator="or";v.experimentByte=5;}else if(i===2)v.byte=0;else if(i===3)v.byte=0;return v;};
+const initialFor=i=>{const v=initial();if(i===0)v.byte=0;else if(i===1){v.byte=0;v.step=0;v.operator="or";v.experimentByte=5;v.operatorModelV2=true;}else if(i===2)v.byte=0;else if(i===3)v.byte=0;return v;};
 const S=()=>states[selected]||(states[selected]=initialFor(selected));
 // Versioned reset: older Chapter 19.2 records used a sensor byte, not three variables.
 if(states[1]&&!states[1].operatorModelV2){const keep={note:states[1].note||"",choice:states[1].choice??-1};states[1]={...initialFor(1),...keep,operatorModelV2:true};}
