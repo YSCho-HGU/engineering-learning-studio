@@ -19,6 +19,7 @@ on:
 permissions:
   contents: read
   pages: write
+  actions: read
   id-token: write
 
 concurrency:
@@ -80,6 +81,25 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ${{ runner.temp }}/studio-site
+
+      # Upload completes before artifact metadata is necessarily available
+      # through the Actions REST API. Avoid sporadic deploy-pages 404 races.
+      - name: Wait until uploaded Pages artifact is visible
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+            available="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts?per_page=100"               --jq '.artifacts | any(.name == "github-pages")' || true)"
+            if [ "$available" = "true" ]; then
+              echo "Pages artifact metadata is available (attempt $attempt)."
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "::error::Pages artifact was uploaded but is not yet visible to the Actions API."
+          exit 1
 
       - name: Deploy to GitHub Pages
         id: deployment
