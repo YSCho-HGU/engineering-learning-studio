@@ -111,6 +111,7 @@ async function checkOne(context,item,width,mode){
     const rect=await canvas.boundingBox();
     assert.ok(rect&&rect.width>=240&&rect.width<=width+1,"Helix canvas mobile geometry");
   }
+  await page.screenshot({path:output+"/"+item.id+"-"+width+"-verified.png",fullPage:false,animations:"disabled"});
   results.push({id:item.id,width,charts:initial.charts,lang:"PASS",theme:"PASS",layout:"PASS"});
  }catch(err){
   failures.push({id:item.id,width,error:String(err)});
