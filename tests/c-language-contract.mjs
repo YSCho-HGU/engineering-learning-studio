@@ -156,8 +156,8 @@ try{
     await tab.locator('#lesson-nav button[data-lesson="3"]').click();
     await tab.locator('.dm-heap [data-phase="used"]').click();
     await tab.locator('.dm-heap .dm-cell').nth(3).click();
-    await tab.locator('.dm-heap [data-leak="lost"]').click();
     await tab.locator('.dm-heap .dm-leak').evaluate(e=>e.open=true);
+    await tab.locator('.dm-heap [data-leak="lost"]').click();
     await tab.locator('#lesson .trace-controls button').nth(1).click();
     await tab.evaluate(()=>window.__heapDocumentMarker="unchanged");
     for(const mode of ["en","ko","mixed"]){
