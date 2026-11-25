@@ -31,7 +31,26 @@ function bits(s){
 function device(s){
  const names=[[0,"READY"],[1,"ERROR"],[4,"ALARM"],[5,"LOW_BAT"]];
  return '<div class="c191-device"><div class="c191-device-head"><span>'+tr("장치 상태","Device status")+'</span><span>'+state(s.byte)+'</span></div><div class="c191-leds">'+
- names.map(([b,name])=>'<div class="c191-led"><div class="c191-led-dot '+(s.byte&(1<<b)?"on ":"")+(b===1||b===4?"alarm":"")+'" aria-label="'+name+' '+(s.byte&(1<<b)?"ON":"OFF")+'"></div><small>'+name+'</small><small>'+(s.byte&(1<<b)?"ON":"OFF")+'</small></div>').join("")+'</div></div>';
+ names.map(([b,name])=>'<div class="c191-led"><div class="c191-led-dot '+(s.byte&(1<<b)?"on ":"")+(b===1||b===4?"alarm":"")+'" aria-label="'+name+' '+(s.byte&(1<<b)?"ON":"OFF")+'"></div><small>'+name+'</small><small>'+(s.byte&(1<<b)?"ON":"OFF")+'</small></div>').join("")+'</div>'+signalDiagram(s)+'</div>';
+}
+function signalDiagram(s){
+ const alarming=(s.byte&18)!==0,ready=(s.byte&1)!==0;
+ const color=alarming?"#e16b73":ready?"#30b692":"#829bac";
+ return '<svg class="c191-hardware" viewBox="0 0 580 132" role="img" aria-label="Sensor byte to C logic to device output model">'+
+ '<rect x="6" y="28" width="132" height="70" rx="12" class="c191-hardware-box"/>'+
+ '<text x="72" y="52" text-anchor="middle" class="c191-hardware-label">SENSOR</text>'+
+ '<text x="72" y="77" text-anchor="middle" class="c191-hardware-sub">8-bit byte</text>'+
+ '<path d="M142 63 H184" stroke="'+color+'" stroke-width="4" class="c191-hardware-wire" fill="none"/>'+
+ '<polygon points="185,63 174,57 174,69" fill="'+color+'"/>'+
+ '<rect x="191" y="28" width="150" height="70" rx="12" class="c191-hardware-box"/>'+
+ '<text x="266" y="52" text-anchor="middle" class="c191-hardware-label">C MASK / enum</text>'+
+ '<text x="266" y="77" text-anchor="middle" class="c191-hardware-sub">'+hex(s.byte)+'</text>'+
+ '<path d="M345 63 H388" stroke="'+color+'" stroke-width="4" class="c191-hardware-wire" fill="none"/>'+
+ '<polygon points="389,63 378,57 378,69" fill="'+color+'"/>'+
+ '<rect x="395" y="28" width="175" height="70" rx="12" class="c191-hardware-box"/>'+
+ '<circle cx="418" cy="62" r="11" fill="'+color+'"/>'+
+ '<text x="487" y="56" text-anchor="middle" class="c191-hardware-label">DEVICE</text>'+
+ '<text x="487" y="79" text-anchor="middle" class="c191-hardware-sub">'+(alarming?"ALARM":ready?"RUNNING":"IDLE")+'</text></svg>';
 }
 function maskExpression(s){const m="(1u << "+s.target+")";return s.op==="set"?"value |= "+m:s.op==="clear"?"value &= ~"+m:s.op==="toggle"?"value ^= "+m:"result = value & "+m;}
 function terminal(s,scene){

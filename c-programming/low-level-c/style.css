@@ -59,3 +59,12 @@
 .c191-motion{transition:transform .26s,opacity .26s}
 @media(max-width:850px){.c191-grid{grid-template-columns:1fr}.c191-bits{gap:3px}.c191-bit{padding:8px 1px}.c191-panel{padding:14px}}
 @media(prefers-reduced-motion:reduce){.c191-bit,.c191-led-dot,.c191-file,.c191-motion{transition:none!important;animation:none!important}}
+
+/* Meaningful, one-shot signal flow animation (never autoplayed continuously). */
+.c191-hardware{display:block;width:100%;height:auto;max-height:145px;overflow:visible;margin:12px 0 4px}
+.c191-hardware-box{fill:var(--els-surface,#1c293a);stroke:var(--els-border,#526477);stroke-width:1.5}
+.c191-hardware-label{fill:var(--els-ink,#e6edf4);font:700 13px system-ui,sans-serif}
+.c191-hardware-sub{fill:var(--els-muted,#c6d4df);font:12px system-ui,sans-serif}
+.c191-hardware-wire{stroke-dasharray:9 7;animation:c191-signal-once .7s ease-out 1}
+@keyframes c191-signal-once{from{stroke-dashoffset:65;opacity:.3}to{stroke-dashoffset:0;opacity:1}}
+@media(prefers-reduced-motion:reduce){.c191-hardware-wire{animation:none}}

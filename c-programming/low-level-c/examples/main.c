@@ -21,8 +21,8 @@ int main(int argc, char *argv[]) {
     state = decode_state(status);
     printf("status = 0x%02X\n", (unsigned)status);
     printf("READY=%u ERROR=%u ALARM=%u LOW_BAT=%u\n",
-        !!(status & READY_MASK), !!(status & ERROR_MASK),
-        !!(status & ALARM_MASK), !!(status & LOW_BAT_MASK));
+        (unsigned)((status & READY_MASK) != 0u), (unsigned)((status & ERROR_MASK) != 0u),
+        (unsigned)((status & ALARM_MASK) != 0u), (unsigned)((status & LOW_BAT_MASK) != 0u));
     printf("state = %s\n", state == IDLE ? "IDLE" :
         state == RUNNING ? "RUNNING" : "ERROR_STATE");
     return 0;
