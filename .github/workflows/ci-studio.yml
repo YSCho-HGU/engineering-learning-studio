@@ -323,6 +323,7 @@ jobs:
               failures=$((failures+1))
             fi
           }
+          run_case node tests/ss-applications-header-contract.mjs
           run_case node tests/fft-butterfly-invariants.mjs
           run_case node tests/fft-content-invariants.mjs
           run_case node tests/image-fft-core-invariants.mjs
