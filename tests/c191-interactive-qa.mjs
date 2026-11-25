@@ -43,6 +43,49 @@ for(const width of [390,1280]){
   await page.locator(".c191-bit[data-bit='0']").click();
   const status=await page.locator(".c191-terminal").innerText();
   assert.ok(status.includes("ERROR_STATE"),"sensor decoder priority");
+  // Q3: predict -> execute -> compare, across all 11 sections.
+  await page.locator('#lesson-nav button[data-lesson="2"]').click();
+  await page.locator('#c191-pred-byte').fill("6");
+  await page.locator('[data-action="predict-save"]').click();
+  assert.equal(await page.locator('.c191-pred-compare').count(),1);
+  assert.ok((await page.locator('.c191-pred-pending').innerText()).includes("Step") || (await page.locator('.c191-pred-pending').innerText()).includes("후"));
+  await page.locator('[data-action="step"]').click();
+  await page.locator('[data-action="step"]').click();
+  assert.equal(await page.locator('.c191-pred-feedback.matched').count(),1,"register prediction 0x06 matches LED");
+  assert.equal(await page.locator('.c191-pred-side').nth(1).locator('.c191-mini-leds .lit').count(),2);
+  await page.locator('[data-action="predict-edit"]').click();
+  assert.equal(await page.locator('#c191-pred-byte').isEnabled(),true,"prediction editable again");
+  await page.locator('[data-action="reset-step"]').click();
+  assert.equal(await page.locator('.c191-pred-compare').count(),0,"reset clears comparison");
+
+  await page.locator('#lesson-nav button[data-lesson="3"]').click();
+  await page.locator('#c191-pred-state').selectOption("RUNNING");
+  await page.locator('[data-action="predict-save"]').click();
+  await page.locator('[data-action="flag"][data-flag="0"]').click();
+  assert.equal(await page.locator('.c191-pred-feedback.matched').count(),1,"READY yields RUNNING");
+  await page.locator('[data-action="flag"][data-flag="4"]').click();
+  assert.equal(await page.locator('.c191-pred-feedback.unmatched').count(),1,"ALARM overrides READY");
+  assert.ok((await page.locator('.c191-state.active').innerText()).includes("ERROR"));
+
+  await page.locator('#lesson-nav button[data-lesson="0"]').click();
+  await page.locator('#c191-pred-byte').fill("180");
+  await page.locator('[data-action="predict-save"]').click();
+  await page.locator('.c191-bit[data-bit="0"]').click();
+  assert.equal(await page.locator('.c191-pred-feedback.matched').count(),1,"bit explorer 0xB5 to 0xB4");
+  assert.equal(await page.locator('.c191-pred-side').nth(1).locator('.c191-mini-bits .mismatch').count(),0);
+
+  for(let section=0;section<11;section++){
+   await page.locator('#lesson-nav button[data-lesson="'+section+'"]').click();
+   assert.equal(await page.locator('#lesson h2').count(),1,"heading section "+(section+1));
+   assert.ok((await page.locator('.c191-code .c191-line').count())>=2,"code section "+(section+1));
+   assert.equal(await page.locator('#c191-visual .c191-terminal').count(),1,"result section "+(section+1));
+   if([0,1,2,3,8,10].includes(section))
+    assert.equal(await page.locator('.c191-prediction').count(),1,"prediction section "+(section+1));
+   await page.locator('[data-action="reset-step"]').click();
+   await page.locator('[data-action="step"]').click();
+   assert.equal(await page.locator('.c191-code .c191-line.current').count(),1,"single highlighted line section "+(section+1));
+  }
+  await page.locator('#lesson-nav button[data-lesson="8"]').click();
   await page.locator("#c191-note").fill("Keep my unsent reasoning");
   const previousUrl=page.url();
   await page.locator(".ss-common-language select").selectOption("en");
