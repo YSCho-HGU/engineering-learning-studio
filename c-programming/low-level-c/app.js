@@ -220,7 +220,7 @@ function advance(){
   const now=traceModel(s,scene);
   s.focus=now.focus;
   s.trace=now.message;
-  if(scene==="lifetime")s.calls=now.call;
+  if(scene==="lifetime")s.calls=Math.floor(s.step/4);
  }else{
   s.focus=s.step-1;
   s.trace=scene==="operators"?s.trace:tr("실행 단계 ","Execution step ")+s.step+"/"+lines.length+": "+lines[s.focus].trim()+
@@ -232,7 +232,7 @@ function advance(){
 }
 function play(){
  if(!advance()){stop();refreshVisual();return;}
- if(S().prediction?.observed)render();
+ if(["preprocessor","modules","lifetime","cli"].includes(D.lessons[selected].scene)||S().prediction?.observed)render();
  if((D.lessons[selected].scene==="lifetime"&&S().step%4!==0)||(!["lifetime","preprocessor","modules","cli"].includes(D.lessons[selected].scene)&&S().step<D.lessons[selected].code.split("\n").length)||(["preprocessor","modules","cli"].includes(D.lessons[selected].scene)&&!traceModel(S(),D.lessons[selected].scene).done))timer=setTimeout(play,650);
  else stop();
  refreshVisual();
@@ -332,8 +332,8 @@ stage.addEventListener("click",event=>{
  if(action==="operator"){const n=Number.isInteger(s.experimentByte)?s.experimentByte:5,op=s.operator;s.experimentByte=op==="and"?n&2:op==="or"?n|2:op==="xor"?n^2:op==="not"?(~n)&255:op==="left"?(n<<1)&255:n>>>1;s.experimentTrace=hex(n)+" "+({and:"& 0x02",or:"| 0x02",xor:"^ 0x02",not:"~ (8-bit)",left:"<< 1",right:">> 1"}[op])+" → "+hex(s.experimentByte);}
  if(action==="flag"){const before=s.byte,bit=Number(b.dataset.flag);s.byte=bit===-1?0:s.byte^(1<<bit);s.changed=before^s.byte;s.step=0;s.trace=tr("입력 변경","Input changed")+": "+hex(before)+" → "+hex(s.byte)+"; "+state(s.byte);markObserved(s);}
  if(action==="build")s.build=(s.build+1)%(scene==="modules"?5:3);
- if(action==="reset-build")s.build=0;
- if(action==="call"){for(let j=0;j<4;j++)advance();}
+ if(action==="reset-build"){s.build=0;s.step=0;s.focus=null;}
+ if(action==="call"){const remaining=4-(s.step%4);for(let j=0;j<remaining;j++)advance();}
  if(action==="reset-call"){s.calls=0;s.step=0;s.focus=null;}
  if(["reset-step","build","reset-build","call","reset-call","parse"].includes(action))s.changed=0;
  if(action==="parse"){s.step=0;s.focus=null;s.parsed=true;s.trace=tr("명령행 분기 추적 준비","Ready to trace command-line branches");}
