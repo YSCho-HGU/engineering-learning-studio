@@ -55,7 +55,17 @@ const entries=[
  ['Sample index n','n'],['f (Hz)','f\\;(\\mathrm{Hz})'],
  ['frequency (Hz)','f\\;(\\mathrm{Hz})'],
  ['step response','\\text{Step response}'],
- ['n','n'],['k','k'],['M (terms)','M\\;(\\text{terms})']
+ ['phase difference (rad)','\\Delta\\phi\\;(\\mathrm{rad})'],
+ ['sample index n (full record)','n\\;(\\text{full record})'],
+ ['time (seconds)','t\\;(\\mathrm{s})'],
+ ['normalized amplitude (dB)','\\text{Normalized amplitude }(\\mathrm{dB})'],
+ ['xw[n]','x_w[n]'],
+ ['X(e^{jΩ})','X(e^{j\\Omega})'],
+ ['|H(e^{jΩ})|','|H(e^{j\\Omega})|'],
+ ['fₛ','f_s'],['fₛ/2','\\frac{f_s}{2}'],
+ ['f₀','f_0'],['Δf','\\Delta f'],
+ ['ω₀','\\omega_0'],['Ω','\\Omega'],['π','\\pi'],
+  ['n','n'],['k','k'],['M (terms)','M\\;(\\text{terms})']
 ];
 const mapping=new Map(entries);
 const latexFor=value=>mapping.get(String(value||'').trim())||null;
