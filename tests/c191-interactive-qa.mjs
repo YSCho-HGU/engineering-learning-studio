@@ -26,7 +26,7 @@ for(const width of [390,1280]){
   await page.locator('[data-action="reset-step"]').click();
   assert.equal(await page.locator(".c191-metrics span").nth(1).innerText(),"Hex 0x04");
   await page.locator('#lesson-nav button[data-lesson="3"]').click();
-  await page.locator('[data-action="flag"][data-flag="1"]').click();
+  await page.locator('[data-action="flag"][data-flag="0"]').click();
   assert.ok((await page.locator(".c191-state.active").innerText()).includes("RUNNING"));
   await page.locator('[data-action="flag"][data-flag="4"]').click();
   assert.ok((await page.locator(".c191-state.active").innerText()).includes("ERROR"));

@@ -52,7 +52,7 @@ function sceneHTML(){
  }
  if(scene==="operators")html+='<div class="c191-task"><select data-setting="operator">'+options([["and","&"],["or","|"],["xor","^"],["not","~ (8-bit)"],["left","<< 1"],["right",">> 1"]],s.operator)+'</select>'+btn(tr("비트 연산 실행","Execute operator"),"operator")+'</div>';
  if(scene==="state"||scene==="capstone"){
-  html+='<div class="c191-task">'+[[0,"Reset status"],[1,"READY"],[2,"ERROR"],[4,"ALARM"],[5,"LOW_BAT"]].map(([b,t])=>'<button type="button" data-action="flag" data-flag="'+b+'">'+t+'</button>').join("")+'</div>';
+  html+='<div class="c191-task">'+[[-1,"Reset status"],[0,"READY"],[1,"ERROR"],[4,"ALARM"],[5,"LOW_BAT"]].map(([b,t])=>'<button type="button" data-action="flag" data-flag="'+b+'">'+t+'</button>').join("")+'</div>';
   html+='<div class="c191-states">'+["IDLE","RUNNING","ERROR_STATE"].map(t=>'<span class="c191-state '+(state(s.byte)===t?"active":"")+'">'+t+'</span>').join('<span class="c191-arrow">→</span>')+'</div>';
  }
  if(scene==="preprocessor"||scene==="modules"||scene==="optional"){
@@ -124,7 +124,7 @@ stage.addEventListener("click",event=>{
  }
  if(action==="mask"){if(s.op==="set")s.byte|=mask;else if(s.op==="clear")s.byte&=~mask;else if(s.op==="toggle")s.byte^=mask;s.byte&=255;s.step=Math.max(2,s.step);}
  if(action==="operator"){const n=s.byte,op=s.operator;s.byte=op==="and"?n&15:op==="or"?n|2:op==="xor"?n^15:op==="not"?~n&255:op==="left"?n<<1&255:n>>>1;s.step=Math.max(3,s.step);}
- if(action==="flag"){const bit=Number(b.dataset.flag);s.byte=bit===0?0:s.byte^(1<<bit);s.step=Math.max(2,s.step);}
+ if(action==="flag"){const bit=Number(b.dataset.flag);s.byte=bit===-1?0:s.byte^(1<<bit);s.step=Math.max(2,s.step);}
  if(action==="build")s.build=(s.build+1)%(scene==="modules"?5:3);
  if(action==="reset-build")s.build=0;
  if(action==="call")s.calls++;
