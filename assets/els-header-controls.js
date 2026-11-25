@@ -211,7 +211,7 @@
      const hash=control.getAttribute("href");
      if(hash&&hash.startsWith("#")&&hash.length>1){
        const found=doc.getElementById(decodeURIComponent(hash.slice(1)));
-       if(found)return found;
+       if(found&&!found.hidden&&!found.closest("[hidden]"))return found;
      }
      return doc.querySelector(
        "#lesson, .ss-layout-main, .ss-vertical-main, .ss-app-main, .ss-al-workspace, .ss-sys-root, main.main, main#app, main"
