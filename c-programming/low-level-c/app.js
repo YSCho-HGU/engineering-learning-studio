@@ -199,6 +199,7 @@ function branchPath(s,scene){
 }
 function traceLimit(s,scene){
  if(scene==="state"||scene==="capstone")return branchPath(s,scene).length;
+ if(scene==="optional")return 4;
  if(scene==="preprocessor")return 4;
  if(scene==="modules")return 5;
  if(scene==="cli"){const m=traceModel(s,scene);return m.valid?(m.passed?5:4):2;}
@@ -213,7 +214,7 @@ function conceptSceneHTML(s,scene){
  if(scene==="bits")return (s.step<2?unknownByte("status"):bits(s))+'<p class="c191-caption">'+tr("숫자 181의 8-bit 표현을 관찰합니다.","Observe the eight-bit representation of decimal 181.")+'</p>';
  if(scene==="optional"){
   const stages=[["union Data",tr("공유 저장 공간 선언","Shared storage declaration")],["function pointer",tr("함수 포인터 선언","Function pointer declaration")],["#ifdef DEBUG",tr("조건부 컴파일 지시문","Conditional compilation directive")]];
-  return '<div class="c191-stage-list">'+stages.map(([name,desc],i)=>'<div class="c191-file '+(s.step===i+1?"active":"")+'"><small>'+desc+'</small><strong>'+name+'</strong></div>').join("")+'</div>'+
+  return '<div class="c191-stage-list">'+stages.map(([name,desc],i)=>'<div class="c191-file '+((s.step===i+1||(i===2&&s.step===4))?"active":"")+'"><small>'+desc+'</small><strong>'+name+'</strong></div>').join("")+'</div>'+
   '<p class="c191-caption">'+tr("서로 독립된 개념을 소스 순서대로 살펴봅니다. 이는 실행 시뮬레이션이 아닌 코드 해설입니다.","These are separate concepts inspected in source order, not an executable program.")+'</p>';
  }
  return "";
@@ -244,7 +245,11 @@ function advance(){
  if(s.step>=limit)return false;
  const before=s.byte;
  let focus=null;
- if(scene==="operators"){s.step++;s.byte=s.step===3?7:0;s.trace=["","a = 0x05 (0000 0101)","b = 0x02 (0000 0010)","result = a | b = 0x07 (0000 0111)"][s.step];focus=s.step-1;}
+ if(scene==="optional"){
+  const path=[0,1,2,4];focus=path[s.step++];
+  s.trace=focus===4?tr("DEBUG가 정의되지 않았으므로 puts는 포함되지 않습니다.","Without DEBUG defined, puts is excluded by preprocessing."):tr("소스 구성요소 확인: ","Inspect source construct: ")+lines[focus].trim();
+ }
+ else if(scene==="operators"){s.step++;s.byte=s.step===3?7:0;s.trace=["","a = 0x05 (0000 0101)","b = 0x02 (0000 0010)","result = a | b = 0x07 (0000 0111)"][s.step];focus=s.step-1;}
  else if(scene==="state"||scene==="capstone"){
   const path=branchPath(s,scene);
   focus=path[s.step++];
