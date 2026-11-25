@@ -36,12 +36,14 @@ function bits(s){
 function device(s){
  const register=D.lessons[selected].scene==="register";
  const names=register?Array.from({length:8},(_,bit)=>[bit,"LED"+bit]):[[0,"READY"],[1,"ERROR"],[4,"ALARM"],[5,"LOW_BAT"]];
- return '<div class="c191-device"><div class="c191-device-head"><span>'+(register?tr("LED 출력 레지스터","LED output register"):tr("장치 상태","Device status"))+'</span><span>'+(register?hex(s.byte):state(s.byte))+'</span></div><div class="c191-leds">'+
+ const displayState=register?hex(s.byte):(D.lessons[selected].scene==="state"||D.lessons[selected].scene==="capstone")?(s.decoded||tr("판정 전","Not decoded")):state(s.byte);
+ return '<div class="c191-device"><div class="c191-device-head"><span>'+(register?tr("LED 출력 레지스터","LED output register"):tr("장치 상태","Device status"))+'</span><span>'+displayState+'</span></div><div class="c191-leds">'+
  names.map(([b,name])=>'<div class="c191-led"><div class="c191-led-dot '+(s.byte&(1<<b)?"on ":"")+(!register&&(b===1||b===4)?"alarm ":"")+(s.changed&(1<<b)?"changed":"")+'" aria-label="'+name+' '+(s.byte&(1<<b)?"ON":"OFF")+'"></div><small>'+name+'</small><small>'+(s.byte&(1<<b)?"ON":"OFF")+'</small></div>').join("")+'</div>'+signalDiagram(s)+'</div>';
 }
 function signalDiagram(s){
  const register=D.lessons[selected].scene==="register";
- const alarming=!register&&(s.byte&18)!==0,ready=(s.byte&1)!==0;
+ const pending=!register&&(D.lessons[selected].scene==="state"||D.lessons[selected].scene==="capstone")&&!s.decoded;
+ const alarming=!pending&&!register&&(s.byte&18)!==0,ready=!pending&&(s.byte&1)!==0;
  const color=register?"#30b692":alarming?"#e16b73":ready?"#30b692":"#829bac";
  return '<svg class="c191-hardware" viewBox="0 0 580 132" role="img" aria-label="Sensor byte to C logic to device output model">'+
  '<rect x="6" y="28" width="132" height="70" rx="12" class="c191-hardware-box"/>'+
@@ -57,7 +59,7 @@ function signalDiagram(s){
  '<rect x="395" y="28" width="175" height="70" rx="12" class="c191-hardware-box"/>'+
  '<circle cx="418" cy="62" r="11" fill="'+color+'"/>'+
  '<text x="487" y="56" text-anchor="middle" class="c191-hardware-label">'+(register?"LED ARRAY":"DEVICE")+'</text>'+
- '<text x="487" y="79" text-anchor="middle" class="c191-hardware-sub">'+(register?"LED OUTPUT":alarming?"ALARM":ready?"RUNNING":"IDLE")+'</text></svg>';
+ '<text x="487" y="79" text-anchor="middle" class="c191-hardware-sub">'+(register?"LED OUTPUT":pending?"PENDING":alarming?"ALARM":ready?"RUNNING":"IDLE")+'</text></svg>';
 }
 function maskExpression(s){const m="(1u << "+s.target+")";return s.op==="set"?"value |= "+m:s.op==="clear"?"value &= ~"+m:s.op==="toggle"?"value ^= "+m:"result = value & "+m;}
 function terminal(s,scene){
@@ -66,7 +68,7 @@ function terminal(s,scene){
  if(scene==="modules")return ["Header interface declarations","Source translation units","Two compiled object files","Linker resolves references","Executable sensor program"][s.build%5];
  if(scene==="optional")return ["union shares storage","function pointer stores an address","DEBUG is enabled only when defined"][s.build%3];
  if(scene==="cli"){if(!s.parsed)return tr("Parse arguments를 누르면 argc와 argv가 나타납니다.","Press Parse arguments to inspect argc and argv.");const a=s.argv.trim().split(/\s+/).filter(Boolean);return "argc = "+a.length+"\n"+a.map((t,i)=>"argv["+i+"] = "+t).join("\n")+"\n"+(a.length===2?"argc == 2: file path accepted":"argc != 2: return 1");}
- return "status = "+hex(s.byte)+" | "+binary(s.byte)+"\nREADY="+Number(!!(s.byte&1))+"  ERROR="+Number(!!(s.byte&2))+"  ALARM="+Number(!!(s.byte&16))+"\nstate = "+state(s.byte);
+ return "status = "+hex(s.byte)+" | "+binary(s.byte)+"\nREADY="+Number(!!(s.byte&1))+"  ERROR="+Number(!!(s.byte&2))+"  ALARM="+Number(!!(s.byte&16))+"\nstate = "+((scene==="state"||scene==="capstone")?(s.decoded||"Unknown"):state(s.byte));
 }
 
 function operatorVars(s){
@@ -141,7 +143,7 @@ function traceModel(s,scene){
   return {rows,idx,focus:idx<0?null:rows[idx][2],message:idx<0?tr("Step을 눌러 첫 단계부터 확인하세요.","Use Step to start the trace."):rows[idx][1],done:idx===rows.length-1};
  }
  if(scene==="lifetime"){
-  const phase=k===0?0:(k-1)%4,call=k===0?0:Math.ceil(k/4),value=1000+Math.max(0,call-1)+(phase===3?1:0);
+  const phase=k===0?0:(k-1)%4,call=k===0?0:Math.ceil(k/4),value=1000+Math.max(0,call-1)+(k>0&&phase>=2?1:0);
   const stages=[
    tr("첫 호출 전: static 객체의 초기화 값은 1000입니다.","Before the first call, the static object's initializer is 1000."),
    tr("함수에 진입합니다. static 저장 공간은 새로 생성되지 않습니다.","Enter function. Static storage is not recreated."),
@@ -149,7 +151,7 @@ function traceModel(s,scene){
    tr("++count가 값을 1 증가시킵니다.","++count increments the retained value."),
    tr("증가된 값을 반환하고 함수 프레임이 종료됩니다.","Return the incremented value and leave the call frame.")
   ];
-  return {idx:phase,call,value,focus:phase===1?0:phase===2?1:phase===3?2:null,message:stages[k===0?0:phase+1],done:false};
+  return {idx:phase,call,value,focus:k===0?null:phase===0?0:phase===1?1:2,message:stages[k===0?0:phase+1],done:false};
  }
  if(scene==="cli"){
   const valid=argc===2,passed=!!s.fileAvailable;
@@ -228,7 +230,7 @@ function sceneHTML(){
   if(["register","state","capstone"].includes(scene)&&!(scene==="register"&&s.step===0))html+=device(s);
   if(scene==="state"||scene==="capstone"){
    html+='<p class="c191-caption">'+tr("우선순위: ERROR/ALARM → READY → IDLE","Priority: ERROR/ALARM → READY → IDLE")+'</p>'+
-   '<div class="c191-states">'+["IDLE","RUNNING","ERROR_STATE"].map(v=>'<span class="c191-state '+(state(s.byte)===v?"active":"")+'">'+v+'</span>').join("")+'</div>';
+   '<div class="c191-states">'+["IDLE","RUNNING","ERROR_STATE"].map(v=>'<span class="c191-state '+((s.decoded||"")===v?"active":"")+'">'+v+'</span>').join("")+'</div>';
   }
   if(scene==="review")html+='<p class="c191-caption">'+tr("마스크를 적용한 전후의 값에서 바뀐 비트만 확인하세요.","Check only the bits changed by the mask.")+'</p>';
  }
@@ -351,7 +353,7 @@ nav.addEventListener("click",event=>{
 stage.addEventListener("click",event=>{
  const b=event.target.closest("button[data-action],button[data-bit]");if(!b)return;
  const s=S(),scene=D.lessons[selected].scene;
- if(b.dataset.bit!==undefined){stop();const before=s.byte;s.byte^=1<<Number(b.dataset.bit);s.byte&=255;s.changed=before^s.byte;s.step=0;s.decoded=null;s.focus=null;s.trace="b"+b.dataset.bit+": "+hex(before)+" → "+hex(s.byte);markObserved(s);render();return;}
+ if(b.dataset.bit!==undefined){stop();const before=s.byte;s.byte^=1<<Number(b.dataset.bit);s.byte&=255;s.changed=before^s.byte;s.step=0;s.decoded=(scene==="state"||scene==="capstone")?state(s.byte):null;s.focus=null;s.trace="b"+b.dataset.bit+": "+hex(before)+" → "+hex(s.byte);markObserved(s);render();return;}
  const action=b.dataset.action,mask=1<<s.target;
  if(action==="predict-save"){const stateOnly=scene==="state"||scene==="capstone";const input=byId("c191-pred-byte");const n=stateOnly?s.byte:Number(input?.value);if(!stateOnly&&(!input?.value.trim()||!Number.isInteger(n)||n<0||n>255)){input?.setCustomValidity(tr("0–255 정수를 입력하세요.","Enter an integer from 0 to 255."));input?.reportValidity();return;}s.prediction={expectedByte:n,expectedState:stateOnly?byId("c191-pred-state").value:state(n),observed:false};save();render();return;}
  if(action==="predict-edit"){s.prediction=null;save();render();return;}
@@ -366,7 +368,7 @@ stage.addEventListener("click",event=>{
  if(action==="mask"){const before=Number.isInteger(s.maskByte)?s.maskByte:s.byte;let n=before;if(s.op==="set")n|=mask;else if(s.op==="clear")n&=~mask;else if(s.op==="toggle")n^=mask;s.maskByte=n&255;s.maskTrace=maskExpression(s)+"; "+hex(before)+" → "+hex(s.maskByte);}
  if(action==="reset-mask"){s.maskByte=undefined;s.maskTrace="";}
  if(action==="operator"){const n=Number.isInteger(s.experimentByte)?s.experimentByte:5,op=s.operator;s.experimentByte=op==="and"?n&2:op==="or"?n|2:op==="xor"?n^2:op==="not"?(~n)&255:op==="left"?(n<<1)&255:n>>>1;s.experimentTrace=hex(n)+" "+({and:"& 0x02",or:"| 0x02",xor:"^ 0x02",not:"~ (8-bit)",left:"<< 1",right:">> 1"}[op])+" → "+hex(s.experimentByte);}
- if(action==="flag"){const before=s.byte,bit=Number(b.dataset.flag);s.byte=bit===-1?0:s.byte^(1<<bit);s.changed=before^s.byte;s.step=0;s.decoded=null;s.focus=null;s.trace=tr("입력 변경","Input changed")+": "+hex(before)+" → "+hex(s.byte)+"; "+state(s.byte);markObserved(s);}
+ if(action==="flag"){const before=s.byte,bit=Number(b.dataset.flag);s.byte=bit===-1?0:s.byte^(1<<bit);s.changed=before^s.byte;s.step=0;s.decoded=state(s.byte);s.focus=null;s.trace=tr("입력 변경","Input changed")+": "+hex(before)+" → "+hex(s.byte)+"; "+state(s.byte);markObserved(s);}
  if(action==="build")s.build=(s.build+1)%(scene==="modules"?5:3);
  if(action==="reset-build"){s.build=0;s.step=0;s.focus=null;}
  if(action==="call"){const remaining=4-(s.step%4);for(let j=0;j<remaining;j++)advance();}
