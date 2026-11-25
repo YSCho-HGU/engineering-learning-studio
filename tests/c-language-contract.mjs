@@ -205,6 +205,42 @@ try{
     await ctx.close();
   }
 
+  // The Chapter 211 engine stores activity state separately from language:
+  // a graded answer, bubble-sort trace and checked safety choices must survive.
+  {
+    const ctx=await browser.newContext({viewport:{width:1280,height:900}});
+    await ctx.addInitScript(()=>localStorage.setItem("els-language","mixed"));
+    const tab=await ctx.newPage();
+    await tab.goto(root+"c-programming/ai-coding/toolkit.html#11-1",{waitUntil:"domcontentloaded"});
+    await tab.locator('#activity .ai-card button').nth(1).click();
+    await tab.evaluate(()=>window.__ai211Identity="same-document");
+    for(const mode of ["en","ko","mixed"]){
+      await tab.locator('#c-shared-language select').selectOption(mode);
+      await tab.waitForFunction(m=>window.ELSLanguage?.get()===m,mode);
+      assert.equal(await tab.evaluate(()=>window.__ai211Identity),"same-document");
+      const answer=await tab.locator('#activity .ai-result').innerText();
+      assert.ok(answer.includes(mode==="ko"?"정답":"Correct"),
+        mode+" AI Coding answer feedback missing");
+      assert.equal(new URL(tab.url()).hash,"#11-1");
+    }
+    await tab.evaluate(()=>location.hash="#11-2");
+    await tab.locator('#sort-step').click();
+    const before=await tab.locator('#activity .ai-result').innerText();
+    const suffix=before.slice(before.lastIndexOf("("));
+    assert.ok(suffix.startsWith("(")&&suffix.includes("/"),"sort trace not started");
+    await tab.locator('#c-shared-language select').selectOption("en");
+    assert.ok((await tab.locator('#activity .ai-result').innerText()).includes(suffix),
+      "sort trace returned to frame zero");
+    await tab.evaluate(()=>location.hash="#11-6");
+    for(const i of [0,2,4])await tab.locator('#activity .ai-check input').nth(i).check();
+    await tab.locator('#activity .ai-card button').last().click();
+    await tab.locator('#c-shared-language select').selectOption("ko");
+    assert.ok((await tab.locator('#activity .ai-result').innerText()).includes("정답"),
+      "AI Coding safety verdict disappeared after language change");
+    assert.equal(await tab.locator('#activity .ai-check input:checked').count(),3);
+    await ctx.close();
+  }
+
   // AI-Assisted Coding and File I/O Guided Labs have their own translation
   // engines. Removing the shared right-hand select must not strand either.
   for(const target of [
