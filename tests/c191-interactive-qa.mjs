@@ -15,8 +15,11 @@ for(const width of [390,1280]){
   assert.equal(response?.status(),200,"Chapter 19 served");
   await page.waitForSelector("#lesson-nav button[data-lesson]");
   assert.equal(await page.locator("#lesson-nav button[data-lesson]").count(),11);
-  assert.equal(await page.locator("#c191-visual .c191-bit").count(),8);
-  assert.equal(await page.locator("#c191-visual .c191-bit.on").count(),5);
+  assert.equal(await page.locator("#c191-visual .c191-uninitialized").count(),1,"19.1 starts uninitialized");
+  await page.locator('[data-action="step"]').click();
+  assert.equal(await page.locator("#c191-visual .c191-uninitialized").count(),1,"include does not initialize status");
+  await page.locator('[data-action="step"]').click();
+  assert.equal(await page.locator("#c191-visual .c191-bit.on").count(),5,"status becomes 0xB5 on declaration");
   assert.equal(await page.locator(".ss-common-language select").count(),1,"single standard language picker");
   assert.equal(await page.locator('.c191-concept-check').count(),1);
   assert.equal(await page.locator('.c191-concept-check').evaluate(el=>el.open),false);
@@ -45,15 +48,16 @@ for(const width of [390,1280]){
   await page.locator('[data-action="operator"]').click();
   assert.equal(await page.locator('.c191-op-unknown').count(),3,"independent experiment cannot initialize sample");
   await page.locator('#lesson-nav button[data-lesson="2"]').click();
-  assert.equal(await page.locator(".c191-metrics span").nth(1).innerText(),"Hex 0x04");
+  assert.equal(await page.locator("#c191-visual .c191-uninitialized").count(),1,"19.3 led uninitialized");
   await page.locator('[data-action="step"]').click();
+  assert.equal(await page.locator(".c191-metrics span").nth(1).innerText(),"Hex 0x04");
   await page.locator('[data-action="step"]').click();
   assert.equal(await page.locator(".c191-metrics span").nth(1).innerText(),"Hex 0x06","C line to LED register");
   await page.locator('[data-action="reset-step"]').click();
-  assert.equal(await page.locator(".c191-metrics span").nth(1).innerText(),"Hex 0x04");
+  assert.equal(await page.locator(".c191-uninitialized").count(),1,"reset restores unknown LED");
   // Independent mask exploration must not mutate the reference LED register.
   await page.locator('[data-action="mask"]').click();
-  assert.equal(await page.locator('.c191-metrics span').nth(1).innerText(),"Hex 0x04","reference register unchanged by extra exploration");
+  assert.equal(await page.locator('.c191-uninitialized').count(),1,"extra exploration leaves code display uninitialized");
   assert.equal(await page.locator('.c191-extra .c191-mini-bits').count(),1,"exploration has its own byte");
   await page.locator('[data-action="reset-mask"]').click();
   await page.locator('#lesson-nav button[data-lesson="3"]').click();
@@ -61,6 +65,28 @@ for(const width of [390,1280]){
   assert.ok((await page.locator(".c191-state.active").innerText()).includes("RUNNING"));
   await page.locator('[data-action="flag"][data-flag="4"]').click();
   assert.ok((await page.locator(".c191-state.active").innerText()).includes("ERROR"));
+  // Branch paths: only reachable statements execute; return stops the trace.
+  await page.locator('#lesson-nav button[data-lesson="3"]').click();
+  await page.locator('[data-action="reset-step"]').click();
+  await page.locator('[data-action="step"]').click();
+  assert.ok((await page.locator('.c191-device-head').innerText()).includes("판정 전") ||
+    (await page.locator('.c191-device-head').innerText()).includes("Not decoded"));
+  await page.locator('[data-action="step"]').click();
+  assert.ok((await page.locator('.c191-code .c191-line.current').innerText()).includes("if (status"));
+  await page.locator('[data-action="step"]').click();
+  assert.ok((await page.locator('.c191-code .c191-line.current').innerText()).includes("state = IDLE")===false);
+  await page.locator('#lesson-nav button[data-lesson="8"]').click();
+  await page.locator('[data-action="reset-step"]').click();
+  for(let i=0;i<3;i++)await page.locator('[data-action="step"]').click();
+  assert.ok((await page.locator('.c191-code .c191-line.current').innerText()).includes("ERROR_STATE"),"error branch returns");
+  await page.locator('[data-action="step"]').click();
+  assert.ok((await page.locator('.c191-code .c191-line.current').innerText()).includes("ERROR_STATE"),"no steps after return");
+  await page.locator('#lesson-nav button[data-lesson="10"]').click();
+  await page.locator('[data-action="reset-step"]').click();
+  await page.locator('[data-action="step"]').click();
+  await page.locator('[data-action="step"]').click();
+  assert.ok((await page.locator('.c191-metrics span').nth(1).innerText()).includes("0x95"),"bit 5 cleared");
+
   // 19.5: macro expansion and arithmetic must appear only at their trace steps.
   await page.locator('#lesson-nav button[data-lesson="4"]').click();
   assert.equal(await page.locator('.c191-stage-list .c191-file.active').count(),0,"macro before first step");
@@ -130,6 +156,8 @@ for(const width of [390,1280]){
   assert.ok((await page.locator('.c191-state.active').innerText()).includes("ERROR"));
 
   await page.locator('#lesson-nav button[data-lesson="0"]').click();
+  await page.locator('[data-action="step"]').click();
+  await page.locator('[data-action="step"]').click();
   await page.locator('#c191-pred-byte').fill("180");
   await page.locator('[data-action="predict-save"]').click();
   await page.locator('.c191-bit[data-bit="0"]').click();
@@ -145,8 +173,10 @@ for(const width of [390,1280]){
 
    assert.ok((await page.locator('.c191-code .c191-line').count())>=2,"code section "+(section+1));
    if(section===1) assert.equal(await page.locator('#c191-visual .c191-op-variable').count(),3,"three C variables");
-   else if([0,10].includes(section)) assert.equal(await page.locator('#c191-visual .c191-bit').count(),8,"bit-only model section "+(section+1));
-   else if(![4,5,6,7].includes(section)) assert.equal(await page.locator('#c191-visual .c191-terminal').count(),1,"result section "+(section+1));
+   else if(section===0) assert.equal(await page.locator('#c191-visual .c191-uninitialized').count(),1,"uninitialized byte section "+(section+1));
+   else if(section===2) assert.equal(await page.locator('#c191-visual .c191-uninitialized').count(),1,"uninitialized LED section "+(section+1));
+   else if(section===10) assert.equal(await page.locator('#c191-visual .c191-bit').count(),8,"review bit model");
+   else if(![0,1,4,5,6,7,10].includes(section)) assert.equal(await page.locator('#c191-visual .c191-terminal').count(),1,"result section "+(section+1));
    if([0,1,10].includes(section)) assert.equal(await page.locator('#c191-visual .c191-device').count(),0,"no irrelevant hardware section "+(section+1));
    if([4,5,9].includes(section)) assert.ok(await page.locator('#c191-visual .c191-stage-list').count()===1,"stage model section "+(section+1));
    if([2,3,8,10].includes(section)) assert.equal(await page.locator('.c191-extra').count(),1,"separate exploration card section "+(section+1));
