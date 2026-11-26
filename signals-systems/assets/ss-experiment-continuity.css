@@ -1,0 +1,21 @@
+/* Compact explanatory relationship; never alters charts, control grids or step mechanics. */
+.ss-continuity-observe,.ss-continuity-explain{
+ margin:10px 0 13px;padding:10px 13px;
+ border:1px solid var(--els-border,#accbd3);
+ border-left:3px solid var(--els-link,#12869b);
+ border-radius:9px;background:var(--els-surface-alt,#edf7f8);
+ color:var(--els-ink,#214451);font:500 13px/1.55 system-ui,"Malgun Gothic",sans-serif;
+}
+.ss-continuity-observe strong{font-weight:750}
+.ss-continuity-observe p,.ss-continuity-explain p{margin:5px 0 0;line-height:1.6}
+.ss-continuity-heading{display:flex;gap:7px 12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.ss-continuity-heading strong{font-weight:800}
+.ss-continuity-same{color:var(--els-link,#16849c);font-size:12px;font-weight:750}
+.ss-continuity-values-title{font-weight:750;font-size:12px;margin:10px 0 5px}
+.ss-continuity-values{display:flex;gap:5px;flex-wrap:wrap}
+.ss-continuity-chip{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;max-width:100%;
+ border:1px solid var(--els-border,#bfd2d8);background:var(--els-surface,#fff);
+ border-radius:7px;padding:4px 8px;font:500 12px/1.35 system-ui,sans-serif}
+.ss-continuity-chip strong{font-weight:750}
+.ss-continuity-verify{border-top:1px solid var(--els-border,#bfd2d8);padding-top:8px;margin-top:10px!important}
+@media(max-width:600px){.ss-continuity-observe,.ss-continuity-explain{padding:9px 10px}}
