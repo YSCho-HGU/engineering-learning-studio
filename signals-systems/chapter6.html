@@ -27,6 +27,7 @@
 .ch6-context-header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 12px}
 .ch6-context-header strong,.ch6-observe-bridge strong{font-weight:800}
 .ch6-same{font-size:12px;font-weight:750;color:var(--els-link,#16849c)}
+.ch6-values-title{font-size:12px!important;font-weight:800!important;margin-top:10px!important}
 .ch6-context-values{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 6px}
 .ch6-context-chip{display:inline-flex;align-items:center;gap:5px;max-width:100%;flex-wrap:wrap;
  padding:4px 8px;border:1px solid var(--els-border,#c4dadf);border-radius:7px;
@@ -515,7 +516,7 @@ function ch6Text(en,ko){const m=window.SSContentModel.mode();return m==='en'?en:
 function ch6CurrentSettings(id,values){
  const model=MODULES.find(m=>m.id===id);
  if(!model)return '';
- return model.controls.filter(c=>c.key!=='mode'&&values[c.key]!==undefined)
+ return model.controls.filter(c=>values[c.key]!==undefined)
   .filter(c=>id!=='pairs'||c.key!=='a'||['exp','sym'].includes(values.kind))
   .filter(c=>id!=='pairs'||c.key!=='m'||values.kind==='rect')
   .filter(c=>id!=='pairs'||c.key!=='n0'||values.kind==='shift')
@@ -529,7 +530,7 @@ function ch6Guidance(id,values){
  '<div class="ch6-context-header"><strong>'+ch6Text('4 · Explain these graphs','4 · 위 그래프 설명')+'</strong>'+
  '<span class="ch6-same">'+ch6Text('Same experiment settings','동일한 실험 조건')+'</span></div>'+
  '<p>'+ch6Text('This derivation explains graphs 2 and 3 with the same parameters. Changing an experiment parameter updates the graphs and equations together. Previous/Next only changes the explanation step.','이 수식 유도는 2·3번 그래프와 같은 변수를 사용합니다. 실험 변수를 바꾸면 그래프와 수식이 함께 갱신되지만, 이전/다음은 설명 단계만 바꿉니다.')+'</p>'+
- '<div class="ch6-context-values">'+ch6CurrentSettings(id,values)+'</div>'+
+ '<p class="ch6-values-title">'+ch6Text('Current experiment values','현재 실험값')+'</p>'+ '<div class="ch6-context-values">'+ch6CurrentSettings(id,values)+'</div>'+
  '<p><strong>'+ch6Text('Predict:','예측:')+'</strong> '+ch6Text(d[0],d[1])+'</p></section>';
 }
 function ch6Verify(id){
