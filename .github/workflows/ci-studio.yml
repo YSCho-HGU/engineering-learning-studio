@@ -280,6 +280,7 @@ jobs:
           run_case node tests/ss-chapters-math-audit.mjs
           run_case node tests/ss-detail-math-browser.mjs
           run_case node tests/ss-chapters-full-qa.mjs
+          run_case node tests/ss-ch6-learning-direction-browser.mjs
           run_case node tests/ss-responsive-unified-browser.mjs
           run_case node tests/ss-plot-typography-browser.mjs
           run_case node tests/ss-graph-label-math-browser.mjs
