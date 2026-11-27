@@ -97,7 +97,7 @@ function model(){
   return {
    en:"f = "+fmt(Number(p.frequency),2)+" Hz · fc = "+fmt(cutoff,2)+" Hz · gain = "+fmt(gain),
    ko:"f = "+fmt(Number(p.frequency),2)+" Hz · 차단주파수 = "+fmt(cutoff,2)+" Hz · 이득 = "+fmt(gain),
-   equation:"f_c = 1/(2πRC) = "+fmt(cutoff,3)+" Hz",
+   tex:String.raw`f_c=\frac{1}{2\pi RC}=${fmt(cutoff,3)}\,\mathrm{Hz},\quad|H(j2\pi f)|=${fmt(gain)}`, 
    interpretation:tr("For this same circuit, LP and HP measure voltage across different components.","같은 회로에서도 저역통과와 고역통과는 서로 다른 소자의 전압을 출력으로 측정합니다.")
   };
  }
@@ -106,7 +106,7 @@ function model(){
   return {
    en:"n = "+sample.index+" · M = "+d.M+" · y[n] = "+fmt(sample.total)+" · delay = "+fmt(d.delay,1)+" samples",
    ko:"n = "+sample.index+" · M = "+d.M+" · y[n] = "+fmt(sample.total)+" · 지연 = "+fmt(d.delay,1)+" 표본",
-   equation:"y[n] = (1/M) Σ x[n−k] = "+fmt(sample.total)+"; τg = (M−1)/2 = "+fmt(d.delay,1)+" samples",
+   tex:String.raw`y[${sample.index}]=\frac1{${d.M}}\sum_{k=0}^{${d.M-1}}x[${sample.index}-k]=${fmt(sample.total)},\quad\tau_g=${fmt(d.delay,1)}\ \mathrm{samples}`, 
    interpretation:tr("The selected FIR output equals the sum of the highlighted input taps divided by M.","선택한 FIR 출력은 음영으로 표시한 입력 표본들의 합을 M으로 나눈 값입니다.")
   };
  }
@@ -117,7 +117,7 @@ function model(){
  return {
   en:"fc(RC) = "+fmt(d.cutoffRC,2)+" Hz · fc(MA) = "+fmt(d.cutoffMA,2)+" Hz · delay RC/MA = "+fmt(d.groupDelayRC*ms,1)+"/"+fmt(d.groupDelayMA*ms,1)+" ms",
   ko:"RC/MA 차단주파수 = "+fmt(d.cutoffRC,2)+"/"+fmt(d.cutoffMA,2)+" Hz · 군지연 RC/MA = "+fmt(d.groupDelayRC*ms,1)+"/"+fmt(d.groupDelayMA*ms,1)+" ms",
-  equation:"τg,MA = (M−1)/(2fs) = "+fmt(d.groupDelayMA*ms,2)+" ms; τg,RC(0) = "+fmt(d.groupDelayRC*ms,2)+" ms",
+  tex:String.raw`\begin{aligned}\tau_{g,\mathrm{MA}}&=\frac{M-1}{2f_s}=${fmt(d.groupDelayMA*ms,2)}\,\mathrm{ms}\\\tau_{g,\mathrm{RC}}(0)&=${fmt(d.groupDelayRC*ms,2)}\,\mathrm{ms}\end{aligned}`, 
   interpretation:tr("Both filters see one x[n]. Equal −3 dB cutoff does not guarantee equal phase, group delay or noise reduction.","두 필터는 같은 x[n]을 사용합니다. −3 dB 차단주파수가 같아도 위상·군지연·잡음 감소는 같지 않을 수 있습니다.")
  };
 }
@@ -138,10 +138,15 @@ function updateEvidence(){
   node("p","ss-b-evidence-label",key),
   node("output","ss-b-evidence-values",tr(m.en,m.ko)),
   node("p","ss-b-evidence-label",tr("Current values in the relation","현재 값을 대입한 관계식")),
-  node("div","ss-b-evidence-equation",m.equation),
+  node("div","ss-b-evidence-equation",m.tex),
   node("p","ss-b-evidence-meaning",m.interpretation),
   node("p","ss-b-evidence-bridge",note)
  );
+ const math=card.querySelector(".ss-b-evidence-equation");
+ if(math&&typeof W.katex?.render==="function"){
+  try{W.katex.render(m.tex,math,{displayMode:true,throwOnError:true,strict:"ignore",trust:false,output:"htmlAndMathml"});math.dataset.mathState="rendered"}
+  catch(err){math.dataset.mathState="error";math.title=String(err.message||err)}
+ }else if(math)math.dataset.mathState="waiting";
  const progress=$("ss-b-inquiry-progress");if(progress)progress.textContent=tr(
   "Prepared examples observed: "+selected.seen.size+" / 2",
   "준비된 예제 관찰: "+selected.seen.size+" / 2");
