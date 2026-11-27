@@ -36,7 +36,7 @@ for(const width of [390,768]){
    const chapter=route.startsWith("chapter"),fail=[];
    if(!row.headerPresent||!row.languagePresent||!row.themePresent)fail.push("missing shared header controls");
    if(row.docWidth>width+6)fail.push("horizontal overflow "+row.docWidth);
-   if(row.controlsClipped.length)fail.push("header controls outside viewport");
+   if(row.controlsClipped.length){fail.push("header controls outside viewport");console.log("CLIPPED",route,width,JSON.stringify(row.controlsClipped));}
    if(row.header?.h>140)fail.push("header too tall "+row.header.h);
    if(chapter&&!row.sidebarPresent)fail.push("chapter sidebar missing");
    if(chapter&&row.arrows!==4)fail.push("chapter navigation arrows missing");
