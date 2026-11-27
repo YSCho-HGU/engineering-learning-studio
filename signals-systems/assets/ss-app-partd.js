@@ -68,6 +68,18 @@ function runAudio(){
  let source=$("source").value,type=$("filter").value,cut=+$("cutoff").value,bw=+$("band").value;
  $("cutoff-value").textContent=cut+" Hz";$("band-value").textContent=bw+" Hz";$("band").disabled=type!=="band";
  const x=newSound(source),h=fir(type,cut,bw),y=convolveSame(x,h);audioData={x,y};
+ const typeText=type==="low"?tr("Low-pass","저역통과"):type==="high"?tr("High-pass","고역통과"):tr("Band-pass","대역통과");
+ const sourceText=source==="tones"?tr("Two-tone: 250 Hz + 1950 Hz","두 정현파: 250 Hz + 1950 Hz"):tr("Synthetic vowel-like sound","합성 모음 유사 소리");
+ const settingText=type==="band"?
+  typeText+" · "+cut+" Hz · "+tr("Bandwidth","대역폭")+" "+bw+" Hz":
+  typeText+" · "+cut+" Hz";
+ $("observe-settings").textContent=tr("Input: ","입력: ")+sourceText+"  |  "+tr("Filter: ","필터: ")+settingText;
+ $("spectrum-guide").textContent=source==="tones"?(type==="low"?
+  tr("Check the 250 Hz and 1950 Hz peaks. The 250 Hz component should remain stronger after low-pass filtering.","250 Hz와 1950 Hz 피크를 찾으세요. 저역통과에서는 필터 출력의 250 Hz 성분이 상대적으로 더 강하게 남습니다."):
+  type==="high"?tr("Check the 250 Hz and 1950 Hz peaks. High-pass filtering should reduce the 250 Hz component more strongly.","250 Hz와 1950 Hz 피크를 찾으세요. 고역통과에서는 필터 출력의 250 Hz 성분이 더 크게 줄어듭니다."):
+  tr("Check which of 250 Hz and 1950 Hz lies within the selected passband. Change center and bandwidth to test your prediction.","250 Hz와 1950 Hz 중 선택한 통과대역에 포함되는 성분을 확인하세요. 중심주파수와 대역폭을 바꾸며 예측을 검증하세요.")):
+  tr("This input has several harmonics. Compare how the orange peaks change against the blue peaks, then try the two-tone example to see an easier result.","이 입력에는 여러 고조파가 있습니다. 주황 피크가 파란 피크에 비해 어떻게 변하는지 비교한 뒤, 더 명확한 관찰을 위해 두 정현파 예제도 선택해 보세요.");
+ $("wave-guide").textContent=tr("These are the exact same input and output as in graph A, shown over time. Their difference comes from filtering, not from a new experiment. For a clear frequency test, use Two-tone and compare again.","A 그래프에서 비교한 바로 그 입력과 출력을 시간영역에 나타낸 것입니다. 다른 실험이 아니라 같은 필터링 결과입니다. 주파수 차이를 명확하게 보고 싶다면 ‘두 개의 정현파’로 다시 비교해 보세요.");
  let p1=points(x.slice(0,320),1000/FS,0,2),p2=points(y.slice(0,320),1000/FS,0,2);
  draw("waveplot",[{points:p1,color:blue,label:tr("Input","입력")},{points:p2,color:orange,label:tr("Output","출력")}],{xmin:0,xmax:40,ymin:-1.3,ymax:1.3,label:"ms"});
  let a=fftMagnitudes(x,250),b=fftMagnitudes(y,250),norm=Math.max(...a,1e-10);
