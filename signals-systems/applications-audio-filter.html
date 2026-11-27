@@ -13,7 +13,7 @@
 </div></div></section>
 <section class="d-card" id="observe">
 <h2 data-en="3 · Observe — what did my filter change?" data-ko="3 · 관찰 — 내가 설정한 필터가 무엇을 바꾸었을까요?"></h2>
-<p class="d-muted" data-en="Step 3 shows the result of your current Step 2 settings. A filter change updates both graphs below; there is no separate experiment here." data-ko="3번은 2번에서 현재 설정한 필터의 결과입니다. 필터를 바꾸면 아래 두 그래프가 함께 갱신되며, 별도의 실험이 아닙니다."></p>
+<p class="d-muted" data-en="The graphs below update with the filter you set in Step 2." data-ko="아래 그래프는 2번에서 설정한 필터값에 따라 함께 갱신됩니다."></p>
 <div class="d-observe-bridge" aria-live="polite">
  <div class="d-bridge-heading" data-en="Live connection to Step 2" data-ko="2번 실험의 현재 설정과 실시간 연결"></div>
  <div id="observe-settings" class="d-observe-settings"></div>
@@ -37,7 +37,7 @@
  <div class="d-stage" id="delay-explain" aria-live="polite"></div>
 </details>
 <div class="d-metrics"><div class="d-metric"><strong id="atten">—</strong><span data-en="Output / input RMS (dB)" data-ko="출력 / 입력 RMS (dB)"></span></div><div class="d-metric"><strong id="delay">—</strong><span data-en="FIR group delay (ms)" data-ko="FIR 군지연 (ms)"></span></div><div class="d-metric"><strong id="rms">—</strong><span data-en="Output RMS" data-ko="출력 RMS"></span></div></div>
-<p class="d-observe-conclusion" data-en="Takeaway: Step 2 sets the system H. Step 3 checks what that SAME system does to x[n], in frequency and time." data-ko="핵심: 2번은 시스템 H를 설정하고, 3번은 바로 그 시스템이 x[n]을 어떻게 바꾸는지 주파수·시간영역에서 확인하는 과정입니다."></p>
+<p class="d-observe-conclusion" data-en="Conclusion: the filter changes the strengths of frequency components, which changes the sound without changing the sampling rate." data-ko="결론: 필터는 주파수별 성분의 크기를 바꾸므로 샘플링 주파수를 바꾸지 않고도 소리가 달라집니다."></p>
 </section>
 <details class="d-observe-optional" id="d1-theory">
  <summary data-en="Optional foundations · What do cutoff, FFT and dB mean?" data-ko="선택 기초 설명 · 차단주파수·FFT·dB의 의미"></summary>
