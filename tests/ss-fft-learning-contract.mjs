@@ -48,8 +48,8 @@ let contentChecks=0;
 for(const [id,page,observedId] of ids){
  const body=file(page),c=entries[id];
  assert.ok(body.includes('data-fft-path-lesson="'+id+'"'),page+' chapter binding');
- assert.ok(body.includes('ss-fft-study-path.js?v=20261127-study-v1'),page+' missing JS');
- assert.ok(body.includes('ss-fft-study-path.css?v=20261127-study-v1'),page+' missing CSS');
+ assert.ok(body.includes('ss-fft-study-path.js?v=20261127-study-v2'),page+' missing JS');
+ assert.ok(body.includes('ss-fft-study-path.css?v=20261127-study-v2'),page+' missing CSS');
  assert.ok(body.includes('id="'+observedId+'"'),page+' native evidence missing');
  assert.ok(c.predict.length===2&&c.change.length===2&&c.goal.length===2);
  assert.equal(c.options.length,2);assert.equal(c.applied.length,2);
@@ -60,7 +60,7 @@ for(const [id,page,observedId] of ids){
  contentChecks++;
 }
 const shell=file('applications-fft-theory.html');
-assert.ok(shell.includes('ss-fft-theory-guide.js?v=20261127-theory-v1'));
+assert.ok(shell.includes('ss-fft-theory-guide.js?v=20261127-theory-v2'));
 assert.ok(shell.includes('id="guide-n"')&&shell.includes('id="guide-k"')&&shell.includes('id="guide-known"'));
 assert.ok(file('applications.html').includes('applications-fft-theory.html#samples'));
 const chartInputs={
