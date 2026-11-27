@@ -93,10 +93,16 @@ for(const [width,height] of [[1366,900],[1138,840],[768,900],[390,844]]){
   assert(Math.abs(restored.totalHeight-firstPart.totalHeight)<35,"Page grows when switching Parts repeatedly: "+JSON.stringify({first:firstPart,restored}));
   for(let step=0;step<3;step++){
     await page.locator(".ss-app-toc a[href='#part-c']").click();
+    await page.waitForFunction(()=>!document.querySelector("#part-c").hidden);
     await page.locator(".ss-app-toc a[href='#part-a']").click();
+    await page.waitForFunction(()=>!document.querySelector("#part-a").hidden);
   }
-  assert(Math.abs((await visibleParts()).totalHeight-firstPart.totalHeight)<35,
-    "Repeated section navigation causes cumulative vertical growth");
+  await page.waitForTimeout(180);
+  const repeated=await visibleParts();
+  console.log("HEIGHT_NAVIGATION",width,JSON.stringify({first:firstPart,restored,repeated}));
+  assert.deepEqual(repeated.visible,["part-a"],"Repeated navigation must return to Part A");
+  assert(Math.abs(repeated.totalHeight-firstPart.totalHeight)<35,
+    "Repeated navigation changed document height: "+JSON.stringify({first:firstPart,restored,repeated}));
 
   const select=page.locator("#ss-app-language");
   await select.selectOption("ko");
