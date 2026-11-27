@@ -95,18 +95,3 @@ button,select{font:inherit}
 .ss-app-future-list{margin:8px 0 0;padding-left:20px;color:var(--els-muted);line-height:1.8}
 @media(min-width:980px){#topics-c .ss-app-lesson-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:670px){.ss-app-lesson-row{grid-template-columns:34px minmax(0,1fr) 18px;gap:9px;padding:9px;min-height:64px}.ss-app-lesson-number{width:32px;height:33px}}
-
-/* Part A-D learning scope: concise default, optional depth on demand. */
-.ss-app-study-route{margin-top:17px;padding:14px 16px;border:1px solid var(--els-border);border-radius:11px;background:var(--els-surface)}
-.ss-app-study-heading{font-size:.96rem;font-weight:750;line-height:1.4}
-.ss-app-study-route p{margin:6px 0 9px;font-size:.91rem;line-height:1.65;max-width:100ch}
-.ss-app-path-rail{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:11px 0 9px}
-.ss-app-path-rail a{padding:8px 9px;border:1px solid var(--els-border);border-radius:7px;background:var(--els-surface-alt);color:var(--els-ink);font-size:.83rem;font-weight:650;text-align:center;line-height:1.4}
-.ss-app-path-rail a:hover{border-color:var(--els-link);text-decoration:none}
-.ss-app-study-detail{min-width:0;padding:8px 11px;border:1px solid var(--els-border);background:var(--els-surface-alt);border-radius:8px;margin-top:10px}
-.ss-app-study-detail summary{cursor:pointer;color:var(--els-ink);font-size:.87rem;font-weight:700;line-height:1.5}
-.ss-app-study-detail p{font-size:.9rem;line-height:1.65;color:var(--els-muted);margin:9px 0 3px}
-.ss-app-part-guide{margin:0 0 13px}
-.ss-app-part-guide summary{font-size:.91rem}
-@media(max-width:900px){.ss-app-path-rail{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:480px){.ss-app-study-route{padding:11px 12px}.ss-app-path-rail a{font-size:.8rem;padding:8px 6px}.ss-app-study-detail summary{font-size:.85rem}}
