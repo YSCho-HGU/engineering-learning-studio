@@ -33,6 +33,17 @@ for(const width of [390,768]){
       fontSize:getComputedStyle(body).fontSize,lineHeight:getComputedStyle(body).lineHeight,
       headerDisplay:header?getComputedStyle(header).display:null};
    });
+   if(route==="chapter5.html"&&width===390){
+     const menu=page.locator(".ss5-chapter-menu");
+     assert.equal(await menu.evaluate(e=>e.open),false,"Chapter 5 chapter picker should initially be closed");
+     const hidden=await page.locator(".ss5-chapter-links").evaluate(e=>getComputedStyle(e).display==="none");
+     assert(hidden,"Chapter 5 chapter links leak into header while closed");
+     await menu.locator("summary").click();
+     const opened=await page.locator(".ss5-chapter-links").boundingBox();
+     assert(opened&&opened.width>250&&opened.x>=0&&opened.x+opened.width<=width+3,
+       "Chapter 5 chapter dropdown clips horizontally when open: "+JSON.stringify(opened));
+     await menu.locator("summary").click();
+   }
    const chapter=route.startsWith("chapter"),fail=[];
    if(!row.headerPresent||!row.languagePresent||!row.themePresent)fail.push("missing shared header controls");
    if(row.docWidth>width+6)fail.push("horizontal overflow "+row.docWidth);
