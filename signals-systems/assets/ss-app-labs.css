@@ -308,3 +308,15 @@ button:disabled{opacity:.55;cursor:default}
  min-height:0;
  max-height:none;
 }
+
+/* 04 Beats / 05 AM-FM / 06 Sampling: same safeguard as Chirp/Helix.
+   The primary canvas must keep its explicit responsive CSS height instead of
+   stretching to the automatically sized grid row. Canvas bitmap resizing can
+   otherwise feed back into grid sizing while controls and playback redraw.
+   01 Harmonics uses the regular independent single-row plot layout. */
+.ss-al-charts[data-kind="beats"] .ss-al-plot:first-child canvas,
+.ss-al-charts[data-kind="amfm"] .ss-al-plot:first-child canvas,
+.ss-al-charts[data-kind="sampling"] .ss-al-plot:first-child canvas{
+ flex:0 0 auto;
+ min-height:0;
+}
