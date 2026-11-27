@@ -15,7 +15,7 @@ const spec={
   choices:[["8 Hz (fast)","8 Hz (빠른 신호)"],["0.4 Hz (slow)","0.4 Hz (느린 신호)"]],answer:0,
   apply:["At the same R and C, which filter passes a fast sine wave more strongly?","R과 C가 같을 때 높은 주파수 정현파를 더 강하게 통과시키는 필터는 무엇일까요?"],
   applyChoices:[["High-pass (HP)","고역통과(HP)"],["Low-pass (LP)","저역통과(LP)"]],applyAnswer:0,
-  why:["For a fixed RC, raising frequency lowers the low-pass gain. High-pass and low-pass read output across different elements.","RC를 고정하면 입력 주파수가 높을수록 저역통과 이득은 줄어듭니다. 고역·저역통과는 출력 전압을 측정하는 소자가 다릅니다."],
+  why:["In the same RC low-pass experiment, compare output amplitude at 0.4 Hz and 8 Hz: the faster sine is attenuated more. Switch to high-pass only after identifying this difference.","같은 RC 저역통과 실험에서 0.4 Hz와 8 Hz의 출력 진폭을 비교하세요. 빠른 정현파가 더 감쇠됩니다. 이 차이를 확인한 뒤 고역통과로 바꾸어 비교하세요."],
   next:"applications-system-lab.html?lab=moving-average",
   nextLabel:["Next · Build an FIR from samples","다음 · 표본으로 FIR 필터 만들기"],
   bridge:["The RC circuit smooths continuously. Next, form a digital filter by averaging samples.","RC 회로는 연속시간에서 평활화합니다. 다음에는 표본의 평균으로 디지털 필터를 만듭니다."]
@@ -25,7 +25,7 @@ const spec={
   choices:[["The output rises more slowly (more averaging memory)","출력이 더 천천히 올라갑니다(평균의 기억 증가)"],["Both outputs are identical at the edge","경계에서도 두 출력은 같습니다"]],answer:0,
   apply:["For independent white noise, what happens to output noise standard deviation when M increases?","독립 백색잡음에서 평균 길이 M이 증가하면 출력 잡음의 표준편차는 어떻게 될까요?"],
   applyChoices:[["It decreases approximately as 1/√M","대략 1/√M에 비례해 감소합니다"],["It increases approximately as √M","대략 √M에 비례해 증가합니다"]],applyAnswer:0,
-  why:["A causal M-tap average uses the current and M−1 past samples. Longer windows smooth independent noise more but spread sharp transitions and increase delay.","인과적 M탭 이동평균은 현재와 과거 M−1개 표본을 사용합니다. M이 커지면 독립 잡음은 더 줄지만 급격한 변화가 퍼지고 지연이 증가합니다."],
+  why:["At the same step edge, M=21 averages more past samples than M=3, so its output rises more gradually. The same mechanism smooths independent noise but increases the delay.","같은 계단 경계에서 M=21은 M=3보다 더 많은 과거 표본을 평균하므로 출력이 완만하게 상승합니다. 이 원리로 독립 잡음도 줄지만 지연은 커집니다."],
   next:"applications-system-compare.html",
   nextLabel:["Next · Compare filters on one input","다음 · 동일 입력으로 두 필터 비교"],
   bridge:["An FIR average also smooths, but creates a different delay. Compare it fairly with RC using the same input and cutoff.","FIR 평균도 신호를 평활하지만 지연 특성이 다릅니다. 다음에는 동일 입력과 차단주파수 조건에서 RC와 비교합니다."]
@@ -35,7 +35,7 @@ const spec={
   choices:[["No; matching cutoff does not force identical response","아니요. 차단주파수가 같아도 응답은 다를 수 있습니다"],["Yes; all frequency and time responses must match","예. 시간·주파수 응답도 반드시 같습니다"]],answer:0,
   apply:["With the same M, how does the moving-average group delay in seconds change when sampling rate fs doubles?","M이 같은 이동평균에서 표본화 주파수 fs가 두 배가 되면 초 단위 군지연은 어떻게 변할까요?"],
   applyChoices:[["It is halved","절반이 됩니다"],["It doubles","두 배가 됩니다"]],applyAnswer:0,
-  why:["The matched cutoff is just one magnitude point. Phase and group delay depend on each filter's structure; for MA, τg=(M−1)/(2fs).","같은 차단주파수는 크기 응답의 한 점만 일치한다는 의미입니다. 위상과 군지연은 필터 구조에 따라 달라지며, 이동평균의 군지연은 τg=(M−1)/(2fs)입니다."],
+  why:["The same input and −3 dB cutoff do not make two systems identical: compare the RC and moving-average output curves for their timing and noise behavior. For MA, group delay is (M−1)/(2fs).","동일한 입력과 −3 dB 차단주파수만으로 두 시스템이 같아지지는 않습니다. RC와 이동평균 출력에서 변화 시점과 잡음 감소를 비교하세요. MA의 군지연은 (M−1)/(2fs)입니다."],
   next:"applications.html#part-c",
   nextLabel:["Continue · Explore FFT and spectral evidence","계속 · FFT와 스펙트럼 실습"],
   bridge:["You compared time and frequency responses of two systems. Next, use FFT to identify frequency components in actual sampled data.","두 시스템의 시간·주파수 응답을 비교했습니다. 다음에는 FFT로 실제 표본 데이터의 주파수 성분을 분석합니다."]
