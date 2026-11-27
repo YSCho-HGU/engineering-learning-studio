@@ -23,15 +23,15 @@
 </header>
 <main class="fft-guide-main">
  <section class="fft-guide-hero">
-  <p class="fft-guide-eyebrow">SIGNALS &amp; SYSTEMS · APPLICATIONS · OPTIONAL THEORY</p>
+  <p class="fft-guide-eyebrow" id="guide-eyebrow">SIGNALS &amp; SYSTEMS · APPLICATIONS · OPTIONAL THEORY</p>
   <h1 id="guide-title">FFT Concept Guide</h1>
   <p id="guide-description">FFT concepts for independent study.</p>
   <div class="fft-guide-diagram" role="img" aria-label="Eight time samples mapping to eight DFT frequency bins">
    <svg viewBox="0 0 730 172" width="100%" height="auto" preserveAspectRatio="xMidYMid meet">
     <rect x="7" y="8" width="322" height="154" rx="10" fill="none" stroke="currentColor" stroke-opacity=".3"/>
     <rect x="400" y="8" width="322" height="154" rx="10" fill="none" stroke="currentColor" stroke-opacity=".3"/>
-    <text x="26" y="33" fill="currentColor" font-size="17" font-weight="bold">x[n] · samples</text>
-    <text x="418" y="33" fill="currentColor" font-size="17" font-weight="bold">X[k] · FFT bins</text>
+    <text id="guide-diagram-left" x="26" y="33" fill="currentColor" font-size="17" font-weight="bold">x[n] · samples</text>
+    <text id="guide-diagram-right" x="418" y="33" fill="currentColor" font-size="17" font-weight="bold">X[k] · FFT bins</text>
     <line x1="34" y1="132" x2="299" y2="132" stroke="currentColor" stroke-opacity=".5"/>
     <line x1="425" y1="132" x2="691" y2="132" stroke="currentColor" stroke-opacity=".5"/>
     <g stroke="#338bac" stroke-width="5" stroke-linecap="round">
@@ -75,7 +75,7 @@
  <div id="guide-topics"></div>
  <footer class="fft-guide-footer">
   <p id="guide-footer"></p>
-  <a href="./applications.html">← Applications</a>
+  <a href="./applications.html" id="guide-footer-home">← Applications</a>
  </footer>
 </main>
 <script defer src="../assets/els-language.js?v=1"></script>
