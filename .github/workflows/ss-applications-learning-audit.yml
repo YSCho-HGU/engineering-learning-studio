@@ -1,0 +1,29 @@
+name: Applications curriculum and math contract
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'signals-systems/applications.html'
+      - 'signals-systems/applications-chirp-stft.html'
+      - 'signals-systems/assets/ss-applications-hub.js'
+      - 'signals-systems/assets/ss-app-chirp-stft.js'
+      - 'signals-systems/assets/ss-app-inquiry.js'
+      - 'tests/ss-applications-learning-contract.mjs'
+      - '.github/workflows/ss-applications-learning-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  source-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify lab inventory, links and instructional math
+        run: node tests/ss-applications-learning-contract.mjs
