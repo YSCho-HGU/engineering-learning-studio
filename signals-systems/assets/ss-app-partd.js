@@ -184,4 +184,11 @@ window.addEventListener("resize",()=>{
  resizeQueued=true;
  requestAnimationFrame(()=>{resizeQueued=false;drawAll()});
 });
+window.addEventListener("els:themechange",()=>requestAnimationFrame(drawAll));
+if(!audio){
+ const detail=$("correlation-detail");
+ detail?.addEventListener("toggle",()=>{
+  if(detail.open)requestAnimationFrame(productStep);
+ });
+}
 })();
