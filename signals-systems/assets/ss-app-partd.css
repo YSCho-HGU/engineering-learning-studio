@@ -53,3 +53,33 @@ a{color:var(--els-link,#77cbb7)}button,select,input{font:inherit}
 .d-stage{overflow-wrap:anywhere;white-space:pre-line}
 .d-plot canvas{max-width:100%}
 @media(max-width:600px){.d-product-lab{padding:10px}.d-product-lab .d-buttons button{flex:1 1 42%}}
+
+/* Readability changes informed by desktop/mobile screenshot review. */
+.d-card p{max-width:90ch}
+.d-card .d-plot{margin-top:14px}
+.d-card .d-plot figcaption{font-size:.92rem;line-height:1.55;margin:8px 0 3px}
+.d-field>span{font-size:.96rem}
+.d-hint,.d-muted{font-size:.93rem;line-height:1.65}
+.d-stage{font-size:.93rem;line-height:1.6}
+.d-metric span{font-size:.85rem;line-height:1.45}
+.d-product-lab{margin:16px 0;border-color:var(--els-border,#65756b)}
+details.d-product-lab>summary{cursor:pointer;font-size:1rem;font-weight:750;padding:9px 10px;border-radius:9px;list-style-position:inside;line-height:1.5}
+details.d-product-lab>summary:hover{background:var(--els-surface,#eff5f1)}
+details.d-product-lab[open]>summary{margin-bottom:12px;border-bottom:1px solid var(--els-border,#65756b)}
+details.d-product-lab:not([open]){padding:8px 12px}
+.d-buttons button{min-height:38px}
+#experiment .d-plot canvas{aspect-ratio:2.55/1}
+@media(max-width:850px){
+ .d-card .d-plot figcaption{font-size:.94rem}
+ #experiment .d-plot{margin-top:12px}
+}
+@media(max-width:480px){
+ .d-card h2{font-size:1.08rem}
+ .d-card .d-plot canvas{aspect-ratio:1.85/1}
+ #experiment .d-plot canvas{aspect-ratio:1.85/1}
+ .d-card .d-plot figcaption{font-size:.92rem}
+ .d-stage{padding:12px}
+ .d-field input[type=range]{min-height:30px}
+ .d-steps a{min-height:34px;display:inline-flex;align-items:center}
+ .d-metric strong{font-size:1.12rem}
+}
