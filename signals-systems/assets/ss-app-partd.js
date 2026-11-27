@@ -7,7 +7,7 @@ function localize(){document.querySelectorAll("[data-en][data-ko]").forEach(el=>
 lang?.bindSelect?.($("partd-language"));
 lang?.subscribe?.(()=>{localize();drawAll()});
 localize();
-const N=8192,FS=8000,TAU=2*Math.PI;
+const N=16384,FS=8000,TAU=2*Math.PI;
 function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
 function rms(a){return Math.sqrt(a.reduce((s,v)=>s+v*v,0)/a.length)}
 function draw(canvas,series,{xmin=0,xmax=1,ymin=-1,ymax=1,marks=[],label=""}={}){
@@ -28,7 +28,7 @@ function draw(canvas,series,{xmin=0,xmax=1,ymin=-1,ymax=1,marks=[],label=""}={})
 const blue="#4a9ce8",orange="#e59e4e",green="#66ba83";
 function points(a,dt=1,start=0,step=1){const v=[];for(let i=0;i<a.length;i+=step)v.push([start+i*dt,a[i]]);return v}
 function prediction(options,correct){
- const root=$("predict-options");for(const [id,en,ko] of options){let label=document.createElement("label"),radio=document.createElement("input");radio.type="radio";radio.name="prediction";radio.value=id;label.append(radio,document.createTextNode(tr(en,ko)));root.append(label)}
+ const root=$("predict-options");for(const [id,en,ko] of options){let label=document.createElement("label"),radio=document.createElement("input");radio.type="radio";radio.name="prediction";radio.value=id;const span=document.createElement("span");span.dataset.en=en;span.dataset.ko=ko;span.textContent=tr(en,ko);label.append(radio,span);root.append(label)}
  $("predict-check").addEventListener("click",()=>{const answer=document.querySelector('input[name="prediction"]:checked')?.value;$("predict-result").textContent=!answer?tr("Choose an answer first.","먼저 답을 선택하세요."):answer===correct?tr("Correct. Test the prediction below.","맞았습니다. 아래에서 예측을 시험해 보세요."):tr("Try the experiment and compare the outcome.","실험 결과를 살펴보고 다시 생각해 보세요.")});
 }
 function newSound(source){
