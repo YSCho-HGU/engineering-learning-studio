@@ -21,6 +21,10 @@ for(const [path,kind] of [["applications-audio-filter.html","audio"],["applicati
    assert.equal(await page.locator('input[name="prediction"]').count(),3);
   }
   if(kind==="audio"){
+   await page.locator("#d1-delay-detail").evaluate(el=>el.open=true);
+   assert.equal(await page.locator("#observe-settings").count(),1);
+   assert.equal(await page.locator("#spectrum-guide").count(),1);
+   assert.equal(await page.locator("#wave-guide").count(),1);
    let before=await page.locator("#atten").innerText();
    await page.locator("#filter").selectOption("high");
    await page.locator("#cutoff").evaluate(el=>{el.value="2100";el.dispatchEvent(new Event("input",{bubbles:true}))});
@@ -32,6 +36,7 @@ for(const [path,kind] of [["applications-audio-filter.html","audio"],["applicati
    await page.locator("#filter").selectOption("band");
    assert.equal(await page.locator("#band").isDisabled(),false);
    assert((await page.locator("#cutoff-explain").innerText()).length>50);
+   assert.match(await page.locator("#observe-settings").innerText(),/2100|2,100/);
    assert(await page.locator("#experiment #gainplot").count()===1,"Filter response should be next to controls");
   }else{
    assert(await page.locator("#observe #corr-plot").count()===1,"Correlation plot must be in Observe");
