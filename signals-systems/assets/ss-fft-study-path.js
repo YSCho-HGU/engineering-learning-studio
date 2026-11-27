@@ -32,7 +32,8 @@
    formula:()=>{
     const raw=$("fft-samples")?.value||"";
     const count=raw.split(/[\s,;]+/).filter(x=>x.length).length;
-    const N=count>0?count:0;
+    const reported=Number($("fft-metrics")?.querySelector(".ss-fft-metric:first-child strong")?.textContent||"");
+    const N=Number.isInteger(reported)&&reported>1?reported:count;
     const valid=$("fft-known")?.checked&&numeric("fft-fs")>0;
     const fs=valid?numeric("fft-fs"):null;
     return N?{
@@ -141,8 +142,11 @@
    change:["Start with a built-in demonstration, then inspect the FFT peaks. Try a real file; enter fs only if the recording or sensor documentation provides it.","기본 데모로 FFT 피크를 먼저 확인한 뒤 실제 파일을 사용하세요. fs는 녹음·센서 기록에 명시된 경우에만 입력하세요."],
    evidence:()=>visibleText("fft-upload-stats",205)||t("Choose a demo or local file first.","데모 또는 로컬 파일을 먼저 선택하세요."),
    formula:()=>{
-    const N=numeric("fft-upload-n")||1024,fs=numeric("fft-upload-fs");
-    const isHz=fs>0;
+    const N=numeric("fft-upload-n")||1024;
+    const entered=$("fft-upload-fs")?.value.trim()||"";
+    const fromSource=($("fft-upload-meta")?.textContent||"").match(/fs\s*=\s*([0-9.]+)\s*Hz/i);
+    const fs=entered==="0"?null:entered!==""?Number(entered):fromSource?Number(fromSource[1]):null;
+    const isHz=Number.isFinite(fs)&&fs>0;
     return {
       tex:isHz?String.raw`\nu_k=\frac{k}{${N}},\quad f_k=\frac{k\,${fmt(fs)}}{${N}}\ \mathrm{Hz}`:
        String.raw`\nu_k=\frac{k}{${N}}\ \mathrm{cycles/sample}`,
