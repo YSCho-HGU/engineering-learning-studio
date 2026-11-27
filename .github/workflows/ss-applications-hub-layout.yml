@@ -1,0 +1,44 @@
+name: Applications hub layout integrity
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'signals-systems/applications.html'
+      - 'signals-systems/assets/ss-applications-hub.css'
+      - 'signals-systems/assets/ss-applications-hub.js'
+      - 'tests/ss-applications-hub-layout.mjs'
+      - '.github/workflows/ss-applications-hub-layout.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  applications-layout:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chromium for visual layout checks
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1 @playwright/test@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Start static preview
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > "$RUNNER_TEMP/apphub-http.log" 2>&1 &
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            curl -fsS http://127.0.0.1:8765/index.html -o /dev/null && break
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8765/index.html -o /dev/null
+      - name: Check Applications layout at desktop and mobile widths
+        run: node tests/ss-applications-hub-layout.mjs
+      - name: Save screenshot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: applications-hub-layout-screenshots
+          path: qa/applications-hub-layout
+          if-no-files-found: ignore
+          retention-days: 14
