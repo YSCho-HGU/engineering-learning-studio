@@ -1,0 +1,46 @@
+name: Chapters vs Applications mobile consistency
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'signals-systems/applications-*.html'
+      - 'signals-systems/assets/ss-responsive-unified.css'
+      - 'signals-systems/assets/ss-common-header.css'
+      - 'signals-systems/assets/ss-app-partd.css'
+      - 'signals-systems/assets/ss-applications-hub.css'
+      - 'tests/ss-applications-chapter-mobile-consistency.mjs'
+      - '.github/workflows/ss-applications-chapter-mobile-consistency.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mobile-consistency:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 19
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1 @playwright/test@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Start local site
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > "$RUNNER_TEMP/app-consistency-http.log" 2>&1 &
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            curl -fsS http://127.0.0.1:8765/index.html -o /dev/null && break
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8765/index.html -o /dev/null
+      - name: Compare 8 Chapters and 14 Applications pages
+        run: node tests/ss-applications-chapter-mobile-consistency.mjs
+      - name: Save screenshots and DOM measurements
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chapter-applications-mobile-consistency
+          path: qa/ss-chapter-app-consistency
+          if-no-files-found: ignore
+          retention-days: 14
