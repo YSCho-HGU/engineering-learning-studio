@@ -100,7 +100,7 @@ jobs:
                 if (p.includes('ss-math-core')) { flags.chapters = true; flags.apps = true; }
               } else if (p.startsWith('tests/')) {
                 if (/^tests\/(c|textbook|phase0|qa-unified)/.test(p)) flags.c = true;
-                if (/^tests\/(applications|fft|image|ss-(apps|applications|fft|chirp|dtmf|sound|extra|partb))/.test(p)) flags.apps = true;
+                if (/^tests\/(applications|fft|image|ss-(apps|applications|fft|chirp|dtmf|sound|extra|partb|partd))/.test(p)) flags.apps = true;
                 if (/^tests\/ss-(chapters|ch4|responsive|plot|header|sidebar)/.test(p)) flags.chapters = true;
                 if (/^tests\/(studio|els|header)/.test(p)) flags.shared = true;
                 if (/^tests\/studio-admin/.test(p)) flags.admin = true;
