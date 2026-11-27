@@ -1,0 +1,61 @@
+:root{font-family:Arial,"Malgun Gothic",sans-serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}body{margin:0;background:var(--els-page,#f4f6f8);color:var(--els-ink,#243645);font:16px/1.65 Arial,"Malgun Gothic",sans-serif}
+a{color:var(--els-link,#187d9a);text-decoration:none}a:hover{text-decoration:underline}
+button,select,input{font:inherit}button{cursor:pointer}
+:where(a,button,input,select):focus-visible{outline:3px solid var(--els-focus,var(--els-link,#187d9a));outline-offset:3px}
+.fft-guide-skip{position:absolute;left:10px;top:-120px;padding:7px;background:var(--els-surface,#fff);z-index:100}
+.fft-guide-skip:focus{top:10px}
+.fft-guide-header{position:sticky;top:0;z-index:40;display:flex;gap:12px;justify-content:space-between;align-items:center;
+ padding:10px clamp(12px,3vw,30px);background:var(--els-surface,#fff);
+ border-bottom:1px solid var(--els-border,#ccd7db);min-height:57px}
+.fft-guide-home{font-weight:750;line-height:1.3;color:var(--els-link,#187d9a)}
+.fft-guide-header-tools{display:flex;gap:9px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.fft-guide-header-tools label{font-size:12px;color:var(--els-muted,#576779)}
+.fft-guide-header-tools select,.fft-guide-header-tools button{
+ min-height:34px;border:1px solid var(--els-border,#ccd7db);border-radius:7px;
+ padding:4px 8px;background:var(--els-surface-alt,var(--els-surface,#fff));color:var(--els-ink)
+}
+.fft-guide-main{max-width:1100px;padding:23px clamp(14px,3vw,28px) 70px;margin:0 auto}
+.fft-guide-hero,.fft-guide-explorer,.fft-guide-toc,.fft-guide-topic{background:var(--els-surface,#fff);
+ border:1px solid var(--els-border,#ccd7db);border-radius:13px;
+ padding:clamp(14px,3vw,24px);margin:0 0 15px;min-width:0}
+.fft-guide-hero h1{font-size:clamp(24px,4vw,34px);line-height:1.25;margin:8px 0 9px}
+.fft-guide-eyebrow,.fft-guide-number{font-size:12px;color:var(--els-link,#187d9a);font-weight:800;letter-spacing:.035em;margin:0}
+.fft-guide-hero p,.fft-guide-explorer p,.fft-guide-topic p,.fft-guide-footer p{white-space:pre-line;line-height:1.7;overflow-wrap:anywhere}
+.fft-guide-diagram{border:1px solid var(--els-border,#ccd7db);background:var(--els-surface-alt,var(--els-surface,#fff));border-radius:10px;padding:7px;margin-top:14px;overflow:hidden}
+.fft-guide-diagram svg{display:block;max-width:100%;height:auto}
+.fft-guide-figure-note{color:var(--els-muted,#576779);font-size:12px}
+.fft-guide-explorer h2,.fft-guide-toc h2{font-size:19px;line-height:1.35;margin:0 0 8px}
+.fft-guide-input-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}
+.fft-guide-input-grid label{display:grid;gap:5px;min-width:0;font-size:13px;font-weight:650;line-height:1.4}
+.fft-guide-input-grid label span{overflow-wrap:anywhere;white-space:pre-line}
+.fft-guide-input-grid select,.fft-guide-input-grid input:not([type=checkbox]){width:100%;min-width:0;background:var(--els-surface-alt,var(--els-surface,#fff));color:var(--els-ink);padding:8px;border-radius:7px;border:1px solid var(--els-border,#ccd7db)}
+.fft-guide-input-grid .fft-guide-checkbox{align-self:end;display:flex;align-items:center;gap:8px;min-height:39px}
+.fft-guide-mini-output{display:grid;gap:10px;padding:12px;border-radius:9px;background:var(--els-surface-alt,var(--els-surface,#fff));min-width:0}
+.fft-guide-mini-output output{display:block;white-space:pre-line;font-weight:700;font-size:14px;overflow-wrap:anywhere}
+.fft-guide-toc #guide-toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+.fft-guide-nav-link{display:block;border:1px solid var(--els-border,#ccd7db);padding:9px 11px;border-radius:7px;white-space:pre-line;font-size:13px;font-weight:700;line-height:1.55}
+.fft-guide-topic{scroll-margin-top:84px}
+.fft-guide-topic h2{margin:5px 0 8px;font-size:clamp(19px,3vw,25px);line-height:1.35}
+.fft-guide-intro{font-size:15px;line-height:1.75;margin:0 0 14px}
+.fft-guide-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.fft-guide-step{border:1px solid var(--els-border,#ccd7db);border-radius:9px;background:var(--els-surface-alt,var(--els-surface,#fff));padding:12px;min-width:0}
+.fft-guide-step h3{margin:0 0 8px;font-size:15px;line-height:1.45;white-space:pre-line}
+.fft-guide-step p{font-size:14px;margin:0;line-height:1.7}
+.fft-guide-math{min-width:0;margin-top:15px;display:grid;gap:9px}
+.fft-guide-math h3,.fft-guide-example h3{font-size:15px;margin:0}
+.fft-guide-equation{display:block;min-width:0;max-width:100%;overflow-x:auto;overflow-y:hidden;background:var(--els-surface-alt,var(--els-surface,#fff));border-radius:8px;border:1px solid var(--els-border,#ccd7db);padding:9px 12px;font-size:16px;scrollbar-width:thin}
+.fft-guide-equation .katex-display{margin:.28em 0;text-align:left}
+.fft-guide-equation .katex-display>.katex{text-align:left;white-space:nowrap}
+.fft-guide-example{margin-top:13px;border-left:3px solid var(--els-link,#187d9a);padding:9px 12px;background:var(--els-surface-alt,var(--els-surface,#fff));border-radius:6px}
+.fft-guide-example p{font-size:14px;margin:7px 0 0}
+.fft-guide-caution{font-size:14px;color:var(--els-ink);margin:12px 0}
+.fft-guide-return{display:inline-block;margin-top:9px;font-weight:700;font-size:13px}
+.fft-guide-footer{font-size:13px;color:var(--els-muted,#576779);padding:8px 4px}
+@media(max-width:850px){.fft-guide-steps{grid-template-columns:1fr}.fft-guide-input-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.fft-guide-header{align-items:flex-start}.fft-guide-header-tools{gap:6px}
+.fft-guide-header-tools label{display:none}.fft-guide-header-tools button{font-size:12px}
+.fft-guide-main{padding:14px 12px 42px}.fft-guide-input-grid{grid-template-columns:1fr}
+.fft-guide-toc #guide-toc{grid-template-columns:1fr}.fft-guide-equation{font-size:13px}
+}
