@@ -235,7 +235,7 @@ function localize(){
  "finger-piano-file-label":["Piano recording","피아노 녹음"],"finger-guitar-file-label":["Guitar recording","기타 녹음"],"finger-voice-file-label":["Voice recording","목소리 녹음"],
  "finger-clear-files":["Use synthetic models again","합성 모델로 돌아가기"],
  "finger-predict-title":["1 · Listen, Then Make a Prediction","1 · 듣고 예측하기"],
- "finger-predict-help":["Play A, B and C. Which instrument or voice is the currently selected sound? The names remain hidden until you reveal the fingerprints.","A·B·C를 들어보세요. 현재 선택한 소리가 어떤 악기 또는 목소리일까요? 결과를 공개하기 전까지 정체를 숨깁니다."],
+ "finger-predict-help":["Keep the reference note fixed and listen to A, B and C first. Predict the selected sound, then reveal the FFT: which harmonic peaks support your guess?","기준 음높이를 고정하고 A·B·C를 먼저 들으세요. 선택한 소리를 예측한 뒤 FFT를 공개하여 어떤 고조파 피크가 추측을 뒷받침하는지 확인하세요."],
  "finger-guess-label":["Selected sound identity","현재 소리의 정체"],
  "finger-guess-check":["Check my prediction","예측 확인"],
  "finger-synthesis-note":["Initial examples are instrument-like and vowel-like harmonic models, NOT real piano/guitar/human recordings.","기본 예제는 악기·모음 특성을 모사한 합성 모델이며 실제 피아노·기타·사람 목소리 녹음이 아닙니다."],
