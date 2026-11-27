@@ -171,7 +171,7 @@ function insight(result){
 const labels={
  title:["FFT from Sample Data","샘플 데이터로 시작하는 FFT"],
  subtitle:["Start with a list of samples. Find the strongest frequency bins, then discover what changes—and what does not—when sampling rate is known.","샘플 배열에서 출발하여 주요 주파수 Bin을 찾고, 샘플링 주파수 유무에 따라 해석 가능한 정보를 구분합니다."],
- controls:["Input samples","입력 표본 데이터"],note:["Choose a sample set or paste numeric samples. One column, separated by spaces, commas, or line breaks.","예제 데이터를 선택하거나 숫자 표본을 붙여넣습니다. 공백·쉼표·줄바꿈으로 구분합니다."],
+ controls:["Input samples","입력 표본 데이터"],note:["Start with One coherent sinusoid, then Two sinusoids. Run FFT and compare peak bins before entering a sampling rate.","먼저 ‘단일 정현파’, 다음으로 ‘두 정현파’ 예제를 선택하세요. fs를 입력하기 전에 FFT를 실행해 피크 Bin부터 비교하세요."],
  preset:["Example dataset","예제 데이터"],samples:["Sample values x[n]","표본값 x[n]"],format:["Enter 8–128 real values. For power-of-two N, a radix-2 FFT is used; otherwise, a direct DFT returns the same coefficients.","실수 표본 8~128개를 입력합니다. N이 2의 거듭제곱이면 radix-2 FFT, 아니면 동일한 계수를 구하는 직접 DFT를 사용합니다."],
  known:["Sampling rate fₛ is known","샘플링 주파수 fₛ를 알고 있습니다"],fs:["Sampling rate fₛ (Hz)","샘플링 주파수 fₛ (Hz)"],
  run:["Run FFT","FFT 실행"],reset:["Reset","초기화"],
