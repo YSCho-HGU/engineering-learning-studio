@@ -298,7 +298,7 @@ function localization(){
  "stft-title":["Chirp, STFT, and Spectrogram","처프·STFT·스펙트로그램"],
  "stft-intro":["Compare rising, falling, and step-frequency signals: the full FFT gives spectral content, while moving-window FFT and Spectrogram show when frequencies occur.","상승·하강·계단형 주파수 신호를 비교하세요. 전체 FFT는 주파수 성분을 보여주지만, 이동 Window FFT와 Spectrogram은 언제 발생했는지를 보여줍니다."],
  "stft-controls-title":["Change · Signal and analysis","Change · 신호와 분석 설정"],
- "stft-controls-help":["Adjust chirp frequency, observation duration, and the STFT window. Then move the selected frame.","처프 주파수·관측 시간·STFT 창을 조절한 뒤 현재 분석 구간을 이동하세요."],
+ "stft-controls-help":["Start with Rising chirp. Move the analysis frame from the beginning to the end and compare its local FFT peak with the spectrogram ridge; then change window length.","‘상승 처프’로 시작하세요. 분석 구간을 처음부터 끝까지 이동하며 국소 FFT 피크와 스펙트로그램 능선을 비교한 뒤 창 길이를 조절하세요."],
  "stft-shape-label":["Frequency pattern","주파수 변화 유형"],
  "stft-contrast-title":["Compare · Time–Frequency Resolution","비교 · 시간–주파수 해상도"],
  "stft-contrast-help":["Two computed STFTs of the same signal, shown with one shared magnitude-dB color scale.","동일한 신호에 대해 계산한 두 STFT 결과를 공통 Magnitude dB 색상 척도로 비교합니다."],
