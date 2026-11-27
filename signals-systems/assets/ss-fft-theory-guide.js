@@ -184,7 +184,7 @@
     "k="+k+", N="+N+"; ν="+nu.toFixed(5)+" cycles/sample; 부호 주파수="+signed.toFixed(5)+" cycles/sample. 실제 Hz는 알 수 없습니다."];
   $("guide-explorer-result").textContent=t(...lines);
   $("guide-explorer-tex").textContent=physical?
-   String.raw`f_k=\frac{${k}\times${fs}}{${N}}=${(nu*fs).toFixed(2)}\,\mathrm{Hz}`:
+   String.raw`f_{\mathrm{signed}}=\frac{${k>N/2?k-N:k}\times${fs}}{${N}}=${(signed*fs).toFixed(2)}\,\mathrm{Hz}`:
    String.raw`\nu_k=\frac{${k}}{${N}}=${nu.toFixed(5)}\ \mathrm{cycles/sample}`;
   if(window.katex?.render){
    try{window.katex.render($("guide-explorer-tex").textContent,$("guide-explorer-tex"),{displayMode:true,throwOnError:true,strict:"ignore",trust:false});}
