@@ -83,3 +83,21 @@ details.d-product-lab:not([open]){padding:8px 12px}
  .d-steps a{min-height:34px;display:inline-flex;align-items:center}
  .d-metric strong{font-size:1.12rem}
 }
+
+/* D1 live Step 2 -> Step 3 pedagogy */
+.d-observe-bridge{border:1px solid var(--els-border,#809188);border-radius:12px;background:var(--els-surface-alt,#2a362e);padding:14px 16px;margin:14px 0;display:flex;flex-direction:column;gap:5px}
+.d-bridge-heading{font-size:.84rem;font-weight:750;color:var(--els-ink,#eaf2eb)}
+.d-observe-settings{font-weight:700;font-size:1.02rem;line-height:1.5;overflow-wrap:anywhere}
+.d-observe-edit{font-size:.86rem;font-weight:650;align-self:start;text-decoration:underline;text-underline-offset:3px}
+.d-instruction{border-left:3px solid var(--els-link,#64ba9c);background:var(--els-surface-alt,#283b30);padding:12px 15px;font-weight:600;line-height:1.65}
+.d-observe-step{margin:18px 0;padding:14px;border-radius:12px;border:1px solid var(--els-border,#60786b)}
+.d-observe-step-heading{display:flex;gap:12px;align-items:start}
+.d-observe-step-heading h3{margin:0 0 4px}
+.d-observe-step-heading p{margin:0;font-size:.93rem}
+.d-step-letter{flex:0 0 auto;display:grid;place-items:center;border-radius:50%;width:33px;height:33px;background:var(--els-surface-alt,#27382e);border:1px solid var(--els-border,#7b9183);font-weight:800;font-size:.96rem}
+.d-observe-optional{margin:16px 0;padding:12px 14px;border:1px solid var(--els-border,#708777);border-radius:10px}
+.d-observe-optional summary{font-weight:730;cursor:pointer}
+.d-observe-optional[open] summary{margin-bottom:12px}
+.d-observe-optional p{font-size:.93rem}
+.d-observe-conclusion{border-top:1px solid var(--els-border,#6b796d);padding-top:14px;margin-top:16px;font-weight:700}
+@media(max-width:600px){.d-observe-bridge{padding:12px}.d-observe-step{padding:10px}.d-observe-step-heading{gap:9px}.d-observe-settings{font-size:.96rem}}
