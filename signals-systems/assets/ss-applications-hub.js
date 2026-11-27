@@ -1,15 +1,15 @@
-/* Applications curriculum catalog: six Part A labs, three Part B labs, eight Part C labs, remaining topics planned. */
+/* Applications curriculum: 6 A + 3 B + 7 C core + 1 C optional + 2 D labs; future modules separately marked. */
 (()=>{
 "use strict";
 const sections=["a","b","c","d"];
 const topics={
  a:[
-  {lab:"harmonics",en:"Harmonics and Musical Sound",ko:"조화파와 악기 음색",kind:"Sound & periodicity",concept:"CTFS · Harmonics · Timbre",questionEn:"Why do instruments playing the same pitch sound different?",questionKo:"같은 음높이인데 악기마다 음색이 다른 이유는?",observeEn:"Fundamental frequency, harmonic amplitudes, time waveform, spectrum, and audio playback.",observeKo:"기본주파수·조화파 크기·시간 파형·스펙트럼·소리 재생",ch:[3,4,6]},
-  {lab:"chirp",en:"Chirp Signals and Frequency Sweeps",ko:"처프 신호와 주파수 변화",kind:"Time-varying frequency",concept:"Instantaneous frequency · optional STFT preview",questionEn:"How does a rising-frequency chirp differ from a fixed-frequency tone?",questionKo:"주파수가 증가하는 처프는 고정 주파수 정현파와 어떻게 다른가?",observeEn:"Linear chirp sweep, waveform spacing, and a time-frequency spectrogram preview.",observeKo:"선형 처프 스윕, 파형 간격 변화, 시간-주파수 스펙트로그램 미리보기",ch:[1,4,6]},
-  {lab:"helix",en:"Complex Exponential and 3D Helix",ko:"복소지수함수와 3D 나선",kind:"Complex signals",concept:"Euler relation · Phasor · e^(σ+jω)t",questionEn:"How does a rotating phasor generate a sine wave?",questionKo:"회전하는 페이저가 어떻게 정현파를 만드는가?",observeEn:"Complex-plane rotation, 3D helix, real/imaginary projections, growth and decay.",observeKo:"복소평면 회전·3D 나선·실수부/허수부 투영·감쇠와 증가",ch:[1,3,5]},
-  {lab:"beats",en:"Beats and Interference",ko:"맥놀이와 간섭",kind:"Sound & superposition",concept:"Sum of sinusoids · Envelope",questionEn:"Why can two similar tones produce periodic loudness changes?",questionKo:"주파수가 비슷한 두 음을 동시에 내면 왜 소리 크기가 주기적으로 달라지는가?",observeEn:"Two nearby frequencies, their sum, beat envelope, and audible difference.",observeKo:"가까운 두 주파수·합성 파형·맥놀이 포락선·청각적 차이",ch:[1,3]},
-  {lab:"amfm",en:"AM and FM Signal Intuition",ko:"AM·FM 신호의 직관",kind:"Communication signals",concept:"Carrier · Modulation · Spectrum",questionEn:"How can a message be represented by a carrier's amplitude or frequency?",questionKo:"정보를 반송파의 진폭이나 주파수 변화로 어떻게 나타내는가?",observeEn:"Message/carrier signals, AM envelope, FM instantaneous frequency, and spectra.",observeKo:"정보 신호와 반송파·AM 포락선·FM 순간주파수·스펙트럼",ch:[3,4,6]},
-  {lab:"sampling",en:"Sampling and Aliasing in Daily Life",ko:"일상 속 표본화와 에일리어싱",kind:"Sampling",concept:"Sampling rate · Aliasing · Reconstruction",questionEn:"Why can a rotating wheel appear to turn backward on video?",questionKo:"영상에서 회전 바퀴가 거꾸로 도는 것처럼 보이는 이유는?",observeEn:"Sine or linear chirp, adjustable sampling rate fₛ, CT waveform, x[n], Nyquist threshold and folded frequency versus time.",observeKo:"정현파·선형 처프 선택, 샘플링 주파수 fₛ 조절, CT 파형·x[n]·나이퀴스트 경계·시간에 따른 접힌 주파수",ch:[1,6,7]}
+  {lab:"harmonics",learningEn:"Hear how added harmonics change timbre without changing pitch",learningKo:"음높이를 고정하고 고조파가 음색을 바꾸는 현상 확인",en:"Harmonics and Musical Sound",ko:"조화파와 악기 음색",kind:"Sound & periodicity",concept:"CTFS · Harmonics · Timbre",questionEn:"Why do instruments playing the same pitch sound different?",questionKo:"같은 음높이인데 악기마다 음색이 다른 이유는?",observeEn:"Fundamental frequency, harmonic amplitudes, time waveform, spectrum, and audio playback.",observeKo:"기본주파수·조화파 크기·시간 파형·스펙트럼·소리 재생",ch:[3,4,6]},
+  {lab:"chirp",learningEn:"Watch waveform spacing shrink as chirp frequency rises",learningKo:"처프 주파수가 높아지며 파형 간격이 좁아지는 현상 관찰",en:"Chirp Signals and Frequency Sweeps",ko:"처프 신호와 주파수 변화",kind:"Time-varying frequency",concept:"Instantaneous frequency · optional STFT preview",questionEn:"How does a rising-frequency chirp differ from a fixed-frequency tone?",questionKo:"주파수가 증가하는 처프는 고정 주파수 정현파와 어떻게 다른가?",observeEn:"Linear chirp sweep, waveform spacing, and a time-frequency spectrogram preview.",observeKo:"선형 처프 스윕, 파형 간격 변화, 시간-주파수 스펙트로그램 미리보기",ch:[1,4,6]},
+  {lab:"helix",learningEn:"Connect phasor rotation to a real sinusoidal waveform",learningKo:"페이저 회전과 실수 정현파의 관계 발견",en:"Complex Exponential and 3D Helix",ko:"복소지수함수와 3D 나선",kind:"Complex signals",concept:"Euler relation · Phasor · e^(σ+jω)t",questionEn:"How does a rotating phasor generate a sine wave?",questionKo:"회전하는 페이저가 어떻게 정현파를 만드는가?",observeEn:"Complex-plane rotation, 3D helix, real/imaginary projections, growth and decay.",observeKo:"복소평면 회전·3D 나선·실수부/허수부 투영·감쇠와 증가",ch:[1,3,5]},
+  {lab:"beats",learningEn:"Change the frequency difference and hear beat speed change",learningKo:"주파수 차이를 바꾸어 맥놀이 속도 변화 확인",en:"Beats and Interference",ko:"맥놀이와 간섭",kind:"Sound & superposition",concept:"Sum of sinusoids · Envelope",questionEn:"Why can two similar tones produce periodic loudness changes?",questionKo:"주파수가 비슷한 두 음을 동시에 내면 왜 소리 크기가 주기적으로 달라지는가?",observeEn:"Two nearby frequencies, their sum, beat envelope, and audible difference.",observeKo:"가까운 두 주파수·합성 파형·맥놀이 포락선·청각적 차이",ch:[1,3]},
+  {lab:"amfm",learningEn:"Compare changes in carrier amplitude and frequency",learningKo:"반송파 진폭 변화와 주파수 변화 비교",en:"AM and FM Signal Intuition",ko:"AM·FM 신호의 직관",kind:"Communication signals",concept:"Carrier · Modulation · Spectrum",questionEn:"How can a message be represented by a carrier's amplitude or frequency?",questionKo:"정보를 반송파의 진폭이나 주파수 변화로 어떻게 나타내는가?",observeEn:"Message/carrier signals, AM envelope, FM instantaneous frequency, and spectra.",observeKo:"정보 신호와 반송파·AM 포락선·FM 순간주파수·스펙트럼",ch:[3,4,6]},
+  {lab:"sampling",learningEn:"Change sampling rate and detect a false apparent frequency",learningKo:"샘플링 주파수를 바꾸어 에일리어싱 관찰",en:"Sampling and Aliasing in Daily Life",ko:"일상 속 표본화와 에일리어싱",kind:"Sampling",concept:"Sampling rate · Aliasing · Reconstruction",questionEn:"Why can a rotating wheel appear to turn backward on video?",questionKo:"영상에서 회전 바퀴가 거꾸로 도는 것처럼 보이는 이유는?",observeEn:"Sine or linear chirp, adjustable sampling rate fₛ, CT waveform, x[n], Nyquist threshold and folded frequency versus time.",observeKo:"정현파·선형 처프 선택, 샘플링 주파수 fₛ 조절, CT 파형·x[n]·나이퀴스트 경계·시간에 따른 접힌 주파수",ch:[1,6,7]}
  ],
  b:[
   {lab:"rc",learningEn:"Start with the circuit · See how R and C determine voltage and cutoff",learningKo:"회로에서 시작 · R과 C가 출력 전압과 차단주파수를 결정하는 과정",en:"RC Low-Pass and High-Pass Filters",ko:"RC 저역통과·고역통과 필터",kind:"Circuits",concept:"Time constant · Cutoff · Frequency response",questionEn:"Why does an RC circuit smooth one input but attenuate another?",questionKo:"RC 회로가 어떤 신호는 평활하고 다른 신호는 감쇠시키는 이유는?",observeEn:"R/C values, step response, amplitude/phase response, and input-output waveforms.",observeKo:"R·C 값·계단응답·진폭/위상 응답·입출력 파형",ch:[2,4,5]},
@@ -37,8 +37,8 @@ const topics={
 
 
  d:[
-  {lab:"audio-filter",href:"./applications-audio-filter.html",en:"Hear the System · Audio Filtering",ko:"소리로 시스템 이해하기 · 오디오 필터링",kind:"Audio",concept:"FIR · Frequency response · Sound",ch:[2,4,6]},
-  {lab:"chirp-echo",href:"./applications-chirp-echo.html",en:"Detect the Invisible · Chirp Echo",ko:"보이지 않는 물체 탐지 · 처프 반사파",kind:"Radar & Sonar",concept:"Chirp · Delay · Cross-correlation",ch:[1,2,4,6]}
+  {lab:"audio-filter",learningEn:"Change one FIR setting; compare sound and the same output spectrum",learningKo:"FIR 설정 하나를 바꾸고 소리·출력 스펙트럼 비교",href:"./applications-audio-filter.html",en:"Hear the System · Audio Filtering",ko:"소리로 시스템 이해하기 · 오디오 필터링",kind:"Audio",concept:"FIR · Frequency response · Sound",ch:[2,4,6]},
+  {lab:"chirp-echo",learningEn:"Create a delayed chirp echo; find its lag and estimate distance",learningKo:"처프 반사파를 만들고 지연에서 거리 추정",href:"./applications-chirp-echo.html",en:"Detect the Invisible · Chirp Echo",ko:"보이지 않는 물체 탐지 · 처프 반사파",kind:"Radar & Sonar",concept:"Chirp · Delay · Cross-correlation",ch:[1,2,4,6]}
  ]
 };
 function node(tag,className,content){
@@ -127,7 +127,7 @@ function renderSystemsModules(host,data){
   a.setAttribute("aria-label",i18n("Open interactive system lab "+(i+1)+": "+x.en,"시스템 실습 "+(i+1)+" 열기: "+x.ko,true));
   a.append(node("span","ss-app-lesson-number",moduleNumber(i)));
   const copy=node("span","ss-app-lesson-copy");
-  copy.append(node("strong","ss-app-lesson-title",i18n(x.en,x.ko,true)),node("span","ss-app-lesson-desc",x.concept));
+  copy.append(node("strong","ss-app-lesson-title",i18n(x.en,x.ko,true)),node("span","ss-app-lesson-desc",i18n(x.learningEn||x.concept,x.learningKo||x.concept,true)));
   a.append(copy,node("span","ss-app-lesson-arrow","›"));list.append(a);
  });
  host.append(list);
@@ -148,7 +148,7 @@ function renderIntegratedModules(host,data){
   a.append(node("span","ss-app-lesson-number",moduleNumber(i)));
   const copy=node("span","ss-app-lesson-copy");
   copy.append(node("strong","ss-app-lesson-title",i18n(x.en,x.ko,true)));
-  copy.append(node("span","ss-app-lesson-desc",x.concept));
+  copy.append(node("span","ss-app-lesson-desc",i18n(x.learningEn||x.concept,x.learningKo||x.concept,true)));
   a.append(copy,node("span","ss-app-lesson-arrow","›"));list.append(a);
  });
  host.append(list);
