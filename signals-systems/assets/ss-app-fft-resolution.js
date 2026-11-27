@@ -5,7 +5,7 @@ const $=id=>document.getElementById(id),tau=2*Math.PI;
 const L={
 title:["Frequency Resolution & Spectral Leakage","주파수 분해능과 스펙트럼 누설"],
 subtitle:["First change how long you observe a signal. Next move a tone between FFT bins. Finally add zeros without adding observations.","먼저 실제 관측 시간을 바꾸고, 다음에는 신호를 FFT Bin 사이로 이동해 봅니다. 마지막으로 새 표본 없이 0만 추가해 봅니다."],
-controls:["Experiment controls","실험 설정"],controlsNote:["Change one control at a time. The time graph and FFT spectrum update together.","한 번에 하나의 값을 바꾸면서 시간 파형과 FFT 스펙트럼을 함께 관찰하세요."],
+controls:["Experiment controls","실험 설정"],controlsNote:["Start with Two nearby tones. Hold fs and the tone separation fixed, then increase N and check when two peaks separate.","‘가까운 두 정현파’ 실험으로 시작하세요. fs와 주파수 차이를 고정한 채 N을 늘리며 두 피크가 분리되는지 확인하세요."],
 experiment:["Choose experiment","실험 선택"],fs:["Sampling rate fs","샘플링 주파수 fs"],n:["Observed samples N","관측 표본 수 N"],
 separation:["Two-tone separation","두 신호의 주파수 차이"],offset:["Fractional bin offset","정수 Bin에서 벗어난 정도"],
 window:["Observation window","관측 창 함수"],padding:["FFT length M (zero padding)","FFT 길이 M (영 채우기)"],
