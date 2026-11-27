@@ -143,6 +143,10 @@
   $("guide-description").textContent=t(
    "A short reference you can open beside each FFT lab. Start with time samples; open only the concepts you need to solve the current experiment.",
    "FFT 실습 옆에서 함께 볼 수 있는 보충 자료입니다. 시간 표본에서 출발하고, 지금 진행하는 실습에 필요한 개념만 골라 읽어도 됩니다.");
+  $("guide-eyebrow").textContent=t("SIGNALS & SYSTEMS · APPLICATIONS · OPTIONAL THEORY","신호및시스템 · 응용 실습 · 선택 보충 이론");
+  $("guide-diagram-left").textContent=t("x[n] · samples","x[n] · 표본");
+  $("guide-diagram-right").textContent=t("X[k] · FFT bins","X[k] · 주파수 Bin");
+  $("guide-footer-home").textContent=t("← Back to Applications","← 응용 실습 목차로");
   $("guide-home").textContent=t("Applications · FFT","응용 실습 · FFT");
   $("guide-skip").textContent=t("Skip to FFT concepts","FFT 개념 본문으로 이동");
   $("guide-lang-label").textContent=t("Language","언어");
