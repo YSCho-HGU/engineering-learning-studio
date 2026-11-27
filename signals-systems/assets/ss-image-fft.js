@@ -12,7 +12,7 @@ const words={
  "image-stage-1":["Patterns","패턴 발견"],"image-stage-2":["Spectrum","스펙트럼"],
  "image-stage-3":["Kernel → FFT","커널 → FFT"],"image-stage-4":["Remove noise","잡음 제거"],
  "image-controls-title":["Change · Observe","조절 · 관찰"],
- "image-controls-help":["One input updates every result; begin with the prepared four-step sequence.","하나의 입력이 모든 결과에 반영됩니다. 네 단계 실습부터 시작하세요."],
+ "image-controls-help":["Start with Adjustable stripes and change the stripe count. Compare the image with its 2D FFT peaks first; then follow the existing four stages.","먼저 ‘조절 가능한 줄무늬’를 선택하고 줄무늬 개수를 바꾸세요. 원본 영상과 2D FFT 피크의 관계를 관찰한 뒤 기존 네 단계를 진행하세요."],
  "image-preset-label":["Input pattern","입력 패턴"],"image-cycles-label":["Cycles across image","이미지 내 반복 횟수"],
  "image-angle-label":["Stripe direction","줄무늬 방향"],
  "image-size-label":["Image resolution","이미지 해상도"],
