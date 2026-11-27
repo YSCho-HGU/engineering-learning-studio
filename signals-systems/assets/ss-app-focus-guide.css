@@ -1,0 +1,12 @@
+/* A-D single inquiry visual contract. Adds orientation without changing existing lab layouts. */
+.ss-focus-guide{margin:14px 0 18px;padding:15px 17px;border:1px solid var(--els-border,#6c8073);border-radius:12px;background:var(--els-surface,#1e2822);color:var(--els-ink,#eef3ee);min-width:0;line-height:1.6}
+.ss-focus-head{display:grid;gap:3px}
+.ss-focus-eyebrow{font-size:.73rem;font-weight:800;letter-spacing:.05em;color:var(--els-link,#83c8a6);text-transform:uppercase}
+.ss-focus-question{font-size:clamp(1rem,1.4vw,1.12rem);font-weight:750;line-height:1.5;margin:0 0 12px;white-space:pre-line;overflow-wrap:anywhere}
+.ss-focus-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.ss-focus-step{min-width:0;border:1px solid var(--els-border,#6c8073);border-radius:8px;padding:9px 11px;background:var(--els-surface-alt,#2e3930);display:grid;grid-template-columns:23px minmax(0,1fr);grid-template-rows:auto auto;column-gap:7px;row-gap:1px;align-content:start}
+.ss-focus-index{grid-row:1 / span 2;border-radius:100%;background:var(--els-surface,#192820);display:grid;place-items:center;width:21px;height:21px;font-size:.74rem;font-weight:800}
+.ss-focus-label{font-size:.8rem;line-height:1.35;font-weight:780;white-space:pre-line}
+.ss-focus-description{font-size:.86rem;line-height:1.55;white-space:pre-line;overflow-wrap:anywhere}
+@media(max-width:760px){.ss-focus-guide{margin:11px 0 14px;padding:12px}.ss-focus-steps{grid-template-columns:1fr;gap:6px}.ss-focus-step{padding:8px 10px;grid-template-columns:23px 95px minmax(0,1fr);grid-template-rows:auto;align-items:start}.ss-focus-index{grid-row:auto}.ss-focus-label,.ss-focus-description{grid-row:1}.ss-focus-description{grid-column:3}.ss-focus-question{font-size:1rem}}
+@media(max-width:390px){.ss-focus-step{grid-template-columns:21px 73px minmax(0,1fr)}.ss-focus-description{font-size:.82rem}}
