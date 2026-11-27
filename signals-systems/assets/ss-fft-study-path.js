@@ -252,7 +252,7 @@
   const prediction=create("div","ss-fft-path-predict");
   prediction.append(create("h3","",t("① Predict · Before changing anything","① Predict · 값을 바꾸기 전 예상하기")),
    create("p","",t(...c.predict)),
-   optionControl(c.options,selection.predict,v=>{selection.predict=v;selection.done=false},t("Prediction","예측")));
+   optionControl(c.options,selection.predict,v=>{selection.predict=v;selection.done=false;const f=note.querySelector(".ss-fft-path-feedback");if(f){f.textContent="";f.dataset.status=""}},t("Prediction","예측")));
   const step=create("div","ss-fft-path-change");
   step.append(create("h3","",t("② Change · One control at a time","② Change · 변수 하나씩 조작")),
    create("p","",t(...c.change)));
@@ -272,7 +272,7 @@
   const apply=create("div","ss-fft-path-apply");
   apply.append(create("h3","",t("⑤ Apply / Check · Try a new condition","⑤ Apply / Check · 다른 조건에도 적용")),
     create("p","",t(...c.apply)));
-  apply.append(optionControl(c.applied,selection.apply,v=>{selection.apply=v;selection.done=false},t("Transfer question","응용 질문")));
+  apply.append(optionControl(c.applied,selection.apply,v=>{selection.apply=v;selection.done=false;const f=note.querySelector(".ss-fft-path-feedback");if(f){f.textContent="";f.dataset.status=""}},t("Transfer question","응용 질문")));
   const check=create("button","ss-fft-path-check",t("Check my explanation","근거로 정답 확인"));
   check.type="button";const feedback=create("p","ss-fft-path-feedback");feedback.setAttribute("role","status");feedback.setAttribute("aria-live","polite");
   check.addEventListener("click",()=>{
