@@ -79,7 +79,11 @@ function runAudio(){
   type==="high"?tr("Check the 250 Hz and 1950 Hz peaks. High-pass filtering should reduce the 250 Hz component more strongly.","250 Hz와 1950 Hz 피크를 찾으세요. 고역통과에서는 필터 출력의 250 Hz 성분이 더 크게 줄어듭니다."):
   tr("Check which of 250 Hz and 1950 Hz lies within the selected passband. Change center and bandwidth to test your prediction.","250 Hz와 1950 Hz 중 선택한 통과대역에 포함되는 성분을 확인하세요. 중심주파수와 대역폭을 바꾸며 예측을 검증하세요.")):
   tr("This input has several harmonics. Compare how the orange peaks change against the blue peaks, then try the two-tone example to see an easier result.","이 입력에는 여러 고조파가 있습니다. 주황 피크가 파란 피크에 비해 어떻게 변하는지 비교한 뒤, 더 명확한 관찰을 위해 두 정현파 예제도 선택해 보세요.");
- $("wave-guide").textContent=tr("These are the exact same input and output as in graph A, shown over time. Their difference comes from filtering, not from a new experiment. For a clear frequency test, use Two-tone and compare again.","A 그래프에서 비교한 바로 그 입력과 출력을 시간영역에 나타낸 것입니다. 다른 실험이 아니라 같은 필터링 결과입니다. 주파수 차이를 명확하게 보고 싶다면 ‘두 개의 정현파’로 다시 비교해 보세요.");
+ $("wave-guide").textContent=type==="low"?
+  tr("Does the orange waveform contain fewer rapid oscillations? Compare its timing with the blue input.","주황색 출력에서 빠른 진동이 줄었나요? 파란 입력과 시간적 위치도 비교하세요."):
+  type==="high"?
+  tr("Do rapid oscillations stand out more strongly in orange while slower changes fade?","주황색 출력에서 느린 변화는 줄고 빠른 진동은 상대적으로 더 두드러지나요?"):
+  tr("Move the passband center in Step 2. Which oscillations strengthen or fade in the orange waveform?","2번에서 통과대역 중심을 이동하세요. 주황색 파형의 어떤 진동이 강해지거나 약해지나요?");
  let p1=points(x.slice(0,320),1000/FS,0,2),p2=points(y.slice(0,320),1000/FS,0,2);
  draw("waveplot",[{points:p1,color:blue,label:tr("Input","입력")},{points:p2,color:orange,label:tr("Output","출력")}],{xmin:0,xmax:40,ymin:-1.3,ymax:1.3,label:"ms"});
  // Show the full nonnegative FFT range (0–4000 Hz), including the 1950 Hz test tone.
