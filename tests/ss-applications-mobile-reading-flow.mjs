@@ -13,7 +13,7 @@ const suites=[
  ["samples","applications-fft-lab.html",".ss-fft-controls",".ss-fft-graphs .ss-fft-graph-card"],
  ["resolution","applications-fft-resolution.html",".ss-fft-r-controls",".ss-fft-r-graphs > *"],
  ["algorithm","applications-dft-fft.html","#panel-same .dft-controls","#panel-same .dft-plot-card"],
- ["dtmf","applications-fft-dtmf.html",".ss-dtmf-controls","#dtmf-spectrum-panel"],
+ ["dtmf","applications-fft-dtmf.html",".ss-dtmf-controls","#dtmf-spectrum"],
  ["fingerprint","applications-fft-sound-fingerprint.html",".ss-finger-controls","#finger-wave"],
  ["upload","applications-fft-upload.html",".ss-fft-upload-controls","#fft-upload-spectrum"],
  ["image","applications-fft-image.html",".ss-image-controls","#image-input-canvas"],
@@ -36,6 +36,11 @@ for(const vp of [{width:390,height:844},{width:768,height:900}]){
    const res=await page.goto(base+"/signals-systems/"+spec.path,{waitUntil:"load",timeout:35000});
    assert(res?.ok(),label+" HTTP error");
    await page.waitForTimeout(240);
+   // DTMF deliberately hides the FFT until the student clicks Analyze FFT.
+   if(spec.id==="C-dtmf"){
+     await page.locator("#dtmf-fft").click();
+     await page.locator("#dtmf-spectrum").waitFor({state:"visible",timeout:10000});
+   }
    // Inspect only existing elements; tolerate plots that are populated after user runs an experiment.
    const data=await page.evaluate(({control,plot})=>{
     const firstVisible=selector=>[...document.querySelectorAll(selector)].find(x=>x.getClientRects().length&&!x.hidden);
