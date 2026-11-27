@@ -62,8 +62,8 @@ assert.match(native,/shape:"step",M:3,noise:0,index:55/);
 assert.match(native,/shape:"step",M:21,noise:0,index:55/);
 for(const page of ['applications-system-lab.html','applications-system-compare.html']){
  const html=read(page);
- assert.ok(html.includes('ss-app-system-inquiry.js?v=20261127-partb-inquiry-v1'));
- assert.ok(html.includes('ss-app-system-inquiry.css?v=20261127-partb-inquiry-v1'));
+ assert.ok(html.includes('ss-app-system-inquiry.js?v=20261127-partb-inquiry-v2'));
+ assert.ok(html.includes('ss-app-system-inquiry.css?v=20261127-partb-inquiry-v2'));
 }
 assert.ok(read('applications-lab.html').includes('ss-app-inquiry.js?v=20261127-all-six-inquiry-v2'));
 for(const js of ['assets/ss-app-inquiry.js','assets/ss-app-system-inquiry.js','assets/ss-app-system-labs.js'])new Function(read(js));
