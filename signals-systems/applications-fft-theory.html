@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Bilingual illustrated FFT companion for second-year Signals and Systems students: bins, resolution, DFT/FFT, DTMF, timbre, real data and 2D image FFT.">
+<title>FFT Concept Guide | Engineering Learning Studio</title>
+<script>(function(){var t="white-clean";try{var v=localStorage.getItem("els-theme-v2");if(["white-clean","warm-neutral","warm-dark","navy-dark","neutral-dark"].includes(v))t=v}catch(e){}document.documentElement.dataset.elsTheme=t;document.documentElement.dataset.theme=["white-clean","warm-neutral"].includes(t)?"light":"dark";document.documentElement.style.colorScheme=["white-clean","warm-neutral"].includes(t)?"only light":"dark"})();</script>
+<link rel="stylesheet" href="../assets/els-theme-v2.css?v=6">
+<link rel="stylesheet" href="../assets/els-typography-standard.css?v=1">
+<link rel="stylesheet" href="./assets/ss-fft-theory-guide.css?v=20261127-theory-v1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css">
+</head>
+<body>
+<a class="fft-guide-skip" href="#guide-topics">Skip to FFT concepts</a>
+<header class="fft-guide-header">
+ <a href="./applications.html" class="fft-guide-home">Applications · FFT</a>
+ <div class="fft-guide-header-tools">
+  <label for="guide-lang">Language</label>
+  <select id="guide-lang" aria-label="Language mode"><option value="mixed">한/영</option><option value="en">English</option><option value="ko">한국어</option></select>
+  <button type="button" id="guide-close">Close / 닫기</button>
+ </div>
+</header>
+<main class="fft-guide-main">
+ <section class="fft-guide-hero">
+  <p class="fft-guide-eyebrow">SIGNALS &amp; SYSTEMS · APPLICATIONS · OPTIONAL THEORY</p>
+  <h1 id="guide-title">FFT Concept Guide</h1>
+  <p id="guide-description">FFT concepts for independent study.</p>
+  <div class="fft-guide-diagram" role="img" aria-label="Eight time samples mapping to eight DFT frequency bins">
+   <svg viewBox="0 0 730 172" width="100%" height="auto" preserveAspectRatio="xMidYMid meet">
+    <rect x="7" y="8" width="322" height="154" rx="10" fill="none" stroke="currentColor" stroke-opacity=".3"/>
+    <rect x="400" y="8" width="322" height="154" rx="10" fill="none" stroke="currentColor" stroke-opacity=".3"/>
+    <text x="26" y="33" fill="currentColor" font-size="17" font-weight="bold">x[n] · samples</text>
+    <text x="418" y="33" fill="currentColor" font-size="17" font-weight="bold">X[k] · FFT bins</text>
+    <line x1="34" y1="132" x2="299" y2="132" stroke="currentColor" stroke-opacity=".5"/>
+    <line x1="425" y1="132" x2="691" y2="132" stroke="currentColor" stroke-opacity=".5"/>
+    <g stroke="#338bac" stroke-width="5" stroke-linecap="round">
+     <line x1="60" y1="132" x2="60" y2="94"/><line x1="92" y1="132" x2="92" y2="57"/>
+     <line x1="124" y1="132" x2="124" y2="116"/><line x1="156" y1="132" x2="156" y2="65"/>
+     <line x1="188" y1="132" x2="188" y2="96"/><line x1="220" y1="132" x2="220" y2="112"/>
+     <line x1="252" y1="132" x2="252" y2="56"/><line x1="284" y1="132" x2="284" y2="101"/>
+    </g>
+    <g stroke="#d99137" stroke-width="11" stroke-linecap="round">
+     <line x1="450" y1="132" x2="450" y2="119"/><line x1="481" y1="132" x2="481" y2="82"/>
+     <line x1="512" y1="132" x2="512" y2="110"/><line x1="543" y1="132" x2="543" y2="49"/>
+     <line x1="574" y1="132" x2="574" y2="113"/><line x1="605" y1="132" x2="605" y2="65"/>
+     <line x1="636" y1="132" x2="636" y2="118"/><line x1="667" y1="132" x2="667" y2="100"/>
+    </g>
+    <path d="M341 76 L386 76" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M377 68 L388 76 L377 84" stroke="currentColor" stroke-width="3" fill="none" stroke-linejoin="round"/>
+    <text x="345" y="63" fill="currentColor" font-size="13">FFT</text>
+    <text x="66" y="151" fill="currentColor" font-size="12">n →</text>
+    <text x="655" y="151" fill="currentColor" font-size="12">k →</text>
+   </svg>
+  </div>
+  <p class="fft-guide-figure-note">Schematic only · This diagram illustrates a mapping, not the numerical DFT of the bars. / 개념도이며 그림 속 막대의 실제 DFT 값을 나타내지는 않습니다.</p>
+ </section>
+ <section class="fft-guide-explorer" aria-labelledby="guide-explorer-heading">
+  <h2 id="guide-explorer-heading"></h2>
+  <p id="guide-explorer-note"></p>
+  <div class="fft-guide-input-grid">
+   <label><span id="guide-n-label"></span><select id="guide-n"><option value="8">N = 8</option><option value="16" selected>N = 16</option><option value="32">N = 32</option><option value="64">N = 64</option><option value="128">N = 128</option></select></label>
+   <label><span id="guide-k-label"></span><input type="number" id="guide-k" min="0" max="15" step="1" value="3"></label>
+   <label class="fft-guide-checkbox"><input type="checkbox" id="guide-known"><span id="guide-known-label"></span></label>
+   <label><span id="guide-fs-label"></span><input type="number" id="guide-fs" value="8000" min="1" max="1000000" step="1" disabled></label>
+  </div>
+  <div class="fft-guide-mini-output">
+   <output id="guide-explorer-result" aria-live="polite"></output>
+   <div id="guide-explorer-tex" class="fft-guide-equation"></div>
+  </div>
+ </section>
+ <nav class="fft-guide-toc" aria-labelledby="guide-toc-heading">
+  <h2 id="guide-toc-heading"></h2><div id="guide-toc"></div>
+ </nav>
+ <div id="guide-topics"></div>
+ <footer class="fft-guide-footer">
+  <p id="guide-footer"></p>
+  <a href="./applications.html">← Applications</a>
+ </footer>
+</main>
+<script defer src="../assets/els-language.js?v=1"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js"></script>
+<script defer src="./assets/ss-fft-theory-guide.js?v=20261127-theory-v1"></script>
+<script>
+(function(){var select=document.getElementById("guide-lang");if(!select)return;
+ document.addEventListener("DOMContentLoaded",function(){
+  var lang=window.ELSLanguage;
+  if(lang){select.value=lang.get();select.addEventListener("change",function(){lang.set(select.value)});lang.subscribe(function(mode){select.value=mode})}
+  document.getElementById("guide-close").addEventListener("click",function(){
+   if(window.opener&&!window.opener.closed)window.close();
+   else window.location.href="./applications.html";
+  });
+ });
+})();
+</script>
+</body>
+</html>
