@@ -2,7 +2,7 @@
 :root{font-family:Arial,"Malgun Gothic",sans-serif}
 *{box-sizing:border-box}
 html{scroll-padding-top:66px}
-body{margin:0;min-width:0;background:var(--els-page,#171a19);color:var(--els-ink,#e5eeec);font:15px/1.6 Arial,"Malgun Gothic",sans-serif}
+body{margin:0;min-width:0;background:var(--els-page,#171a19);color:var(--els-ink,#e5eeec);font-family:var(--els-body-font,Arial,"Malgun Gothic",sans-serif);font-size:var(--els-body-size,16px);line-height:var(--els-body-leading,1.7)}
 button,input,select{font:inherit}
 .dft-skip{position:absolute;left:-9999px;top:4px;padding:8px;background:var(--els-surface,#252928);z-index:999}
 .dft-skip:focus{left:10px}
