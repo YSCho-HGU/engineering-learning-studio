@@ -39,7 +39,6 @@
 .ss-fft-path :is(a,summary):focus-visible{outline:3px solid var(--els-focus,#f0cd78);outline-offset:2px}
 @media(max-width:700px){
  .ss-fft-path{padding:6px;gap:4px}
- .ss-fft-path-picker{min-width:0}
  .ss-fft-path-summary{padding:5px 5px;min-height:40px}
  .ss-fft-path-current{font-size:12px}
  .ss-fft-path-meta{font-size:9px}
