@@ -1,0 +1,57 @@
+name: Signals and Systems Learning Map curriculum and browser QA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'signals-systems/index.html'
+      - 'signals-systems/assets/ss-learning-journey.js'
+      - 'signals-systems/assets/ss-learning-journey.css'
+      - 'tests/ss-learning-map-curriculum-contract.mjs'
+      - 'tests/ss-learning-map-browser.mjs'
+      - '.github/workflows/ss-learning-map-qa.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  curriculum-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify chapter and application links, content modes and original transform map
+        run: node tests/ss-learning-map-curriculum-contract.mjs
+
+  chromium-languages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: curriculum-contract
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund @playwright/test
+          npx playwright install --with-deps chromium
+      - name: Run six interactive map scenarios (three languages × two widths)
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/ss-learning-map-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          sleep 1
+          node tests/ss-learning-map-browser.mjs
+      - name: Save browser QA report and failed layout screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ss-learning-map-multilingual-mobile-qa
+          path: tests/screenshots/ss-learning-map/
+          if-no-files-found: warn
+          retention-days: 14
