@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="../assets/els-typography-standard.css?v=1">
 <link rel="stylesheet" href="./assets/ss-common-header.css?v=canonical-clean-v5">
 <link rel="stylesheet" href="../assets/els-header-controls.css?v=mobile-return-v2">
-<link rel="stylesheet" href="./assets/ss-applications-hub.css?v=study-path-v1">
+<link rel="stylesheet" href="./assets/ss-applications-hub.css?v=layout-repair-20261127">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css">
 <link rel="stylesheet" href="./assets/ss-applications-math.css?v=3">
 <link rel="stylesheet" href="./assets/ss-responsive-unified.css?v=1">
@@ -61,21 +61,9 @@
       <a href="#part-c" data-en="Part C · FFT" data-ko="Part C · FFT"></a>
       <a href="#part-d" data-en="Part D · Integrated" data-ko="Part D · 종합 응용"></a>
     </nav>
-<section class="ss-app-study-route" aria-label="Suggested two-year engineering learning pathway">
- <div class="ss-app-study-heading" data-en="How to study these Applications" data-ko="Applications 학습 방법"></div>
- <p data-en="Follow one idea across the course: identify a signal (A), see how a system changes it (B), inspect hidden frequencies (C), then solve an engineering problem (D). You need not finish every module before moving on." data-ko="하나의 생각을 연결해 보세요. 신호를 이해하고(A), 시스템이 신호를 바꾸는 과정을 살펴본 뒤(B), 숨은 주파수를 찾고(C), 실제 공학 문제에 적용합니다(D). 모든 실습을 완료해야 다음 Part로 갈 수 있는 것은 아닙니다."></p>
- <div class="ss-app-path-rail">
-  <a href="#part-a" data-en="A · Recognize a signal" data-ko="A · 신호의 특징 발견"></a>
-  <a href="#part-b" data-en="B · Change it with a system" data-ko="B · 시스템의 효과 비교"></a>
-  <a href="#part-c" data-en="C · Find frequencies" data-ko="C · 주파수 분석"></a>
-  <a href="#part-d" data-en="D · Solve an application" data-ko="D · 공학 문제 해결"></a>
- </div>
- <details class="ss-app-study-detail"><summary data-en="Suggested short route (if your time is limited)" data-ko="시간이 부족할 때의 추천 학습 순서"></summary>
-  <p data-en="Try A Chirp or Sampling → B Moving Average and Same-Input Comparison → C FFT from Samples and Frequency Resolution → one Part C discovery task → D Audio or Echo. Other labs add valuable perspectives and can be explored afterward." data-ko="A 처프 또는 표본화 → B 이동평균과 동일 입력 비교 → C 샘플 데이터 FFT와 주파수 분해능 → C 발견 실습 중 하나 → D 오디오 또는 반사파 순서로 진행해 보세요. 나머지 실습은 다른 관점으로 확장할 때 선택할 수 있습니다."></p>
- </details>
-</section>
+
   </section>
-  <div class="ss-app-layout"
+  <div class="ss-app-layout">
     <aside class="ss-app-toc" aria-label="Applications table of contents">
       <h2 data-en="Applications · Contents" data-ko="Applications · 목차"></h2>
       <a href="#part-a" data-part-link="a"><strong>Part A · Signal Applications</strong><span data-en="Signals we can hear, see, and measure" data-ko="듣고 보고 측정하는 신호"></span></a>
@@ -91,26 +79,22 @@
       <section class="ss-app-part" id="part-a" data-app-part="a" aria-labelledby="part-a-heading">
         <div class="ss-app-part-head"><div><span class="ss-app-part-kicker">PART A · SIGNALS</span><h2 id="part-a-heading" data-en="Signal Applications" data-ko="신호 응용"></h2></div><span class="ss-app-count" id="part-a-count"></span></div>
         <p class="ss-app-part-desc" data-en="Understand real-world phenomena as time-domain and frequency-domain signals." data-ko="생활 속 현상을 시간영역 및 주파수영역 신호로 해석합니다."></p>
-        <details class="ss-app-study-detail ss-app-part-guide"><summary data-en="Learning guide · compare one variable at a time" data-ko="학습 안내 · 한 번에 하나의 변수만 비교"></summary><p data-en="Predict a change → run the two example conditions → identify one visible or audible piece of evidence → explain the result. Start with the physical phenomenon; optional complex-number or time-frequency explanations can come later." data-ko="변화 예측 → 두 예제 조건 비교 → 그래프 또는 소리에서 근거 한 가지 찾기 → 결과 설명의 순서로 진행하세요. 먼저 현상을 이해하고 복소수·시간주파수 심화 설명은 나중에 선택하세요."></p></details>
         <div class="ss-app-topic-grid" id="topics-a"></div>
       </section>
       <section class="ss-app-part" id="part-b" data-app-part="b" aria-labelledby="part-b-heading">
         <div class="ss-app-part-head"><div><span class="ss-app-part-kicker">PART B · SYSTEMS</span><h2 id="part-b-heading" data-en="System Applications" data-ko="시스템 응용"></h2></div><span class="ss-app-count" id="part-b-count"></span></div>
         <p class="ss-app-part-desc" data-en="Follow three connected experiments: understand an RC circuit, build a moving-average FIR, then compare both on one input with matched cutoff." data-ko="세 실습을 순서대로 진행합니다: RC 회로 이해 → 이동평균 FIR 계산 → 동일 입력으로 차단주파수·위상·지연 비교."></p>
-        <details class="ss-app-study-detail ss-app-part-guide"><summary data-en="Learning guide · connect input, system and output" data-ko="학습 안내 · 입력·시스템·출력 연결"></summary><p data-en="For each filter, keep the input visible and change one system parameter. Observe the output and then describe the tradeoff. Recommended sequence: RC → Moving Average → compare both at matched cutoff. Pole analysis and detailed phase mathematics are extensions, not prerequisites." data-ko="입력을 확인하면서 시스템 변수 하나만 조절하고, 출력의 변화를 관찰한 뒤 장단점을 설명하세요. 추천 순서는 RC → 이동평균 → 차단주파수를 맞춘 두 필터 비교입니다. 극점 해석과 자세한 위상 수학은 필수 선행 지식이 아니라 심화 영역입니다."></p></details>
         <div class="ss-app-topic-grid" id="topics-b"></div>
       </section>
       <section class="ss-app-part" id="part-c" data-app-part="c" aria-labelledby="part-c-heading">
         <div class="ss-app-part-head"><div><span class="ss-app-part-kicker">PART C · FFT</span><h2 id="part-c-heading" data-en="FFT &amp; Spectral Applications" data-ko="FFT 및 스펙트럼 응용"></h2></div><span class="ss-app-count" id="part-c-count"></span></div>
         <p class="ss-app-part-desc" data-en="Learn FFT fundamentals, uncover hidden information, and analyze sound, sensors, and 2D images. Select any lab below." data-ko="FFT의 기초를 이해하고 소리·센서·이미지에서 숨겨진 주파수 성분을 찾아 분석합니다. 아래 실습을 바로 선택하세요."></p>
         <p class="ss-app-part-desc"><a href="./applications-fft-theory.html#samples" target="_blank" rel="noopener noreferrer" data-en="New to FFT? Read the illustrated 7-topic concept guide (opens in a new tab)" data-ko="FFT가 낯설다면? 7개 핵심 개념과 예제가 있는 보충 자료 보기 (새 창)"></a></p>
-        <details class="ss-app-study-detail ss-app-part-guide"><summary data-en="Learning guide · FFT basics first, one discovery next" data-ko="학습 안내 · FFT 기초부터 시작해 발견 실습 하나로 확장"></summary><p data-en="Core: FFT from Samples → Bins & Resolution. DFT vs FFT explains the calculation strategy; beginners may return to it after observing results. Then choose just one discovery task (DTMF, sound, recording/sensor or image). Other discovery tasks are alternatives, not required prerequisites. Chirp/STFT is optional." data-ko="핵심은 표본 데이터 FFT → Bin과 분해능입니다. DFT와 FFT의 계산 방식은 먼저 결과를 관찰한 다음 돌아와 학습해도 됩니다. 이후 DTMF·소리·녹음/센서·이미지 중 발견 실습 하나를 선택하세요. 다른 발견 실습은 선행 필수가 아닌 대안이며 Chirp/STFT는 선택 확장입니다."></p></details>
         <div class="ss-app-topic-grid" id="topics-c"></div>
       </section>
       <section class="ss-app-part" id="part-d" data-app-part="d" aria-labelledby="part-d-heading">
         <div class="ss-app-part-head"><div><span class="ss-app-part-kicker">PART D · INTEGRATION</span><h2 id="part-d-heading" data-en="Integrated Engineering Applications" data-ko="종합 공학 응용"></h2></div><span class="ss-app-count" id="part-d-count"></span></div>
         <p class="ss-app-part-desc" data-en="Study real engineering scenarios from signal model to system response and interpretation." data-ko="신호 모델에서 시스템 응답과 결과 해석까지 실제 공학 사례를 종합적으로 살펴봅니다."></p>
-        <details class="ss-app-study-detail ss-app-part-guide"><summary data-en="Learning guide · use prior discoveries to explain a real result" data-ko="학습 안내 · 배운 개념으로 실제 결과 설명"></summary><p data-en="D1: adjust the filter in Step 2 and inspect the SAME input/output in Step 3. D2: create an echo in Step 2 and find its delay in Step 3. Complete the A/B observation tasks first; impulse/group delay details and sample-by-sample correlation are optional." data-ko="D1: 2번에서 필터를 조절하고 3번에서 같은 입출력을 비교합니다. D2: 2번에서 반사파를 만들고 3번에서 지연을 찾습니다. 기본 A/B 관찰을 먼저 수행하고, 임펄스·군지연 및 표본별 상관 계산은 필요할 때 선택하세요."></p></details>
         <div class="ss-app-topic-grid" id="topics-d"></div>
       </section>
       <p class="ss-app-outro" data-en="Part A offers six interactive signal labs. Part B offers three connected system labs: RC, Moving Average, and a same-input comparison. Part C offers seven core FFT labs plus one optional STFT extension. Windowing and zero-padding are covered within the existing labs; three further Part C topics are planned. Part D includes two integrated interactive labs: audio filtering and chirp echo detection." data-ko="Part A에는 신호 응용 실습 6개, Part B에는 RC·이동평균·동일 입력 비교를 연결한 실습 3개가 제공됩니다. Part C에는 FFT 핵심 실습 7개와 선택 STFT 확장 1개가 있으며, Windowing과 Zero-padding은 기존 실습에 포함되어 있습니다. Part C의 추가 주제 3개는 개발 예정이며, Part D에는 오디오 필터링과 처프 반사파 탐지의 종합 실습 2개가 있습니다."></p>
