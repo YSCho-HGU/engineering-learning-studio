@@ -39,3 +39,17 @@ a{color:var(--els-link,#77cbb7)}button,select,input{font:inherit}
 .d-hidden{display:none!important}
 @media(max-width:850px){.d-layout{grid-template-columns:1fr}.d-two{grid-template-columns:1fr}.d-shell{width:min(100% - 20px,720px)}.d-card{padding:14px}.d-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:420px){.d-metrics{grid-template-columns:1fr}.d-hero{padding:17px}.d-steps a{padding:6px 8px}.d-card{margin-bottom:12px}}
+
+/* Part D correlation microscope and explanatory figures */
+.d-product-lab{border:1px solid var(--els-border,#66766c);border-radius:12px;padding:16px;margin:18px 0;background:var(--els-surface-alt,#2a3530);min-width:0}
+.d-product-lab h3{margin:0 0 5px}
+.d-product-lab .d-plot{margin:12px 0}
+.d-product-lab canvas{background:var(--els-surface,#1b2720)}
+.d-product-lab .d-metrics{margin:12px 0}
+.d-product-lab .d-formula{background:var(--els-surface,#1d2922)}
+.d-product-lab .d-buttons{margin:10px 0}
+.d-product-lab .d-metric{min-width:0}
+.d-product-lab .d-metric strong{overflow-wrap:anywhere}
+.d-stage{overflow-wrap:anywhere;white-space:pre-line}
+.d-plot canvas{max-width:100%}
+@media(max-width:600px){.d-product-lab{padding:10px}.d-product-lab .d-buttons button{flex:1 1 42%}}
