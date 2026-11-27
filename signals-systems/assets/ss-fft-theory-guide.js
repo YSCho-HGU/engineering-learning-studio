@@ -143,6 +143,13 @@
   $("guide-description").textContent=t(
    "A short reference you can open beside each FFT lab. Start with time samples; open only the concepts you need to solve the current experiment.",
    "FFT 실습 옆에서 함께 볼 수 있는 보충 자료입니다. 시간 표본에서 출발하고, 지금 진행하는 실습에 필요한 개념만 골라 읽어도 됩니다.");
+  $("guide-home").textContent=t("Applications · FFT","응용 실습 · FFT");
+  $("guide-skip").textContent=t("Skip to FFT concepts","FFT 개념 본문으로 이동");
+  $("guide-lang-label").textContent=t("Language","언어");
+  $("guide-close").textContent=t("Close guide","설명 창 닫기");
+  $("guide-figure-note").textContent=t(
+   "Schematic only: the bars show an illustrative mapping, not the calculated FFT of the drawn samples.",
+   "개념도입니다. 막대는 대응 관계의 예시이며 그려진 표본의 실제 FFT 계산 결과는 아닙니다.");
   $("guide-toc-heading").textContent=t("Jump to one concept","필요한 개념 바로 찾기");
   $("guide-explorer-heading").textContent=t("Mini explorer · One bin in two units","작은 계산 실험 · Bin 하나와 두 단위");
   $("guide-explorer-note").textContent=t(
@@ -161,7 +168,7 @@
   if(!n||!k||!known||!fs)return;
   const N=Number(n.value),old=Number(k.value);
   k.max=String(N-1);
-  if(old>=N)k.value=String(N-1);
+  k.value=String(Number.isFinite(old)?Math.min(N-1,Math.max(0,Math.round(old))):0);
   fs.disabled=!known.checked;
  };
  const updateExplorer=()=>{
