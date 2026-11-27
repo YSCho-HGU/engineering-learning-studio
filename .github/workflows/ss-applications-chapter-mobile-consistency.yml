@@ -4,6 +4,8 @@ on:
     branches: [main]
     paths:
       - 'signals-systems/applications-*.html'
+      - 'signals-systems/chapter*.html'
+      - 'signals-systems/assets/ss-ch5-standalone.css'
       - 'signals-systems/assets/ss-responsive-unified.css'
       - 'signals-systems/assets/ss-common-header.css'
       - 'signals-systems/assets/ss-app-partd.css'
