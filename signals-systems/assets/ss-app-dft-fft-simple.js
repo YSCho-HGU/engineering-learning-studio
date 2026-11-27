@@ -9,7 +9,7 @@ let currentTrace=traceCore.trace(traceCore.presets.ramp);
 const dictionaries={
  "dft-intro":["Same result. Different computation. Why is FFT faster?","결과는 같지만 계산 방법은 다릅니다. FFT는 왜 빠를까요?"],
  "same-title":["Same samples → Same DFT coefficients","같은 입력 → 동일한 DFT 계수"],
- "same-desc":["Calculate the same samples with direct DFT and FFT. Compare the complex outputs.","같은 표본을 직접 DFT와 FFT로 계산하여 복소수 결과를 비교합니다."],
+ "same-desc":["Choose one input, press Calculate, then compare the two spectra and the maximum coefficient difference before opening Butterfly or Speed.","입력을 하나 선택해 ‘계산하기’를 누른 뒤, Butterfly·속도 탭으로 이동하기 전에 두 스펙트럼과 최대 계수 차이를 비교하세요."],
  "same-signal-label":["Signal","신호"],
  "same-size-label":["N samples","표본 수 N"],
  "same-rate-label":["Sampling rate fₛ (Hz)","샘플링 주파수 fₛ (Hz)"],
