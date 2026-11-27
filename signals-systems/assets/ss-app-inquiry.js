@@ -52,7 +52,56 @@ const specs={
    return ["f₀ = "+s.tone+" Hz · fs/2 = "+nyquist+" Hz · signed alias = "+signed+" Hz · |alias| = "+Math.abs(signed)+" Hz",
    "f₀ = "+s.tone+" Hz · fs/2 = "+nyquist+" Hz · 부호 있는 에일리어스 = "+signed+" Hz · |에일리어스| = "+Math.abs(signed)+" Hz"];
   }
+ },
+ chirp:{
+  question:["With the same starting frequency and duration, what happens halfway through a chirp if its ending frequency increases?","시작 주파수와 스윕 시간을 고정하고 끝 주파수를 높이면 중간 지점의 순간주파수는 어떻게 될까요?"],
+  choices:[["The halfway frequency increases","중간 지점의 주파수가 증가합니다"],["It is unaffected by the ending frequency","끝 주파수와 관계없이 일정합니다"]],answer:0,
+  scenarios:[
+   {en:"A · End at 900 Hz",ko:"A · 끝 900 Hz",patch:{f0:220,f1:900,T:2,window:512,pos:50}},
+   {en:"B · End at 1800 Hz",ko:"B · 끝 1800 Hz",patch:{f0:220,f1:1800,T:2,window:512,pos:50}}
+  ],
+  transfer:["Keeping the start and end frequencies fixed, what happens to sweep rate if duration T doubles?","시작·끝 주파수를 유지하면서 스윕 시간 T를 두 배로 늘리면 주파수 변화율은 어떻게 될까요?"],
+  transferChoices:[["The sweep rate is halved","주파수 변화율이 절반이 됩니다"],["The sweep rate doubles","주파수 변화율이 두 배가 됩니다"]],transferAnswer:0,
+  reason:["For a linear chirp, f(t)=f₀+(f₁−f₀)t/T. At the same relative time, a higher f₁ raises instantaneous frequency; doubling T halves the rate (f₁−f₀)/T. The spectrogram is an FFT-based preview, not a second signal.","선형 처프의 순간주파수는 f(t)=f₀+(f₁−f₀)t/T입니다. 동일한 상대 시각에서 f₁이 높으면 순간주파수도 증가하고 T를 두 배로 하면 변화율은 절반이 됩니다. 스펙트로그램은 같은 신호의 FFT 기반 미리보기입니다."],
+  evidence:s=>{
+   const time=s.T*s.pos/100,f=s.f0+(s.f1-s.f0)*s.pos/100,rate=(s.f1-s.f0)/s.T;
+   return ["t = "+time.toFixed(2)+" s · f(t) = "+f.toFixed(1)+" Hz · df/dt = "+rate.toFixed(1)+" Hz/s",
+    "t = "+time.toFixed(2)+"초 · f(t) = "+f.toFixed(1)+" Hz · 주파수 변화율 = "+rate.toFixed(1)+" Hz/s"];
+  }
+ },
+ helix:{
+  question:["At t>0, if σ changes from negative to positive while f stays fixed, what happens to the helix radius?","t>0에서 회전 주파수 f를 고정하고 σ를 음수에서 양수로 바꾸면 나선의 반지름은 어떻게 될까요?"],
+  choices:[["It changes from decay to growth","감쇠에서 증가로 바뀝니다"],["Only the rotation speed changes","회전 속도만 바뀝니다"]],answer:0,
+  scenarios:[
+   {en:"A · σ = −0.4 s⁻¹",ko:"A · 감쇠 σ=−0.4",patch:{f:1.5,sigma:-.4,pos:70,playing:false}},
+   {en:"B · σ = +0.4 s⁻¹",ko:"B · 증가 σ=+0.4",patch:{f:1.5,sigma:.4,pos:70,playing:false}}
+  ],
+  transfer:["If rotation frequency f doubles while σ stays fixed, which quantity remains unchanged at a given time?","σ를 고정하고 회전 주파수 f만 두 배로 하면 같은 시각에서 무엇이 변하지 않을까요?"],
+  transferChoices:[["Magnitude |x(t)|","신호 크기 |x(t)|"],["Number of turns per second","초당 회전 횟수"]],transferAnswer:0,
+  reason:["x(t)=e^{(σ+j2πf)t}. Its magnitude is e^{σt}; frequency f controls angular rotation. At t=0 all cases have magnitude 1. Compare the selected positive time in the phasor, helix and real/imaginary plots.","x(t)=e^{(σ+j2πf)t}에서 크기는 e^{σt}, 회전 속도는 f가 결정합니다. t=0에서는 모두 크기가 1이므로, 양의 선택 시각에서 나선·페이저·실수부/허수부를 함께 비교하세요."],
+  evidence:s=>{
+   const t=3*s.pos/100,mag=Math.exp(s.sigma*t),turns=s.f*t;
+   return ["t = "+t.toFixed(2)+" s · |x(t)| = e^("+s.sigma.toFixed(2)+"·"+t.toFixed(2)+") = "+mag.toFixed(3)+" · turns = "+turns.toFixed(2),
+    "t = "+t.toFixed(2)+"초 · |x(t)| = "+mag.toFixed(3)+" · 회전 수 = "+turns.toFixed(2)];
+  }
+ },
+ amfm:{
+  question:["With the carrier and message frequencies fixed, which modulation keeps its ideal envelope constant while varying instantaneous frequency?","반송파·정보 신호 주파수를 고정했을 때 포락선의 크기는 일정하고 순간주파수가 변하는 방식은 무엇일까요?"],
+  choices:[["AM — amplitude modulation","AM — 진폭 변조"],["FM — frequency modulation","FM — 주파수 변조"]],answer:1,
+  scenarios:[
+   {en:"A · AM envelope",ko:"A · AM 포락선",patch:{mode:"am",fc:440,fm:8,depth:.65,beta:2.5}},
+   {en:"B · FM frequency",ko:"B · FM 순간주파수",patch:{mode:"fm",fc:440,fm:8,depth:.65,beta:2.5}}
+  ],
+  transfer:["For FM, if β doubles at the same message frequency fₘ, how does maximum frequency deviation change?","FM에서 정보 신호 주파수 fₘ을 유지하고 β를 두 배로 하면 최대 주파수 편이는 어떻게 변할까요?"],
+  transferChoices:[["It doubles (Δf=βfₘ)","두 배가 됩니다(Δf=βfₘ)"],["It stays unchanged","변하지 않습니다"]],transferAnswer:0,
+  reason:["AM changes envelope amplitude: 1±m. FM keeps ideal amplitude constant while its instantaneous frequency varies between f꜀−βfₘ and f꜀+βfₘ. Compare waveform shape and sidebands for the same carrier/message frequencies.","AM은 포락선의 진폭을 1±m으로 바꿉니다. 이상적인 FM의 진폭은 일정하고 순간주파수는 f꜀−βfₘ부터 f꜀+βfₘ까지 변합니다. 같은 반송파·정보 신호 주파수에서 파형과 측대역을 비교하세요."],
+  evidence:s=>s.mode==="fm"?
+   ["FM · f꜀ = "+s.fc+" Hz · Δf = βfₘ = "+(s.beta*s.fm).toFixed(1)+" Hz · envelope = 1",
+    "FM · 반송파 "+s.fc+" Hz · 최대 주파수 편이 = "+(s.beta*s.fm).toFixed(1)+" Hz · 포락선 = 1"]:
+   ["AM · f꜀ = "+s.fc+" Hz · envelope range = "+(1-s.depth).toFixed(2)+" … "+(1+s.depth).toFixed(2),
+    "AM · 반송파 "+s.fc+" Hz · 포락선 범위 = "+(1-s.depth).toFixed(2)+" … "+(1+s.depth).toFixed(2)]
  }
+
 };
 function session(lab){return store[lab]||(store[lab]={predict:"",transfer:"",seen:new Set(),checked:false,choice:""});}
 function text(pair){const m=W.ELSLanguage?.get?.()||"mixed";return m==="en"?pair[0]:m==="ko"?pair[1]:pair[0]+"\n"+pair[1]}
@@ -132,5 +181,5 @@ function renderSignal({lab,state,host,apply}){
  return true;
 }
 function reset(lab){delete store[lab];}
-W.SSApplicationsInquiry=Object.freeze({renderSignal,refresh,reset});
+W.SSApplicationsInquiry=Object.freeze({renderSignal,refresh,reset,covered:Object.freeze(Object.keys(specs))});
 })(window);
