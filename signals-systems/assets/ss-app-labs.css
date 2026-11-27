@@ -282,3 +282,17 @@ button:disabled{opacity:.55;cursor:default}
 .ss-al-results:has(.ss-al-charts[data-kind="sampling"]) .ss-al-charts{order:1}
 .ss-al-results:has(.ss-al-charts[data-kind="sampling"]) .ss-al-metrics{order:2}
 .ss-al-results:has(.ss-al-charts[data-kind="sampling"]) #ss-al-transport{order:3}
+
+/* Mobile reading order: put the waveform/spectrum immediately after the
+   results toolbar, before the secondary metric cards. This only changes CSS
+   ordering at phone widths, not lab controls, DOM, or desktop composition.
+   Sampling already has its own carefully tuned ordering. */
+@media(max-width:600px){
+ .ss-al-results:not(:has(.ss-al-charts[data-kind="sampling"])) .ss-al-results-bar{order:0}
+ .ss-al-results:not(:has(.ss-al-charts[data-kind="sampling"])) #ss-al-transport{order:1}
+ .ss-al-results:not(:has(.ss-al-charts[data-kind="sampling"])) .ss-al-charts{order:2}
+ .ss-al-results:not(:has(.ss-al-charts[data-kind="sampling"])) .ss-al-metrics{order:3}
+ .ss-al-results:not(:has(.ss-al-charts[data-kind="sampling"])) #ss-al-alias-summary{order:4}
+ .ss-al-results:not(:has(.ss-al-charts[data-kind="sampling"])) .ss-al-insight{order:5}
+ .ss-al-plot-note{font-size:12px;line-height:1.55;overflow-wrap:anywhere}
+}
