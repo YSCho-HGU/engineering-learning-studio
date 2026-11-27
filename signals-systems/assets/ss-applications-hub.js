@@ -35,13 +35,10 @@ const topics={
   {phase:"planned",en:"Video Temporal FFT and Flicker",ko:"동영상 시간 FFT와 깜빡임"}
  ],
 
+
  d:[
-  {en:"Audio Equalizer and Speech Filtering",ko:"오디오 이퀄라이저와 음성 필터",kind:"Audio",concept:"Signal spectrum · H(f) · Filtering",questionEn:"What happens to both the waveform and sound when frequency bands are attenuated?",questionKo:"특정 주파수 대역을 감쇠시키면 파형과 소리는 어떻게 달라지는가?",observeEn:"Input/filtered audio, gain curve, waveform, spectrum, and listening comparison.",observeKo:"입력·필터된 소리·이득 곡선·파형·스펙트럼·청각 비교",ch:[2,3,4,6]},
-  {en:"Wearable and IoT Sensor Denoising",ko:"웨어러블·IoT 센서 잡음 제거",kind:"Sensors & IoT",concept:"Noise · Smoothing · Delay",questionEn:"How can a sensor trend be recovered while preserving meaningful changes?",questionKo:"필요한 변화는 유지하면서 센서의 추세를 어떻게 추출할 수 있는가?",observeEn:"Synthetic sensor trace, moving-average or RC-like smoothing, and response lag.",observeKo:"합성 센서 파형·이동평균 및 RC 평활화·응답 지연",ch:[1,2,6]},
-  {en:"Radar and Sonar Chirp Echoes",ko:"레이더·소나의 처프 반사",kind:"Radar & Sonar",concept:"Chirp · Delay · Correlation",questionEn:"How can a delayed echo help estimate the distance to an object?",questionKo:"지연된 반사파로 물체까지의 거리를 어떻게 추정하는가?",observeEn:"Transmit/receive chirps, propagation delay, correlation peak, and distance model.",observeKo:"송신·수신 처프·전파 지연·상관 피크·거리 모델",ch:[1,2,4,6]},
-  {en:"Biomedical Waveforms and Filtering",ko:"생체 신호와 필터링",kind:"Biomedical",concept:"ECG-like signal · Drift · Filtering",questionEn:"How can filtering suppress baseline drift without distorting useful features?",questionKo:"유용한 파형 특징을 왜곡하지 않고 기저선 변동을 어떻게 줄이는가?",observeEn:"Synthetic ECG-like data, baseline drift, selected filters, and preserved features.",observeKo:"합성 ECG 유사 신호·기저선 변동·필터·유지되는 특징",ch:[1,2,4,6]},
-  {en:"Camera Image Enhancement",ko:"카메라 이미지 개선",kind:"Image & Vision",concept:"2D convolution · Frequency filters · Edges",questionEn:"How do image blur and sharpening correspond to different spatial-frequency responses?",questionKo:"이미지 흐림과 선명화는 어떤 공간주파수 응답의 차이인가?",observeEn:"Image, filter mask, 2D spectrum, reconstruction, and edge details.",observeKo:"이미지·필터 마스크·2D 스펙트럼·복원·에지 세부 정보",ch:[2,4,6]},
-  {en:"Communication and Modulation Spectra",ko:"통신 변조와 스펙트럼",kind:"Communications",concept:"Carrier · AM/FM · Bandwidth",questionEn:"How does modulation change the signal's frequency content?",questionKo:"변조는 신호의 주파수 성분을 어떻게 변화시키는가?",observeEn:"Message and modulated signal, spectral occupancy, and filter behavior.",observeKo:"정보 신호와 변조 신호·주파수 대역 점유·필터 동작",ch:[3,4,6]}
+  {lab:"audio-filter",href:"./applications-audio-filter.html",en:"Hear the System · Audio Filtering",ko:"소리로 시스템 이해하기 · 오디오 필터링",kind:"Audio",concept:"FIR · Frequency response · Sound",ch:[2,4,6]},
+  {lab:"chirp-echo",href:"./applications-chirp-echo.html",en:"Detect the Invisible · Chirp Echo",ko:"보이지 않는 물체 탐지 · 처프 반사파",kind:"Radar & Sonar",concept:"Chirp · Delay · Cross-correlation",ch:[1,2,4,6]}
  ]
 };
 function node(tag,className,content){
@@ -142,6 +139,20 @@ function renderSystemsModules(host,data){
   details.append(section);host.append(details);
  }
 }
+function renderIntegratedModules(host,data){
+ const list=node("div","ss-app-lesson-list ss-app-abd-lab-list");
+ data.forEach((x,i)=>{
+  const a=node("a","ss-app-lesson-row ss-app-abd-lab-row");
+  a.href=x.href;a.dataset.lab=x.lab;
+  a.setAttribute("aria-label",i18n("Open integrated lab "+(i+1)+": "+x.en,"종합 실습 "+(i+1)+" 열기: "+x.ko,true));
+  a.append(node("span","ss-app-lesson-number",moduleNumber(i)));
+  const copy=node("span","ss-app-lesson-copy");
+  copy.append(node("strong","ss-app-lesson-title",i18n(x.en,x.ko,true)));
+  copy.append(node("span","ss-app-lesson-desc",x.concept));
+  a.append(copy,node("span","ss-app-lesson-arrow","›"));list.append(a);
+ });
+ host.append(list);
+}
 function renderPlannedModules(host,data,part){
  const list=node("div","ss-app-abd-planned-list");
  data.forEach((x,i)=>{
@@ -192,8 +203,8 @@ function renderTopics(){
    document.getElementById("part-b-count").textContent=i18n("3 interactive labs + 4 planned","인터랙티브 실습 3개 + 예정 4개",true);
    renderSystemsModules(host,data);restoreDisclosure();return;
   }
-  document.getElementById("part-"+part+"-count").textContent=data.length+" "+i18n("planned topics","개발 예정 주제",true);
-  renderPlannedModules(host,data,part);restoreDisclosure();
+  document.getElementById("part-d-count").textContent=i18n("2 interactive integrated labs","종합 실습 2개",true);
+  renderIntegratedModules(host,data);
  });
 }
 function selectedPart(){
