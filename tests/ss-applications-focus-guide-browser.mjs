@@ -39,6 +39,16 @@ for(const spec of entries){
   });
   assert(evidence.exists,"The question has no actual target graph: "+JSON.stringify(evidence));
   assert(evidence.target.length>3,"Evidence link is missing");
+  await page.locator(".ss-focus-evidence-link").click();
+  await page.waitForTimeout(80);
+  assert.equal(await page.evaluate(()=>decodeURIComponent(location.hash)),evidence.target,"Evidence link did not navigate to target");
+  const jumped=await page.evaluate(target=>{
+    const el=document.getElementById(target.slice(1));const box=el?.getBoundingClientRect();
+    return {exists:!!el,visible:!!box&&box.width>10&&box.height>10,top:box?.top||0};
+  },evidence.target);
+  assert(jumped.exists,"Missing plot after navigation");
+  await page.goto(base+"/signals-systems/"+spec.path,{waitUntil:"load",timeout:40000});
+  await page.locator("#ss-app-focus-question").waitFor({state:"visible",timeout:10000});
   const initial=await page.evaluate(()=>{
    const main=document.querySelector("main"),guide=main.querySelector("#ss-app-focus-guide");
    return {index:[...main.children].indexOf(guide),hasTitleBefore:[...main.children].slice(0,[...main.children].indexOf(guide)).some(el=>!!el.querySelector("h1")||el.tagName==="H1"),next:guide.nextElementSibling?.className||""}
