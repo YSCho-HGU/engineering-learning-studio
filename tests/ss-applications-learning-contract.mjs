@@ -31,7 +31,15 @@ const coreC=topics.c.filter(x=>x.phase==='foundation'||x.phase==='discovery');
 const extraC=topics.c.filter(x=>x.phase==='extension');
 const plannedC=topics.c.filter(x=>x.phase==='planned');
 assert.deepEqual([readyA.length,readyB.length,coreC.length,extraC.length,plannedC.length],[6,3,7,1,3]);
-assert.ok(topics.d.every(x=>!x.lab));
+const readyD=topics.d.filter(x=>x.lab);
+assert.equal(readyD.length,2,'Part D must contain exactly two complete integrated labs');
+assert.deepEqual(readyD.map(x=>x.lab),['audio-filter','chirp-echo']);
+for(const t of readyD){
+ assert.ok(t.href&&existsSync(new URL(t.href.replace(/^\.\//,''),root)),'Missing Part D lab '+t.href);
+ assert.ok(t.en&&t.ko&&t.concept&&t.ch?.length,'Incomplete Part D bilingual learning metadata');
+}
+assert.ok(existsSync(new URL('assets/ss-app-partd.js',root)));
+assert.ok(existsSync(new URL('assets/ss-app-partd.css',root)));
 for(const t of [...readyA,...readyB]){
  const local=t.href?.replace(/^\.\//,'')||(readyA.includes(t)?'applications-lab.html':'applications-system-lab.html');
  assert.ok(existsSync(new URL(local,root)),'Missing application lab '+local);
@@ -45,7 +53,7 @@ const landing=read('applications.html');
 assert.match(landing,/seven core FFT labs plus one optional STFT extension/);
 assert.match(landing,/FFT 핵심 실습 7개와 선택 STFT 확장 1개/);
 assert.match(landing,/three further Part C topics are planned/);
-assert.match(landing,/Part D remains a proposed integration curriculum/);
+assert.match(landing,/Part D includes two integrated interactive labs/);
 const chirp=readyA.find(t=>t.lab==='chirp');
 assert.match(chirp.observeEn,/Linear chirp sweep/);
 assert.doesNotMatch(chirp.observeEn,/exponential/i);
@@ -60,6 +68,6 @@ assert.match(engine,/20\*Math\.log10/);
 const inquiry=read('assets/ss-app-inquiry.js');
 const supported=readyA.map(t=>t.lab).filter(key=>
  new RegExp('(?:^|\\n)\\s*'+key+':\\{').test(inquiry));
-console.log('PASS: 6 signal labs, 3 system labs, 7 FFT core + 1 optional, 3 planned FFT topics, Part D planned');
+console.log('PASS: 6 signal labs, 3 system labs, 7 FFT core + 1 optional, 3 planned FFT topics, Part D: 2 interactive integrated labs');
 console.log('PASS: implemented links exist and STFT formula agrees with measured display grid');
 console.log('Pedagogical observation: structured inquiry '+supported.length+'/6 Part A labs ('+supported.join(', ')+')');
