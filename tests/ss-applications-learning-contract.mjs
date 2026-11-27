@@ -49,11 +49,23 @@ for(const t of [...coreC,...extraC]){
  assert.ok(existsSync(new URL(t.href.replace(/^\.\//,''),root)),t.href);
  assert.ok(t.en&&t.ko&&t.descEn&&t.descKo);
 }
+for(const t of [...readyA,...readyB,...readyD]){
+ assert.ok(t.learningEn&&t.learningKo,'Missing bilingual student-facing observation goal: '+t.lab);
+ assert.ok(t.learningEn.length<140&&t.learningKo.length<140,'Learning goal is too long: '+t.lab);
+}
 const landing=read('applications.html');
 assert.match(landing,/seven core FFT labs plus one optional STFT extension/);
 assert.match(landing,/FFT 핵심 실습 7개와 선택 STFT 확장 1개/);
 assert.match(landing,/three further Part C topics are planned/);
 assert.match(landing,/Part D includes two integrated interactive labs/);
+for(const part of ['a','b','c','d']){
+ assert.match(landing,new RegExp('ss-app-part-guide'),part+' guide styles should be present');
+ assert.match(landing,new RegExp('id="topics-'+part+'"'),part+' modules should remain linked');
+}
+assert.equal((landing.match(/class="ss-app-study-detail ss-app-part-guide"/g)||[]).length,4);
+assert.match(landing,/ss-app-study-route/);
+assert.match(landing,/Chirp\/STFT is optional/);
+assert.match(landing,/one Part C discovery task/);
 const chirp=readyA.find(t=>t.lab==='chirp');
 assert.match(chirp.observeEn,/Linear chirp sweep/);
 assert.doesNotMatch(chirp.observeEn,/exponential/i);
