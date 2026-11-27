@@ -23,13 +23,13 @@ for(const [path,kind] of [["applications-audio-filter.html","audio"],["applicati
   if(kind==="audio"){
    let before=await page.locator("#atten").innerText();
    await page.locator("#filter").selectOption("high");
-   await page.locator("#cutoff").fill("2100");
+   await page.locator("#cutoff").evaluate(el=>{el.value="2100";el.dispatchEvent(new Event("input",{bubbles:true}))});
    const after=await page.locator("#atten").innerText();
    assert(before!==after,"FIR result did not change");
    for(const id of ["waveplot","specplot","gainplot"])assert((await page.locator("#"+id).evaluate(e=>e.width*e.height))>0);
   }else{
    const initial=await page.locator("#estimate").innerText();
-   await page.locator("#distance").fill("27");
+   await page.locator("#distance").evaluate(el=>{el.value="27";el.dispatchEvent(new Event("input",{bubbles:true}))});
    assert.notEqual(await page.locator("#estimate").innerText(),initial,"Estimated distance did not update");
    await page.locator("#lag-peak").click();
    const lag=+(await page.locator("#lag").inputValue());
