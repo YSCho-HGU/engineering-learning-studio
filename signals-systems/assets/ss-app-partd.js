@@ -82,8 +82,9 @@ function runAudio(){
  $("wave-guide").textContent=tr("These are the exact same input and output as in graph A, shown over time. Their difference comes from filtering, not from a new experiment. For a clear frequency test, use Two-tone and compare again.","A 그래프에서 비교한 바로 그 입력과 출력을 시간영역에 나타낸 것입니다. 다른 실험이 아니라 같은 필터링 결과입니다. 주파수 차이를 명확하게 보고 싶다면 ‘두 개의 정현파’로 다시 비교해 보세요.");
  let p1=points(x.slice(0,320),1000/FS,0,2),p2=points(y.slice(0,320),1000/FS,0,2);
  draw("waveplot",[{points:p1,color:blue,label:tr("Input","입력")},{points:p2,color:orange,label:tr("Output","출력")}],{xmin:0,xmax:40,ymin:-1.3,ymax:1.3,label:"ms"});
- let a=fftMagnitudes(x,250),b=fftMagnitudes(y,250),norm=Math.max(...a,1e-10);
- draw("specplot",[{points:a.map((v,i)=>[i*FS/2048,20*Math.log10(Math.max(1e-8,v/norm))]),color:blue,label:tr("Input","입력")},{points:b.map((v,i)=>[i*FS/2048,20*Math.log10(Math.max(1e-8,v/norm))]),color:orange,label:tr("Output","출력")}],{xmin:0,xmax:FS*249/2048,ymin:-75,ymax:5,label:"Hz"});
+ // Show the full nonnegative FFT range (0–4000 Hz), including the 1950 Hz test tone.
+ let a=fftMagnitudes(x,1025),b=fftMagnitudes(y,1025),norm=Math.max(...a,1e-10);
+ draw("specplot",[{points:a.map((v,i)=>[i*FS/2048,20*Math.log10(Math.max(1e-8,v/norm))]),color:blue,label:tr("Input","입력")},{points:b.map((v,i)=>[i*FS/2048,20*Math.log10(Math.max(1e-8,v/norm))]),color:orange,label:tr("Output","출력")}],{xmin:0,xmax:FS/2,ymin:-75,ymax:5,label:"Hz"});
  let curve=[];for(let f=0;f<=3000;f+=25)curve.push([f,Math.max(-70,20*Math.log10(Math.max(1e-6,response(h,f))))]);
  const edges=type==="band"?[Math.max(50,cut-bw/2),Math.min(3900,cut+bw/2)]:[cut];
  draw("gainplot",[{points:curve,color:green,label:"|H(f)|"}],{xmin:0,xmax:3000,ymin:-70,ymax:8,label:"Hz",marks:edges.map(f=>({x:f,color:orange})),hmarks:[{y:-3,color:blue}]});
