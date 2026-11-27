@@ -24,6 +24,7 @@ for(const spec of pages){
   assert(res?.ok(),"HTTP failure");
   await page.waitForFunction(()=>!!window.ELSLanguage,{timeout:10000});
   await page.waitForTimeout(200);
+  if(spec.id==="radar")await page.locator("#correlation-detail").evaluate(el=>el.open=true);
   for(const viewport of viewports){
    await page.setViewportSize(viewport);
    for(const theme of themes){
@@ -71,10 +72,17 @@ for(const spec of pages){
       for(const c of state.canvases)assert(!c.error&&c.distinct&&c.width>100&&c.height>80,"blank or collapsed canvas "+c.id);
       for(const m of state.metrics)assert(m.value&&m.value!=="—","empty metric "+m.id);
       assert(state.controlWidth>220,"controls missing");
+      if(spec.id==="audio")assert(await page.locator("#experiment #gainplot").count()===1,"cutoff graph is not next to controls");
+      if(spec.id==="radar"){
+       const order=await page.evaluate(()=>document.querySelector("#corr-plot").compareDocumentPosition(document.querySelector("#correlation-detail")));
+       assert(order & 4,"correlation plot must precede optional detailed calculation");
+      }
       if(pageErrors.length)throw Error("page errors "+pageErrors.join(" | "));
       report.cases.push({label,ok:true});
       if((viewport.width===1366||viewport.width===390)&&(theme==="white-clean"||theme==="neutral-dark")&&language==="ko"){
+       if(spec.id==="radar")await page.locator("#correlation-detail").evaluate(el=>el.open=false);
        await page.screenshot({path:"qa/partd-visual/"+spec.id+"-"+viewport.width+"-"+theme+".png",fullPage:true});
+       if(spec.id==="radar")await page.locator("#correlation-detail").evaluate(el=>el.open=true);
       }
      }catch(e){fail(label,e);report.cases.push({label,ok:false})}
     }
