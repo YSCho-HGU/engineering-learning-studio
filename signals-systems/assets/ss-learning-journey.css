@@ -1,0 +1,92 @@
+/* Learning Map · Ch1–8 ↔ actual Applications. Scoped to route #map. */
+#ss-learning-journey{--j-bg:var(--els-surface,var(--paper,#fff));--j-card:var(--els-surface-alt,var(--els-surface,#fff));
+--j-fg:var(--els-ink,var(--ink,#143347));--j-muted:var(--els-muted,var(--muted,#597384));--j-line:var(--els-border,var(--line,#c9d9e1));
+--j-accent:var(--els-link,#137a99);--j-focus:var(--els-focus,var(--els-link,#137a99));
+color:var(--j-fg);min-width:0;max-width:100%;display:grid;gap:16px;margin:18px 0 30px;font-size:14px;line-height:1.6}
+#ss-learning-journey *{box-sizing:border-box;min-width:0}
+#ss-learning-journey a{color:var(--j-accent);text-decoration:none}
+#ss-learning-journey a:hover{text-decoration:underline;text-underline-offset:3px}
+#ss-learning-journey :is(a,button):focus-visible{outline:3px solid var(--j-focus);outline-offset:3px}
+#ss-learning-journey :is(h3,h4,p){margin:0}
+#ss-learning-journey .ss-j-intro{display:grid;gap:8px}
+#ss-learning-journey .ss-j-overline{font-size:11px;line-height:1.4;font-weight:800;letter-spacing:.075em;color:var(--j-accent)}
+#ss-learning-journey .ss-j-main-title{font-size:clamp(19px,2.4vw,25px);font-weight:800;line-height:1.32;letter-spacing:-.02em}
+#ss-learning-journey .ss-j-lead,#ss-learning-journey .ss-j-desc{color:var(--j-muted);font-size:14px;white-space:pre-line;line-height:1.65}
+#ss-learning-journey :is(.ss-j-overview,.ss-j-routes,.ss-j-catalogue,.ss-j-finish){
+background:var(--j-bg);border:1px solid var(--j-line);border-radius:13px;
+padding:clamp(14px,2.2vw,22px);display:grid;gap:13px}
+#ss-learning-journey :is(.ss-j-routes,.ss-j-catalogue,.ss-j-finish) h3{
+font-size:clamp(16px,2vw,20px);line-height:1.35;font-weight:800}
+#ss-learning-journey .ss-j-root-card{border:1px solid var(--j-line);border-radius:10px;padding:12px 15px;
+display:grid;gap:7px;justify-items:center;max-width:440px;width:100%;margin:0 auto;background:var(--j-card)}
+#ss-learning-journey .ss-j-root-card>strong{font-size:12px;letter-spacing:.025em;color:var(--j-accent)}
+#ss-learning-journey .ss-j-foundation-links{display:flex;flex-wrap:wrap;justify-content:center;gap:9px}
+#ss-learning-journey .ss-j-root-note{color:var(--j-muted);font-size:12px;white-space:pre-line;text-align:center}
+#ss-learning-journey .ss-j-split{height:28px;width:70%;margin:-12px auto -8px;
+border-left:1px solid var(--j-line);border-right:1px solid var(--j-line);
+border-top:0;border-bottom:1px solid var(--j-line);display:flex;justify-content:space-around}
+#ss-learning-journey .ss-j-split>span{width:1px;height:13px;background:var(--j-line);align-self:flex-end;transform:translateY(13px)}
+#ss-learning-journey .ss-j-branch-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;padding-top:10px}
+#ss-learning-journey .ss-j-branch{border:1px solid var(--j-line);border-radius:10px;display:grid;
+grid-template-rows:auto auto auto auto 1fr;gap:8px;padding:13px;background:var(--j-card);min-height:185px}
+#ss-learning-journey .ss-j-branch h4{font-weight:800;font-size:14px;line-height:1.4}
+#ss-learning-journey .ss-j-branch p{color:var(--j-muted);font-size:12px;white-space:pre-line}
+#ss-learning-journey .ss-j-branch-chapters,
+#ss-learning-journey .ss-j-branch-apps,
+#ss-learning-journey .ss-j-related-links,
+#ss-learning-journey .ss-j-stage-links{display:flex;align-items:flex-start;flex-wrap:wrap;gap:6px}
+#ss-learning-journey :is(.ss-j-chapter-chip,.ss-j-chip){border:1px solid var(--j-line);border-radius:8px;
+padding:5px 8px;font-size:12px;font-weight:700;line-height:1.45;background:var(--j-bg);white-space:normal;overflow-wrap:anywhere}
+#ss-learning-journey .ss-j-chapter-chip{font-size:13px;font-weight:800}
+#ss-learning-journey .ss-j-branch-arrow{display:block;color:var(--j-accent);font-weight:800;text-align:center;line-height:1}
+#ss-learning-journey .ss-j-branch-note{font-size:12px;line-height:1.62;white-space:pre-line;color:var(--j-muted)}
+#ss-learning-journey .ss-j-route-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#ss-learning-journey .ss-j-route-button{border:1px solid var(--j-line);border-radius:9px;
+background:var(--j-card);color:var(--j-fg);text-align:left;cursor:pointer;
+padding:11px 12px;font-size:14px;font-weight:750;min-height:65px;white-space:pre-line;line-height:1.45}
+#ss-learning-journey .ss-j-route-button:hover{border-color:var(--j-accent)}
+#ss-learning-journey .ss-j-route-button[aria-pressed=true]{border-color:var(--j-accent);box-shadow:inset 0 0 0 1px var(--j-accent)}
+#ss-learning-journey .ss-j-route-code{display:block;margin-bottom:3px;font-size:11px;line-height:1.25;color:var(--j-accent)}
+#ss-learning-journey .ss-j-route-body{display:grid;gap:12px}
+#ss-learning-journey .ss-j-route-summary{font-size:13px;white-space:pre-line;color:var(--j-muted)}
+#ss-learning-journey .ss-j-steps{display:flex;align-items:stretch;gap:6px;width:100%;overflow-x:auto;
+padding:1px 0 9px;scrollbar-width:thin}
+#ss-learning-journey .ss-j-stage{min-width:152px;flex:1 0 152px;display:grid;align-content:start;gap:9px;
+background:var(--j-card);border:1px solid var(--j-line);border-radius:10px;padding:11px;max-width:240px}
+#ss-learning-journey .ss-j-step-number{color:var(--j-accent);font-size:12px;font-weight:800}
+#ss-learning-journey .ss-j-stage-name{font-weight:800;font-size:13px;line-height:1.45;white-space:pre-line}
+#ss-learning-journey .ss-j-stage-primary{display:block;font-weight:800}
+#ss-learning-journey .ss-j-step-note{font-size:12px;color:var(--j-muted);line-height:1.55;white-space:pre-line}
+#ss-learning-journey .ss-j-stage-connector{flex:0 0 11px;align-self:center;color:var(--j-accent);font-size:20px;font-weight:600;text-align:center}
+#ss-learning-journey .ss-j-route-outcome{border-left:3px solid var(--j-accent);padding:9px 10px;
+background:var(--j-card);white-space:pre-line;font-size:13px}
+#ss-learning-journey .ss-j-chapter-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#ss-learning-journey .ss-j-chapter-card{border:1px solid var(--j-line);border-radius:10px;
+background:var(--j-card);padding:13px;display:grid;align-content:start;gap:8px}
+#ss-learning-journey .ss-j-chapter-name{font-weight:800;font-size:14px;line-height:1.4}
+#ss-learning-journey .ss-j-question{font-size:13px;font-weight:650;line-height:1.6;white-space:pre-line}
+#ss-learning-journey .ss-j-key{font-size:12px;color:var(--j-muted);line-height:1.6;white-space:pre-line}
+#ss-learning-journey .ss-j-related{margin-top:3px;border-top:1px solid var(--j-line);padding-top:9px;display:grid;gap:7px}
+#ss-learning-journey .ss-j-related-label{font-size:12px;font-weight:700;color:var(--j-accent)}
+#ss-learning-journey .ss-j-finish{gap:11px}
+#ss-learning-journey .ss-j-finish p{font-size:13px;white-space:pre-line}
+#ss-learning-journey .ss-j-facts{margin:0;padding-left:20px;display:grid;gap:5px;color:var(--j-muted);font-size:13px}
+#ss-learning-journey .ss-j-footer-links{display:flex;flex-wrap:wrap;gap:9px}
+#ss-learning-journey .ss-j-footer-link{border:1px solid var(--j-line);border-radius:9px;background:var(--j-card);padding:9px 11px;font-size:13px;font-weight:700}
+#ss-learning-journey .ss-j-planned{color:var(--j-muted);font-size:12px!important}
+@media(max-width:950px){
+ #ss-learning-journey .ss-j-branch-grid{grid-template-columns:1fr}
+ #ss-learning-journey .ss-j-branch{min-height:0;grid-template-rows:auto}
+ #ss-learning-journey .ss-j-split{display:none}
+ #ss-learning-journey .ss-j-route-buttons{grid-template-columns:1fr}
+ #ss-learning-journey .ss-j-route-button{min-height:44px}
+}
+@media(max-width:640px){
+ #ss-learning-journey{gap:12px;margin:12px 0 24px}
+ #ss-learning-journey .ss-j-chapter-grid{grid-template-columns:1fr}
+ #ss-learning-journey .ss-j-stage{flex-basis:180px;min-width:180px;max-width:200px}
+ #ss-learning-journey .ss-j-stage-connector{font-size:16px;flex-basis:8px}
+ #ss-learning-journey :is(.ss-j-overview,.ss-j-routes,.ss-j-catalogue,.ss-j-finish){padding:12px}
+ #ss-learning-journey .ss-j-lead{font-size:13px}
+}
+@media(prefers-reduced-motion:reduce){#ss-learning-journey *{scroll-behavior:auto}}
