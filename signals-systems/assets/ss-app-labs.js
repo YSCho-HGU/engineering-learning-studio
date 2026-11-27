@@ -23,19 +23,19 @@ const labels={
  harmonics:{
   title:["Harmonics & Sound","조화파와 소리"],sub:["Explore how a periodic waveform and its harmonic amplitudes create an audible timbre.","주기 신호의 파형과 조화파 크기가 소리의 음색을 만드는 과정을 관찰합니다."],
   control:["Tone and harmonic mix","소리와 조화파 구성"],
-  notes:[["Keep the fundamental fixed, change the harmonic count, then listen and compare the waveform and line spectrum.","기본주파수를 고정하고 조화파 개수를 바꾼 다음 파형·선 스펙트럼·소리를 비교합니다."],["Select a different waveform preset. Which harmonics appear or disappear?","파형 프리셋을 바꾸면 어떤 조화파가 생기거나 사라지는지 관찰합니다."],["Use Custom to change individual harmonic amplitudes. Predict the sound before playing it.","Custom에서 각 조화파의 크기를 변경하고 재생 전에 음색을 예측합니다."]],
+  notes:[["Keep f₀ fixed. Compare Pure sine and Square-wave approximation: which new harmonic lines appear, and does the pitch change?","f₀를 고정하고 ‘단일 정현파’와 ‘사각파 근사’를 비교하세요. 어떤 고조파 선이 추가되며 음높이는 변하나요?"],["Select a different waveform preset. Which harmonics appear or disappear?","파형 프리셋을 바꾸면 어떤 조화파가 생기거나 사라지는지 관찰합니다."],["Use Custom to change individual harmonic amplitudes. Predict the sound before playing it.","Custom에서 각 조화파의 크기를 변경하고 재생 전에 음색을 예측합니다."]],
   insight:["A harmonic line spectrum shows components at integer multiples of f₀. Timbre depends on their amplitudes and phases; this model uses zero sine-phase offsets. Audio playback is synthesized, not recorded.","조화파 선 스펙트럼은 f₀의 정수배에 존재합니다. 음색은 조화파의 크기와 위상에 영향을 받으며, 여기서는 각 사인 성분의 위상 오프셋을 0으로 둡니다. 소리는 녹음이 아닌 합성음입니다."]
  },
  chirp:{
   title:["Chirp & Spectrogram","처프와 스펙트로그램"],sub:["Change a sweep and compare its local waveform, instantaneous frequency, and FFT-based spectrogram.","처프의 주파수를 변화시키면서 국소 파형·순간주파수·FFT 기반 스펙트로그램을 비교합니다."],
   control:["Frequency sweep settings","주파수 스윕 설정"],
-  notes:[["Increase the ending frequency. Follow the rising ridge in the spectrogram.","끝 주파수를 높이고 스펙트로그램의 능선이 위로 이동하는 모습을 관찰합니다."],["Change the STFT window. Compare time localization with frequency concentration.","STFT 윈도 길이를 바꾸고 시간 위치와 주파수 집중도를 비교합니다."],["Move the observation time to see the oscillations become closer together.","관찰 시간을 이동해 파형의 진동 간격이 변하는 것을 확인합니다."]],
+  notes:[["Keep f₀ and duration fixed, then raise f₁. Compare the frequency at the same observation time in the waveform, frequency curve and spectrogram.","f₀와 지속 시간을 고정하고 f₁만 높이세요. 같은 관찰 시각에서 파형·주파수 곡선·스펙트로그램의 변화를 비교하세요."],["Change the STFT window. Compare time localization with frequency concentration.","STFT 윈도 길이를 바꾸고 시간 위치와 주파수 집중도를 비교합니다."],["Move the observation time to see the oscillations become closer together.","관찰 시간을 이동해 파형의 진동 간격이 변하는 것을 확인합니다."]],
   insight:["The spectrogram is computed from successive finite-window FFTs. Its frequency ridge is approximate; finite windows trade time localization against frequency selectivity. The white line is the ideal instantaneous-frequency model.","스펙트로그램은 유한 윈도 구간마다 FFT를 계산해 만듭니다. 주파수 능선은 근사 결과이며 윈도 길이는 시간·주파수 국소화 사이에 상충 관계가 있습니다. 흰 선은 이상적인 순간주파수 모델입니다."]
  },
  helix:{
   title:["Complex Exponential · 3D Helix","복소지수함수 · 3D 나선"],sub:["Connect a rotating complex exponential to a 3D helix, a complex-plane phasor, and real/imaginary time signals.","회전하는 복소지수함수를 3D 나선, 복소평면 페이저, 실수부·허수부 시간 신호로 연결합니다."],
   control:["Rotation and growth","회전 및 진폭 변화 설정"],
-  notes:[["Set σ = 0 and observe constant-radius rotation. Track the real and imaginary projections.","σ=0에서 반지름이 일정한 회전을 관찰하고 실수부·허수부 투영을 비교합니다."],["Change σ to a negative value. The helix contracts as the complex magnitude decays.","σ를 음수로 바꾸면 복소 신호의 크기가 감소하면서 나선 반지름이 줄어듭니다."],["Increase f while holding σ fixed. Compare helix turns with real/imaginary periods.","σ를 고정하고 f를 높여 나선 회전수와 실수부·허수부 주기를 비교합니다."]],
+  notes:[["Begin with σ = 0 and notice the constant helix radius. Then compare σ < 0 and σ > 0 at the same positive time; which case shrinks or grows?","먼저 σ=0에서 일정한 반지름을 확인하세요. 같은 양의 시각에서 σ<0과 σ>0을 비교하면 어느 쪽의 반지름이 줄거나 커지나요?"],["Change σ to a negative value. The helix contracts as the complex magnitude decays.","σ를 음수로 바꾸면 복소 신호의 크기가 감소하면서 나선 반지름이 줄어듭니다."],["Increase f while holding σ fixed. Compare helix turns with real/imaginary periods.","σ를 고정하고 f를 높여 나선 회전수와 실수부·허수부 주기를 비교합니다."]],
   insight:["x(t) = exp[(σ+j2πf)t] has magnitude exp(σt) and phase 2πft. The 3D projection uses a common scale to keep growth and decay visible; the complex-plane view shows the phasor at the selected time.","x(t)=exp[(σ+j2πf)t]의 크기는 exp(σt), 위상은 2πft입니다. 3D 투영은 증가·감쇠를 화면에 표시하기 위해 공통 축척을 사용하고, 복소평면에는 선택한 시각의 페이저를 나타냅니다."]
  }
 };
