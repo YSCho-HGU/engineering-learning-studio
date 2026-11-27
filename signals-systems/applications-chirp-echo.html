@@ -13,7 +13,7 @@
 <section class="d-product-lab" aria-labelledby="product-title">
 <h3 id="product-title" data-en="Inspect one correlation calculation" data-ko="상호상관 계산 한 번 자세히 보기"></h3>
 <p class="d-hint" data-en="For the selected delay, compare each template sample x[i] with the received sample r[t₀ + lag + i]. Their products add to the unnormalized correlation numerator. The normalized value divides this total by both signal energies." data-ko="선택된 지연에서 기준 표본 x[i]와 수신 표본 r[t₀ + lag + i]를 비교합니다. 곱을 합하면 상호상관 분자가 됩니다. 정규화 값은 두 신호 에너지로 나눈 결과입니다."></p>
-<div class="d-formula" data-ss-math="S_m(\\ell)=\\sum_{i=0}^{m}x[i]\\,r[t_0+\\ell+i]" data-ss-math-display="block"></div>
+<div class="d-formula" data-ss-math="S_m(\ell)=\sum_{i=0}^{m}x[i]\,r[t_0+\ell+i]" data-ss-math-display="block"></div>
 <label class="d-field" for="sample-index"><span data-en="Sample-by-sample accumulation" data-ko="표본별 곱셈과 누적합"></span><output class="d-range-value" id="sample-value"></output><input id="sample-index" type="range" min="0" max="239" step="1" value="70"></label>
 <div class="d-buttons"><button type="button" id="sample-prev" data-en="← Previous sample" data-ko="← 이전 표본"></button><button type="button" id="sample-next" data-en="Next sample →" data-ko="다음 표본 →"></button><button type="button" id="sample-play" data-en="▶ Accumulate" data-ko="▶ 누적합 애니메이션"></button><button type="button" id="sample-complete" data-en="Show complete sum" data-ko="전체 합 보기"></button></div>
 <div class="d-plot"><figure><canvas id="product-plot" width="820" height="260"></canvas><figcaption data-en="Product of the two aligned samples at each i; the blue marker shows the current multiplication." data-ko="동일 위치의 두 표본을 곱한 값. 파란 표시점은 현재 곱셈 위치입니다."></figcaption></figure></div>
