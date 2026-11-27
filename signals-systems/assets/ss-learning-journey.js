@@ -145,6 +145,18 @@ function stageCard(stage){
 }
 function fullRender(){
  mount.replaceChildren();
+ for(const [id,en,ko] of [
+  ["ss-map-kicker","LEARNING MAP · CHAPTERS → APPLICATIONS","학습 개념도 · Chapter에서 Applications로"],
+  ["ss-map-heading","From Signals and Systems to Engineering Applications","신호및시스템에서 공학 응용까지"],
+  ["ss-map-lead","Choose an engineering goal, see which chapters explain it, and open the actual experiment.","공학적 학습 목표를 선택하고 연결된 Chapter와 실제 실습으로 이동하세요."],
+  ["ss-map-transform-kicker","DEEPER CONNECTIONS · TRANSFORM EXPLORER","심화 관계 · 변환 탐색기"],
+  ["ss-map-transform-heading","Explore the Mathematical Relationships","변환 사이의 수학적 관계 탐색"],
+  ["ss-map-transform-desc","Select a relationship to inspect its conditions, equation and a related chapter.","관계선을 선택해 성립 조건·수식·관련 Chapter를 확인하세요."]
+ ]){
+  const el=document.getElementById(id);
+  if(el)el.textContent=lang(en,ko);
+ }
+ mount.setAttribute("aria-label",lang("Integrated Chapter 1–8 and Applications learning map","Chapter 1~8 및 Applications 통합 학습 개념도"));
  const intro=node("div","ss-j-intro");
  const kicker=node("p","ss-j-overline",lang("01 / The full course at a glance","01 / 전체 학습 흐름"));
  intro.append(kicker,node("h3","ss-j-main-title",lang("From a signal to an engineering decision","신호 이해에서 공학적 판단까지")));
@@ -192,7 +204,7 @@ function fullRender(){
  for(const r of routes){
   const btn=node("button","ss-j-route-button",lang(...r.title));btn.type="button";
   btn.dataset.routeId=r.id;btn.setAttribute("aria-pressed",String(active===r.id));
-  btn.addEventListener("click",()=>{active=r.id;fullRender();mount.querySelector(".ss-j-routes")?.scrollIntoView({block:"start",behavior:"instant"})});
+  btn.addEventListener("click",()=>{active=r.id;fullRender();mount.querySelector(".ss-j-routes")?.scrollIntoView({block:"start",behavior:"auto"})});
   const small=node("span","ss-j-route-code","PART "+r.code);btn.prepend(small);
   pickers.append(btn);
  }
