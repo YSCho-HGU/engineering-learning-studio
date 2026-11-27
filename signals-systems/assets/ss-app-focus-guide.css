@@ -10,3 +10,8 @@
 .ss-focus-description{font-size:.86rem;line-height:1.55;white-space:pre-line;overflow-wrap:anywhere}
 @media(max-width:760px){.ss-focus-guide{margin:11px 0 14px;padding:12px}.ss-focus-steps{grid-template-columns:1fr;gap:6px}.ss-focus-step{padding:8px 10px;grid-template-columns:23px 95px minmax(0,1fr);grid-template-rows:auto;align-items:start}.ss-focus-index{grid-row:auto}.ss-focus-label,.ss-focus-description{grid-row:1}.ss-focus-description{grid-column:3}.ss-focus-question{font-size:1rem}}
 @media(max-width:390px){.ss-focus-step{grid-template-columns:21px 73px minmax(0,1fr)}.ss-focus-description{font-size:.82rem}}
+
+.ss-focus-evidence-link{display:inline-flex;align-items:center;justify-content:center;align-self:start;margin-top:12px;padding:7px 11px;font-size:.86rem;line-height:1.4;font-weight:730;color:var(--els-link,#88c8a6);border:1px solid var(--els-border,#718575);border-radius:8px;text-decoration:none}
+.ss-focus-evidence-link:hover{border-color:var(--els-link,#88c8a6);background:var(--els-surface-alt,#293a2d);text-decoration:none}
+.ss-focus-evidence-link:focus-visible{outline:3px solid var(--els-link,#88c8a6);outline-offset:2px}
+@media(max-width:600px){.ss-focus-evidence-link{width:100%;min-height:38px}}
