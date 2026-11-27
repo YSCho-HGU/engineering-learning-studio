@@ -25,6 +25,7 @@ for(const spec of pages){
   await page.waitForFunction(()=>!!window.ELSLanguage,{timeout:10000});
   await page.waitForTimeout(200);
   if(spec.id==="radar")await page.locator("#correlation-detail").evaluate(el=>el.open=true);
+  if(spec.id==="audio")await page.locator("#d1-delay-detail").evaluate(el=>el.open=true);
   for(const viewport of viewports){
    await page.setViewportSize(viewport);
    for(const theme of themes){
@@ -81,8 +82,10 @@ for(const spec of pages){
       report.cases.push({label,ok:true});
       if((viewport.width===1366||viewport.width===390)&&(theme==="white-clean"||theme==="neutral-dark")&&language==="ko"){
        if(spec.id==="radar")await page.locator("#correlation-detail").evaluate(el=>el.open=false);
+       if(spec.id==="audio")await page.locator("#d1-delay-detail").evaluate(el=>el.open=false);
        await page.screenshot({path:"qa/partd-visual/"+spec.id+"-"+viewport.width+"-"+theme+".png",fullPage:true});
        if(spec.id==="radar")await page.locator("#correlation-detail").evaluate(el=>el.open=true);
+       if(spec.id==="audio")await page.locator("#d1-delay-detail").evaluate(el=>el.open=true);
       }
      }catch(e){fail(label,e);report.cases.push({label,ok:false})}
     }
@@ -118,6 +121,9 @@ for(const spec of pages){
    const before=await page.locator("#cutoff-explain").innerText();
    await page.locator("#cutoff").evaluate(el=>{el.value="1700";el.dispatchEvent(new Event("input",{bubbles:true}))});
    assert.notEqual(await page.locator("#cutoff-explain").innerText(),before,"cutoff explanation failed to update");
+   assert.match(await page.locator("#observe-settings").innerText(),/1700|1,700/,"Step 3 settings did not follow Step 2");
+   assert((await page.locator("#spectrum-guide").innerText()).length>25);
+   assert((await page.locator("#wave-guide").innerText()).length>25);
    assert((await page.locator("#delay-explain").innerText()).includes("6.25"),"delay explanation not visible");
   }
  }catch(e){fail(spec.id+" setup or interaction",e)}
