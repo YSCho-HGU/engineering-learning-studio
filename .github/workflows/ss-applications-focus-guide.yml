@@ -1,0 +1,36 @@
+name: Applications A-D student inquiry guidance
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'signals-systems/assets/ss-app-focus-guide.js'
+      - 'signals-systems/assets/ss-app-focus-guide.css'
+      - 'signals-systems/applications-*.html'
+      - 'tests/ss-applications-focus-guide-browser.mjs'
+      - '.github/workflows/ss-applications-focus-guide.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  discovery-guide:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1 @playwright/test@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Serve current repository
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > "$RUNNER_TEMP/guide-http.log" 2>&1 &
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            curl -fsS http://127.0.0.1:8765/index.html -o /dev/null && break
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8765/index.html -o /dev/null
+      - name: Test 19 lab guides in English, Korean, mixed and mobile
+        run: node tests/ss-applications-focus-guide-browser.mjs
