@@ -1,0 +1,36 @@
+name: Applications 02-03 graph height regression
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'signals-systems/assets/ss-app-labs.css'
+      - 'signals-systems/assets/ss-app-labs.js'
+      - 'signals-systems/applications-lab.html'
+      - 'tests/ss-app-chirp-helix-height-regression.mjs'
+      - '.github/workflows/ss-app-chirp-helix-height.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  graph-height:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chromium
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1 @playwright/test@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Start local static site
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > "$RUNNER_TEMP/chirp-helix-http.log" 2>&1 &
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            curl -fsS http://127.0.0.1:8765/index.html -o /dev/null && break
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8765/index.html -o /dev/null
+      - name: Verify stable 02 Chirp and 03 Helix plot-card heights
+        run: node tests/ss-app-chirp-helix-height-regression.mjs
