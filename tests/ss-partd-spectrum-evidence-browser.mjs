@@ -45,14 +45,16 @@ try{
     "A visible input peak is missing at 250 or 1950 Hz: "+JSON.stringify(low));
   await page.locator("#filter").selectOption("high");
   const high=await capture();
-  assert(high.output1950.top!==null&&high.output250.top!==null,
-    "High-pass peaks not rendered at both frequencies: "+JSON.stringify(high));
-  assert(low.output250.top!==null&&low.output1950.top!==null,
-    "Low-pass peaks not rendered at both frequencies: "+JSON.stringify(low));
-  // Smaller y means higher spectral magnitude in the plotted dB graph.
-  assert(low.output250.top+30<high.output250.top,
+  assert(high.output1950.top!==null&&low.output250.top!==null,
+    "Passing-tone peaks were not rendered: "+JSON.stringify({low,high}));
+  // Suppressed tones can fall below the -75 dB graph floor, so no colored
+  // pixels inside the plotting area is itself a valid attenuation result.
+  const floor=Math.min(low.height,high.height)-37;
+  const low250=low.output250.top,low1950=low.output1950.top??floor;
+  const high250=high.output250.top??floor,high1950=high.output1950.top;
+  assert(low250+30<high250,
     "Low-pass should retain 250 Hz far more than high-pass: "+JSON.stringify({low,high}));
-  assert(high.output1950.top+30<low.output1950.top,
+  assert(high1950+30<low1950,
     "High-pass should retain 1950 Hz far more than low-pass: "+JSON.stringify({low,high}));
   console.log("PASS D1: input FFT includes 250 & 1950 Hz; LP/HP output peaks swap",JSON.stringify({low,high}));
   r=await page.goto(base+"/signals-systems/applications-chirp-echo.html",{waitUntil:"load"});
