@@ -1,0 +1,48 @@
+name: Applications document-height stability
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'signals-systems/assets/ss-app-*.js'
+      - 'signals-systems/assets/ss-app-*.css'
+      - 'signals-systems/assets/ss-image-fft.js'
+      - 'signals-systems/assets/ss-image-fft.css'
+      - 'signals-systems/assets/ss-applications*.js'
+      - 'signals-systems/applications-*.html'
+      - 'signals-systems/applications.html'
+      - 'tests/ss-applications-height-stability.mjs'
+      - '.github/workflows/ss-applications-height-stability.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  height-stability:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chromium
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1 @playwright/test@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Serve repository
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > "$RUNNER_TEMP/height-http.log" 2>&1 &
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            curl -fsS http://127.0.0.1:8765/index.html -o /dev/null && break
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8765/index.html -o /dev/null
+      - name: Diagnose time-dependent document growth
+        run: node tests/ss-applications-height-stability.mjs
+      - name: Save measurements
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: applications-height-stability
+          path: qa/app-height-stability
+          if-no-files-found: ignore
+          retention-days: 14
