@@ -115,9 +115,16 @@ function simulate(){
  let peak=0;for(let k=1;k<corr.length;k++)if(corr[k]>corr[peak])peak=k;
  sim={v,d,noiseAmp,template,received,t0,delay,corr,peak,maxLag};
  $("distance-value").textContent=d+" m";$("noise-value").textContent=Math.round(noiseAmp*100)+"%";
+ const mediumText=v===343?tr("Air / sound, 343 m/s","공기 / 소리, 343 m/s"):tr("Water / sonar, 1500 m/s","물 / 소나, 1500 m/s");
+ const chirpText=narrow?tr("Narrow chirp, 1000–1500 Hz","좁은 처프, 1000–1500 Hz"):tr("Wide chirp, 500–2500 Hz","넓은 처프, 500–2500 Hz");
+ $("radar-observe-settings").textContent=tr("Medium: ","매질: ")+mediumText+"  |  "+tr("Target: ","거리: ")+d+" m  |  "+tr("Noise: ","잡음: ")+Math.round(noiseAmp*100)+"%  |  "+chirpText;
  $("truth").textContent=(1000*delay/fs).toFixed(2)+" ms";
  $("estimate").textContent=(peak/fs*v/2).toFixed(2)+" m";
  $("error").textContent=Math.abs(peak/fs*v/2-d).toFixed(2)+" m";
+ $("radar-result-guide").textContent=tr(
+  "The selected Step 2 target is "+d+" m; the strongest correlation peak gives a "+(peak*1000/FS).toFixed(2)+" ms round-trip delay and an estimated "+(peak/FS*v/2).toFixed(2)+" m. Compare their difference, then change only the distance in Step 2.",
+  "2번에서 정한 목표물 거리는 "+d+" m입니다. 가장 높은 상관 피크의 왕복 지연은 "+(peak*1000/FS).toFixed(2)+" ms이고, 추정 거리는 "+(peak/FS*v/2).toFixed(2)+" m입니다. 두 거리를 비교한 뒤 2번에서 거리만 바꾸어 다시 관찰하세요."
+ );
  $("lag").max=String(maxLag);$("lag").step="1";$("lag").value=String(Math.min(maxLag,Math.round(.02*fs)));
  renderRadar()
 }
