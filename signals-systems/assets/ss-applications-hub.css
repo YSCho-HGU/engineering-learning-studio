@@ -32,6 +32,8 @@ button,select{font:inherit}
 .ss-app-back{margin-top:15px;padding-top:12px;border-top:1px solid var(--els-border);display:grid;gap:5px}
 .ss-app-back a{color:var(--els-link);padding:6px 8px;font-size:13px}
 .ss-app-main{min-width:0;display:grid;gap:20px}
+.ss-app-main>.ss-app-part[hidden]{display:none!important}
+.ss-app-shortcuts a[aria-current="location"]{border-color:var(--els-link);background:var(--els-surface-alt);color:var(--els-ink)}
 .ss-app-part{scroll-margin-top:63px;background:var(--els-surface);border:1px solid var(--els-border);border-radius:16px;padding:22px}
 .ss-app-part:target{border-color:var(--els-link)}
 .ss-app-part-head{display:flex;align-items:start;justify-content:space-between;gap:10px}
