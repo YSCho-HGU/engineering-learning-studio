@@ -45,3 +45,26 @@ Scope: 19 implemented interactive labs: A=6, B=3, C=7 core+1 optional, D=2.
 - Automated QA checks that each guide loads, displays 3 language modes, fits mobile width, and links to a real page element.
 - Existing lab-specific regression checks provide additional computations/interaction coverage (Part A canvas changes, Part B inquiry, Part C numerical and browser tests, Part D 90-state matrix).
 - These checks do not prove every student interpreted every plot correctly; live student usability testing remains distinct from code correctness.
+
+## Follow-up verification: copy-to-plot integrity and copy trimming (Nov 27, 2026)
+
+**Scope:** the 19-lab catalog remains A1–A6, B1–B3, C1–C8 (C8 optional), D1–D2. The existing controls, section structure and simulation algorithms remain intact except for one necessary D1 plot-range correction.
+
+**Physical chart inconsistency found and corrected:**
+- D1 Audio Filtering formerly calculated only FFT bins 0–249 for the displayed spectrum. With fs = 8,000 Hz and NFFT = 2,048, that limited the plot to 0–972.66 Hz, while the two-tone learning prompt explicitly asks students to compare peaks at 250 Hz and 1,950 Hz.
+- D1 now plots the entire nonnegative 0–4,000 Hz FFT range (bins 0–1024). The browser pixel-evidence test exercises the actual filter UI and verifies that the 250 Hz and 1,950 Hz input/output peaks are present in the correct filter conditions. Low-pass preserves 250 Hz, high-pass preserves 1,950 Hz.
+- The D2 independent browser evidence test verifies that a known target at 17 m or 27 m yields consistent two-way delay and estimated distance under a noise-free condition. The existing 90-state visual matrix also checks languages, themes and three viewport widths.
+
+**Mathematical wording corrected:**
+- A6 Sampling: a 1,500 Hz sine sampled at fs=2,000 Hz has signed alias −500 Hz (not +500 Hz with an unchanged sine phase). Its magnitude spectrum displays a 500 Hz peak; exact sample-sequence equivalence requires attention to sign and phase. The old claim that the 1,500 Hz and +500 Hz sources generate exactly the same samples without qualification has been removed.
+
+**Selective shortening without new UI:**
+- D1 and D2 Step 3 introductions no longer repeat the entire Step 2→3 relation already shown in the live-settings bridge.
+- D1 and D2 summary lines now convey the core physical conclusion rather than paraphrasing the procedural instructions.
+- D1's dynamic time-domain hint now varies with low-/high-/band-pass selection, directing students to an actual waveform change rather than repeating the graph caption.
+- D2 optional glossary invitation was condensed; the optional theory and samplewise correlation remain available.
+- Part A (6), Part B (3), and Part C (8) in-card descriptions were refined in their existing text dictionaries. No global inquiry banner, card insertion, layout restructure or new visual container was introduced.
+
+**QA interpretation:**
+- The D1/D2 physical browser-evidence tests and native Part D interaction/visual checks establish the numerical/visual findings above.
+- Legacy global browser test failures referencing old markup, above-fold graph assumptions and versions are a separate QA maintenance issue, not evidence that all existing labs passed end-to-end. Do not conflate scoped evidence checks with 19-lab numerical certification.
