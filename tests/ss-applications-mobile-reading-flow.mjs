@@ -13,11 +13,11 @@ const suites=[
  ["samples","applications-fft-lab.html",".ss-fft-controls",".ss-fft-graphs .ss-fft-graph-card"],
  ["resolution","applications-fft-resolution.html",".ss-fft-r-controls",".ss-fft-r-graphs > *"],
  ["algorithm","applications-dft-fft.html","#panel-same .dft-controls","#panel-same .dft-plot-card"],
- ["dtmf","applications-fft-dtmf.html",".ss-dtmf-controls","#dtmf-spectrum"],
- ["fingerprint","applications-fft-sound-fingerprint.html",".ss-finger-controls","#finger-spectrum"],
+ ["dtmf","applications-fft-dtmf.html",".ss-dtmf-controls","#dtmf-spectrum-panel"],
+ ["fingerprint","applications-fft-sound-fingerprint.html",".ss-finger-controls","#finger-wave"],
  ["upload","applications-fft-upload.html",".ss-fft-upload-controls","#fft-upload-spectrum"],
- ["image","applications-fft-image.html",".ss-image-controls","#image-spectrum-canvas"],
- ["stft","applications-chirp-stft.html",".ss-stft-controls","#stft-spectrogram"]
+ ["image","applications-fft-image.html",".ss-image-controls","#image-input-canvas"],
+ ["stft","applications-chirp-stft.html",".ss-stft-controls","#stft-time-plot"]
  ].map(([id,path,control,plot])=>({id:"C-"+id,path,control,plot,family:"C"})),
  {id:"D-audio",path:"applications-audio-filter.html",control:"#experiment",plot:"#observe #specplot",family:"D"},
  {id:"D-radar",path:"applications-chirp-echo.html",control:"#experiment",plot:"#observe #echo-plot",family:"D"}
@@ -54,6 +54,14 @@ for(const vp of [{width:390,height:844},{width:768,height:900}]){
    assert(data.control.width>260&&data.plot.width>255,"collapsed panel width "+JSON.stringify(data));
    assert(data.plot.left>=-2&&data.plot.right<=vp.width+3,"plot off-screen "+JSON.stringify(data));
    assert(data.chart&&data.chart.width>235,"small/collapsed plot graphic "+JSON.stringify(data));
+   if(vp.width===390&&spec.family==="A"&&spec.id!=="A-sampling"){
+     const order=await page.evaluate(()=>{
+       const g=document.querySelector(".ss-al-charts").getBoundingClientRect();
+       const m=document.querySelector(".ss-al-metrics").getBoundingClientRect();
+       return {graphBottom:g.bottom,metricTop:m.top};
+     });
+     assert(order.graphBottom<=order.metricTop+5,"secondary metrics should follow the phone graph: "+JSON.stringify(order));
+   }
    if(vp.width===390){
     assert(data.control.bottom<=data.plot.top+5,"plot appears before controls in mobile reading order "+JSON.stringify(data));
     assert(data.description.every(x=>x.rect.right<=vp.width+5),"plot description clips horizontally "+JSON.stringify(data));
