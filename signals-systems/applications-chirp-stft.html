@@ -72,8 +72,8 @@
    <section class="ss-stft-card"><h2 id="stft-insight-title"></h2><div class="ss-stft-formulas">
     <div><small id="stft-eq1-label"></small><div data-ss-math="f(t)=f_0+\frac{f_1-f_0}{T}t" data-ss-math-display="block"></div></div>
     <div><small id="stft-eq2-label"></small><div data-ss-math="X(m,k)=\sum_{r=0}^{L-1}x[r+mH]w[r]e^{-j2\pi kr/M}" data-ss-math-display="block"></div></div>
-    <div><small id="stft-eq3-label"></small><div data-ss-math="T_w=\frac{L}{f_s},\quad \Delta f_{\rm bin}=\frac{f_s}{L},\quad \Delta t=\frac{H}{f_s}" data-ss-math-display="block"></div></div>
-    <div><small id="stft-eq4-label"></small><div data-ss-math="S(m,k)=\lvert X(m,k)\rvert^2" data-ss-math-display="block"></div></div>
+    <div><small id="stft-eq3-label"></small><div data-ss-math="\begin{aligned}T_w&amp;=\frac{L}{f_s},\quad \Delta f_{\rm record}\sim\frac{f_s}{L}\\\Delta f_{\rm grid}&amp;=\frac{f_s}{M},\quad \Delta t_{\rm hop}=\frac{H}{f_s}\end{aligned}" data-ss-math-display="block"></div></div>
+    <div><small id="stft-eq4-label"></small><div data-ss-math="D(m,k)=20\log_{10}\!\frac{|X(m,k)|}{\max_{p,q}|X(p,q)|}\ \mathrm{dB}" data-ss-math-display="block"></div></div>
    </div><p id="stft-insight-body"></p></section>
    <section class="ss-stft-card ss-stft-mission"><h2 id="stft-mission-title"></h2><p id="stft-mission-prompt"></p><button type="button" id="stft-mission-check"></button><p id="stft-mission-feedback" role="status" aria-live="polite"></p></section>
    </div>
