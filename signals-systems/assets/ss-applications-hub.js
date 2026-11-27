@@ -211,14 +211,28 @@ function selectedPart(){
  const m=/^#part-([a-d])$/.exec(location.hash);
  return m?m[1]:"a";
 }
-function updateNavigation(){
+function updateNavigation({scroll=false}={}){
  const part=selectedPart(),idx=sections.indexOf(part);
+ // Keep all Part content/controls intact; use the existing TOC to display
+ // only the current Part rather than a 4-Part vertically stacked document.
+ sections.forEach(id=>{
+  const panel=document.getElementById("part-"+id);
+  if(panel)panel.hidden=id!==part;
+ });
  document.querySelectorAll("[data-part-link]").forEach(el=>{
   if(el.dataset.partLink===part)el.setAttribute("aria-current","location");else el.removeAttribute("aria-current");
+ });
+ document.querySelectorAll(".ss-app-shortcuts a[href^='#part-']").forEach(el=>{
+  if(el.getAttribute("href")==="#part-"+part)el.setAttribute("aria-current","location");
+  else el.removeAttribute("aria-current");
  });
  const prev=document.getElementById("ss-app-prev"),next=document.getElementById("ss-app-next");
  prev.disabled=idx<=0;next.disabled=idx===sections.length-1;
  prev.setAttribute("aria-disabled",String(prev.disabled));next.setAttribute("aria-disabled",String(next.disabled));
+ if(scroll)requestAnimationFrame(()=>{
+  const panel=document.getElementById("part-"+part);
+  if(panel)panel.scrollIntoView({block:"start",behavior:"auto"});
+ });
 }
 function move(delta){
  const index=sections.indexOf(selectedPart());
@@ -231,7 +245,8 @@ function init(){
  localizeStatic();renderTopics();updateNavigation();
  document.getElementById("ss-app-prev").addEventListener("click",()=>move(-1));
  document.getElementById("ss-app-next").addEventListener("click",()=>move(1));
- window.addEventListener("hashchange",updateNavigation);
+ window.addEventListener("hashchange",()=>updateNavigation({scroll:true}));
+ if(/^#part-[a-d]$/.test(location.hash))updateNavigation({scroll:true});
  document.querySelectorAll('a[href^="#part-"]').forEach(a=>a.addEventListener("click",()=>{const menu=document.querySelector(".ss-common-menu");if(menu)menu.open=false}));
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
