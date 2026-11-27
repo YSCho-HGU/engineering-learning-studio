@@ -69,7 +69,7 @@ button:disabled{opacity:.55;cursor:default}
 .ss-al-plot-note{margin:6px 0 0;color:var(--els-muted);font-size:12px;line-height:1.5}
 .ss-al-charts[data-kind=chirp],.ss-al-charts[data-kind=helix]{grid-template-columns:minmax(0,1.17fr) minmax(0,.83fr);grid-template-rows:auto auto}
 .ss-al-charts[data-kind=chirp] .ss-al-plot:first-child,.ss-al-charts[data-kind=helix] .ss-al-plot:first-child{grid-row:span 2}
-.ss-al-charts[data-kind=chirp] .ss-al-plot:first-child canvas,.ss-al-charts[data-kind=helix] .ss-al-plot:first-child canvas{height:clamp(335px,calc(100dvh - 389px),560px);flex:1}
+.ss-al-charts[data-kind=chirp] .ss-al-plot:first-child canvas,.ss-al-charts[data-kind=helix] .ss-al-plot:first-child canvas{height:clamp(335px,calc(100dvh - 389px),560px)}
 .ss-al-charts[data-kind=chirp] .ss-al-plot:not(:first-child) canvas,.ss-al-charts[data-kind=helix] .ss-al-plot:not(:first-child) canvas{height:clamp(151px,calc((100dvh - 440px)/2),260px)}
 .ss-al-insight{font-size:13px;line-height:1.65;background:var(--els-surface-alt);border-left:3px solid var(--els-link);border-radius:8px;padding:11px 14px;color:var(--els-ink)}
 .ss-al-root.focus .ss-al-intro,.ss-al-root.focus .ss-al-controls{display:none}
@@ -160,7 +160,7 @@ button:disabled{opacity:.55;cursor:default}
 .ss-al-charts[data-kind=beats] .ss-al-plot:first-child canvas,
 .ss-al-charts[data-kind=amfm] .ss-al-plot:first-child canvas,
 .ss-al-charts[data-kind=sampling] .ss-al-plot:first-child canvas{
- height:clamp(335px,calc(100dvh - 390px),560px);flex:1
+ height:clamp(335px,calc(100dvh - 390px),560px)
 }
 .ss-al-charts[data-kind=beats] .ss-al-plot:not(:first-child) canvas,
 .ss-al-charts[data-kind=amfm] .ss-al-plot:not(:first-child) canvas,
@@ -297,26 +297,19 @@ button:disabled{opacity:.55;cursor:default}
  .ss-al-plot-note{font-size:12px;line-height:1.55;overflow-wrap:anywhere}
 }
 
-/* 02 Chirp / 03 Helix: a raster canvas must not flex to fill a two-row
-   auto-sized grid.  flex:1 + canvas.width/height rewrites form a positive
-   feedback loop (grid row -> flex canvas -> intrinsic canvas -> grid row).
-   Let the existing desktop/tablet/focus height rules determine its height.
-   Fix its flex basis so redraw or ResizeObserver cannot grow the plot card. */
-.ss-al-charts[data-kind="chirp"] .ss-al-plot:first-child canvas,
-.ss-al-charts[data-kind="helix"] .ss-al-plot:first-child canvas{
+/* Shared Part A primary-plot height stability.
+ * Applies only to the five two-row chart layouts (02–06); 01 Harmonics
+ * keeps its independent equal-size panels. Existing responsive height
+ * rules remain authoritative. Avoid flex-growing a canvas whose bitmap
+ * dimensions are updated from its rendered box on redraw. */
+.ss-al-charts:is(
+ [data-kind="chirp"],
+ [data-kind="helix"],
+ [data-kind="beats"],
+ [data-kind="amfm"],
+ [data-kind="sampling"]
+) .ss-al-plot:first-child canvas{
  flex:0 0 auto;
  min-height:0;
  max-height:none;
-}
-
-/* 04 Beats / 05 AM-FM / 06 Sampling: same safeguard as Chirp/Helix.
-   The primary canvas must keep its explicit responsive CSS height instead of
-   stretching to the automatically sized grid row. Canvas bitmap resizing can
-   otherwise feed back into grid sizing while controls and playback redraw.
-   01 Harmonics uses the regular independent single-row plot layout. */
-.ss-al-charts[data-kind="beats"] .ss-al-plot:first-child canvas,
-.ss-al-charts[data-kind="amfm"] .ss-al-plot:first-child canvas,
-.ss-al-charts[data-kind="sampling"] .ss-al-plot:first-child canvas{
- flex:0 0 auto;
- min-height:0;
 }
