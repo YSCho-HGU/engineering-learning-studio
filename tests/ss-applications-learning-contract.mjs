@@ -58,14 +58,16 @@ assert.match(landing,/seven core FFT labs plus one optional STFT extension/);
 assert.match(landing,/FFT 핵심 실습 7개와 선택 STFT 확장 1개/);
 assert.match(landing,/three further Part C topics are planned/);
 assert.match(landing,/Part D includes two integrated interactive labs/);
+// The Applications hub intentionally uses its existing sidebar + two-column grid,
+ // not a second learning-route/card layer placed above the course sections.
+assert.match(landing,/<div class="ss-app-layout">\s*<aside class="ss-app-toc"/);
+assert.doesNotMatch(landing,/<div class="ss-app-layout"\s*\n\s*<aside/,'The grid wrapper must have a closing >');
+assert.doesNotMatch(landing,/ss-app-study-route|ss-app-part-guide|ss-app-focus-guide/);
 for(const part of ['a','b','c','d']){
- assert.match(landing,new RegExp('ss-app-part-guide'),part+' guide styles should be present');
- assert.match(landing,new RegExp('id="topics-'+part+'"'),part+' modules should remain linked');
+ assert.match(landing,new RegExp('id="topics-'+part+'"'),'Part '+part+' modules remain visible');
+ assert.match(landing,new RegExp('id="part-'+part+'"'),'Part '+part+' section remains present');
 }
-assert.equal((landing.match(/class="ss-app-study-detail ss-app-part-guide"/g)||[]).length,4);
-assert.match(landing,/ss-app-study-route/);
-assert.match(landing,/Chirp\/STFT is optional/);
-assert.match(landing,/one Part C discovery task/);
+assert.equal((landing.match(/class="ss-app-part" id="part-[abcd]"/g)||[]).length,4);
 const chirp=readyA.find(t=>t.lab==='chirp');
 assert.match(chirp.observeEn,/Linear chirp sweep/);
 assert.doesNotMatch(chirp.observeEn,/exponential/i);
