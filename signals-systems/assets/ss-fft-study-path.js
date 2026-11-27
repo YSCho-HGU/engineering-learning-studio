@@ -250,11 +250,11 @@
   header.append(create("p","ss-fft-path-kicker",t("STEP-BY-STEP FFT DISCOVERY","단계별 FFT 발견 학습")),mainTitle,
     create("p","ss-fft-path-goal",t(...c.goal)));
   const prediction=create("div","ss-fft-path-predict");
-  prediction.append(create("h3","",t("① Predict · Before changing anything","① Predict · 값을 바꾸기 전 예상하기")),
+  prediction.append(create("h3","",t("① Predict · Before changing anything","① 예측 · 값을 바꾸기 전 예상하기")),
    create("p","",t(...c.predict)),
    optionControl(c.options,selection.predict,v=>{selection.predict=v;selection.done=false;const f=note.querySelector(".ss-fft-path-feedback");if(f){f.textContent="";f.dataset.status=""}},t("Prediction","예측")));
   const step=create("div","ss-fft-path-change");
-  step.append(create("h3","",t("② Change · One control at a time","② Change · 변수 하나씩 조작")),
+  step.append(create("h3","",t("② Change · One control at a time","② 조작 · 변수 하나씩 변경")),
    create("p","",t(...c.change)));
   const jump=document.createElement("a");jump.href=c.target;
   jump.textContent=t("Go to experiment controls","실습 조절 메뉴로 이동");
@@ -264,13 +264,13 @@
   help.textContent=t("Need FFT theory? Open the illustrated guide (new tab)","FFT 배경 이론 보기 (새 창)");
   const meta=create("p","ss-fft-path-count");meta.dataset.fftPathInteractions="";
   header.append(prediction,step,help,meta);
-  note.append(create("h3","ss-fft-path-observe-title",t("③ Observe · Read the actual result","③ Observe · 실제 결과 확인")));
+  note.append(create("h3","ss-fft-path-observe-title",t("③ Observe · Read the actual result","③ 관찰 · 실제 결과 확인")));
   const evidence=create("output","ss-fft-path-evidence");evidence.dataset.fftPathEvidence="";note.append(evidence);
-  note.append(create("h3","ss-fft-path-explain-title",t("④ Explain · The equation for these settings","④ Explain · 현재 설정값을 수식으로 확인")));
+  note.append(create("h3","ss-fft-path-explain-title",t("④ Explain · The equation for these settings","④ 설명 · 현재 설정값을 수식으로 확인")));
   const math=create("div","ss-fft-path-equation");math.dataset.fftPathMath="";note.append(math);
   const meaning=create("p","ss-fft-path-meaning");meaning.dataset.fftPathMeaning="";note.append(meaning);
   const apply=create("div","ss-fft-path-apply");
-  apply.append(create("h3","",t("⑤ Apply / Check · Try a new condition","⑤ Apply / Check · 다른 조건에도 적용")),
+  apply.append(create("h3","",t("⑤ Apply / Check · Try a new condition","⑤ 응용·확인 · 다른 조건에도 적용")),
     create("p","",t(...c.apply)));
   apply.append(optionControl(c.applied,selection.apply,v=>{selection.apply=v;selection.done=false;const f=note.querySelector(".ss-fft-path-feedback");if(f){f.textContent="";f.dataset.status=""}},t("Transfer question","응용 질문")));
   const check=create("button","ss-fft-path-check",t("Check my explanation","근거로 정답 확인"));
