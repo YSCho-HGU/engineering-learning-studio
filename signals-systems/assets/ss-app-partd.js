@@ -40,8 +40,20 @@ function fir(type,cut,bw){
  for(let i=0;i<=M;i++){let k=i-M/2,w=.54-.46*Math.cos(TAU*i/M),v=type==="low"?lp(cut,k):type==="high"?(k===0?1:0)-lp(cut,k):lp(Math.min(3900,cut+bw/2),k)-lp(Math.max(50,cut-bw/2),k);h.push(v*w)}
  return h
 }
-function convolveSame(x,h){let y=new Array(x.length).fill(0),mid=(h.length-1)/2;for(let n=0;n<x.length;n++){let sum=0;for(let k=0;k<h.length;k++){let j=n+mid-k;if(j>=0&&j<x.length)sum+=h[k]*x[j]}y[n]=sum}return y}
-function fftMagnitudes(x,bins=128){const N0=2048,section=x.slice(500,500+N0),out=[];for(let k=0;k<bins;k++){let re=0,im=0;for(let n=0;n<N0;n++){let a=TAU*k*n/N0,w=.5-.5*Math.cos(TAU*n/(N0-1));re+=section[n]*w*Math.cos(a);im-=section[n]*w*Math.sin(a)}out.push(Math.hypot(re,im))}return out}
+function convolveSame(x,h){let y=new Array(x.length).fill(0);for(let n=0;n<x.length;n++){let sum=0;for(let k=0;k<h.length;k++){let j=n-k;if(j>=0)sum+=h[k]*x[j]}y[n]=sum}return y}
+function fftMagnitudes(x,bins=128){
+ const n=2048,re=new Float64Array(n),im=new Float64Array(n);
+ for(let i=0;i<n;i++)re[i]=(x[500+i]||0)*(.5-.5*Math.cos(TAU*i/(n-1)));
+ for(let i=1,j=0;i<n;i++){let bit=n>>1;for(;j&bit;bit>>=1)j^=bit;j^=bit;if(i<j){let t=re[i];re[i]=re[j];re[j]=t}}
+ for(let size=2;size<=n;size<<=1){const half=size>>1;
+  for(let k=0;k<n;k+=size)for(let p=0;p<half;p++){
+   const ang=-TAU*p/size,c=Math.cos(ang),s=Math.sin(ang),j=k+p+half;
+   const tr=re[j]*c-im[j]*s,ti=re[j]*s+im[j]*c;
+   re[j]=re[k+p]-tr;im[j]=im[k+p]-ti;re[k+p]+=tr;im[k+p]+=ti;
+  }
+ }
+ return Array.from({length:bins},(_,i)=>Math.hypot(re[i],im[i]));
+}
 function response(h,f){let re=0,im=0;for(let k=0;k<h.length;k++){let a=TAU*f*k/FS;re+=h[k]*Math.cos(a);im-=h[k]*Math.sin(a)}return Math.hypot(re,im)}
 let audioData=null,ctxAudio=null,currentNode=null;
 function stopAudio(){if(currentNode){try{currentNode.stop()}catch(e){}currentNode=null}}
