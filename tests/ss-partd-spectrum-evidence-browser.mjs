@@ -41,10 +41,14 @@ try{
   });
   const low=await capture();
   assert(low.width>400&&low.height>150,"Spectrum canvas collapsed");
-  assert(low.blue250.count>2&&low.blue1950.count>2,
-    "A visible input peak is missing at 250 or 1950 Hz: "+JSON.stringify(low));
+  // Curves are drawn in order: a passing orange output can fully cover the
+  // blue input at 250 Hz, so validate the complementary visible peaks instead.
+  assert(low.output250.count>2&&low.blue1950.count>2,
+    "Low-pass evidence is missing its 250 Hz output or 1950 Hz input: "+JSON.stringify(low));
   await page.locator("#filter").selectOption("high");
   const high=await capture();
+  assert(high.blue250.count>2&&high.output1950.count>2,
+    "High-pass evidence is missing its 250 Hz input or 1950 Hz output: "+JSON.stringify(high));
   assert(high.output1950.top!==null&&low.output250.top!==null,
     "Passing-tone peaks were not rendered: "+JSON.stringify({low,high}));
   // Suppressed tones can fall below the -75 dB graph floor, so no colored
