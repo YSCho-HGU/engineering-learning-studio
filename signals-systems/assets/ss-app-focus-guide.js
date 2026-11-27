@@ -62,7 +62,11 @@ for(const [i,k] of ["change","observe","explain"].entries()){
  description.dataset.stepField=k;item.append(number,label,description);steps.append(item);
 }
 guide.append(steps);
-main.insertBefore(guide,main.firstElementChild);
+// Place the single question AFTER the lab title, before controls/results.
+const intro=[...main.children].find(el=>el.matches("h1")||el.querySelector("h1"));
+const anchor=main.querySelector(":scope > .d-steps")||intro;
+if(anchor?.parentElement===main)anchor.insertAdjacentElement("afterend",guide);
+else main.insertBefore(guide,main.firstElementChild);
 function render(){
  const m=mode();
  name.textContent=pairText(q("ONE DISCOVERY QUESTION","핵심 발견 질문 하나"));
