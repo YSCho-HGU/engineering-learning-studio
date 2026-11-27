@@ -10,7 +10,7 @@ localize();
 const N=16384,FS=8000,TAU=2*Math.PI;
 function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
 function rms(a){return Math.sqrt(a.reduce((s,v)=>s+v*v,0)/a.length)}
-function draw(canvas,series,{xmin=0,xmax=1,ymin=-1,ymax=1,marks=[],label=""}={}){
+function draw(canvas,series,{xmin=0,xmax=1,ymin=-1,ymax=1,marks=[],hmarks=[],label=""}={}){
  const c=$(canvas),ctx=c.getContext("2d"),w=c.width,h=c.height, L=47,R=15,T=14,B=34;
  const px=x=>L+(x-xmin)*(w-L-R)/(xmax-xmin),py=y=>T+(ymax-y)*(h-T-B)/(ymax-ymin);
  const bg=getComputedStyle(document.documentElement).getPropertyValue("--els-surface-alt").trim()||"#26332c";
@@ -23,6 +23,7 @@ function draw(canvas,series,{xmin=0,xmax=1,ymin=-1,ymax=1,marks=[],label=""}={})
  ctx.fillText(label,w-20,h-11);
  for(const s of series){ctx.strokeStyle=s.color;ctx.lineWidth=s.width||2;ctx.beginPath();let started=false;for(const p of s.points){if(p[0]<xmin||p[0]>xmax||!Number.isFinite(p[1]))continue;let x=px(p[0]),y=py(clamp(p[1],ymin,ymax));if(!started){ctx.moveTo(x,y);started=true}else ctx.lineTo(x,y)}ctx.stroke()}
  for(const m of marks){let x=px(m.x);ctx.strokeStyle=m.color||ink;ctx.lineWidth=2;ctx.setLineDash([7,5]);ctx.beginPath();ctx.moveTo(x,T);ctx.lineTo(x,h-B);ctx.stroke();ctx.setLineDash([])}
+ for(const m of hmarks){let y=py(m.y);ctx.strokeStyle=m.color||ink;ctx.lineWidth=1.5;ctx.setLineDash([4,5]);ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(w-R,y);ctx.stroke();ctx.setLineDash([])}
  ctx.textAlign="left";let yy=17;for(const s of series){ctx.fillStyle=s.color;ctx.fillRect(L+9,yy-8,18,4);ctx.fillStyle=ink;ctx.fillText(s.label||"",L+35,yy);yy+=17}
 }
 const blue="#4a9ce8",orange="#e59e4e",green="#66ba83";
@@ -67,12 +68,22 @@ function runAudio(){
  let a=fftMagnitudes(x,250),b=fftMagnitudes(y,250),norm=Math.max(...a,1e-10);
  draw("specplot",[{points:a.map((v,i)=>[i*FS/2048,20*Math.log10(Math.max(1e-8,v/norm))]),color:blue,label:tr("Input","입력")},{points:b.map((v,i)=>[i*FS/2048,20*Math.log10(Math.max(1e-8,v/norm))]),color:orange,label:tr("Output","출력")}],{xmin:0,xmax:FS*249/2048,ymin:-75,ymax:5,label:"Hz"});
  let curve=[];for(let f=0;f<=3000;f+=25)curve.push([f,Math.max(-70,20*Math.log10(Math.max(1e-6,response(h,f))))]);
- draw("gainplot",[{points:curve,color:green,label:"|H(f)|"}],{xmin:0,xmax:3000,ymin:-70,ymax:8,label:"Hz"});
+ const edges=type==="band"?[Math.max(50,cut-bw/2),Math.min(3900,cut+bw/2)]:[cut];
+ draw("gainplot",[{points:curve,color:green,label:"|H(f)|"}],{xmin:0,xmax:3000,ymin:-70,ymax:8,label:"Hz",marks:edges.map(f=>({x:f,color:orange})),hmarks:[{y:-3,color:blue}]});
+ $("cutoff-explain").textContent=type==="band"?
+  tr("Orange dashed lines = nominal passband edges "+edges.map(v=>Math.round(v)).join("–")+" Hz; blue line = −3 dB. Compare the green *actual* FIR response with both limits.","주황 점선 = 설정한 대역 경계 "+edges.map(v=>Math.round(v)).join("–")+" Hz; 파란 선 = −3 dB. 초록색 실제 FIR 응답을 경계와 비교하세요."):
+  tr("Orange dashed line = selected "+cut+" Hz cutoff; blue horizontal line = −3 dB. Compare where the actual green FIR response crosses this level.","주황 점선 = 설정 차단주파수 "+cut+" Hz; 파란 가로선 = −3 dB. 실제 초록색 FIR 응답이 이 수준을 통과하는 위치를 관찰하세요.");
+ const impulseAt=64,impulse=new Array(320).fill(0),impout=new Array(320).fill(0);
+ impulse[impulseAt]=1;for(let i=0;i<h.length;i++)impout[impulseAt+i]=h[i];
+ const absMax=Math.max(1,...h.map(Math.abs)),scale=1.1*absMax;
+ draw("impulseplot",[{points:points(impulse.map(v=>v*absMax),1000/FS,0,1),color:blue,label:tr("Unit impulse (scaled)","단위 임펄스(축소)")},{points:points(impout,1000/FS),color:orange,label:"h[n]"}],
+ {xmin:0,xmax:36,ymin:-scale,ymax:scale,label:"ms",marks:[{x:impulseAt*1000/FS,color:blue},{x:(impulseAt+50)*1000/FS,color:orange}]});
+ $("delay-explain").textContent=tr("The input impulse occurs at 8 ms (blue dashed line); the symmetric FIR impulse response is centered at 14.25 ms (orange). Group delay = 50 samples / 8000 samples per second = 6.25 ms. This is phase/group delay, not 6.25 ms of total silence.","입력 임펄스는 8 ms(파란 점선)에 발생합니다. 대칭 FIR 임펄스 응답의 중심은 14.25 ms(주황 점선)입니다. 군지연 = 50표본 / 초당 8000표본 = 6.25 ms. 이는 위상/군지연이며, 6.25 ms 동안 출력이 완전히 0이라는 뜻은 아닙니다.");
  let ratio=20*Math.log10(Math.max(1e-10,rms(y))/rms(x));
  $("atten").textContent=ratio.toFixed(1)+" dB";$("delay").textContent="6.25 ms";$("rms").textContent=rms(y).toFixed(3);
  $("audio-insight").textContent=type==="low"?tr("High frequencies are attenuated; listen for a duller sound.","높은 주파수가 줄어들어 소리가 둔탁해지는지 들어보세요."):type==="high"?tr("Low frequencies are attenuated; listen for a thinner sound.","낮은 주파수가 줄어들어 소리가 가늘어지는지 들어보세요."):tr("Only the selected band is emphasized; compare spectra and sound.","선택한 대역만 통과하므로 스펙트럼과 소리를 비교하세요.")
 }
-let sim=null,animation=null,noiseSeed=7;
+let sim=null,animation=null,sampleAnimation=null,noiseSeed=7;
 function noise(i,seed){let v=Math.sin((i+1)*12.9898+seed*78.233)*43758.5453;return 2*(v-Math.floor(v))-1}
 function simulate(){
  const v=$("medium").value==="sound"?343:1500,d=+$("distance").value,noiseAmp=+$("noise").value/100;
@@ -93,6 +104,35 @@ function simulate(){
  $("lag").max=String(maxLag);$("lag").step="1";$("lag").value=String(Math.min(maxLag,Math.round(.02*fs)));
  renderRadar()
 }
+
+function productStep(){
+ if(!sim)return;
+ const s=sim,lag=+ $("lag").value,m=+ $("sample-index").value;
+ const products=[],sums=[];let total=0;
+ for(let i=0;i<s.template.length;i++){
+  const v=s.template[i]*(s.received[s.t0+lag+i]||0);products.push(v);total+=v;sums.push(total);
+ }
+ const maxP=Math.max(.01,...products.map(Math.abs))*1.12;
+ draw("product-plot",[{points:points(products),color:orange,label:tr("Sample products","표본별 곱")}],
+  {xmin:0,xmax:s.template.length-1,ymin:-maxP,ymax:maxP,label:"i",marks:[{x:m,color:blue}]});
+ const maxS=Math.max(.1,...sums.map(Math.abs))*1.15;
+ draw("sum-plot",[{points:points(sums.slice(0,m+1)),color:green,label:tr("Running sum","누적합")}],
+  {xmin:0,xmax:s.template.length-1,ymin:-maxS,ymax:maxS,label:"m",marks:[{x:m,color:blue}]});
+ $("sample-value").textContent=String(m+1)+" / "+s.template.length;
+ $("product-value").textContent=products[m].toFixed(4);
+ $("partial-value").textContent=sums[m].toFixed(4);
+ $("norm-value").textContent=s.corr[lag].toFixed(4);
+ const normEnergy=s.template.reduce((a,v)=>a+v*v,0);
+ let receivedEnergy=0;for(let i=0;i<s.template.length;i++){const v=s.received[s.t0+lag+i]||0;receivedEnergy+=v*v}
+ const denom=Math.sqrt(normEnergy*receivedEnergy);
+ $("product-explain").textContent=tr(
+ "Step "+(m+1)+": multiply the two aligned samples ("+s.template[m].toFixed(3)+" × "+(s.received[s.t0+lag+m]||0).toFixed(3)+"), then add "+products[m].toFixed(4)+" to the running total. Full sum "+total.toFixed(4)+" ÷ energy normalization "+denom.toFixed(4)+" = "+s.corr[lag].toFixed(4)+".",
+ "단계 "+(m+1)+": 정렬한 두 표본을 곱하고 ("+s.template[m].toFixed(3)+" × "+(s.received[s.t0+lag+m]||0).toFixed(3)+"), 그 값 "+products[m].toFixed(4)+"를 누적합에 더합니다. 전체 합 "+total.toFixed(4)+" ÷ 에너지 정규화 "+denom.toFixed(4)+" = "+s.corr[lag].toFixed(4)+"."
+ );
+}
+function pauseSample(){
+ if(sampleAnimation!==null){clearInterval(sampleAnimation);sampleAnimation=null;$("sample-play").textContent=tr("▶ Accumulate","▶ 누적합 애니메이션")}
+}
 function renderRadar(){
  if(!sim)return;const s=sim,lag=+$("lag").value;
  $("lag-value").textContent=(lag*1000/FS).toFixed(2)+" ms";
@@ -101,10 +141,17 @@ function renderRadar(){
  draw("echo-plot",[{points:r,color:orange,label:tr("Received","수신")},{points:shifted,color:blue,label:tr("Shifted template","이동 기준 신호")}],{xmin:0,xmax:290,ymin:-1.7,ymax:1.7,label:"ms"});
  draw("corr-plot",[{points:points(s.corr,1000/FS,0,2),color:green,label:tr("Correlation","상호상관")}],{xmin:0,xmax:s.maxLag*1000/FS,ymin:-.55,ymax:1.05,label:"ms",marks:[{x:lag*1000/FS,color:blue},{x:s.peak*1000/FS,color:orange}]});
  const corr=s.corr[lag],peak=s.corr[s.peak];
- $("lag-explain").textContent=tr("At this lag, normalized similarity is ","현재 지연에서 정규화된 유사도는 ")+corr.toFixed(3)+tr("; peak is ","이며, 최대값은 ")+peak.toFixed(3)+tr(". Try moving toward the orange peak.","입니다. 주황색 피크 쪽으로 이동해 보세요.")
+ $("lag-explain").textContent=tr("At this lag, normalized similarity is ","현재 지연에서 정규화된 유사도는 ")+corr.toFixed(3)+tr("; peak is ","이며, 최대값은 ")+peak.toFixed(3)+tr(". Try moving toward the orange peak.","입니다. 주황색 피크 쪽으로 이동해 보세요.");
+ productStep()
 }
-function pause(){if(animation!==null){clearInterval(animation);animation=null;$("lag-play").textContent=tr("▶ Animate scan","▶ 지연 탐색 애니메이션")}}
+function pause(){pauseSample();if(animation!==null){clearInterval(animation);animation=null;$("lag-play").textContent=tr("▶ Animate scan","▶ 지연 탐색 애니메이션")}}
 function radarSetup(){
+ $("sample-index").addEventListener("input",()=>{pauseSample();productStep()});
+ $("sample-prev").addEventListener("click",()=>{pauseSample();$("sample-index").value=String(Math.max(0,+$("sample-index").value-1));productStep()});
+ $("sample-next").addEventListener("click",()=>{pauseSample();$("sample-index").value=String(Math.min(239,+$("sample-index").value+1));productStep()});
+ $("sample-complete").addEventListener("click",()=>{pauseSample();$("sample-index").value="239";productStep()});
+ $("sample-play").addEventListener("click",()=>{if(sampleAnimation!==null){pauseSample();return}$("sample-index").value="0";productStep();sampleAnimation=setInterval(()=>{let n=+$("sample-index").value+2;if(n>239){pauseSample();return}$("sample-index").value=String(n);productStep()},65);$("sample-play").textContent=tr("■ Pause","■ 일시정지")});
+ window.addEventListener("pagehide",()=>{pause();pauseSample()});
  for(const id of ["medium","distance","noise","bandwidth"])$(id).addEventListener("input",()=>{pause();simulate()});
  $("new-noise").addEventListener("click",()=>{noiseSeed++;pause();simulate()});
  $("lag").addEventListener("input",()=>{pause();renderRadar()});
