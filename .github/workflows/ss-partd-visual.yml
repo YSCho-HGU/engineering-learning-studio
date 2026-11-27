@@ -1,0 +1,48 @@
+name: Part D visual and mathematical verification
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'signals-systems/assets/ss-app-partd.js'
+      - 'signals-systems/assets/ss-app-partd.css'
+      - 'signals-systems/applications-audio-filter.html'
+      - 'signals-systems/applications-chirp-echo.html'
+      - 'tests/ss-partd-integrated-browser.mjs'
+      - 'tests/ss-partd-visual-matrix.mjs'
+      - '.github/workflows/ss-partd-visual.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  partd:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser test runtime
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1 @playwright/test@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Start local preview
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > "$RUNNER_TEMP/partd-http.log" 2>&1 &
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            curl -fsS http://127.0.0.1:8765/index.html -o /dev/null && break
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8765/index.html -o /dev/null
+      - name: Verify primary student interactions
+        run: node tests/ss-partd-integrated-browser.mjs
+      - name: Verify 90 language/theme/viewport states and correlation
+        run: node tests/ss-partd-visual-matrix.mjs
+      - name: Preserve review screenshots and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: partd-visual-evidence
+          path: qa/partd-visual/
+          if-no-files-found: ignore
+          retention-days: 14
