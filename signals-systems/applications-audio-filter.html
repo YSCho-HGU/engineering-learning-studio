@@ -13,13 +13,13 @@
 </div></div></section>
 <section class="d-card" id="observe">
 <h2 data-en="3 · Observe — what did my filter change?" data-ko="3 · 관찰 — 내가 설정한 필터가 무엇을 바꾸었을까요?"></h2>
-<p class="d-muted" data-en="This section uses the exact input and filter settings from Step 2. Nothing is reset and no new filter is applied. Change a value in Step 2 and all graphs here update automatically." data-ko="이 영역은 2번에서 선택한 입력 신호와 필터 설정을 그대로 사용합니다. 설정값이 초기화되거나 다른 필터가 적용되지 않습니다. 2번에서 값을 바꾸면 아래 그래프도 자동으로 바뀝니다."></p>
+<p class="d-muted" data-en="Step 3 shows the result of your current Step 2 settings. A filter change updates both graphs below; there is no separate experiment here." data-ko="3번은 2번에서 현재 설정한 필터의 결과입니다. 필터를 바꾸면 아래 두 그래프가 함께 갱신되며, 별도의 실험이 아닙니다."></p>
 <div class="d-observe-bridge" aria-live="polite">
  <div class="d-bridge-heading" data-en="Live connection to Step 2" data-ko="2번 실험의 현재 설정과 실시간 연결"></div>
  <div id="observe-settings" class="d-observe-settings"></div>
  <a href="#experiment" class="d-observe-edit" data-en="↑ Change settings in Step 2" data-ko="↑ 2번으로 돌아가 설정 바꾸기"></a>
 </div>
-<p class="d-instruction" data-en="Try this: select Two-tone in Step 2, set Low-pass to 950 Hz, then follow A → B below. Afterward change to High-pass without reloading and see which frequency remains." data-ko="따라 해 보세요: 2번에서 ‘두 개의 정현파’, 저역통과 950 Hz를 선택하고 아래 A → B를 차례대로 확인하세요. 이어서 새로고침하지 말고 고역통과로 바꾸어 남는 주파수를 비교하세요."></p>
+<p class="d-instruction" data-en="Try Two-tone → Low-pass, 950 Hz. In A, compare the 250 Hz and 1950 Hz peaks; in B, examine the same signals over time. Return to Step 2 and switch to High-pass." data-ko="‘두 정현파 → 저역통과 950 Hz’를 선택하세요. A에서 250 Hz와 1950 Hz 피크를 비교하고 B에서 같은 신호의 시간 파형을 확인하세요. 이후 2번으로 돌아가 고역통과로 바꿔 보세요."></p>
 <div class="d-observe-step">
  <div class="d-observe-step-heading"><span class="d-step-letter">A</span><div><h3 data-en="Frequency-domain result — which components remain?" data-ko="주파수영역 결과 — 어떤 성분이 남았나요?"></h3><p data-en="Compare blue (input) with orange (filtered output). A tall orange peak means that frequency remains; a much smaller orange peak means it was attenuated." data-ko="파란색(입력)과 주황색(필터 출력)을 비교하세요. 주황 피크가 높게 남으면 그 주파수는 통과했고, 크게 낮아졌으면 감쇠된 것입니다."></p></div></div>
  <div class="d-plot"><figure><canvas id="specplot" width="680" height="300"></canvas><figcaption data-en="Same input and filter as Step 2 · 2048-point FFT · horizontal axis: frequency (Hz), vertical axis: relative magnitude (dB)" data-ko="2번과 동일한 입력·필터 · 2048점 FFT · 가로축: 주파수(Hz), 세로축: 상대 크기(dB)"></figcaption></figure></div>
