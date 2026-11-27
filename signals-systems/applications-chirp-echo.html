@@ -12,7 +12,7 @@
 <div class="d-buttons"><button id="new-noise" data-en="New noise realization" data-ko="새 잡음 생성"></button><button id="reset" data-en="Reset" data-ko="초기화"></button></div></div><div><div class="d-formula" data-ss-math="d=\frac{v\,\Delta t}{2}" data-ss-math-display="block"></div><p class="d-note" data-en="The signal travels to the target and back, so divide the travel distance by two. This is a simple monostatic echo model, without Doppler or multipath." data-ko="신호는 목표물까지 갔다가 되돌아오므로 이동 거리를 2로 나눕니다. 도플러와 다중경로를 제외한 단순 왕복 반사 모델입니다."></p><div class="d-metrics"><div class="d-metric"><strong id="truth">—</strong><span data-en="True delay" data-ko="실제 지연"></span></div><div class="d-metric"><strong id="estimate">—</strong><span data-en="Estimated distance" data-ko="추정 거리"></span></div><div class="d-metric"><strong id="error">—</strong><span data-en="Absolute error" data-ko="절대 오차"></span></div></div></div></div></section>
 <section class="d-card" id="observe">
 <h2 data-en="3 · Observe — find the echo from Step 2" data-ko="3 · 관찰 — 2번에서 만든 반사파 찾기"></h2>
-<p class="d-muted" data-en="Step 3 uses the current Step 2 echo. Changing distance, noise or chirp bandwidth updates both observations and the estimated distance." data-ko="3번은 2번에서 만든 현재 반사파를 사용합니다. 거리·잡음·처프 대역폭을 바꾸면 두 관찰 그래프와 추정 거리도 갱신됩니다."></p>
+<p class="d-muted" data-en="The echo and correlation below update with the current Step 2 settings." data-ko="아래 반사파와 상호상관 결과는 2번의 현재 설정에 따라 함께 갱신됩니다."></p>
 <div class="d-observe-bridge" aria-live="polite">
  <div class="d-bridge-heading" data-en="Live settings from Step 2" data-ko="2번 실험과 실시간 연결된 설정"></div>
  <div id="radar-observe-settings" class="d-observe-settings"></div>
@@ -32,12 +32,12 @@
  <p data-en="The green curve measures how similar the two whole chirps are at each delay. The blue dashed line follows your selected delay; the orange dashed line marks the strongest match used to estimate distance." data-ko="초록색 곡선은 각 지연에서 두 처프 전체가 얼마나 비슷한지 나타냅니다. 파란 점선은 현재 선택한 지연, 주황 점선은 거리 추정에 사용하는 가장 잘 일치하는 위치입니다."></p></div></div>
  <div class="d-plot"><figure><canvas id="corr-plot" width="820" height="280"></canvas><figcaption data-en="Normalized cross-correlation versus candidate echo delay (ms) · blue = selected · orange = best match" data-ko="후보 반사 지연(ms)에 따른 정규화 상호상관 · 파랑 = 선택한 지연 · 주황 = 최대 일치 위치"></figcaption></figure></div>
  <div id="radar-result-guide" class="d-stage" aria-live="polite"></div>
- <p class="d-observe-conclusion" data-en="Takeaway: Step 2 creates a delayed echo. In Step 3, A compares waveforms and B finds the time shift of the best match. The system then converts that round-trip time to distance." data-ko="핵심: 2번은 지연된 반사파를 만듭니다. 3번 A는 파형을 비교하고, B는 가장 일치하는 시간 지연을 찾습니다. 마지막으로 신호의 왕복 시간을 거리로 환산합니다."></p>
+ <p class="d-observe-conclusion" data-en="Conclusion: a longer best-match delay indicates a more distant target. Distance = wave speed × round-trip delay / 2." data-ko="결론: 상호상관의 최대값이 더 늦게 나타나면 목표물이 더 멀리 있습니다. 거리 = 전파 속도 × 왕복 지연 / 2입니다."></p>
 </div>
 <details class="d-observe-optional" id="radar-glossary">
  <summary data-en="Optional basics · Chirp, lag, peak and normalized similarity" data-ko="선택 기초 설명 · 처프·지연·피크·정규화 유사도"></summary>
  <p data-en="Chirp: a signal whose frequency changes over time. Lag: how far a copy is shifted in time. Correlation peak: the time shift where the two whole signals match best. Normalized similarity: a value that makes the comparison less dependent on overall signal strength." data-ko="처프(Chirp)는 시간이 지나며 주파수가 바뀌는 신호입니다. 지연(Lag)은 기준 신호 복사본을 시간축에서 이동한 양입니다. 상관 피크는 전체 파형이 가장 잘 일치하는 지연 위치입니다. 정규화 유사도는 신호의 전체 크기에 덜 의존하도록 보정한 비교값입니다."></p>
- <p data-en="You can complete A and B without calculating any sample products. Open the deeper correlation calculation only after the delay-and-distance idea makes sense." data-ko="A와 B는 표본별 곱셈을 직접 계산하지 않아도 수행할 수 있습니다. 지연과 거리 추정의 연결을 이해한 후에만 상호상관 계산 심화를 펼쳐보세요."></p>
+ <p data-en="For a first pass, A and B are enough; sample-by-sample computation is optional." data-ko="처음에는 A와 B만 수행해도 됩니다. 표본별 상호상관 계산은 선택 심화입니다."></p>
  </details><details class="d-observe-optional" id="radar-theory">
  <summary data-en="Optional foundations · Why does correlation reveal distance?" data-ko="선택 기초 설명 · 상호상관으로 거리를 알 수 있는 이유"></summary>
  <p data-en="A chirp changes frequency as time passes, making its pattern easier to recognize among noise. Cross-correlation compares this entire pattern while sliding it in time; the highest similarity gives the echo's round-trip delay. A distance estimate needs the propagation speed and the factor of two for travel to the target and back." data-ko="처프는 시간이 흐르면서 주파수가 바뀌므로 잡음 속에서도 전체 파형의 특징을 비교하기 좋습니다. 상호상관은 이 파형 전체를 시간축으로 이동시키며 비교하는 방법이며, 가장 잘 맞는 지연이 왕복 전파 시간을 나타냅니다. 거리는 전파 속도를 곱하고 왕복을 고려해 2로 나눕니다."></p>
