@@ -334,7 +334,7 @@ function demo(){
 function localize(){
  const labels={
  "fft-upload-title":["FFT of Real Audio, Music & Sensor Data","실제 음성·음악·센서 데이터 FFT"],
- "fft-upload-intro":["Upload a sound recording or IoT sensor CSV. Select samples, run one FFT and interpret peaks—with or without a known sampling rate. Files stay in your browser.","음성·음악 파일이나 IoT 센서 CSV를 선택하세요. 구간 FFT를 계산하고 샘플링 주파수의 유무에 따라 피크를 해석합니다. 파일은 브라우저 밖으로 전송되지 않습니다."],
+ "fft-upload-intro":["Begin with a built-in demo or choose an audio/sensor file. Run FFT, locate a peak bin, then check whether a known sampling rate lets you label that peak in Hz. Files remain in your browser.","내장 예제 또는 음성·센서 파일로 시작하세요. FFT 피크 Bin을 찾은 뒤 fs를 알 때 그 피크를 Hz로 나타낼 수 있는지 확인하세요. 파일은 브라우저 내부에서만 처리됩니다."],
  "fft-upload-controls-title":["1 · Load & Change","1 · 불러오기와 조절"],
  "fft-upload-file-label":["Audio or sensor file","오디오 또는 센서 파일"],
  "fft-upload-file-help":["Audio: WAV, MP3, OGG and browser-supported codecs. Sensor: CSV/TXT with one value column or time,value columns. Maximum 25 MB. Local only.","오디오: WAV·MP3·OGG 등 브라우저 지원 코덱. 센서: 값 한 열 또는 time,value CSV/TXT. 최대 25 MB. 브라우저에서만 처리."],
