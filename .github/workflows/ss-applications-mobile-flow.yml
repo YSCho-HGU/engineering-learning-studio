@@ -1,0 +1,49 @@
+name: Applications mobile reading-flow audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'signals-systems/applications-*.html'
+      - 'signals-systems/assets/ss-app-labs.css'
+      - 'signals-systems/assets/ss-app-system-labs.css'
+      - 'signals-systems/assets/ss-system-compare.css'
+      - 'signals-systems/assets/ss-responsive-unified.css'
+      - 'signals-systems/assets/ss-app-fft-visual-standard.css'
+      - 'signals-systems/assets/ss-app-partd.css'
+      - 'signals-systems/assets/ss-image-fft.css'
+      - 'tests/ss-applications-mobile-reading-flow.mjs'
+      - '.github/workflows/ss-applications-mobile-flow.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mobile-flow:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chromium for viewport checks
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1 @playwright/test@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Start current static site
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > "$RUNNER_TEMP/mobileflow-http.log" 2>&1 &
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            curl -fsS http://127.0.0.1:8765/index.html -o /dev/null && break
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8765/index.html -o /dev/null
+      - name: Check control-to-plot flow across 19 labs
+        run: node tests/ss-applications-mobile-reading-flow.mjs
+      - name: Preserve layout evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: applications-mobile-flow-evidence
+          path: qa/applications-mobile-flow
+          if-no-files-found: ignore
+          retention-days: 14
