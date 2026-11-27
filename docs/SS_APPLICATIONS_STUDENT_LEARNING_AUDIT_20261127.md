@@ -65,3 +65,24 @@ A shared learning **contract** does not require identical page layouts.
 2. **P1 — cognitive-load reduction:** Stage image FFT advanced processing behind optional expansion; focus Part B compare on one prepared matched-cutoff scenario.
 3. **P2 — cross-topic transfer:** Add prerequisite/return links, new-case questions and formula-to-current-metric evidence panels.
 4. **QA:** static formulas and language contracts, then full Playwright evaluation with user-level interactions.
+
+## Implementation update — 2026-11-27 (Part A Q1 / Part B Q2)
+
+**Part A: inquiry completed across all six live labs.**
+- Chirp adds an A/B comparison with the same start frequency, duration, selected time and STFT window; only ending frequency changes. The live evidence computes instantaneous frequency and sweep rate. The transfer question asks what doubling the sweep duration changes.
+- Complex Helix compares negative/positive growth rate at the same selected time and rotation frequency. Live evidence computes the exponential magnitude and accumulated turns. Transfer checks the independence of magnitude from rotation frequency.
+- AM/FM compares modulation modes with fixed carrier and message frequencies. Evidence gives the AM envelope range or the FM deviation; transfer relates deviation to β and message frequency.
+- The shared inquiry controls preserve the student selection and observed A/B states when the language changes and when a prepared scenario updates the native plot. Reset clears inquiry responses.
+
+**Part B: a single connected student journey across three original simulations.**
+- RC: predict attenuation; run two preset sinusoidal frequencies with unchanged R/C; connect the native magnitude to calculated cutoff and gain. Transfer asks about high-pass behavior, then links to digital FIR.
+- Moving Average: revised presets now use the **same zero-noise step at index n=55** and vary **only M=3 vs M=21**. Native convolution tap inspector and output graph demonstrate averaging memory. Transfer applies white-noise scaling and delay, then links to the matched-cutoff comparison.
+- Same-input RC vs FIR: predict that matching the −3 dB cutoff does not guarantee matching phase/group delay or noise reduction. Two prepared investigations inspect the common input and step delay. The live equation uses the native comparison engine's sample frequency and effective matched cutoff; the transfer question checks group-delay scaling with sampling rate.
+- For each Part B page, **Predict** is now before the native controls and plots; **Apply / Check** follows the current graph/equation evidence. Completion offers the next meaningful Part B lab, or the FFT introduction. Three language modes use the existing shared language key; no new progress storage is introduced.
+
+**Regression coverage**
+- `tests/ss-applications-inquiry-contract.mjs`: six Part A authored inquiries, 12 A/B states, RC LP gain inequality, FIR short/long step difference, matched RC/MA cutoffs and unequal group delay, script/page bindings.
+- `tests/ss-applications-inquiry-browser.mjs`: 36 planned Chromium cases (six lab routes × three language modes × desktop/mobile), including actual A/B interactions, transfer checks, live evidence and layout overflow. Workflow: `.github/workflows/ss-applications-inquiry-qa.yml`.
+- The static contract passed through source execution during authoring. **Do not interpret the browser workflow's presence as a confirmed browser run**; check its Actions artifact for that separate evidence.
+
+**Remaining scope:** Part C learning-flow unification is not part of this implementation. All existing Part A/B plot engines, filter cores and local audio behavior remain otherwise unchanged.
