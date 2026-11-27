@@ -174,7 +174,7 @@ function localize(){
  "dtmf-evidence-high-label":["High-frequency column","고주파 열"],
  "dtmf-evidence-check":["Verify peak pair","주파수 쌍 검증"],
  "dtmf-wave-title":["Time waveform · What is hidden?","시간 파형 · 무엇이 숨어 있나요?"],"dtmf-wave-help":["The shaded samples are used for FFT.","음영으로 표시된 표본 구간만 FFT에 사용됩니다."],
- "dtmf-spectrum-title":["2 · FFT Spectrum","2 · FFT 스펙트럼"],"dtmf-spectrum-help":["Find one low-frequency peak and one high-frequency peak.","저주파 피크 하나와 고주파 피크 하나를 찾아보세요."],
+ "dtmf-spectrum-title":["2 · FFT Spectrum","2 · FFT 스펙트럼"],"dtmf-spectrum-help":["After running FFT, identify the tallest peak in the low-frequency group and another in the high-frequency group. Their pair gives the key row and column.","FFT 실행 후 저주파군과 고주파군에서 각각 하나씩 주요 피크를 찾으세요. 두 피크의 조합이 버튼의 행과 열을 결정합니다."],
  "dtmf-decode-title":["4 · Decode the Key from the Two Peaks","4 · 두 주파수로 숫자 해독"],"dtmf-decode-help":["Match the low-frequency row and high-frequency column to find the keypad digit.","저주파의 행과 고주파의 열을 교차하여 숫자를 알아내세요."],
  "dtmf-guess-label":["Your answer","나의 답"],"dtmf-check":["Check Answer","정답 확인"],
  "dtmf-explain-title":["5 · Explain Why FFT Worked","5 · FFT로 해독한 원리 설명"],
