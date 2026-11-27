@@ -31,6 +31,14 @@ for(const spec of entries){
   await page.locator("#ss-app-focus-question").waitFor({state:"visible",timeout:10000});
   assert.equal(await page.locator("#ss-app-focus-guide").count(),1,"exactly one guide");
   assert.equal(await page.locator(".ss-focus-step").count(),3,"three steps");
+  const evidence=await page.evaluate(()=>{
+    const link=document.querySelector(".ss-focus-evidence-link");
+    const target=link?.getAttribute("href")||"";
+    const el=target.startsWith("#")?document.getElementById(target.slice(1)):null;
+    return {target,exists:!!el,tag:el?.tagName||"",text:el?.textContent?.trim()?.slice(0,140)||""};
+  });
+  assert(evidence.exists,"The question has no actual target graph: "+JSON.stringify(evidence));
+  assert(evidence.target.length>3,"Evidence link is missing");
   const initial=await page.evaluate(()=>{
    const main=document.querySelector("main"),guide=main.querySelector("#ss-app-focus-guide");
    return {index:[...main.children].indexOf(guide),hasTitleBefore:[...main.children].slice(0,[...main.children].indexOf(guide)).some(el=>!!el.querySelector("h1")||el.tagName==="H1"),next:guide.nextElementSibling?.className||""}
@@ -52,6 +60,7 @@ for(const spec of entries){
    if(language==="en")assert(!/[가-힣]/.test(state.question+state.labels.join("")+state.descriptions.join("")),"EN-only text");
    if(language==="ko")assert(/[가-힣]/.test(state.question),"Korean question");
    if(language==="mixed")assert(/[가-힣]/.test(state.question)&&/[A-Za-z]/.test(state.question),"mixed EN/KR question");
+   assert.equal(await page.locator(".ss-focus-evidence-link").count(),1,"One evidence jump link");
    cases++;
   }
   await page.setViewportSize({width:390,height:844});
@@ -62,8 +71,10 @@ for(const spec of entries){
   });
   assert(responsive.guideWidth>=260&&responsive.left>=-1&&responsive.right<=responsive.windowWidth+2,"mobile guide geometry "+JSON.stringify(responsive));
   assert(responsive.steps.every(b=>b.width>200&&b.right<=responsive.windowWidth+3),"mobile guidance steps");
+  const evidenceGeometry=await page.locator(".ss-focus-evidence-link").boundingBox();
+  assert(evidenceGeometry&&evidenceGeometry.width>160,"Evidence link invisible on mobile");
   cases++;
-  console.log("PASS",spec.name);
+  console.log("PASS",spec.name,"→",evidence.target);
  }catch(err){problems.push({name:spec.name,error:String(err)});console.error("FAIL",spec.name,String(err))}
  finally{await page.close()}
 }
