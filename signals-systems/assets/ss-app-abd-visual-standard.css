@@ -52,6 +52,7 @@ main.ss-al-root{
 }
 /* Part A: complete clickable row, identical geometry to Part C. */
 #topics-a .ss-app-abd-lab-list,
+#topics-b .ss-app-abd-lab-list,
 #topics-b .ss-app-abd-planned-list,
 #topics-d .ss-app-abd-planned-list{
  display:grid;
@@ -59,13 +60,13 @@ main.ss-al-root{
  gap:var(--app-ui-gap);
  min-width:0;
 }
-#topics-a .ss-app-abd-lab-row{
+:is(#topics-a,#topics-b) .ss-app-abd-lab-row{
  padding:var(--app-ui-inner);
  min-height:76px;
  text-decoration:none;
 }
-#topics-a .ss-app-abd-lab-row:hover,
-#topics-a .ss-app-abd-lab-row:focus-visible{
+:is(#topics-a,#topics-b) .ss-app-abd-lab-row:hover,
+:is(#topics-a,#topics-b) .ss-app-abd-lab-row:focus-visible{
  border-color:var(--els-link);
  background:var(--els-surface);
  text-decoration:none;
@@ -77,6 +78,7 @@ main.ss-al-root{
  outline-offset:2px;
 }
 #topics-a .ss-app-abd-lab-row .ss-app-lesson-number,
+#topics-b .ss-app-abd-lab-row .ss-app-lesson-number,
 #topics-b .ss-app-abd-planned .ss-app-lesson-number,
 #topics-d .ss-app-abd-planned .ss-app-lesson-number{
  border:1px solid var(--els-border);
@@ -209,6 +211,7 @@ main.ss-al-root .ss-al-plot canvas{
 /* Keep canvas plot data and internal coordinate calculations unchanged. */
 @media(min-width:980px){
  #topics-a .ss-app-abd-lab-list,
+ #topics-b .ss-app-abd-lab-list,
  #topics-b .ss-app-abd-planned-list,
  #topics-d .ss-app-abd-planned-list{
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -221,7 +224,7 @@ main.ss-al-root .ss-al-plot canvas{
   --app-ui-plot-heading:15px;
   --app-ui-equation:17px;
  }
- #topics-a .ss-app-abd-lab-row{min-height:66px}
+ :is(#topics-a,#topics-b) .ss-app-abd-lab-row{min-height:66px}
  .ss-app-abd-planned-summary{
   grid-template-columns:34px minmax(0,1fr) 16px;
   gap:8px;
@@ -244,11 +247,7 @@ main.ss-al-root .ss-al-plot canvas{
  .ss-app-abd-disclosure{transition:none}
 }
 
-/* Part B uses identical finished-lab cards for its three system lessons. */
-#topics-b .ss-app-abd-lab-list{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--app-ui-gap)}
-#topics-b .ss-app-abd-lab-row{padding:var(--app-ui-inner);min-height:76px;text-decoration:none}
-#topics-b .ss-app-abd-lab-row:hover,#topics-b .ss-app-abd-lab-row:focus-visible{border-color:var(--els-link);background:var(--els-surface);text-decoration:none}
-#topics-b .ss-app-abd-lab-row .ss-app-lesson-number{border:1px solid var(--els-border);background:var(--els-surface)}
+/* Part B shares Part A's finished-lab card geometry and interaction states. */
 #topics-b .ss-app-future{margin-top:12px}
 #topics-b .ss-app-future-topics{margin-top:12px}
-@media(min-width:980px){#topics-b .ss-app-abd-lab-list{grid-template-columns:repeat(2,minmax(0,1fr))}#topics-b .ss-app-abd-lab-row[data-lab='compare']{grid-column:1/-1}}
+@media(min-width:980px){#topics-b .ss-app-abd-lab-row[data-lab='compare']{grid-column:1/-1}}
