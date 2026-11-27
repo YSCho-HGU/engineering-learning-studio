@@ -11,20 +11,25 @@ const N=16384,FS=8000,TAU=2*Math.PI;
 function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
 function rms(a){return Math.sqrt(a.reduce((s,v)=>s+v*v,0)/a.length)}
 function draw(canvas,series,{xmin=0,xmax=1,ymin=-1,ymax=1,marks=[],hmarks=[],label=""}={}){
- const c=$(canvas),ctx=c.getContext("2d"),w=c.width,h=c.height, L=47,R=15,T=14,B=34;
+ const c=$(canvas),rect=c.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);
+ const w=Math.max(270,rect.width||c.width),h=Math.max(130,rect.height||c.height);
+ const pw=Math.round(w*dpr),ph=Math.round(h*dpr);
+ if(c.width!==pw||c.height!==ph){c.width=pw;c.height=ph}
+ const ctx=c.getContext("2d");ctx.setTransform(dpr,0,0,dpr,0,0);
+ const L=51,R=19,T=25,B=36;
  const px=x=>L+(x-xmin)*(w-L-R)/(xmax-xmin),py=y=>T+(ymax-y)*(h-T-B)/(ymax-ymin);
  const bg=getComputedStyle(document.documentElement).getPropertyValue("--els-surface-alt").trim()||"#26332c";
  const ink=getComputedStyle(document.documentElement).getPropertyValue("--els-ink").trim()||"#e7ede8";
- ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);ctx.strokeStyle=ink;ctx.globalAlpha=.22;ctx.lineWidth=1;
+ ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);ctx.strokeStyle=ink;ctx.globalAlpha=.32;ctx.lineWidth=1;
  for(let i=0;i<=4;i++){let y=T+(h-T-B)*i/4;ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(w-R,y);ctx.stroke()}
- ctx.globalAlpha=1;ctx.fillStyle=ink;ctx.font="14px system-ui";ctx.textAlign="right";
+ ctx.globalAlpha=1;ctx.fillStyle=ink;ctx.font="12px system-ui";ctx.textAlign="right";
  for(let i=0;i<=4;i++){let y=T+(h-T-B)*i/4;ctx.fillText((ymax-(ymax-ymin)*i/4).toFixed(Math.abs(ymax-ymin)>20?0:2),L-7,y+4)}
  ctx.textAlign="center";for(let i=0;i<=4;i++){let x=xmin+(xmax-xmin)*i/4;ctx.fillText(x.toFixed(xmax>50?0:1),px(x),h-11)}
  ctx.fillText(label,w-20,h-11);
- for(const s of series){ctx.strokeStyle=s.color;ctx.lineWidth=s.width||2;ctx.beginPath();let started=false;for(const p of s.points){if(p[0]<xmin||p[0]>xmax||!Number.isFinite(p[1]))continue;let x=px(p[0]),y=py(clamp(p[1],ymin,ymax));if(!started){ctx.moveTo(x,y);started=true}else ctx.lineTo(x,y)}ctx.stroke()}
+ for(const s of series){ctx.strokeStyle=s.color;ctx.lineWidth=s.width||2.25;ctx.beginPath();let started=false;for(const p of s.points){if(p[0]<xmin||p[0]>xmax||!Number.isFinite(p[1]))continue;let x=px(p[0]),y=py(clamp(p[1],ymin,ymax));if(!started){ctx.moveTo(x,y);started=true}else ctx.lineTo(x,y)}ctx.stroke()}
  for(const m of marks){let x=px(m.x);ctx.strokeStyle=m.color||ink;ctx.lineWidth=2;ctx.setLineDash([7,5]);ctx.beginPath();ctx.moveTo(x,T);ctx.lineTo(x,h-B);ctx.stroke();ctx.setLineDash([])}
  for(const m of hmarks){let y=py(m.y);ctx.strokeStyle=m.color||ink;ctx.lineWidth=1.5;ctx.setLineDash([4,5]);ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(w-R,y);ctx.stroke();ctx.setLineDash([])}
- ctx.textAlign="left";let yy=17;for(const s of series){ctx.fillStyle=s.color;ctx.fillRect(L+9,yy-8,18,4);ctx.fillStyle=ink;ctx.fillText(s.label||"",L+35,yy);yy+=17}
+ ctx.textAlign="left";let yy=20;for(const s of series){ctx.fillStyle=s.color;ctx.fillRect(L+9,yy-8,18,4);ctx.fillStyle=ink;ctx.fillText(s.label||"",L+35,yy);yy+=17}
 }
 const blue="#4a9ce8",orange="#e59e4e",green="#66ba83";
 function points(a,dt=1,start=0,step=1){const v=[];for(let i=0;i<a.length;i+=step)v.push([start+i*dt,a[i]]);return v}
@@ -173,4 +178,10 @@ function audioSetup(){
 }
 function drawAll(){if(audio){if(audioData)runAudio()}else if(sim)renderRadar()}
 if(audio)audioSetup();else radarSetup();
+let resizeQueued=false;
+window.addEventListener("resize",()=>{
+ if(resizeQueued)return;
+ resizeQueued=true;
+ requestAnimationFrame(()=>{resizeQueued=false;drawAll()});
+});
 })();
