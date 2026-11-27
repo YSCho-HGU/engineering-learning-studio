@@ -32,7 +32,7 @@ for(const width of [1440,390])for(const mode of ['mixed','en','ko'])for(const te
   const root=test.kind==='a'?page.locator('#ss-al-guidance[data-inquiry="'+test.name+'"]'):page.locator('#ss-b-inquiry');
   await root.waitFor({timeout:18000});
   const inputs=root.locator('select');
-  if(await inputs.count()!==2)throw Error('Expected prediction and transfer controls');
+  if(await inputs.count()!==(test.kind==='a'?2:1))throw Error('Expected initial prediction control(s)');
   await inputs.first().selectOption(test.answer);
   if(test.kind==='a'){
    await root.locator('[data-scenario="1"]').click();
@@ -45,8 +45,8 @@ for(const width of [1440,390])for(const mode of ['mixed','en','ko'])for(const te
   }else{
    for(const id of test.buttons)await page.locator('#'+id).click();
    await page.waitForTimeout(150);
-   await root.locator('select').last().selectOption(test.transfer);
-   await root.locator('.ss-b-inquiry-check').click();
+   await page.locator('#ss-b-transfer select').selectOption(test.transfer);
+   await page.locator('#ss-b-transfer .ss-b-inquiry-check').click();
    await page.waitForFunction(()=>document.querySelector('#ss-b-inquiry-next')?.hidden===false,{timeout:6000});
    const progress=await root.locator('.ss-b-inquiry-progress').innerText();
    if(!progress.includes('2 / 2'))throw Error('Both prepared scenarios not recorded: '+progress);
@@ -56,12 +56,12 @@ for(const width of [1440,390])for(const mode of ['mixed','en','ko'])for(const te
    if(equation==='error')throw Error('Part B KaTeX parse failed');
    if((await evidence.locator('.ss-b-evidence-values').innerText()).trim().length<10)throw Error('Missing live result');
   }
-  const text=await root.innerText();
+  const text=await root.innerText()+(test.kind==='b'?'\n'+await page.locator('#ss-b-transfer').innerText():'');
   if(mode==='en'&&/[가-힣]/.test(text))throw Error('Korean in English-only inquiry');
   if(mode==='ko'&&!/[가-힣]/.test(text))throw Error('Korean absent in Korean inquiry');
   if(mode==='mixed'&&(!/[가-힣]/.test(text)||!/[A-Za-z]{3}/.test(text)))throw Error('Bilingual content missing');
   const overflow=await page.evaluate(kind=>{
-   const selectors=kind==='a'?['#ss-al-guidance']:['#ss-b-inquiry','#ss-b-evidence'];
+   const selectors=kind==='a'?['#ss-al-guidance']:['#ss-b-inquiry','#ss-b-evidence','#ss-b-transfer'];
    return selectors.map(selector=>{
     const e=document.querySelector(selector);if(!e)return {selector,missing:true};
     const r=e.getBoundingClientRect(),parent=e.parentElement?.getBoundingClientRect();
