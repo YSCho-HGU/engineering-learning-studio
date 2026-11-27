@@ -61,6 +61,43 @@ for(const [width,height] of [[1366,900],[1138,840],[768,900],[390,844]]){
    assert(state.toc.bottom<state.main.top,"mobile/tablet toc must be above main");
    assert(state.main.width>width*.80,"mobile main column is too narrow");
   }
+  const visibleParts=()=>page.evaluate(()=>({
+    visible:[...document.querySelectorAll(".ss-app-main > .ss-app-part")].filter(x=>!x.hidden&&getComputedStyle(x).display!=="none").map(x=>x.id),
+    totalHeight:document.documentElement.scrollHeight,
+    active:document.querySelector(".ss-app-toc a[aria-current='location']")?.getAttribute("href")
+  }));
+  const firstPart=await visibleParts();
+  assert.deepEqual(firstPart.visible,["part-a"],"Only Part A should be shown on initial visit");
+  assert.equal(firstPart.active,"#part-a","Sidebar must highlight active Part");
+  await page.locator(".ss-app-toc a[href='#part-b']").click();
+  await page.waitForTimeout(120);
+  const partB=await visibleParts();
+  assert.deepEqual(partB.visible,["part-b"],"Part B must replace A, not stack below");
+  assert.equal(partB.active,"#part-b","Part B sidebar not selected");
+  await page.locator("#ss-app-next").click();
+  await page.waitForTimeout(120);
+  const partC=await visibleParts();
+  assert.deepEqual(partC.visible,["part-c"],"Forward navigation must show just Part C");
+  await page.locator(".ss-app-shortcuts a[href='#part-d']").click();
+  await page.waitForTimeout(120);
+  const partD=await visibleParts();
+  assert.deepEqual(partD.visible,["part-d"],"Shortcuts must show just Part D");
+  assert.equal(await page.locator("#ss-app-next").isDisabled(),true);
+  await page.locator("#ss-app-prev").click();
+  await page.waitForTimeout(120);
+  assert.deepEqual((await visibleParts()).visible,["part-c"]);
+  await page.locator(".ss-app-toc a[href='#part-a']").click();
+  await page.waitForTimeout(120);
+  const restored=await visibleParts();
+  assert.deepEqual(restored.visible,["part-a"],"Return to Part A must restore one panel");
+  assert(Math.abs(restored.totalHeight-firstPart.totalHeight)<35,"Page grows when switching Parts repeatedly: "+JSON.stringify({first:firstPart,restored}));
+  for(let step=0;step<3;step++){
+    await page.locator(".ss-app-toc a[href='#part-c']").click();
+    await page.locator(".ss-app-toc a[href='#part-a']").click();
+  }
+  assert(Math.abs((await visibleParts()).totalHeight-firstPart.totalHeight)<35,
+    "Repeated section navigation causes cumulative vertical growth");
+
   const select=page.locator("#ss-app-language");
   await select.selectOption("ko");
   await page.waitForTimeout(80);
