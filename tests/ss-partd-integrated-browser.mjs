@@ -44,6 +44,11 @@ for(const [path,kind] of [["applications-audio-filter.html","audio"],["applicati
    const initial=await page.locator("#estimate").innerText();
    await page.locator("#distance").evaluate(el=>{el.value="27";el.dispatchEvent(new Event("input",{bubbles:true}))});
    assert.notEqual(await page.locator("#estimate").innerText(),initial,"Estimated distance did not update");
+   assert.match(await page.locator("#radar-observe-settings").innerText(),/27 m/,"D2 settings did not follow Step 2");
+   assert.match(await page.locator("#radar-result-guide").innerText(),/27 m/,"D2 conclusion did not follow Step 2");
+   assert.equal(await page.locator("#observe .d-observe-step").count(),2,"D2 must have A and B observation steps");
+   assert.equal(await page.locator("#radar-theory").count(),1,"D2 optional theory missing");
+   assert.equal(await page.locator("#radar-glossary").count(),1,"D2 optional glossary missing");
    await page.locator("#lag-peak").click();
    const lag=+(await page.locator("#lag").inputValue());
    assert(lag>=0,"Invalid correlation lag");
