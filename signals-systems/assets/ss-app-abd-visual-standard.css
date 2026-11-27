@@ -78,7 +78,6 @@ main.ss-al-root{
  outline-offset:2px;
 }
 #topics-a .ss-app-abd-lab-row .ss-app-lesson-number,
-#topics-b .ss-app-abd-lab-row .ss-app-lesson-number,
 #topics-b .ss-app-abd-planned .ss-app-lesson-number,
 #topics-d .ss-app-abd-planned .ss-app-lesson-number{
  border:1px solid var(--els-border);
@@ -224,7 +223,7 @@ main.ss-al-root .ss-al-plot canvas{
   --app-ui-plot-heading:15px;
   --app-ui-equation:17px;
  }
- :is(#topics-a,#topics-b) .ss-app-abd-lab-row{min-height:66px}
+ #topics-a .ss-app-abd-lab-row{min-height:66px}
  .ss-app-abd-planned-summary{
   grid-template-columns:34px minmax(0,1fr) 16px;
   gap:8px;
@@ -248,6 +247,7 @@ main.ss-al-root .ss-al-plot canvas{
 }
 
 /* Part B shares Part A's finished-lab card geometry and interaction states. */
+#topics-b .ss-app-abd-lab-row .ss-app-lesson-number{border:1px solid var(--els-border);background:var(--els-surface)}
 #topics-b .ss-app-future{margin-top:12px}
 #topics-b .ss-app-future-topics{margin-top:12px}
 @media(min-width:980px){#topics-b .ss-app-abd-lab-row[data-lab='compare']{grid-column:1/-1}}
