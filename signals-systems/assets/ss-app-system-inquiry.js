@@ -52,7 +52,7 @@ function options(host,label,pairs,value,callback){
  host.append(select);
 }
 function root(){
- return isComparison?$("cmp-main").querySelector(".cmp-controls"):$("ss-sys-controls");
+ return isComparison?$("cmp-main"):$("ss-sys-root");
 }
 function feedback(){
  const where=$("ss-b-inquiry-feedback");if(!where)return;
@@ -71,9 +71,10 @@ function render(){
   tr("② Run both prepared investigations: matched cutoff, then step response. The same sampled input feeds both filters in each case.","② 준비된 두 예제(차단주파수 일치 → 계단응답)를 실행하세요. 각 예제에서 두 필터에는 동일한 표본 입력이 적용됩니다."):
   tr("② Use both prepared A/B buttons below; change only the intended variable, then inspect the graphs.","② 아래 준비된 A/B 버튼을 모두 사용해 해당 변수만 바꾸고 그래프를 비교하세요.")));
  const progress=node("p","ss-b-inquiry-progress");progress.id="ss-b-inquiry-progress";section.append(progress);
- section.append(node("h4","ss-b-inquiry-apply-title",tr("Apply · One more prediction","응용 · 다른 조건 예측")));
- section.append(node("p","ss-b-inquiry-apply-question",tr(...spec.apply)));
- options(section,["Transfer check","응용 확인"],spec.applyChoices,selected.transfer,value=>{selected.transfer=value;selected.success=false;selected.feedback="";feedback()});
+ const transfer=node("section","ss-b-transfer");transfer.id="ss-b-transfer";
+ transfer.append(node("h4","ss-b-inquiry-apply-title",tr("Apply / Check · Transfer your reasoning","응용·확인 · 새로운 조건에도 적용")));
+ transfer.append(node("p","ss-b-inquiry-apply-question",tr(...spec.apply)));
+ options(transfer,["Transfer check","응용 확인"],spec.applyChoices,selected.transfer,value=>{selected.transfer=value;selected.success=false;selected.feedback="";feedback()});
  const btn=node("button","ss-b-inquiry-check",tr("Check using the observations","관찰 근거로 확인"));btn.type="button";
  btn.addEventListener("click",()=>{
   if(selected.prediction===""||selected.transfer==="")selected.feedback=tr("Choose both answers first.","두 질문의 답을 먼저 선택하세요.");
@@ -82,12 +83,14 @@ function render(){
     selected.feedback=tr("Compare the evidence for both cases, then revise the answers.","두 조건의 관찰 근거를 비교한 뒤 답을 다시 선택하세요.");
   else{selected.success=true;selected.feedback=tr("Evidence verified. ","근거를 확인했습니다. ")+tr(...spec.why)}
   feedback();
- });section.append(btn);
- const status=node("p","ss-b-inquiry-feedback");status.id="ss-b-inquiry-feedback";status.setAttribute("role","status");status.setAttribute("aria-live","polite");section.append(status);
- const link=node("a","ss-b-inquiry-next",tr(...spec.nextLabel));link.id="ss-b-inquiry-next";link.href="./"+spec.next;link.hidden=!selected.success;section.append(link);
- const origin=host.querySelector(isComparison?".ss-sys-panel-heading":".ss-sys-panel-heading");
- origin?.insertAdjacentElement("afterend",section);
- if(!origin)host.prepend(section);
+ });transfer.append(btn);
+ const status=node("p","ss-b-inquiry-feedback");status.id="ss-b-inquiry-feedback";status.setAttribute("role","status");status.setAttribute("aria-live","polite");transfer.append(status);
+ const link=node("a","ss-b-inquiry-next",tr(...spec.nextLabel));link.id="ss-b-inquiry-next";link.href="./"+spec.next;link.hidden=!selected.success;transfer.append(link);
+ const workspace=host.querySelector(isComparison?"#cmp-workspace":"#ss-sys-workspace");
+ if(workspace)host.insertBefore(section,workspace);else host.prepend(section);
+ const results=host.querySelector(isComparison?".cmp-results":".ss-sys-results");
+ results?.querySelector("#ss-b-transfer")?.remove();
+ results?.append(transfer);
  updateEvidence();feedback();
 }
 function model(){
