@@ -32,7 +32,10 @@ for(const [path,kind] of [["applications-audio-filter.html","audio"],["applicati
    await page.locator("#filter").selectOption("band");
    assert.equal(await page.locator("#band").isDisabled(),false);
    assert((await page.locator("#cutoff-explain").innerText()).length>50);
+   assert(await page.locator("#experiment #gainplot").count()===1,"Filter response should be next to controls");
   }else{
+   assert(await page.locator("#observe #corr-plot").count()===1,"Correlation plot must be in Observe");
+   assert(await page.locator("#correlation-detail").count()===1,"Optional calculation details missing");
    const initial=await page.locator("#estimate").innerText();
    await page.locator("#distance").evaluate(el=>{el.value="27";el.dispatchEvent(new Event("input",{bubbles:true}))});
    assert.notEqual(await page.locator("#estimate").innerText(),initial,"Estimated distance did not update");
@@ -41,6 +44,7 @@ for(const [path,kind] of [["applications-audio-filter.html","audio"],["applicati
    assert(lag>=0,"Invalid correlation lag");
    await page.locator("#lag-forward").click();
    assert(+(await page.locator("#lag").inputValue())>=lag);
+   await page.locator("#correlation-detail").evaluate(el=>el.open=true);
    const sumAtStart=+(await page.locator("#partial-value").innerText());
    await page.locator("#sample-complete").click();
    assert.equal(await page.locator("#sample-index").inputValue(),"239");
