@@ -75,6 +75,11 @@ for(const spec of pages){
       assert(state.controlWidth>220,"controls missing");
       if(spec.id==="audio")assert(await page.locator("#experiment #gainplot").count()===1,"cutoff graph is not next to controls");
       if(spec.id==="radar"){
+       assert.equal(await page.locator("#radar-observe-settings").count(),1);
+       assert.equal(await page.locator("#radar-result-guide").count(),1);
+       assert.equal(await page.locator("#observe .d-observe-step").count(),2);
+      }
+      if(spec.id==="radar"){
        const order=await page.evaluate(()=>document.querySelector("#corr-plot").compareDocumentPosition(document.querySelector("#correlation-detail")));
        assert(order & 4,"correlation plot must precede optional detailed calculation");
       }
