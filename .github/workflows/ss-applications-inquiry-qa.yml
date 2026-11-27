@@ -1,0 +1,60 @@
+name: Applications Part A/B inquiry QA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'signals-systems/assets/ss-app-inquiry.js'
+      - 'signals-systems/assets/ss-app-system-inquiry.js'
+      - 'signals-systems/assets/ss-app-system-inquiry.css'
+      - 'signals-systems/assets/ss-app-system-labs.js'
+      - 'signals-systems/applications-lab.html'
+      - 'signals-systems/applications-system-lab.html'
+      - 'signals-systems/applications-system-compare.html'
+      - 'tests/ss-applications-inquiry-contract.mjs'
+      - 'tests/ss-applications-inquiry-browser.mjs'
+      - '.github/workflows/ss-applications-inquiry-qa.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  content-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify 6 Part A and 3 Part B lessons
+        run: node tests/ss-applications-inquiry-contract.mjs
+
+  chromium-multilingual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: content-contract
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund @playwright/test
+          npx playwright install --with-deps chromium
+      - name: Test all three languages on desktop and mobile
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/ss-app-inquiry-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          node tests/ss-applications-inquiry-browser.mjs
+      - name: Preserve screenshots and interaction report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: applications-inquiry-mobile-language-qa
+          path: tests/screenshots/ss-applications-inquiry/
+          retention-days: 14
+          if-no-files-found: warn
