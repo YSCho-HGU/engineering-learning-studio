@@ -9,6 +9,7 @@ on:
       - 'signals-systems/applications-chirp-echo.html'
       - 'tests/ss-partd-integrated-browser.mjs'
       - 'tests/ss-partd-visual-matrix.mjs'
+      - 'tests/ss-partd-spectrum-evidence-browser.mjs'
       - '.github/workflows/ss-partd-visual.yml'
   workflow_dispatch:
 permissions:
@@ -36,6 +37,8 @@ jobs:
           curl -fsS http://127.0.0.1:8765/index.html -o /dev/null
       - name: Verify primary student interactions
         run: node tests/ss-partd-integrated-browser.mjs
+      - name: Verify actual D1 spectrum peaks and D2 echo-distance calculations
+        run: node tests/ss-partd-spectrum-evidence-browser.mjs
       - name: Verify 90 language/theme/viewport states and correlation
         run: node tests/ss-partd-visual-matrix.mjs
       - name: Preserve review screenshots and report
