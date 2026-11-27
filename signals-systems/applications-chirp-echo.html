@@ -37,10 +37,11 @@
 <details class="d-observe-optional" id="radar-theory">
  <summary data-en="Optional foundations · Why does correlation reveal distance?" data-ko="선택 기초 설명 · 상호상관으로 거리를 알 수 있는 이유"></summary>
  <p data-en="A chirp changes frequency as time passes, making its pattern easier to recognize among noise. Cross-correlation compares this entire pattern while sliding it in time; the highest similarity gives the echo's round-trip delay. A distance estimate needs the propagation speed and the factor of two for travel to the target and back." data-ko="처프는 시간이 흐르면서 주파수가 바뀌므로 잡음 속에서도 전체 파형의 특징을 비교하기 좋습니다. 상호상관은 이 파형 전체를 시간축으로 이동시키며 비교하는 방법이며, 가장 잘 맞는 지연이 왕복 전파 시간을 나타냅니다. 거리는 전파 속도를 곱하고 왕복을 고려해 2로 나눕니다."></p>
- <div class="d-formula" data-ss-math="d=\\frac{v\\,\\Delta t}{2}" data-ss-math-display="block"></div>
+ <div class="d-formula" data-ss-math="d=\frac{v\,\Delta t}{2}" data-ss-math-display="block"></div>
  <p data-en="A matched pattern can still give an incorrect result if the noise is strong. Compare the known simulated target distance in Step 2 with the detected estimate rather than treating every correlation peak as truth." data-ko="잡음이 강하면 가장 높은 피크가 잘못된 위치에서 나올 수도 있습니다. 따라서 상관 피크가 항상 정답이라고 생각하기보다, 2번에서 알고 있는 목표물 거리와 추정 거리를 비교하세요."></p>
 </details>
 <details class="d-product-lab" id="correlation-detail" aria-labelledby="product-title"><summary id="product-title" data-en="Optional deep dive · Inspect one correlation calculation" data-ko="선택 심화 · 상호상관 계산 자세히 보기"></summary>
+<div class="d-formula" data-ss-math="R_{rx}[\ell]=\sum_n r[n]x[n-\ell]" data-ss-math-display="block"></div>
 <p class="d-hint" data-en="For the selected delay, compare each template sample x[i] with the received sample r[t₀ + lag + i]. Their products add to the unnormalized correlation numerator. The normalized value divides this total by both signal energies." data-ko="선택된 지연에서 기준 표본 x[i]와 수신 표본 r[t₀ + lag + i]를 비교합니다. 곱을 합하면 상호상관 분자가 됩니다. 정규화 값은 두 신호 에너지로 나눈 결과입니다."></p>
 <div class="d-formula" data-ss-math="S_m(\ell)=\sum_{i=0}^{m}x[i]\,r[t_0+\ell+i]" data-ss-math-display="block"></div>
 <label class="d-field" for="sample-index"><span data-en="Sample-by-sample accumulation" data-ko="표본별 곱셈과 누적합"></span><output class="d-range-value" id="sample-value"></output><input id="sample-index" type="range" min="0" max="239" step="1" value="70"></label>
