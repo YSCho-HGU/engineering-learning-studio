@@ -47,7 +47,7 @@ for(const width of [1440,390])for(const mode of ['mixed','en','ko'])for(const te
    await page.waitForTimeout(150);
    await page.locator('#ss-b-transfer select').selectOption(test.transfer);
    await page.locator('#ss-b-transfer .ss-b-inquiry-check').click();
-   await page.waitForFunction(()=>document.querySelector('#ss-b-inquiry-next')?.hidden===false,{timeout:6000});
+   await page.waitForFunction(()=>document.querySelector('#ss-b-inquiry-next')?.hidden===false,null,{timeout:6000});
    const progress=await root.locator('.ss-b-inquiry-progress').innerText();
    if(!progress.includes('2 / 2'))throw Error('Both prepared scenarios not recorded: '+progress);
    const evidence=page.locator('#ss-b-evidence');
