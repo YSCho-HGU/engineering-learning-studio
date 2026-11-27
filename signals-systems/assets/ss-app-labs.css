@@ -296,3 +296,15 @@ button:disabled{opacity:.55;cursor:default}
  .ss-al-results:not(:has(.ss-al-charts[data-kind="sampling"])) .ss-al-insight{order:5}
  .ss-al-plot-note{font-size:12px;line-height:1.55;overflow-wrap:anywhere}
 }
+
+/* 02 Chirp / 03 Helix: a raster canvas must not flex to fill a two-row
+   auto-sized grid.  flex:1 + canvas.width/height rewrites form a positive
+   feedback loop (grid row -> flex canvas -> intrinsic canvas -> grid row).
+   Let the existing desktop/tablet/focus height rules determine its height.
+   Fix its flex basis so redraw or ResizeObserver cannot grow the plot card. */
+.ss-al-charts[data-kind="chirp"] .ss-al-plot:first-child canvas,
+.ss-al-charts[data-kind="helix"] .ss-al-plot:first-child canvas{
+ flex:0 0 auto;
+ min-height:0;
+ max-height:none;
+}
