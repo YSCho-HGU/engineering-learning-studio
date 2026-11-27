@@ -26,7 +26,12 @@ for(const [path,kind] of [["applications-audio-filter.html","audio"],["applicati
    await page.locator("#cutoff").evaluate(el=>{el.value="2100";el.dispatchEvent(new Event("input",{bubbles:true}))});
    const after=await page.locator("#atten").innerText();
    assert(before!==after,"FIR result did not change");
-   for(const id of ["waveplot","specplot","gainplot"])assert((await page.locator("#"+id).evaluate(e=>e.width*e.height))>0);
+   for(const id of ["waveplot","specplot","gainplot","impulseplot"])assert((await page.locator("#"+id).evaluate(e=>e.width*e.height))>0);
+   assert.match(await page.locator("#cutoff-explain").innerText(),/2100|2,100/);
+   assert.match(await page.locator("#delay-explain").innerText(),/6\.25/);
+   await page.locator("#filter").selectOption("band");
+   assert.equal(await page.locator("#band").isDisabled(),false);
+   assert((await page.locator("#cutoff-explain").innerText()).length>50);
   }else{
    const initial=await page.locator("#estimate").innerText();
    await page.locator("#distance").evaluate(el=>{el.value="27";el.dispatchEvent(new Event("input",{bubbles:true}))});
@@ -36,6 +41,19 @@ for(const [path,kind] of [["applications-audio-filter.html","audio"],["applicati
    assert(lag>=0,"Invalid correlation lag");
    await page.locator("#lag-forward").click();
    assert(+(await page.locator("#lag").inputValue())>=lag);
+   const sumAtStart=+(await page.locator("#partial-value").innerText());
+   await page.locator("#sample-complete").click();
+   assert.equal(await page.locator("#sample-index").inputValue(),"239");
+   assert(Number.isFinite(+(await page.locator("#partial-value").innerText())));
+   assert(Number.isFinite(+(await page.locator("#norm-value").innerText())));
+   await page.locator("#sample-prev").click();
+   assert.equal(await page.locator("#sample-index").inputValue(),"238");
+   await page.locator("#sample-next").click();
+   assert.equal(await page.locator("#sample-index").inputValue(),"239");
+   await page.locator("#lag").evaluate(el=>{el.value="800";el.dispatchEvent(new Event("input",{bubbles:true}))});
+   assert.equal(await page.locator("#sample-index").inputValue(),"239");
+   assert(Number.isFinite(+(await page.locator("#partial-value").innerText())));
+   for(const id of ["echo-plot","corr-plot","product-plot","sum-plot"])assert((await page.locator("#"+id).evaluate(e=>e.width*e.height))>0);
    await page.locator("#medium").selectOption("water");
    assert((await page.locator("#truth").innerText()).includes("ms"),"Missing sonar delay");
   }
