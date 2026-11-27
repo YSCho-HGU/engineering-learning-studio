@@ -87,7 +87,7 @@ for(const spec of pages){
    const check=await page.evaluate(()=>{
     const expected=+document.querySelector("#norm-value").textContent;
     const sum=+document.querySelector("#partial-value").textContent;
-    const proof=(document.querySelector("#product-explain").textContent||"").match(/Full sum ([\d.-]+) ÷ energy normalization ([\d.-]+) = ([\d.-]+)/);
+    const proof=(document.querySelector("#product-explain").textContent||"").match(/Full sum (-?\d+(?:\.\d+)?) ÷ energy normalization (-?\d+(?:\.\d+)?) = (-?\d+(?:\.\d+)?)/);
     return {expected,sum,proof:proof?.slice(1).map(Number)}
    });
    assert(check.proof&&Math.abs(check.sum-check.proof[0])<.00015,"partial sum disagrees with formula");
