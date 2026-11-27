@@ -150,7 +150,7 @@
   $("guide-home").textContent=t("Applications · FFT","응용 실습 · FFT");
   $("guide-skip").textContent=t("Skip to FFT concepts","FFT 개념 본문으로 이동");
   $("guide-lang-label").textContent=t("Language","언어");
-  $("guide-close").textContent=t("Close guide","설명 창 닫기");
+  $("guide-close").textContent=t("Close / Back to Applications","창 닫기 / 응용 실습으로 돌아가기");
   $("guide-figure-note").textContent=t(
    "Schematic only: the bars show an illustrative mapping, not the calculated FFT of the drawn samples.",
    "개념도입니다. 막대는 대응 관계의 예시이며 그려진 표본의 실제 FFT 계산 결과는 아닙니다.");
