@@ -1,6 +1,6 @@
 /* Part B: a common learning rhythm with native graphs and original controls intact. */
-.ss-b-inquiry,.ss-b-evidence{min-width:0;max-width:100%;border:1px solid var(--els-border);border-radius:11px;background:var(--els-surface-alt);color:var(--els-ink);padding:13px 14px;box-sizing:border-box}
-.ss-b-inquiry{display:grid;gap:8px;margin:11px 0 14px}
+.ss-b-inquiry,.ss-b-transfer,.ss-b-evidence{min-width:0;max-width:100%;border:1px solid var(--els-border);border-radius:11px;background:var(--els-surface-alt);color:var(--els-ink);padding:13px 14px;box-sizing:border-box}
+.ss-b-inquiry,.ss-b-transfer{display:grid;gap:8px;margin:11px 0 14px}
 .ss-b-inquiry-kicker{font-size:12px;line-height:1.5;font-weight:750;color:var(--els-link)}
 .ss-b-inquiry-question{margin:0;font-size:15px;line-height:1.45;font-weight:700;color:var(--els-ink)}
 .ss-b-inquiry-choice{width:100%;min-height:39px;max-width:100%;background:var(--els-surface);color:var(--els-ink);border:1px solid var(--els-border);border-radius:8px;padding:7px 9px;font-size:13px}
@@ -22,4 +22,10 @@
 .ss-b-evidence-equation .katex-display>.katex{text-align:left}
 .ss-b-evidence-meaning,.ss-b-evidence-bridge{font-size:13px;line-height:1.6;margin:0;color:var(--els-ink);white-space:pre-line}
 .ss-b-evidence-bridge{border-top:1px solid var(--els-border);padding-top:8px;font-weight:650}
-@media(max-width:700px){.ss-b-inquiry,.ss-b-evidence{padding:11px 12px}.ss-b-inquiry-question{font-size:14px}.ss-b-evidence-equation{font-size:13px}}
+@media(max-width:700px){.ss-b-inquiry,.ss-b-transfer,.ss-b-evidence{padding:11px 12px}.ss-b-inquiry-question{font-size:14px}.ss-b-evidence-equation{font-size:13px}}
+
+/* Prediction remains above the native input controls; assessment appears after the graph evidence. */
+.ss-b-inquiry{margin:10px 0 13px}
+.ss-b-transfer{margin:12px 0 4px}
+.ss-b-inquiry .ss-b-inquiry-choice{max-width:min(100%,580px)}
+.ss-b-inquiry .ss-b-inquiry-direction{font-weight:500;color:var(--els-muted)}
