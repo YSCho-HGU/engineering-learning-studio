@@ -60,7 +60,7 @@ for(const [id,page,observedId] of ids){
  contentChecks++;
 }
 const shell=file('applications-fft-theory.html');
-assert.ok(shell.includes('ss-fft-theory-guide.js?v=20261127-theory-v2'));
+assert.ok(shell.includes('ss-fft-theory-guide.js?v=20261127-theory-v3'));
 assert.ok(shell.includes('id="guide-n"')&&shell.includes('id="guide-k"')&&shell.includes('id="guide-known"'));
 assert.ok(file('applications.html').includes('applications-fft-theory.html#samples'));
 const chartInputs={
