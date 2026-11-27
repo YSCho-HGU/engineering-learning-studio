@@ -150,7 +150,7 @@
     return {
       tex:isHz?String.raw`\nu_k=\frac{k}{${N}},\quad f_k=\frac{k\,${fmt(fs)}}{${N}}\ \mathrm{Hz}`:
        String.raw`\nu_k=\frac{k}{${N}}\ \mathrm{cycles/sample}`,
-      result:isHz?t(`Entered fs=${fmt(fs)} Hz → spacing=${fmt(fs/N,4)} Hz. Verify fs from the source metadata.`,`입력한 fs=${fmt(fs)} Hz → 간격=${fmt(fs/N,4)} Hz입니다. 원본 기록과 일치하는지 확인하세요.`):
+      result:isHz?t(`Known fs=${fmt(fs)} Hz → spacing=${fmt(fs/N,4)} Hz. Confirm this value from the recording or sensor metadata.`,`확인된 fs=${fmt(fs)} Hz → 간격=${fmt(fs/N,4)} Hz입니다. 녹음·센서의 원본 정보와 일치하는지 확인하세요.`):
       t(`Selected N=${N}; read the native peak card to determine whether metadata supply a valid fs. Never infer Hz from samples alone.`,`N=${N}이며 원래 데이터에 fs가 있는지는 기존 피크 카드에서 확인하세요. 표본만으로 Hz를 추정해서는 안 됩니다.`)
     };
    },
