@@ -12,7 +12,7 @@ const num=(v,d=2)=>Number(v).toFixed(d);
 function drawMath(text){const el=$("ss-sys-equation");el.textContent=text;if(window.katex)try{window.katex.render(text,el,{throwOnError:false});}catch(_){}}
 const content={
  rc:{title:["RC Low-Pass and High-Pass","RC 저역통과·고역통과"],sub:["Physical RC circuit → voltage response → frequency selection.","실제 RC 회로 → 전압 응답 → 주파수 선택성을 연결합니다."],question:["Does the circuit pass slow and fast signals equally?","회로는 느린 신호와 빠른 신호를 똑같이 통과시킬까요?"],task:["1. Move frequency below/above f_c. 2. Switch LP/HP and observe the circuit. 3. Click the waveform: where is Vout measured?","1. 주파수를 f_c의 아래와 위로 바꿉니다. 2. LP/HP를 전환하며 회로를 관찰합니다. 3. 파형을 클릭해 출력 전압 측정 위치를 확인하세요."]},
- "moving-average":{title:["Moving Average and Sensor Smoothing","이동평균과 센서 평활화"],sub:["Noisy samples → M-tap convolution → smoothed output and delay.","잡음 표본 → M개 항의 컨벌루션 → 평활 출력과 지연을 연결합니다."],question:["Why does averaging remove noise but blur sudden changes?","평균은 잡음을 줄이면서 갑작스러운 변화를 왜 흐리게 할까요?"],task:["1. Compare the noisy input and output. 2. Click a sample and calculate its M terms. 3. Choose Step, increase M from 3 to 21, and observe the transition.","1. 잡음 입력과 출력을 비교합니다. 2. 표본을 클릭하여 M개 항을 계산합니다. 3. Step에서 M을 3에서 21로 늘려 전이 구간을 관찰하세요."]}
+ "moving-average":{title:["Moving Average and Sensor Smoothing","이동평균과 센서 평활화"],sub:["Noisy samples → M-tap convolution → smoothed output and delay.","잡음 표본 → M개 항의 컨벌루션 → 평활 출력과 지연을 연결합니다."],question:["Why does averaging remove noise but blur sudden changes?","평균은 잡음을 줄이면서 갑작스러운 변화를 왜 흐리게 할까요?"],task:["1. Compare the same step at n=55 for M=3 and M=21. 2. Inspect the M contributing samples. 3. Change to Noisy Sensor to study noise smoothing.","1. 동일한 계단 신호의 n=55에서 M=3과 M=21을 비교하세요. 2. 출력에 기여하는 M개 표본을 확인하세요. 3. 잡음 센서 입력으로 전환해 평활 효과를 살펴보세요."]}
 };
 function colors(){const s=getComputedStyle(document.documentElement);const get=(k,v)=>s.getPropertyValue(k).trim()||v;return {input:get("--ss-trace-teal","#289bc0"),output:get("--ss-trace-coral","#de8a37"),ideal:get("--ss-trace-gold","#7cae76"),muted:get("--els-muted","#9ba4a0"),grid:get("--ss-plot-grid",get("--els-border","#56605a")),accent:get("--els-link","#a9cbb4")};}
 function select(key,en,ko,opts){const row=document.createElement("div");row.className="ss-sys-field";
@@ -93,13 +93,13 @@ function setupExamples(){
     activeExample===2?tr("Only frequency changed: the same RC circuit now suppresses the faster sine wave.","주파수만 달라졌습니다. 같은 RC 회로가 빠른 정현파를 더 감쇠합니다."):
     tr("Compare two input frequencies with the same R, C and low-pass circuit.","R·C 및 저역통과 회로를 유지한 채 두 입력 주파수를 비교합니다.");
  }else{
-  one.textContent=tr("Noisy sensor","잡음 센서",true);
-  two.textContent=tr("Step edge","계단 변화",true);
-  one.onclick=()=>{Object.assign(state,{shape:"trend",M:5,noise:.8,index:65});activeExample=1;controls();render();setupExamples();};
+  one.textContent=tr("A · M = 3 (short)","A · M = 3 (짧은 평균)",true);
+  two.textContent=tr("B · M = 21 (long)","B · M = 21 (긴 평균)",true);
+  one.onclick=()=>{Object.assign(state,{shape:"step",M:3,noise:0,index:55});activeExample=1;controls();render();setupExamples();};
   two.onclick=()=>{Object.assign(state,{shape:"step",M:21,noise:0,index:55});activeExample=2;controls();render();setupExamples();};
-  hint.textContent=activeExample===1?tr("Click an output sample. Its value comes from the current and 4 past inputs.","출력 표본을 클릭하세요. 현재와 과거 4개 입력의 평균입니다."):
-    activeExample===2?tr("At the step edge, the causal window contains both old and new values; inspect all 21 taps.","계단 경계에서 인과적 평균 구간에 변화 전후 값이 함께 포함됩니다. 21개 항을 살펴보세요."):
-    tr("First see noise reduction, then inspect why a sudden edge becomes gradual.","잡음 감소를 먼저 보고, 갑작스러운 변화가 완만해지는 원인을 확인하세요.");
+  hint.textContent=activeExample===1?tr("At n=55, the short three-tap average has already reached the new step level.","n=55에서 짧은 3탭 평균은 이미 계단 변화 후의 값에 도달했습니다."):
+    activeExample===2?tr("The same output index n=55 still averages old and new values over 21 taps.","같은 n=55에서도 21탭 평균에는 변화 이전과 이후 표본이 함께 포함됩니다."):
+    tr("Compare identical noise-free steps at n=55; only the averaging length M changes.","동일한 잡음 없는 계단 신호와 n=55를 유지하고 평균 길이 M만 바꾸세요.");
  }
  one.setAttribute("aria-pressed",String(activeExample===1));
  two.setAttribute("aria-pressed",String(activeExample===2));
